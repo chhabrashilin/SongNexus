@@ -1,0 +1,110 @@
+{
+  "description": "Seed artists for the vertical-slice sample graph. Chosen to span hip-hop, R&B, pop, jazz, electronic and rock so that cross-genre paths and bridge artists exist. Names are resolved to MusicBrainz IDs by `songnexus fetch`; pin `mbid` when the resolver reports an ambiguous name. Every pinned mbid carries a pin_reason recording the human decision.",
+  "albums_per_artist": 4,
+  "artists": [
+    {
+      "name": "Kendrick Lamar"
+    },
+    {
+      "name": "SZA"
+    },
+    {
+      "name": "Drake",
+      "mbid": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "pin_reason": "Ambiguous name: resolver found the Canadian rapper and a Chilean metal band both named Drake."
+    },
+    {
+      "name": "Kanye West"
+    },
+    {
+      "name": "JAY-Z",
+      "mbid": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "pin_reason": "Ambiguous: 'JAŸ-Z' (US rapper) vs 'Jay Z' (a different DJ/producer)."
+    },
+    {
+      "name": "Beyoncé"
+    },
+    {
+      "name": "Rihanna",
+      "mbid": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "pin_reason": "Ambiguous: Barbadian R&B/pop singer vs a mashup artist of the same name."
+    },
+    {
+      "name": "Frank Ocean",
+      "mbid": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "pin_reason": "Ambiguous after alias search: 'Frank Ocean' vs a separate 'Christopher Breaux' (legal-name) entry carrying the alias."
+    },
+    {
+      "name": "Tyler, The Creator"
+    },
+    {
+      "name": "Travis Scott"
+    },
+    {
+      "name": "The Weeknd"
+    },
+    {
+      "name": "Pharrell Williams"
+    },
+    {
+      "name": "Mac Miller",
+      "mbid": "a0e8a1b1-5f8f-475a-a253-17415c17d0ff",
+      "pin_reason": "Ambiguous: American rapper vs a punk vocalist of the same name."
+    },
+    {
+      "name": "Anderson .Paak"
+    },
+    {
+      "name": "Metro Boomin"
+    },
+    {
+      "name": "Thundercat"
+    },
+    {
+      "name": "Flying Lotus"
+    },
+    {
+      "name": "Kamasi Washington"
+    },
+    {
+      "name": "Robert Glasper",
+      "mbid": "6e8f82ea-9e6d-4fdd-9b32-32feef13186b",
+      "pin_reason": "Ambiguous: jazz pianist vs a member of The El Dorados."
+    },
+    {
+      "name": "Herbie Hancock"
+    },
+    {
+      "name": "Miles Davis"
+    },
+    {
+      "name": "Daft Punk"
+    },
+    {
+      "name": "Taylor Swift",
+      "mbid": "20244d07-534f-4eff-b4d4-930878889970",
+      "pin_reason": "Ambiguous: the singer-songwriter vs a screamo side project of the same name."
+    },
+    {
+      "name": "Jack Antonoff"
+    },
+    {
+      "name": "Lana Del Rey",
+      "mbid": "b7539c32-53e7-4908-bda3-81449c367da6",
+      "pin_reason": "Ambiguous: the singer vs a second artist entry with the same name."
+    },
+    {
+      "name": "Bon Iver"
+    },
+    {
+      "name": "Paul McCartney",
+      "mbid": "ba550d0e-adac-4864-b88b-407cab5e76af",
+      "pin_reason": "Ambiguous: 'Paul McCartney' (The Beatles) vs near-identical 'Paul MacCartney' (Shadowlands)."
+    },
+    {
+      "name": "Billie Eilish",
+      "mbid": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "pin_reason": "Ambiguous: the singer vs another artist entry with the same name."
+    }
+  ]
+}

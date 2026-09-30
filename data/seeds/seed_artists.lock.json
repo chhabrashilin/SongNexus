@@ -1,0 +1,173 @@
+{
+  "artists": [
+    {
+      "name": "Kendrick Lamar",
+      "mbid": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "SZA",
+      "mbid": "272989c8-5535-492d-a25c-9f58803e027f",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Drake",
+      "mbid": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Kanye West",
+      "mbid": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "JAY-Z",
+      "mbid": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Beyoncé",
+      "mbid": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Rihanna",
+      "mbid": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Frank Ocean",
+      "mbid": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Tyler, The Creator",
+      "mbid": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Travis Scott",
+      "mbid": "e4a51f17-a57b-47b1-b37b-f552d0f8e9e6",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "The Weeknd",
+      "mbid": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Pharrell Williams",
+      "mbid": "149f91ef-1287-46da-9a8e-87fee02f1471",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Mac Miller",
+      "mbid": "a0e8a1b1-5f8f-475a-a253-17415c17d0ff",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Anderson .Paak",
+      "mbid": "d02dd67e-f655-4600-bc47-f789f59e7367",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Metro Boomin",
+      "mbid": "59db3d82-86ea-451f-881f-dffc8ec387c9",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Thundercat",
+      "mbid": "044fd265-79dd-43eb-afc4-8b20becf7e17",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Flying Lotus",
+      "mbid": "fc7376fe-1a6f-4414-b4a7-83f50ed59c92",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Kamasi Washington",
+      "mbid": "c7a3e868-c6d8-4512-a5ef-f6cbe42899b0",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Robert Glasper",
+      "mbid": "6e8f82ea-9e6d-4fdd-9b32-32feef13186b",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Herbie Hancock",
+      "mbid": "27613b78-1b9d-4ec3-9db5-fa0743465fdd",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Miles Davis",
+      "mbid": "561d854a-6a28-4aa7-8c99-323e6ce46c2a",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Daft Punk",
+      "mbid": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Taylor Swift",
+      "mbid": "20244d07-534f-4eff-b4d4-930878889970",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Jack Antonoff",
+      "mbid": "1155a7a9-a7b4-46ba-ba27-6b6c98be487e",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Lana Del Rey",
+      "mbid": "b7539c32-53e7-4908-bda3-81449c367da6",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Bon Iver",
+      "mbid": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Paul McCartney",
+      "mbid": "ba550d0e-adac-4864-b88b-407cab5e76af",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Billie Eilish",
+      "mbid": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    }
+  ],
+  "unresolved": []
+}

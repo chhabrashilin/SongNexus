@@ -1,0 +1,55 @@
+{
+  "description": "Labeled search queries for the lexical search evaluation. Each case lists the entity (by source ID) a user typing the query is looking for. Labels identify entities by MusicBrainz IDs so they survive re-ingestion. Authored by the development team; small and not held out, so treat results as a regression signal, not a claim of general quality. Extend with queries from real usage (docs/evaluation.md).",
+  "cases": [
+    {"query": "Kendrick Lamar", "category": "exact", "relevant": [{"type": "artist", "mbid": "381086ea-f511-4aba-bdf9-71c753dc5077"}]},
+    {"query": "SZA", "category": "exact", "relevant": [{"type": "artist", "mbid": "272989c8-5535-492d-a25c-9f58803e027f"}]},
+    {"query": "Drake", "category": "exact", "relevant": [{"type": "artist", "mbid": "9fff2f8a-21e6-47de-a2b8-7f449929d43f"}]},
+    {"query": "Thundercat", "category": "exact", "relevant": [{"type": "artist", "mbid": "044fd265-79dd-43eb-afc4-8b20becf7e17"}]},
+    {"query": "Sounwave", "category": "exact", "relevant": [{"type": "artist", "mbid": "9032140b-c6ba-448d-8f05-5ac16e3aa165"}]},
+
+    {"query": "kendrick lamar", "category": "case_and_diacritics", "relevant": [{"type": "artist", "mbid": "381086ea-f511-4aba-bdf9-71c753dc5077"}]},
+    {"query": "beyonce", "category": "case_and_diacritics", "relevant": [{"type": "artist", "mbid": "859d0860-d480-4efd-970c-c05d5f1776b8"}]},
+    {"query": "jay-z", "category": "case_and_diacritics", "relevant": [{"type": "artist", "mbid": "f82bcf78-5b69-4622-a5ef-73800768d9ac"}]},
+    {"query": "tyler the creator", "category": "case_and_diacritics", "relevant": [{"type": "artist", "mbid": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6"}]},
+    {"query": "anderson paak", "category": "case_and_diacritics", "relevant": [{"type": "artist", "mbid": "d02dd67e-f655-4600-bc47-f789f59e7367"}]},
+    {"query": "asap rocky", "category": "case_and_diacritics", "relevant": [{"type": "artist", "mbid": "25b7b584-d952-4662-a8b9-dd8cdfbfeb64"}]},
+
+    {"query": "Kanye West", "category": "alias_and_renamed", "relevant": [{"type": "artist", "mbid": "164f0d73-1234-4e2c-8743-d77bf2191051"}]},
+    {"query": "Yeezy", "category": "alias_and_renamed", "relevant": [{"type": "artist", "mbid": "164f0d73-1234-4e2c-8743-d77bf2191051"}]},
+    {"query": "Hova", "category": "alias_and_renamed", "relevant": [{"type": "artist", "mbid": "f82bcf78-5b69-4622-a5ef-73800768d9ac"}]},
+    {"query": "Shawn Carter", "category": "alias_and_renamed", "relevant": [{"type": "artist", "mbid": "f82bcf78-5b69-4622-a5ef-73800768d9ac"}]},
+    {"query": "jayz", "category": "alias_and_renamed", "relevant": [{"type": "artist", "mbid": "f82bcf78-5b69-4622-a5ef-73800768d9ac"}]},
+
+    {"query": "kendrik lamar", "category": "typo", "relevant": [{"type": "artist", "mbid": "381086ea-f511-4aba-bdf9-71c753dc5077"}]},
+    {"query": "beyonse", "category": "typo", "relevant": [{"type": "artist", "mbid": "859d0860-d480-4efd-970c-c05d5f1776b8"}]},
+    {"query": "the weekend", "category": "typo", "relevant": [{"type": "artist", "mbid": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9"}]},
+    {"query": "rhianna", "category": "typo", "relevant": [{"type": "artist", "mbid": "73e5e69d-3554-40d8-8516-00cb38737a1c"}]},
+    {"query": "herbie hancok", "category": "typo", "relevant": [{"type": "artist", "mbid": "27613b78-1b9d-4ec3-9db5-fa0743465fdd"}]},
+    {"query": "kamasi washingtom", "category": "typo", "relevant": [{"type": "artist", "mbid": "c7a3e868-c6d8-4512-a5ef-f6cbe42899b0"}]},
+    {"query": "billie ellish", "category": "typo", "relevant": [{"type": "artist", "mbid": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533"}]},
+
+    {"query": "kendr", "category": "prefix", "relevant": [{"type": "artist", "mbid": "381086ea-f511-4aba-bdf9-71c753dc5077"}]},
+    {"query": "flying lo", "category": "prefix", "relevant": [{"type": "artist", "mbid": "fc7376fe-1a6f-4414-b4a7-83f50ed59c92"}]},
+    {"query": "metro boo", "category": "prefix", "relevant": [{"type": "artist", "mbid": "59db3d82-86ea-451f-881f-dffc8ec387c9"}]},
+    {"query": "robert glas", "category": "prefix", "relevant": [{"type": "artist", "mbid": "6e8f82ea-9e6d-4fdd-9b32-32feef13186b"}]},
+
+    {"query": "weeknd", "category": "partial_name", "relevant": [{"type": "artist", "mbid": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9"}]},
+    {"query": "glasper", "category": "partial_name", "relevant": [{"type": "artist", "mbid": "6e8f82ea-9e6d-4fdd-9b32-32feef13186b"}]},
+    {"query": "mccartney", "category": "partial_name", "relevant": [{"type": "artist", "mbid": "ba550d0e-adac-4864-b88b-407cab5e76af"}]},
+    {"query": "antonoff", "category": "partial_name", "relevant": [{"type": "artist", "mbid": "1155a7a9-a7b4-46ba-ba27-6b6c98be487e"}]},
+
+    {"query": "humble", "category": "track", "relevant": [{"type": "track", "mbid": "398bf241-7d57-4993-860b-1f9ef496c97f"}]},
+    {"query": "money trees", "category": "track", "relevant": [{"type": "track", "mbid": "c294757b-0430-4eb4-ae7a-6abcffb87405"}]},
+    {"query": "get lucky", "category": "track", "relevant": [{"type": "track", "mbid": "833f00e1-781f-4edd-90e4-e52712618862"}]},
+    {"query": "sicko mode", "category": "track", "relevant": [{"type": "track", "mbid": "73784600-a665-4a6c-9687-187dbefc556d"}]},
+    {"query": "cantaloupe island", "category": "track", "relevant": [{"type": "track", "mbid": "93dfa732-924c-4d9d-b347-4fb7e1617238"}]},
+    {"query": "doves in the wind", "category": "track", "relevant": [{"type": "track", "mbid": "0044ede3-98b6-4cd5-9747-d3d05e2f1a5d"}]},
+
+    {"query": "to pimp a butterfly", "category": "album", "relevant": [{"type": "album", "mbid": "d9103c72-3807-4378-9ce7-b6f3e8fdd547"}]},
+    {"query": "good kid maad city", "category": "album", "relevant": [{"type": "album", "mbid": "499c19c8-0dab-4824-884b-6191d145e95b"}]},
+    {"query": "kind of blue", "category": "album", "relevant": [{"type": "album", "mbid": "8e8a594f-2175-38c7-a871-abb68ec363e7"}]},
+    {"query": "random access memories", "category": "album", "relevant": [{"type": "album", "mbid": "aa997ea0-2936-40bd-884d-3af8a0e064dc"}]},
+    {"query": "channel orange", "category": "album", "relevant": [{"type": "album", "mbid": "f8f4167d-897c-4b25-a171-638374d1dfa4"}]},
+    {"query": "head hunters", "category": "album", "relevant": [{"type": "album", "mbid": "322f18bb-5491-38e9-9044-c0a468651eec"}]}
+  ]
+}

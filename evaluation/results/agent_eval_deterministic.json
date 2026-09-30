@@ -1,0 +1,55 @@
+{
+  "mode": "deterministic",
+  "graph_version": "run-2@2026.09.1",
+  "cases": 20,
+  "metrics": {
+    "tool_selection_accuracy": 0.9,
+    "task_success_rate": 0.9,
+    "grounded_rate": 1.0,
+    "unsupported_claim_rate": 0.0,
+    "limitation_admission": 1.0,
+    "llm_fallbacks": 0,
+    "latency_ms_p50": 46.5,
+    "latency_ms_p95": 1657.3
+  },
+  "by_category": {
+    "comparative": {
+      "n": 2,
+      "task_success_rate": 0.0
+    },
+    "direct_factual": {
+      "n": 4,
+      "task_success_rate": 1.0
+    },
+    "discovery": {
+      "n": 3,
+      "task_success_rate": 1.0
+    },
+    "graph_reasoning": {
+      "n": 6,
+      "task_success_rate": 1.0
+    },
+    "missing_data": {
+      "n": 5,
+      "task_success_rate": 1.0
+    }
+  },
+  "failures": [
+    {
+      "id": "comp-01",
+      "failures": [
+        "missing entity 381086ea-f511-4aba-bdf9-71c753dc5077",
+        "missing entity 9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+        "tools used [], expected ['search_entities', 'get_artist']"
+      ]
+    },
+    {
+      "id": "comp-02",
+      "failures": [
+        "missing entity 859d0860-d480-4efd-970c-c05d5f1776b8",
+        "missing entity 73e5e69d-3554-40d8-8516-00cb38737a1c",
+        "tools used [], expected ['search_entities']"
+      ]
+    }
+  ]
+}
