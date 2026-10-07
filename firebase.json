@@ -1,0 +1,37 @@
+{
+  "hosting": {
+    "public": "web/dist",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "ignore": ["**/.*", "**/node_modules/**"],
+    "rewrites": [
+      { "source": "/v1/**", "run": { "serviceId": "songnexus-api", "region": "us-central1" } },
+      { "source": "/healthz", "run": { "serviceId": "songnexus-api", "region": "us-central1" } },
+      { "source": "**", "destination": "/index.html" }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self'; script-src 'self' https://apis.google.com https://www.gstatic.com; style-src 'self'; img-src 'self' data: https://*.googleusercontent.com; font-src 'self'; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com; frame-src 'self' https://accounts.google.com https://*.firebaseapp.com; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+          },
+          { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" },
+          { "key": "X-Content-Type-Options", "value": "nosniff" },
+          { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+          { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+          { "key": "Cross-Origin-Opener-Policy", "value": "same-origin-allow-popups" }
+        ]
+      },
+      {
+        "source": "/assets/**",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      },
+      {
+        "source": "/index.html",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      }
+    ]
+  }
+}

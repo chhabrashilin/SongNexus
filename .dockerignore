@@ -1,0 +1,20 @@
+# Only server/ sources and the committed data go into images.
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.hypothesis
+**/.import_linter_cache
+**/node_modules
+web/
+docs/
+data/raw/
+data/*.db
+.git/
+.github/
+*.md
+!server/README.md
+plan.md
+.env
+.env.*

@@ -1,0 +1,6 @@
+# Every change needs review from a code owner (branch protection: 1 approval).
+# Add teammates per area as lanes are assigned (plan §25.1).
+*            @chhabrashilin
+/server/     @chhabrashilin
+/web/        @chhabrashilin
+/docs/       @chhabrashilin

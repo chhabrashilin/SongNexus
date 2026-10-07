@@ -1,0 +1,94 @@
+# Cloud Run jobs, using the same image as the service (build once, promote).
+#   songnexus-migrate: runs before traffic shifts; migrations are expand/contract only.
+#   songnexus-ingest:  rebuilds the catalog from the snapshot baked into the image,
+#                      then runs the quality gate (non-zero exit on violations).
+# Rendered with envsubst by .github/workflows/deploy.yml.
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: songnexus-migrate
+  labels:
+    app: songnexus
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/cloudsql-instances: ${CLOUDSQL_INSTANCE}
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          serviceAccountName: songnexus-jobs@${PROJECT_ID}.iam.gserviceaccount.com
+          maxRetries: 0
+          timeoutSeconds: 600
+          containers:
+            - image: ${IMAGE}
+              command: ["songnexus", "migrate"]
+              env:
+                - name: SONGNEXUS_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: songnexus-database-url
+                      key: latest
+---
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: songnexus-ingest
+  labels:
+    app: songnexus
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/cloudsql-instances: ${CLOUDSQL_INSTANCE}
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          serviceAccountName: songnexus-jobs@${PROJECT_ID}.iam.gserviceaccount.com
+          maxRetries: 0
+          timeoutSeconds: 3600
+          containers:
+            - image: ${IMAGE}
+              command: ["sh", "-c", "songnexus ingest && songnexus quality"]
+              resources:
+                limits:
+                  cpu: "2"
+                  memory: 2Gi
+              env:
+                - name: SONGNEXUS_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: songnexus-database-url
+                      key: latest
+---
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: songnexus-purge
+  labels:
+    app: songnexus
+spec:
+  # Scheduled daily by Cloud Scheduler (docs/deploy.md): removes expired sessions and
+  # accounts deleted 28+ days ago, so deletions complete within 30 days (AC-18.4).
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/cloudsql-instances: ${CLOUDSQL_INSTANCE}
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          serviceAccountName: songnexus-jobs@${PROJECT_ID}.iam.gserviceaccount.com
+          maxRetries: 3
+          timeoutSeconds: 600
+          containers:
+            - image: ${IMAGE}
+              command: ["songnexus", "purge"]
+              env:
+                - name: SONGNEXUS_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: songnexus-database-url
+                      key: latest

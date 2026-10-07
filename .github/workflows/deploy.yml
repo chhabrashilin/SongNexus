@@ -1,0 +1,80 @@
+# Continuous deployment to staging (plan §18): build once, migrate, then shift traffic.
+#
+# Inert until the repository variables below are set (see docs/deploy.md):
+#   GCP_PROJECT_ID, GCP_REGION, GCP_WIF_PROVIDER, GCP_DEPLOY_SA, CLOUDSQL_INSTANCE, WEB_ORIGIN
+# Authentication uses Workload Identity Federation: no long-lived keys in GitHub.
+# Rollback: shift Cloud Run traffic to the previous revision (docs/runbooks/bad-deploy.md).
+name: deploy
+
+on:
+  push:
+    branches: [v2]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: vars.GCP_PROJECT_ID != ''
+    runs-on: ubuntu-24.04
+    environment: staging
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      REGION: ${{ vars.GCP_REGION }}
+      CLOUDSQL_INSTANCE: ${{ vars.CLOUDSQL_INSTANCE }}
+      ENVIRONMENT: staging
+      WEB_ORIGIN: ${{ vars.WEB_ORIGIN }}
+      IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/songnexus/server:${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SA }}
+
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      - name: Build and push the image
+        run: |
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          docker build -f server/Dockerfile -t "${IMAGE}" .
+          docker push "${IMAGE}"
+
+      - name: Run migrations (expand/contract only)
+        run: |
+          envsubst < deploy/cloudrun/jobs.yaml > /tmp/jobs.yaml
+          csplit --quiet --elide-empty-files --prefix=/tmp/job- /tmp/jobs.yaml '/^---$/' '{*}'
+          for job in /tmp/job-*; do gcloud run jobs replace "$job" --region "$REGION"; done
+          gcloud run jobs execute songnexus-migrate --region "$REGION" --wait
+
+      - name: Deploy the service
+        run: |
+          envsubst < deploy/cloudrun/service.yaml > /tmp/service.yaml
+          gcloud run services replace /tmp/service.yaml --region "$REGION"
+
+      - name: Smoke test
+        run: |
+          url="$(gcloud run services describe songnexus-api --region "$REGION" --format 'value(status.url)')"
+          curl --fail --silent --show-error --retry 5 --retry-all-errors "$url/healthz"
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build and deploy the web app
+        run: |
+          npm ci --prefix web
+          npm run build --prefix web
+          npx --yes firebase-tools@15.32.1 deploy --only hosting --project "$PROJECT_ID" --non-interactive
