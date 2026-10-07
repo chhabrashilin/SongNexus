@@ -1,0 +1,116 @@
+/* Base element styles. Logical properties only (RTL-safe); 44px targets; visible focus. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Keep focused and scrolled-to content clear of the sticky top bar. */
+  scroll-padding-block-start: calc(var(--nav-height) + var(--space-2));
+}
+
+body {
+  margin: 0;
+  min-block-size: 100dvh;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font: var(--body-large);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1 {
+  font: var(--headline-medium);
+}
+h2 {
+  font: var(--title-large);
+}
+h3 {
+  font: var(--title-medium);
+}
+
+a {
+  color: var(--md-primary);
+  text-underline-offset: 0.15em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+img,
+svg,
+canvas {
+  display: block;
+  max-inline-size: 100%;
+}
+
+/* Component display rules must never override the hidden attribute. */
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--space-4);
+  inset-block-start: -100px;
+  z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--shape-full);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  font: var(--label-large);
+}
+.skip-link:focus {
+  inset-block-start: var(--space-3);
+}
+
+.muted {
+  color: var(--md-on-surface-variant);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}

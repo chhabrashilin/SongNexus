@@ -1,0 +1,104 @@
+/*
+ * Design tokens on Material 3 roles (ADR 0001, D8).
+ *
+ * Theme: every color role is light-dark(light, dark). The page follows the
+ * system; a user choice sets data-theme on <html>, which pins color-scheme.
+ * No inline script is needed (the CSP forbids one) and nothing flashes.
+ *
+ * Data colors (--series-*) are the three categorical hues validated for
+ * color-vision deficiency in both themes (worst CVD ΔE 9.2 light / 9.4 dark).
+ * Other connection kinds use neutral lines with dash patterns, so color is
+ * never the only encoding. The brand primary is never used for data.
+ */
+
+:root {
+  color-scheme: light dark;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+:root {
+  /* Color roles. */
+  --md-primary: light-dark(#5446a5, #c4b8ff);
+  --md-on-primary: light-dark(#ffffff, #2a1b6e);
+  --md-primary-container: light-dark(#e6deff, #413386);
+  --md-on-primary-container: light-dark(#10005f, #e6deff);
+  --md-secondary-container: light-dark(#e6e0f9, #48455c);
+  --md-on-secondary-container: light-dark(#1c1a2c, #e6e0f9);
+  --md-surface: light-dark(#fcf8fd, #131316);
+  --md-surface-container-lowest: light-dark(#ffffff, #0e0e11);
+  --md-surface-container-low: light-dark(#f6f2f7, #1b1b1f);
+  --md-surface-container: light-dark(#f0edf1, #1f1f23);
+  --md-surface-container-high: light-dark(#eae7ec, #2a292e);
+  --md-surface-container-highest: light-dark(#e5e1e6, #353438);
+  --md-on-surface: light-dark(#1c1b1f, #e5e1e6);
+  --md-on-surface-variant: light-dark(#48454e, #c9c5d0);
+  --md-outline: light-dark(#79757f, #938f99);
+  --md-outline-variant: light-dark(#c9c5d0, #48454e);
+  --md-inverse-surface: light-dark(#313033, #e5e1e6);
+  --md-inverse-on-surface: light-dark(#f4eff4, #313033);
+  --md-inverse-primary: light-dark(#c4b8ff, #5446a5);
+  --md-error: light-dark(#ba1a1a, #ffb4ab);
+  --md-on-error: light-dark(#ffffff, #690005);
+  --md-error-container: light-dark(#ffdad6, #93000a);
+  --md-on-error-container: light-dark(#410002, #ffdad6);
+  --md-success: light-dark(#1b6d3c, #7dd99d);
+  --md-scrim: rgb(0 0 0 / 55%);
+
+  /* Data (validated; see header). */
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --neutral-strong: light-dark(#52514e, #c3c2b7);
+  --neutral-soft: light-dark(#9a9993, #6b6d76);
+
+  /* Typography: system UI fonts in every script (no third-party font requests). */
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans CJK JP',
+    'Noto Sans Arabic', 'Noto Sans Ethiopic', 'Helvetica Neue', Arial, sans-serif;
+  --display-small: 400 2.25rem/2.75rem var(--font);
+  --headline-medium: 400 1.75rem/2.25rem var(--font);
+  --headline-small: 400 1.5rem/2rem var(--font);
+  --title-large: 400 1.375rem/1.75rem var(--font);
+  --title-medium: 500 1rem/1.5rem var(--font);
+  --title-small: 500 0.875rem/1.25rem var(--font);
+  --body-large: 400 1rem/1.5rem var(--font);
+  --body-medium: 400 0.875rem/1.25rem var(--font);
+  --body-small: 400 0.75rem/1rem var(--font);
+  --label-large: 500 0.875rem/1.25rem var(--font);
+  --label-medium: 500 0.75rem/1rem var(--font);
+
+  /* Shape, spacing, elevation, motion. */
+  --shape-xs: 4px;
+  --shape-s: 8px;
+  --shape-m: 12px;
+  --shape-l: 16px;
+  --shape-xl: 28px;
+  --shape-full: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --touch-target: 44px;
+  --elevation-1: 0 1px 2px rgb(0 0 0 / 30%), 0 1px 3px 1px rgb(0 0 0 / 15%);
+  --elevation-3: 0 4px 8px 3px rgb(0 0 0 / 15%), 0 1px 3px rgb(0 0 0 / 30%);
+  --motion-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --duration-short: 150ms;
+  --duration-medium: 300ms;
+  --content-max: 1120px;
+  --nav-height: 64px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-short: 0ms;
+    --duration-medium: 0ms;
+  }
+}
