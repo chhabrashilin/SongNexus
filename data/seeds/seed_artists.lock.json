@@ -167,6 +167,480 @@
       "mbid": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
       "method": "pinned_mbid",
       "confidence": 1.0
+    },
+    {
+      "name": "BTS",
+      "mbid": "0d79fe8e-ba27-4859-bb8c-2f255f346853",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "BLACKPINK",
+      "mbid": "48646387-1664-4c9a-9139-9bfd091b823c",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "IU",
+      "mbid": "b9545342-1e6d-4dae-84ac-013374ad8d7c",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "NewJeans",
+      "mbid": "49204a7a-ed85-407a-828f-6fd46f1d8126",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "宇多田ヒカル",
+      "mbid": "b539e453-c4fe-47e3-8a07-8517eac74429",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "YOASOBI",
+      "mbid": "df6c619f-4334-43e2-8b6a-4a32af1e4f85",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "坂本龍一",
+      "mbid": "a7f7df4a-77d8-4f12-8acd-5c60c93f4de8",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Perfume",
+      "mbid": "486067ad-56d6-48b5-957b-d6cfe3e1af73",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "周杰倫",
+      "mbid": "a223958d-5c56-4b2c-a30a-87e357bc121b",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "王菲",
+      "mbid": "692e367d-2846-442d-b13d-1177c3681c65",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Burna Boy",
+      "mbid": "78a19169-ac75-4868-b504-7e2e073118e0",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Wizkid",
+      "mbid": "efc5d365-a448-4e2f-9b5f-4a7c84be725c",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Fela Kuti",
+      "mbid": "6514cffa-fbe0-4965-ad88-e998ead8a82a",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Tems",
+      "mbid": "5b2a8faa-ffee-4706-a1a8-58f109bc8ca2",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Hugh Masekela",
+      "mbid": "83a2e0fb-3d9b-46ff-b383-3dde54c15297",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Tyla",
+      "mbid": "45425c84-9092-4e2c-b732-e1d0280b580a",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Ali Farka Touré",
+      "mbid": "9be2a5ac-8201-489b-b5f6-91f958bf9060",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Mulatu Astatke",
+      "mbid": "67f0c7ca-14e8-47a3-be0e-bd2f2ffe25bb",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Angélique Kidjo",
+      "mbid": "80fe34d0-6b4f-4ccd-81c3-281ab37f0451",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Bad Bunny",
+      "mbid": "89aa5ecb-59ad-46f5-b3eb-2d424e941f19",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "J Balvin",
+      "mbid": "5bdeb32d-56a5-4b6d-a768-264101fa0a0a",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "ROSALÍA",
+      "mbid": "25f3abd9-63b5-471a-bd25-feb9672dfa11",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Shakira",
+      "mbid": "bf24ca37-25f4-4e34-9aec-460b94364cfc",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Karol G",
+      "mbid": "de22adae-f8ac-414f-b653-b0162611bd60",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Celia Cruz",
+      "mbid": "7b8e1188-9ca4-4aa5-8393-172de6fa04de",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Caetano Veloso",
+      "mbid": "f07dbc2f-317b-470f-bad4-5f1b0eb6faf1",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Gilberto Gil",
+      "mbid": "cf6b70f6-2616-481c-912c-0263cabfc974",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Anitta",
+      "mbid": "d606b860-cc03-4959-a3fd-3a24bccf2560",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "João Gilberto",
+      "mbid": "286ec4c2-b5ca-4f85-b331-280a6d73dd14",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Jorge Ben Jor",
+      "mbid": "19499124-36d4-4ccc-b28d-04dde3d2076f",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Buena Vista Social Club",
+      "mbid": "2a85ecff-41e9-4be1-aca6-c87054a4c334",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Bob Marley & The Wailers",
+      "mbid": "c296e10c-110a-4103-9e77-47bfebb7fb2e",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "A. R. Rahman",
+      "mbid": "e0bba708-bdd3-478d-84ea-c706413bedab",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Arijit Singh",
+      "mbid": "ed3f4831-e3e0-4dc0-9381-f5649e9df221",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Ravi Shankar",
+      "mbid": "697f8b9f-0454-40f2-bba2-58f35668cdbe",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Fairuz",
+      "mbid": "338bbb53-5b96-447a-9444-8906844a0790",
+      "method": "exact_name",
+      "confidence": 0.993
+    },
+    {
+      "name": "أم كلثوم",
+      "mbid": "0a354a70-b879-4697-ad9b-60bfe2bd1d63",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Édith Piaf",
+      "mbid": "4f8ef4a3-40fa-46b5-8773-97686a8424f4",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Stromae",
+      "mbid": "ab2528d9-719f-4261-8098-21849222a0f2",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Serge Gainsbourg",
+      "mbid": "b21ef19b-c6aa-4775-90d3-3cc3e067ce6d",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Air",
+      "mbid": "cb67438a-7f50-4f2b-a6f1-2bb2729fd538",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Kraftwerk",
+      "mbid": "5700dcd4-c139-4f31-aa3e-6382b9af9032",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Björk",
+      "mbid": "87c5dedd-371d-4a53-9f7f-80522fb7f3cb",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "ABBA",
+      "mbid": "d87e52c5-bb8d-4da8-b941-9f4928627dc8",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Sigur Rós",
+      "mbid": "f6f2326f-6b25-4170-b89d-e235b25508e8",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "The Beatles",
+      "mbid": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Radiohead",
+      "mbid": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Amy Winehouse",
+      "mbid": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Adele",
+      "mbid": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Dua Lipa",
+      "mbid": "6f1a58bf-9b1b-49cf-a44a-6cefad7ae04f",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Arctic Monkeys",
+      "mbid": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Massive Attack",
+      "mbid": "10adbe5e-a2c0-4bf3-8249-2b4cbf6e6ca8",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Aphex Twin",
+      "mbid": "f22942a1-6f70-4f48-866e-238cb2308fbd",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "David Bowie",
+      "mbid": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Little Simz",
+      "mbid": "3cdb40fe-a63e-4bb9-b40d-17cda5f50979",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Skepta",
+      "mbid": "38474d18-9204-4f60-a137-1fcc6750b869",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Stevie Wonder",
+      "mbid": "1ee18fb3-18a6-4c7f-8ba0-bc41cdd0462e",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Prince",
+      "mbid": "070d193a-845c-479f-980e-bef15710653e",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Michael Jackson",
+      "mbid": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Aretha Franklin",
+      "mbid": "2f9ecbed-27be-40e6-abca-6de49d50299e",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Quincy Jones",
+      "mbid": "5803c81e-739a-4057-9a5c-cf84e55db630",
+      "method": "exact_name",
+      "confidence": 0.993
+    },
+    {
+      "name": "John Coltrane",
+      "mbid": "b625448e-bf4a-41c3-a421-72ad46cdb831",
+      "method": "exact_name",
+      "confidence": 0.995
+    },
+    {
+      "name": "Nina Simone",
+      "mbid": "2944824d-4c26-476f-a981-be849081942f",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Dr. Dre",
+      "mbid": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "Snoop Dogg",
+      "mbid": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "OutKast",
+      "mbid": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Missy Elliott",
+      "mbid": "a0b8cb9e-7532-45fe-a74c-30e7c4009a39",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Erykah Badu",
+      "mbid": "321531fc-db73-4ffa-a959-61a61a2908c1",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "D'Angelo",
+      "mbid": "b66771cc-45fa-4a32-b14f-5337d7223d7a",
+      "method": "pinned_mbid",
+      "confidence": 1.0
+    },
+    {
+      "name": "J Dilla",
+      "mbid": "cbcbb22c-3a8d-46af-b4ba-09c98f0d7931",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "MF DOOM",
+      "mbid": "188711ed-c99b-439c-844a-ca831f63a727",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Esperanza Spalding",
+      "mbid": "5c12b265-5e59-44e0-b657-5cf4169f7316",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Olivia Rodrigo",
+      "mbid": "6925db17-f35e-42f3-a4eb-84ee6bf5d4b0",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Ariana Grande",
+      "mbid": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Kacey Musgraves",
+      "mbid": "d1393ecb-431b-4fde-a6ea-d769f2f040cb",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Dolly Parton",
+      "mbid": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Johnny Cash",
+      "mbid": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Fleetwood Mac",
+      "mbid": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "method": "exact_name",
+      "confidence": 1.0
+    },
+    {
+      "name": "Nirvana",
+      "mbid": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "method": "pinned_mbid",
+      "confidence": 1.0
     }
   ],
   "unresolved": []

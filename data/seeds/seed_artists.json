@@ -1,5 +1,5 @@
 {
-  "description": "Seed artists for the vertical-slice sample graph. Chosen to span hip-hop, R&B, pop, jazz, electronic and rock so that cross-genre paths and bridge artists exist. Names are resolved to MusicBrainz IDs by `songnexus fetch`; pin `mbid` when the resolver reports an ambiguous name. Every pinned mbid carries a pin_reason recording the human decision.",
+  "description": "Seed artists for the reference catalog. Chosen to span regions, scripts, eras and genres (hip-hop, R&B, pop, jazz, electronic, rock, Afrobeats, K-pop, Latin, MPB, Bollywood, Arabic classical) so that cross-genre and cross-region paths and bridge artists exist, and so non-Latin names are exercised end to end. Names are resolved to MusicBrainz IDs by `songnexus fetch`; pin `mbid` when the resolver reports an ambiguous name. Every pinned mbid carries a pin_reason recording the human decision.",
   "albums_per_artist": 4,
   "artists": [
     {
@@ -105,6 +105,289 @@
       "name": "Billie Eilish",
       "mbid": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
       "pin_reason": "Ambiguous: the singer vs another artist entry with the same name."
+    },
+    {
+      "name": "BTS",
+      "mbid": "0d79fe8e-ba27-4859-bb8c-2f255f346853",
+      "pin_reason": "Ambiguous: the South Korean boy group vs a US rapper, an Irish new-wave band and others named BTS."
+    },
+    {
+      "name": "BLACKPINK"
+    },
+    {
+      "name": "IU",
+      "mbid": "b9545342-1e6d-4dae-84ac-013374ad8d7c",
+      "pin_reason": "Ambiguous: the South Korean singer (exact name, verified by country KR after fetch) vs Intricate Unit and DJ IU."
+    },
+    {
+      "name": "NewJeans"
+    },
+    {
+      "name": "宇多田ヒカル"
+    },
+    {
+      "name": "YOASOBI"
+    },
+    {
+      "name": "坂本龍一"
+    },
+    {
+      "name": "Perfume",
+      "mbid": "486067ad-56d6-48b5-957b-d6cfe3e1af73",
+      "pin_reason": "Ambiguous: the Japanese pop girl group vs British, Korean and cumbia groups named Perfume."
+    },
+    {
+      "name": "周杰倫"
+    },
+    {
+      "name": "王菲",
+      "mbid": "692e367d-2846-442d-b13d-1177c3681c65",
+      "pin_reason": "Ambiguous: Faye Wong, Chinese singer-songwriter and actress, vs a Taiwanese singer with the same name."
+    },
+    {
+      "name": "Burna Boy"
+    },
+    {
+      "name": "Wizkid",
+      "mbid": "efc5d365-a448-4e2f-9b5f-4a7c84be725c",
+      "pin_reason": "Ambiguous: the Nigerian singer (Ayodeji Ibrahim Balogun) vs a Dutch artist (M. Hekkert)."
+    },
+    {
+      "name": "Fela Kuti"
+    },
+    {
+      "name": "Tems",
+      "mbid": "5b2a8faa-ffee-4706-a1a8-58f109bc8ca2",
+      "pin_reason": "Ambiguous: the Nigerian singer (verified by country NG after fetch) vs the artist '!tems'."
+    },
+    {
+      "name": "Hugh Masekela"
+    },
+    {
+      "name": "Tyla",
+      "mbid": "45425c84-9092-4e2c-b732-e1d0280b580a",
+      "pin_reason": "Ambiguous: the South African singer vs an English rock musician and a US project named Tyla."
+    },
+    {
+      "name": "Ali Farka Touré"
+    },
+    {
+      "name": "Mulatu Astatke",
+      "mbid": "67f0c7ca-14e8-47a3-be0e-bd2f2ffe25bb",
+      "pin_reason": "Name is listed in Ge'ez script (ሙላቱ አስታጥቄ); the search also returned an unrelated artist 'Abu' carrying the alias."
+    },
+    {
+      "name": "Angélique Kidjo"
+    },
+    {
+      "name": "Bad Bunny",
+      "mbid": "89aa5ecb-59ad-46f5-b3eb-2d424e941f19",
+      "pin_reason": "Ambiguous: the Puerto Rican artist (verified by country PR after fetch) vs a streamer carrying the alias."
+    },
+    {
+      "name": "J Balvin"
+    },
+    {
+      "name": "ROSALÍA",
+      "mbid": "25f3abd9-63b5-471a-bd25-feb9672dfa11",
+      "pin_reason": "Ambiguous: the Spanish singer vs a '60s pop singer, a Mexican actress-singer and a Japanese girl band."
+    },
+    {
+      "name": "Shakira",
+      "mbid": "bf24ca37-25f4-4e34-9aec-460b94364cfc",
+      "pin_reason": "Ambiguous: the Colombian singer-songwriter vs a German trance duo and an Indonesian singer."
+    },
+    {
+      "name": "Karol G",
+      "mbid": "de22adae-f8ac-414f-b653-b0162611bd60",
+      "pin_reason": "Ambiguous: the Colombian singer vs a Spanish singer with the same name."
+    },
+    {
+      "name": "Celia Cruz"
+    },
+    {
+      "name": "Caetano Veloso"
+    },
+    {
+      "name": "Gilberto Gil"
+    },
+    {
+      "name": "Anitta",
+      "mbid": "d606b860-cc03-4959-a3fd-3a24bccf2560",
+      "pin_reason": "Ambiguous: the Brazilian singer vs a Ukrainian electronic producer."
+    },
+    {
+      "name": "João Gilberto"
+    },
+    {
+      "name": "Jorge Ben Jor"
+    },
+    {
+      "name": "Buena Vista Social Club"
+    },
+    {
+      "name": "Bob Marley & The Wailers"
+    },
+    {
+      "name": "A. R. Rahman"
+    },
+    {
+      "name": "Arijit Singh"
+    },
+    {
+      "name": "Ravi Shankar"
+    },
+    {
+      "name": "Fairuz"
+    },
+    {
+      "name": "أم كلثوم"
+    },
+    {
+      "name": "Édith Piaf"
+    },
+    {
+      "name": "Stromae"
+    },
+    {
+      "name": "Serge Gainsbourg"
+    },
+    {
+      "name": "Air",
+      "mbid": "cb67438a-7f50-4f2b-a6f1-2bb2729fd538",
+      "pin_reason": "Ambiguous: the French band vs a US jazz trio and a Japanese band named Air."
+    },
+    {
+      "name": "Kraftwerk"
+    },
+    {
+      "name": "Björk"
+    },
+    {
+      "name": "ABBA",
+      "mbid": "d87e52c5-bb8d-4da8-b941-9f4928627dc8",
+      "pin_reason": "Ambiguous: the Swedish pop group vs a Parisian choir named ABBA."
+    },
+    {
+      "name": "Sigur Rós"
+    },
+    {
+      "name": "The Beatles",
+      "mbid": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "pin_reason": "Ambiguous: the UK rock band vs several other acts named The Beatles."
+    },
+    {
+      "name": "Radiohead",
+      "mbid": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "pin_reason": "Ambiguous: the UK band (verified by country GB after fetch) vs its pre-1991 incarnation 'On a Friday'."
+    },
+    {
+      "name": "Amy Winehouse"
+    },
+    {
+      "name": "Adele",
+      "mbid": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "pin_reason": "Ambiguous: the UK singer vs Norwegian artist Adele Erichsen."
+    },
+    {
+      "name": "Dua Lipa"
+    },
+    {
+      "name": "Arctic Monkeys"
+    },
+    {
+      "name": "Massive Attack"
+    },
+    {
+      "name": "Aphex Twin",
+      "mbid": "f22942a1-6f70-4f48-866e-238cb2308fbd",
+      "pin_reason": "Ambiguous: three entries named Aphex Twin; this is the main entry (verified by release count and genres after fetch)."
+    },
+    {
+      "name": "David Bowie"
+    },
+    {
+      "name": "Little Simz"
+    },
+    {
+      "name": "Skepta"
+    },
+    {
+      "name": "Stevie Wonder"
+    },
+    {
+      "name": "Prince"
+    },
+    {
+      "name": "Michael Jackson",
+      "mbid": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "pin_reason": "Ambiguous: the 'King of Pop' vs a poet, a photographer and others named Michael Jackson."
+    },
+    {
+      "name": "Aretha Franklin"
+    },
+    {
+      "name": "Quincy Jones"
+    },
+    {
+      "name": "John Coltrane"
+    },
+    {
+      "name": "Nina Simone"
+    },
+    {
+      "name": "Dr. Dre",
+      "mbid": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "pin_reason": "Ambiguous: Andre Young, rap producer, vs 'Doctor Dré' of Original Concept."
+    },
+    {
+      "name": "Snoop Dogg"
+    },
+    {
+      "name": "OutKast"
+    },
+    {
+      "name": "Missy Elliott"
+    },
+    {
+      "name": "Erykah Badu"
+    },
+    {
+      "name": "D'Angelo",
+      "mbid": "b66771cc-45fa-4a32-b14f-5337d7223d7a",
+      "pin_reason": "Ambiguous: the US soul singer vs a Brazilian jazz/samba group and another D'Angelo."
+    },
+    {
+      "name": "J Dilla"
+    },
+    {
+      "name": "MF DOOM"
+    },
+    {
+      "name": "Esperanza Spalding"
+    },
+    {
+      "name": "Olivia Rodrigo"
+    },
+    {
+      "name": "Ariana Grande"
+    },
+    {
+      "name": "Kacey Musgraves"
+    },
+    {
+      "name": "Dolly Parton"
+    },
+    {
+      "name": "Johnny Cash"
+    },
+    {
+      "name": "Fleetwood Mac"
+    },
+    {
+      "name": "Nirvana",
+      "mbid": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "pin_reason": "Ambiguous: the US grunge band vs UK, Finnish and French bands named Nirvana."
     }
   ]
 }

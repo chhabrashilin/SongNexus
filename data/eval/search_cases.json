@@ -38,18 +38,18 @@
     {"query": "mccartney", "category": "partial_name", "relevant": [{"type": "artist", "mbid": "ba550d0e-adac-4864-b88b-407cab5e76af"}]},
     {"query": "antonoff", "category": "partial_name", "relevant": [{"type": "artist", "mbid": "1155a7a9-a7b4-46ba-ba27-6b6c98be487e"}]},
 
-    {"query": "humble", "category": "track", "relevant": [{"type": "track", "mbid": "398bf241-7d57-4993-860b-1f9ef496c97f"}]},
-    {"query": "money trees", "category": "track", "relevant": [{"type": "track", "mbid": "c294757b-0430-4eb4-ae7a-6abcffb87405"}]},
-    {"query": "get lucky", "category": "track", "relevant": [{"type": "track", "mbid": "833f00e1-781f-4edd-90e4-e52712618862"}]},
-    {"query": "sicko mode", "category": "track", "relevant": [{"type": "track", "mbid": "73784600-a665-4a6c-9687-187dbefc556d"}]},
-    {"query": "cantaloupe island", "category": "track", "relevant": [{"type": "track", "mbid": "93dfa732-924c-4d9d-b347-4fb7e1617238"}]},
-    {"query": "doves in the wind", "category": "track", "relevant": [{"type": "track", "mbid": "0044ede3-98b6-4cd5-9747-d3d05e2f1a5d"}]},
+    {"query": "humble", "category": "recording", "relevant": [{"type": "recording", "mbid": "398bf241-7d57-4993-860b-1f9ef496c97f"}]},
+    {"query": "money trees", "category": "recording", "relevant": [{"type": "recording", "mbid": "c294757b-0430-4eb4-ae7a-6abcffb87405"}]},
+    {"query": "get lucky", "category": "recording", "relevant": [{"type": "recording", "mbid": "833f00e1-781f-4edd-90e4-e52712618862"}]},
+    {"query": "sicko mode", "category": "recording", "relevant": [{"type": "recording", "mbid": "73784600-a665-4a6c-9687-187dbefc556d"}]},
+    {"query": "cantaloupe island", "category": "recording", "relevant": [{"type": "recording", "mbid": "93dfa732-924c-4d9d-b347-4fb7e1617238"}]},
+    {"query": "doves in the wind", "category": "recording", "relevant": [{"type": "recording", "mbid": "0044ede3-98b6-4cd5-9747-d3d05e2f1a5d"}]},
 
-    {"query": "to pimp a butterfly", "category": "album", "relevant": [{"type": "album", "mbid": "d9103c72-3807-4378-9ce7-b6f3e8fdd547"}]},
-    {"query": "good kid maad city", "category": "album", "relevant": [{"type": "album", "mbid": "499c19c8-0dab-4824-884b-6191d145e95b"}]},
-    {"query": "kind of blue", "category": "album", "relevant": [{"type": "album", "mbid": "8e8a594f-2175-38c7-a871-abb68ec363e7"}]},
-    {"query": "random access memories", "category": "album", "relevant": [{"type": "album", "mbid": "aa997ea0-2936-40bd-884d-3af8a0e064dc"}]},
-    {"query": "channel orange", "category": "album", "relevant": [{"type": "album", "mbid": "f8f4167d-897c-4b25-a171-638374d1dfa4"}]},
-    {"query": "head hunters", "category": "album", "relevant": [{"type": "album", "mbid": "322f18bb-5491-38e9-9044-c0a468651eec"}]}
+    {"query": "to pimp a butterfly", "category": "release", "relevant": [{"type": "release", "mbid": "d9103c72-3807-4378-9ce7-b6f3e8fdd547"}]},
+    {"query": "good kid maad city", "category": "release", "relevant": [{"type": "release", "mbid": "499c19c8-0dab-4824-884b-6191d145e95b"}]},
+    {"query": "kind of blue", "category": "release", "relevant": [{"type": "release", "mbid": "8e8a594f-2175-38c7-a871-abb68ec363e7"}]},
+    {"query": "random access memories", "category": "release", "relevant": [{"type": "release", "mbid": "aa997ea0-2936-40bd-884d-3af8a0e064dc"}]},
+    {"query": "channel orange", "category": "release", "relevant": [{"type": "release", "mbid": "f8f4167d-897c-4b25-a171-638374d1dfa4"}]},
+    {"query": "head hunters", "category": "release", "relevant": [{"type": "release", "mbid": "322f18bb-5491-38e9-9044-c0a468651eec"}]}
   ]
 }
