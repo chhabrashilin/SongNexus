@@ -1,0 +1,142 @@
+[project]
+name = "songnexus"
+version = "0.1.0"
+description = "The people behind the music and how they connect: core library, catalog pipeline and API."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+dependencies = [
+    "alembic>=1.14",
+    "fastapi>=0.115",
+    "firebase-admin>=6.6",
+    "httpx>=0.28",
+    "psycopg[binary]>=3.2",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "sqlalchemy>=2.0.36",
+    "uvicorn[standard]>=0.32",
+]
+
+[project.scripts]
+songnexus = "songnexus.cli:main"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.13.1",
+    "hypothesis>=6.120",
+    "import-linter>=2.1",
+    "mypy>=1.13",
+    "networkx>=3.4",   # test-only oracle for our graph algorithms
+    "numpy>=2.1",      # needed by the networkx PageRank oracle
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "ruff>=0.8",
+    "scipy>=1.14",
+]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/songnexus"]
+
+# ---------------------------------------------------------------------------
+# Style: Google Python Style Guide, enforced by ruff (lint + format).
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "N", "D", "S", "PT", "C4", "PL"]
+ignore = [
+    "D105",    # magic methods are self-describing
+    "D107",    # __init__ is documented on the class
+    "PLR0913", # explicit keyword-heavy constructors are fine for service wiring
+    "S101",    # assert is used for invariants in tests and type narrowing
+    "RUF001",  # music metadata legitimately contains typographic characters
+    "RUF002",
+    "RUF003",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "S", "PLR2004", "PLC0415"]
+"src/songnexus/storage/migrations/**" = ["D", "N999", "PLR0915"]
+"src/songnexus/cli.py" = ["PLC0415", "T201"]
+"src/songnexus/service/routes/**" = ["PLR0917"]  # FastAPI injects handler parameters by name  # lazy imports keep each command's startup small
+
+[tool.ruff.format]
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+# Types
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["networkx.*", "firebase_admin.*", "google.*"]
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# Layering: enforced dependency rules (plan §12).
+# ---------------------------------------------------------------------------
+[tool.importlinter]
+root_package = "songnexus"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "core is pure: it depends on nothing else in songnexus"
+type = "forbidden"
+source_modules = ["songnexus.core"]
+forbidden_modules = [
+    "songnexus.catalog",
+    "songnexus.identity",
+    "songnexus.jobs",
+    "songnexus.service",
+    "songnexus.storage",
+    "sqlalchemy",
+    "fastapi",
+    "httpx",
+]
+
+[[tool.importlinter.contracts]]
+name = "nothing outside the service layer imports it"
+type = "forbidden"
+source_modules = ["songnexus.catalog", "songnexus.identity", "songnexus.jobs", "songnexus.storage"]
+forbidden_modules = ["songnexus.service"]
+
+[[tool.importlinter.contracts]]
+name = "storage does not depend on pipelines or identity"
+type = "forbidden"
+source_modules = ["songnexus.storage"]
+forbidden_modules = ["songnexus.catalog", "songnexus.identity", "songnexus.jobs"]
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "golden: runs against the committed MusicBrainz snapshot",
+    "postgres: requires SONGNEXUS_TEST_DATABASE_URL pointing at a disposable PostgreSQL database",
+]
+filterwarnings = ["error::DeprecationWarning:songnexus.*"]
+
+[tool.coverage.run]
+source = ["songnexus"]
+branch = true
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = true

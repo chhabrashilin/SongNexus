@@ -1,0 +1,3067 @@
+{
+  "components": {
+    "schemas": {
+      "Alias": {
+        "description": "Another name for an artist.",
+        "properties": {
+          "aliasType": {
+            "title": "Aliastype",
+            "type": "string"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "locale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locale"
+          }
+        },
+        "required": [
+          "displayName",
+          "aliasType",
+          "locale"
+        ],
+        "title": "Alias",
+        "type": "object"
+      },
+      "Appearance": {
+        "description": "A release a recording appears on.",
+        "properties": {
+          "discNumber": {
+            "title": "Discnumber",
+            "type": "integer"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "release": {
+            "title": "Release",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "release",
+          "displayName",
+          "year",
+          "discNumber",
+          "position"
+        ],
+        "title": "Appearance",
+        "type": "object"
+      },
+      "Artist": {
+        "description": "GetArtist.",
+        "properties": {
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/Alias"
+            },
+            "title": "Aliases",
+            "type": "array"
+          },
+          "artistType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artisttype"
+          },
+          "beginDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Begindate"
+          },
+          "connectionCount": {
+            "description": "Direct connections under the default categories.",
+            "title": "Connectioncount",
+            "type": "integer"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "detailLevel": {
+            "description": "`full`, `profile` or `stub`: how much the catalog knows about this artist.",
+            "title": "Detaillevel",
+            "type": "string"
+          },
+          "disambiguation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disambiguation"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "genreKnown": {
+            "default": false,
+            "description": "Whether our data has genres for this artist (AC-12.2).",
+            "title": "Genreknown",
+            "type": "boolean"
+          },
+          "genres": {
+            "items": {
+              "$ref": "#/components/schemas/GenreShare"
+            },
+            "title": "Genres",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "title": "Links",
+            "type": "array"
+          },
+          "name": {
+            "description": "Resource name `artists/{artist}`.",
+            "examples": [
+              "artists/0b2c…"
+            ],
+            "title": "Name",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceLink"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "disambiguation",
+          "artistType",
+          "country",
+          "genreKnown",
+          "beginDate",
+          "detailLevel",
+          "genres",
+          "aliases",
+          "links",
+          "connectionCount",
+          "sources",
+          "graphVersion"
+        ],
+        "title": "Artist",
+        "type": "object"
+      },
+      "ArtistSummary": {
+        "description": "An artist as shown in lists.",
+        "properties": {
+          "artistType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artisttype"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "disambiguation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disambiguation"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "genreKnown": {
+            "default": false,
+            "description": "Whether our data has genres for this artist (AC-12.2).",
+            "title": "Genreknown",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "Resource name `artists/{artist}`.",
+            "examples": [
+              "artists/0b2c…"
+            ],
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "disambiguation",
+          "artistType",
+          "country",
+          "genreKnown"
+        ],
+        "title": "ArtistSummary",
+        "type": "object"
+      },
+      "BlockedArtist": {
+        "description": "An artist the user never wants to see in lists or paths.",
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ArtistSummary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null when the artist left the catalog."
+          },
+          "createTime": {
+            "title": "Createtime",
+            "type": "string"
+          },
+          "name": {
+            "description": "`users/{user}/blockedArtists/{artist}`.",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "artist",
+          "createTime"
+        ],
+        "title": "BlockedArtist",
+        "type": "object"
+      },
+      "Collaboration": {
+        "description": "A collaborator under one type.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "firstYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firstyear"
+          },
+          "lastYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastyear"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CollaborationType"
+          }
+        },
+        "required": [
+          "artist",
+          "type",
+          "count",
+          "firstYear",
+          "lastYear",
+          "evidence"
+        ],
+        "title": "Collaboration",
+        "type": "object"
+      },
+      "CollaborationType": {
+        "description": "A collaborations tab.",
+        "enum": [
+          "FEATURE",
+          "PRODUCTION",
+          "BAND",
+          "CREDIT"
+        ],
+        "title": "CollaborationType",
+        "type": "string"
+      },
+      "CompareArtistsResponse": {
+        "description": "CompareArtists.",
+        "properties": {
+          "artistA": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "artistB": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "countsA": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/CollaborationType"
+            },
+            "title": "Countsa",
+            "type": "object"
+          },
+          "countsB": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/CollaborationType"
+            },
+            "title": "Countsb",
+            "type": "object"
+          },
+          "directlyConnected": {
+            "title": "Directlyconnected",
+            "type": "boolean"
+          },
+          "genreOverlap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Weighted overlap in [0, 1]; null if unknown.",
+            "title": "Genreoverlap"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "mutualCollaborators": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Mutualcollaborators",
+            "type": "array"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Path",
+            "type": "array"
+          },
+          "sharedGenres": {
+            "items": {
+              "$ref": "#/components/schemas/SharedGenre"
+            },
+            "title": "Sharedgenres",
+            "type": "array"
+          }
+        },
+        "required": [
+          "artistA",
+          "artistB",
+          "genreOverlap",
+          "sharedGenres",
+          "mutualCollaborators",
+          "directlyConnected",
+          "path",
+          "countsA",
+          "countsB",
+          "graphVersion"
+        ],
+        "title": "CompareArtistsResponse",
+        "type": "object"
+      },
+      "Config": {
+        "description": "GetConfig: feature flags and limits for the client.",
+        "properties": {
+          "flags": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "title": "Flags",
+            "type": "object"
+          },
+          "graphVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Graphversion"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/Limits"
+          }
+        },
+        "required": [
+          "flags",
+          "limits",
+          "graphVersion"
+        ],
+        "title": "Config",
+        "type": "object"
+      },
+      "Connection": {
+        "description": "A connected artist and why.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "evidenceCount": {
+            "title": "Evidencecount",
+            "type": "integer"
+          },
+          "highlights": {
+            "description": "Up to two representative evidence lines.",
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Highlights",
+            "type": "array"
+          },
+          "kinds": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectionKind"
+            },
+            "title": "Kinds",
+            "type": "array"
+          },
+          "strength": {
+            "title": "Strength",
+            "type": "number"
+          }
+        },
+        "required": [
+          "artist",
+          "strength",
+          "kinds",
+          "evidenceCount",
+          "highlights"
+        ],
+        "title": "Connection",
+        "type": "object"
+      },
+      "ConnectionCategory": {
+        "description": "A toggleable group of connection kinds.",
+        "enum": [
+          "FEATURES",
+          "PRODUCERS",
+          "CONTRIBUTIONS",
+          "SAMPLES",
+          "BANDS",
+          "LABELS",
+          "ENGINEERING"
+        ],
+        "title": "ConnectionCategory",
+        "type": "string"
+      },
+      "ConnectionDetail": {
+        "description": "GetArtistConnection: all evidence between two artists, with sources.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "kinds": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectionKind"
+            },
+            "title": "Kinds",
+            "type": "array"
+          },
+          "other": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "strength": {
+            "title": "Strength",
+            "type": "number"
+          }
+        },
+        "required": [
+          "artist",
+          "other",
+          "strength",
+          "kinds",
+          "evidence",
+          "graphVersion"
+        ],
+        "title": "ConnectionDetail",
+        "type": "object"
+      },
+      "ConnectionKind": {
+        "description": "Why two artists are connected.",
+        "enum": [
+          "PERFORMED_WITH",
+          "PRODUCED_FOR",
+          "CO_PRODUCED",
+          "CONTRIBUTED_TO",
+          "SAMPLED",
+          "MEMBER_OF",
+          "COLLABORATION",
+          "SUPPORTED",
+          "TAUGHT",
+          "LABEL_MATES",
+          "ENGINEERED"
+        ],
+        "title": "ConnectionKind",
+        "type": "string"
+      },
+      "CreateBlockedArtistRequest": {
+        "description": "CreateBlockedArtist.",
+        "properties": {
+          "artist": {
+            "description": "Resource name `artists/{artist}` to block.",
+            "title": "Artist",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artist"
+        ],
+        "title": "CreateBlockedArtistRequest",
+        "type": "object"
+      },
+      "CreateSessionRequest": {
+        "description": "CreateSession: exchange a Firebase ID token for a session cookie.",
+        "properties": {
+          "ageConfirmed": {
+            "default": false,
+            "description": "Required (true) when creating an account: the user is 13+.",
+            "title": "Ageconfirmed",
+            "type": "boolean"
+          },
+          "idToken": {
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Idtoken",
+            "type": "string"
+          }
+        },
+        "required": [
+          "idToken"
+        ],
+        "title": "CreateSessionRequest",
+        "type": "object"
+      },
+      "Credit": {
+        "description": "An artist's credit on a recording.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "creditedAs": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Creditedas"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "roleDetail": {
+            "default": "",
+            "title": "Roledetail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artist",
+          "role",
+          "roleDetail",
+          "creditedAs"
+        ],
+        "title": "Credit",
+        "type": "object"
+      },
+      "Empty": {
+        "description": "An empty response.",
+        "properties": {},
+        "title": "Empty",
+        "type": "object"
+      },
+      "EntityType": {
+        "description": "A searchable entity type.",
+        "enum": [
+          "ARTIST",
+          "RELEASE",
+          "RECORDING"
+        ],
+        "title": "EntityType",
+        "type": "string"
+      },
+      "ErrorInfo": {
+        "description": "google.rpc.ErrorInfo: the machine-readable cause.",
+        "properties": {
+          "@type": {
+            "examples": [
+              "type.googleapis.com/google.rpc.ErrorInfo"
+            ],
+            "title": "@Type",
+            "type": "string"
+          },
+          "domain": {
+            "examples": [
+              "songnexus.app"
+            ],
+            "title": "Domain",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Metadata",
+            "type": "object"
+          },
+          "reason": {
+            "examples": [
+              "ARTIST_NOT_FOUND"
+            ],
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "title": "ErrorInfo",
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "description": "The body of every error response.",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Status"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "Evidence": {
+        "description": "One reason two artists are connected, as a localizable message.",
+        "properties": {
+          "fromArtist": {
+            "title": "Fromartist",
+            "type": "string"
+          },
+          "fromRole": {
+            "title": "Fromrole",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ConnectionKind"
+          },
+          "messageId": {
+            "description": "Client message key, e.g. `evidence.featured`.",
+            "title": "Messageid",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceLink"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/Subject"
+          },
+          "toArtist": {
+            "title": "Toartist",
+            "type": "string"
+          },
+          "toRole": {
+            "title": "Torole",
+            "type": "string"
+          }
+        },
+        "required": [
+          "messageId",
+          "kind",
+          "fromArtist",
+          "toArtist",
+          "fromRole",
+          "toRole",
+          "subject",
+          "sources"
+        ],
+        "title": "Evidence",
+        "type": "object"
+      },
+      "FindPathResponse": {
+        "description": "FindPath.",
+        "properties": {
+          "alternatives": {
+            "description": "Other routes, as artist sequences.",
+            "items": {
+              "items": {
+                "$ref": "#/components/schemas/ArtistSummary"
+              },
+              "type": "array"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/PathOutcome"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/PathStep"
+            },
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "outcome",
+          "steps",
+          "alternatives",
+          "graphVersion"
+        ],
+        "title": "FindPathResponse",
+        "type": "object"
+      },
+      "Genre": {
+        "description": "A genre.",
+        "properties": {
+          "artistCount": {
+            "title": "Artistcount",
+            "type": "integer"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "artistCount"
+        ],
+        "title": "Genre",
+        "type": "object"
+      },
+      "GenreShare": {
+        "description": "A genre and its share of an artist's genre votes.",
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "genre": {
+            "description": "Resource name `genres/{genre}`.",
+            "title": "Genre",
+            "type": "string"
+          },
+          "share": {
+            "title": "Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "genre",
+          "displayName",
+          "share"
+        ],
+        "title": "GenreShare",
+        "type": "object"
+      },
+      "Health": {
+        "description": "Liveness and readiness.",
+        "properties": {
+          "catalogLoaded": {
+            "title": "Catalogloaded",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "catalogLoaded"
+        ],
+        "title": "Health",
+        "type": "object"
+      },
+      "Limits": {
+        "description": "Request limits clients should respect (plan §14).",
+        "properties": {
+          "maxAlternatives": {
+            "title": "Maxalternatives",
+            "type": "integer"
+          },
+          "maxPageSize": {
+            "title": "Maxpagesize",
+            "type": "integer"
+          },
+          "maxPathSteps": {
+            "title": "Maxpathsteps",
+            "type": "integer"
+          },
+          "maxQueryLength": {
+            "title": "Maxquerylength",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "maxQueryLength",
+          "maxPathSteps",
+          "maxAlternatives",
+          "maxPageSize"
+        ],
+        "title": "Limits",
+        "type": "object"
+      },
+      "Link": {
+        "description": "An external link.",
+        "properties": {
+          "linkType": {
+            "title": "Linktype",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "linkType",
+          "url"
+        ],
+        "title": "Link",
+        "type": "object"
+      },
+      "ListArtistCollaborationsResponse": {
+        "description": "ListArtistCollaborations. Counts are based on releases in our data.",
+        "properties": {
+          "collaborations": {
+            "items": {
+              "$ref": "#/components/schemas/Collaboration"
+            },
+            "title": "Collaborations",
+            "type": "array"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/CollaborationType"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "collaborations",
+          "counts",
+          "nextPageToken",
+          "totalSize",
+          "graphVersion"
+        ],
+        "title": "ListArtistCollaborationsResponse",
+        "type": "object"
+      },
+      "ListArtistConnectionsResponse": {
+        "description": "ListArtistConnections.",
+        "properties": {
+          "connections": {
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            },
+            "title": "Connections",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "connections",
+          "nextPageToken",
+          "totalSize",
+          "graphVersion"
+        ],
+        "title": "ListArtistConnectionsResponse",
+        "type": "object"
+      },
+      "ListBlockedArtistsResponse": {
+        "description": "ListBlockedArtists.",
+        "properties": {
+          "blockedArtists": {
+            "items": {
+              "$ref": "#/components/schemas/BlockedArtist"
+            },
+            "title": "Blockedartists",
+            "type": "array"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "blockedArtists",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "title": "ListBlockedArtistsResponse",
+        "type": "object"
+      },
+      "ListGenresResponse": {
+        "description": "ListGenres.",
+        "properties": {
+          "genres": {
+            "items": {
+              "$ref": "#/components/schemas/Genre"
+            },
+            "title": "Genres",
+            "type": "array"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "genres",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "title": "ListGenresResponse",
+        "type": "object"
+      },
+      "PathMode": {
+        "description": "How FindPath ranks routes.",
+        "enum": [
+          "FEWEST_STEPS",
+          "STRONGEST_LINKS"
+        ],
+        "title": "PathMode",
+        "type": "string"
+      },
+      "PathOutcome": {
+        "description": "Why a FindPath response does or does not contain a path.",
+        "enum": [
+          "FOUND",
+          "NOT_CONNECTED_WITHIN_LIMIT",
+          "SEARCH_LIMIT_REACHED"
+        ],
+        "title": "PathOutcome",
+        "type": "string"
+      },
+      "PathStep": {
+        "description": "One step of a path.",
+        "properties": {
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "fromArtist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "strength": {
+            "title": "Strength",
+            "type": "number"
+          },
+          "toArtist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          }
+        },
+        "required": [
+          "fromArtist",
+          "toArtist",
+          "strength",
+          "evidence"
+        ],
+        "title": "PathStep",
+        "type": "object"
+      },
+      "Preferences-Input": {
+        "description": "GetPreferences / UpdatePreferences (AIP-134 update mask, AIP-154 ETag).",
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectionCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "etag": {
+            "default": "",
+            "title": "Etag",
+            "type": "string"
+          },
+          "genres": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Genres",
+            "type": "array"
+          },
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "theme": {
+            "$ref": "#/components/schemas/Theme",
+            "default": "SYSTEM"
+          },
+          "updateTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatetime"
+          }
+        },
+        "title": "Preferences",
+        "type": "object"
+      },
+      "Preferences-Output": {
+        "description": "GetPreferences / UpdatePreferences (AIP-134 update mask, AIP-154 ETag).",
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectionCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "etag": {
+            "default": "",
+            "title": "Etag",
+            "type": "string"
+          },
+          "genres": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Genres",
+            "type": "array"
+          },
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "theme": {
+            "$ref": "#/components/schemas/Theme",
+            "default": "SYSTEM"
+          },
+          "updateTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatetime"
+          }
+        },
+        "required": [
+          "name",
+          "genres",
+          "categories",
+          "theme",
+          "etag",
+          "updateTime"
+        ],
+        "title": "Preferences",
+        "type": "object"
+      },
+      "Profile-Input": {
+        "description": "GetProfile / UpdateProfile: Top 5 artists (US-09).",
+        "properties": {
+          "etag": {
+            "default": "",
+            "title": "Etag",
+            "type": "string"
+          },
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "topArtists": {
+            "description": "Up to 5 `artists/{artist}`.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Topartists",
+            "type": "array"
+          },
+          "updateTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatetime"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/Visibility",
+            "default": "PRIVATE"
+          }
+        },
+        "title": "Profile",
+        "type": "object"
+      },
+      "Profile-Output": {
+        "description": "GetProfile / UpdateProfile: Top 5 artists (US-09).",
+        "properties": {
+          "etag": {
+            "default": "",
+            "title": "Etag",
+            "type": "string"
+          },
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "topArtists": {
+            "description": "Up to 5 `artists/{artist}`.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Topartists",
+            "type": "array"
+          },
+          "updateTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatetime"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/Visibility",
+            "default": "PRIVATE"
+          }
+        },
+        "required": [
+          "name",
+          "topArtists",
+          "visibility",
+          "etag",
+          "updateTime"
+        ],
+        "title": "Profile",
+        "type": "object"
+      },
+      "Recording": {
+        "description": "GetRecording.",
+        "properties": {
+          "appearances": {
+            "items": {
+              "$ref": "#/components/schemas/Appearance"
+            },
+            "title": "Appearances",
+            "type": "array"
+          },
+          "credits": {
+            "items": {
+              "$ref": "#/components/schemas/Credit"
+            },
+            "title": "Credits",
+            "type": "array"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "firstReleaseDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firstreleasedate"
+          },
+          "lengthMs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lengthms"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceLink"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "lengthMs",
+          "firstReleaseDate",
+          "credits",
+          "appearances",
+          "sources"
+        ],
+        "title": "Recording",
+        "type": "object"
+      },
+      "SearchCatalogResponse": {
+        "description": "SearchCatalog.",
+        "properties": {
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "results",
+          "graphVersion"
+        ],
+        "title": "SearchCatalogResponse",
+        "type": "object"
+      },
+      "SearchResult": {
+        "description": "A search hit.",
+        "properties": {
+          "blocked": {
+            "default": false,
+            "description": "The viewer blocked this artist. Blocked artists appear only for an exact-name search, so they can be unblocked (AC-17.2).",
+            "title": "Blocked",
+            "type": "boolean"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "entityType": {
+            "$ref": "#/components/schemas/EntityType"
+          },
+          "matchType": {
+            "title": "Matchtype",
+            "type": "string"
+          },
+          "matchedOn": {
+            "title": "Matchedon",
+            "type": "string"
+          },
+          "name": {
+            "description": "Resource name of the entity.",
+            "title": "Name",
+            "type": "string"
+          },
+          "subtitle": {
+            "title": "Subtitle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "entityType",
+          "displayName",
+          "subtitle",
+          "matchType",
+          "matchedOn",
+          "blocked"
+        ],
+        "title": "SearchResult",
+        "type": "object"
+      },
+      "SessionInfo": {
+        "description": "The current session. The cookie itself is never readable by scripts.",
+        "properties": {
+          "csrfToken": {
+            "description": "Send as `X-CSRF-Token` on every write.",
+            "title": "Csrftoken",
+            "type": "string"
+          },
+          "newUser": {
+            "default": false,
+            "title": "Newuser",
+            "type": "boolean"
+          },
+          "user": {
+            "description": "Resource name `users/{user}`.",
+            "title": "User",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user",
+          "csrfToken",
+          "newUser"
+        ],
+        "title": "SessionInfo",
+        "type": "object"
+      },
+      "SharedGenre": {
+        "description": "A genre both compared artists carry.",
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "genre": {
+            "title": "Genre",
+            "type": "string"
+          },
+          "shareA": {
+            "title": "Sharea",
+            "type": "number"
+          },
+          "shareB": {
+            "title": "Shareb",
+            "type": "number"
+          }
+        },
+        "required": [
+          "genre",
+          "displayName",
+          "shareA",
+          "shareB"
+        ],
+        "title": "SharedGenre",
+        "type": "object"
+      },
+      "SourceLink": {
+        "description": "A page where a person can check a fact.",
+        "properties": {
+          "source": {
+            "description": "Data source ID, e.g. `musicbrainz`.",
+            "title": "Source",
+            "type": "string"
+          },
+          "sourceId": {
+            "title": "Sourceid",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "sourceId",
+          "url"
+        ],
+        "title": "SourceLink",
+        "type": "object"
+      },
+      "Status": {
+        "description": "google.rpc.Status, as JSON.",
+        "properties": {
+          "code": {
+            "description": "HTTP status code.",
+            "examples": [
+              404
+            ],
+            "title": "Code",
+            "type": "integer"
+          },
+          "details": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorInfo"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "message": {
+            "description": "Developer-facing English; not for display.",
+            "title": "Message",
+            "type": "string"
+          },
+          "status": {
+            "description": "Canonical status name.",
+            "examples": [
+              "NOT_FOUND"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "status",
+          "message",
+          "details"
+        ],
+        "title": "Status",
+        "type": "object"
+      },
+      "Subject": {
+        "description": "What a piece of evidence is about.",
+        "properties": {
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
+          "name": {
+            "description": "Resource name: `recordings/{id}`, `releases/{id}`, `labels/{id}` or `relations/{id}`.",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName"
+        ],
+        "title": "Subject",
+        "type": "object"
+      },
+      "Theme": {
+        "description": "Color theme.",
+        "enum": [
+          "SYSTEM",
+          "LIGHT",
+          "DARK"
+        ],
+        "title": "Theme",
+        "type": "string"
+      },
+      "User": {
+        "description": "GetUser. Email and name stay with the identity provider.",
+        "properties": {
+          "createTime": {
+            "title": "Createtime",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "createTime"
+        ],
+        "title": "User",
+        "type": "object"
+      },
+      "Visibility": {
+        "description": "Who can see a profile. Only PRIVATE exists in R1.",
+        "enum": [
+          "PRIVATE"
+        ],
+        "title": "Visibility",
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "description": "SongNexus maps the people behind the music and how they connect. Every connection is backed by evidence with a source. Errors follow AIP-193; lists follow AIP-158.",
+    "title": "SongNexus API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/healthz": {
+      "get": {
+        "description": "Liveness: the process is up. Reports whether the catalog is loaded (readiness).",
+        "operationId": "Health",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "ops"
+        ]
+      }
+    },
+    "/v1/artists/{artist}": {
+      "get": {
+        "description": "Returns an artist with genres, aliases, links and sources.",
+        "operationId": "GetArtist",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Artist"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetArtist",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/artists/{artist}/collaborations": {
+      "get": {
+        "description": "Lists an artist's collaborators of one type (features, production, bands, credits).",
+        "operationId": "ListArtistCollaborations",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/CollaborationType",
+              "default": "FEATURE"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListArtistCollaborationsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListArtistCollaborations",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/artists/{artist}/connections": {
+      "get": {
+        "description": "Lists an artist's direct connections, strongest first.",
+        "operationId": "ListArtistConnections",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Connection categories to include (default: all except LABELS, ENGINEERING).",
+            "in": "query",
+            "name": "categories",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Connection categories to include (default: all except LABELS, ENGINEERING).",
+              "items": {
+                "$ref": "#/components/schemas/ConnectionCategory"
+              },
+              "title": "Categories",
+              "type": "array"
+            }
+          },
+          {
+            "description": "Genre resource names to stay within.",
+            "in": "query",
+            "name": "genres",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Genre resource names to stay within.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Genres",
+              "type": "array"
+            }
+          },
+          {
+            "in": "query",
+            "name": "includeUnknownGenre",
+            "required": false,
+            "schema": {
+              "default": true,
+              "title": "Includeunknowngenre",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "orderBy",
+            "required": false,
+            "schema": {
+              "default": "strength desc",
+              "title": "Orderby",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListArtistConnectionsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListArtistConnections",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/artists/{artist}/connections/{other}": {
+      "get": {
+        "description": "Returns every piece of evidence connecting two artists, with sources.",
+        "operationId": "GetArtistConnection",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "other",
+            "required": true,
+            "schema": {
+              "title": "Other",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Connection categories to include (default: all except LABELS, ENGINEERING).",
+            "in": "query",
+            "name": "categories",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Connection categories to include (default: all except LABELS, ENGINEERING).",
+              "items": {
+                "$ref": "#/components/schemas/ConnectionCategory"
+              },
+              "title": "Categories",
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetArtistConnection",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/artists/{artist}:compare": {
+      "get": {
+        "description": "Compares two artists: shared genres, mutual collaborators and the path between.",
+        "operationId": "CompareArtists",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Resource name of the artist to compare with.",
+            "in": "query",
+            "name": "other",
+            "required": true,
+            "schema": {
+              "description": "Resource name of the artist to compare with.",
+              "title": "Other",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Connection categories to include (default: all except LABELS, ENGINEERING).",
+            "in": "query",
+            "name": "categories",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Connection categories to include (default: all except LABELS, ENGINEERING).",
+              "items": {
+                "$ref": "#/components/schemas/ConnectionCategory"
+              },
+              "title": "Categories",
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareArtistsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CompareArtists",
+        "tags": [
+          "analysis"
+        ]
+      }
+    },
+    "/v1/artists/{artist}:findPath": {
+      "get": {
+        "description": "Finds how two artists connect, with evidence for every step.\n\nFilters (genres, blocks) apply to every intermediate artist. The endpoints\nare the viewer's choice and are not genre-filtered. \"Not connected within\nthe limit\" means not connected in our data (yet), never \"not connected\".",
+        "operationId": "FindPath",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Resource name of the artist to reach.",
+            "in": "query",
+            "name": "target",
+            "required": true,
+            "schema": {
+              "description": "Resource name of the artist to reach.",
+              "title": "Target",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PathMode",
+              "default": "FEWEST_STEPS"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxSteps",
+            "required": false,
+            "schema": {
+              "default": 6,
+              "maximum": 6,
+              "minimum": 1,
+              "title": "Maxsteps",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "alternatives",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 3,
+              "minimum": 0,
+              "title": "Alternatives",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Connection categories to include (default: all except LABELS, ENGINEERING).",
+            "in": "query",
+            "name": "categories",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Connection categories to include (default: all except LABELS, ENGINEERING).",
+              "items": {
+                "$ref": "#/components/schemas/ConnectionCategory"
+              },
+              "title": "Categories",
+              "type": "array"
+            }
+          },
+          {
+            "description": "Genre resource names to stay within.",
+            "in": "query",
+            "name": "genres",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Genre resource names to stay within.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Genres",
+              "type": "array"
+            }
+          },
+          {
+            "in": "query",
+            "name": "includeUnknownGenre",
+            "required": false,
+            "schema": {
+              "default": true,
+              "title": "Includeunknowngenre",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindPathResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "FindPath",
+        "tags": [
+          "analysis"
+        ]
+      }
+    },
+    "/v1/catalog:search": {
+      "get": {
+        "description": "Searches artists, releases and recordings by name, in any script.",
+        "operationId": "SearchCatalog",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Query",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "types",
+            "required": false,
+            "schema": {
+              "default": [],
+              "items": {
+                "$ref": "#/components/schemas/EntityType"
+              },
+              "title": "Types",
+              "type": "array"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchCatalogResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "SearchCatalog",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/config": {
+      "get": {
+        "description": "Returns feature flags and request limits for the client.",
+        "operationId": "GetConfig",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Config"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetConfig",
+        "tags": [
+          "ops"
+        ]
+      }
+    },
+    "/v1/genres": {
+      "get": {
+        "description": "Lists genres by how many artists carry them.",
+        "operationId": "ListGenres",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListGenresResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListGenres",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/recordings/{recording}": {
+      "get": {
+        "description": "Returns a recording with its credits and the releases it appears on.",
+        "operationId": "GetRecording",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recording",
+            "required": true,
+            "schema": {
+              "title": "Recording",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recording"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetRecording",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/sessions": {
+      "post": {
+        "description": "Verifies a Firebase ID token and starts a session (sets an HttpOnly cookie).\n\nCreating an account requires ``ageConfirmed`` (13+). An existing session\nfor this browser is replaced.",
+        "operationId": "CreateSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CreateSession",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/sessions/current": {
+      "delete": {
+        "description": "Signs this browser out.",
+        "operationId": "DeleteCurrentSession",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "DeleteCurrentSession",
+        "tags": [
+          "identity"
+        ]
+      },
+      "get": {
+        "description": "Returns the signed-in user and the CSRF token, e.g. after a page reload.",
+        "operationId": "GetCurrentSession",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetCurrentSession",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/sessions:revokeAll": {
+      "post": {
+        "description": "Signs the user out on every device.",
+        "operationId": "RevokeAllSessions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "RevokeAllSessions",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/v1/users/{user}": {
+      "delete": {
+        "description": "Deletes the account (AC-18.4): signed out everywhere, data gone now, purged in 30 days.",
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "DeleteUser",
+        "tags": [
+          "users"
+        ]
+      },
+      "get": {
+        "description": "Returns the signed-in user's account.",
+        "operationId": "GetUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetUser",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/{user}/blockedArtists": {
+      "get": {
+        "description": "Lists the user's blocked artists, oldest first.",
+        "operationId": "ListBlockedArtists",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListBlockedArtistsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListBlockedArtists",
+        "tags": [
+          "users"
+        ]
+      },
+      "post": {
+        "description": "Blocks an artist: it disappears from lists, paths and suggestions everywhere.",
+        "operationId": "CreateBlockedArtist",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlockedArtistRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedArtist"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CreateBlockedArtist",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/{user}/blockedArtists/{artist}": {
+      "delete": {
+        "description": "Unblocks an artist.",
+        "operationId": "DeleteBlockedArtist",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "DeleteBlockedArtist",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/{user}/preferences": {
+      "get": {
+        "description": "Returns the user's preferences (defaults until first saved).",
+        "operationId": "GetPreferences",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preferences-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetPreferences",
+        "tags": [
+          "users"
+        ]
+      },
+      "patch": {
+        "description": "Updates preferences. Stale ETags are rejected with ABORTED (AC-18.3).",
+        "operationId": "UpdatePreferences",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "updateMask",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Updatemask"
+            }
+          },
+          {
+            "in": "header",
+            "name": "if-match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Preferences-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preferences-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "UpdatePreferences",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/{user}/profile": {
+      "get": {
+        "description": "Returns the user's profile. Profiles are private: only the owner can read one (AC-9.2).",
+        "operationId": "GetProfile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetProfile",
+        "tags": [
+          "users"
+        ]
+      },
+      "patch": {
+        "description": "Updates the Top 5. A sixth artist is rejected (AC-9.1).",
+        "operationId": "UpdateProfile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "updateMask",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Updatemask"
+            }
+          },
+          {
+            "in": "header",
+            "name": "if-match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Profile-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "UpdateProfile",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/{user}:export": {
+      "get": {
+        "description": "Returns everything we store about the user, as JSON (target M4-07).",
+        "operationId": "ExportUserData",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Exportuserdata",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ExportUserData",
+        "tags": [
+          "users"
+        ]
+      }
+    }
+  }
+}
