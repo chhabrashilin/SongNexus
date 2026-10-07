@@ -6,23 +6,32 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .hypothesis/
+.coverage
+htmlcov/
 
 # Node
 node_modules/
-frontend/dist/
+dist/
+coverage/
 
-# Local data: the raw API cache and databases are regenerated; the sample snapshot is committed.
+# Local data: the raw HTTP cache and local databases are regenerated.
+# Committed data lives in data/samples, data/seeds and data/eval.
 data/raw/
 data/*.db
 *.sqlite
 
-# Secrets and local config
+# Secrets and local configuration
 .env
 .env.*
 !.env.example
 
-# Editors / OS
+# Editors and OS
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
+.import_linter_cache/
+
+# Playwright
+test-results/
+playwright-report/
