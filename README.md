@@ -20,11 +20,11 @@ tag `v0-prototype`.
 | M4 | Accounts: Google Sign-In, server sessions, preferences, blocks, Top 5, export, deletion | Done |
 | M5 | Web app: Home, Artist, Explore, Six degrees, Compare, Song, You | Done |
 | M6 | Playlist and history import on the device; playlist analysis | Done |
-| M7 | Play: the daily connection puzzle | In progress |
+| M7 | Play: daily puzzle, non-repeating cycles, archive, local stats and share links | Implemented; review pending |
 | M8–M9 | Hardening, demo and handoff | Next |
 
-Quality today: 186 server tests (one runs on PostgreSQL in CI), 32 web unit tests, 22 browser journeys (phone and desktop) with zero
-serious accessibility issues; search MRR 1.0 (gate 0.95); import match precision 0.993 (gate 0.98).
+Quality gates cover server tests (including PostgreSQL in CI), web unit tests, and browser journeys on
+phone and desktop with accessibility scans; search MRR 1.0 (gate 0.95); import match precision 0.993 (gate 0.98).
 Performance against budgets: [docs/perf/measurements.md](docs/perf/measurements.md) (one budget is missed and
 explained there).
 
@@ -49,6 +49,43 @@ npm run dev
 PostgreSQL instead of SQLite: `docker compose up -d` at the repository root and use the PostgreSQL URL in
 `server/.env.example`. Sign-in needs a Firebase project or the Auth emulator (see `web/.env.example`);
 everything else works signed out.
+
+### Windows / VS Code PowerShell
+
+Open this repository folder in VS Code. In **Terminal → New Terminal**, run:
+
+```powershell
+cd server
+uv sync --locked
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+uv run songnexus ingest
+uv run songnexus serve --reload
+```
+
+Leave that terminal running. Open a **second terminal at the repository root**:
+
+```powershell
+cd web
+npm.cmd ci
+npm.cmd run dev -- --host 127.0.0.1 --strictPort
+```
+
+Open **http://127.0.0.1:5173/play** for Daily, or **http://127.0.0.1:5173/** for
+Home. API readiness is at http://127.0.0.1:8790/healthz and interactive API docs
+at http://127.0.0.1:8790/v1/docs. Readiness should report `catalogLoaded: true`.
+
+`npm.cmd` works without changing PowerShell's script execution policy. The server
+reads `server/.env`; the old prototype's root `.env` is not used by these commands.
+The example uses SQLite at `songnexus-dev.db` in the repo root; no Docker, API key,
+Firebase setup or MusicBrainz download is needed to browse or play.
+
+After initial setup, restart with just the two serve commands. Ingest again when
+the bundled snapshot changes. Stop each server with **Ctrl+C** in its terminal.
+If a port is occupied, stop the existing SongNexus server before restarting;
+the web proxy expects the API on 8790. Avoid switching the web port because saved
+progress belongs to the browser origin.
+
+Daily rules, API methods, storage and schedule limits: [Daily puzzle](docs/daily-puzzle.md).
 
 ## Checks
 

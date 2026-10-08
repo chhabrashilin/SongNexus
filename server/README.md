@@ -25,6 +25,9 @@ uv run songnexus <command>       # see below; results are JSON on stdout, logs o
 
 `scripts/build_import_eval.py` regenerates the import-matching labels from the human-verified seeds.
 
+Daily puzzle methods, date rules and share telemetry are described in
+[Daily puzzle](../docs/daily-puzzle.md); their schemas are in `openapi.json`.
+
 ## Layout
 
 | Package | Responsibility | May depend on |

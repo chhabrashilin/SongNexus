@@ -258,7 +258,7 @@ Each milestone is a series of small, reviewed changes; nothing merges without te
 | **M4** | Identity and user data: sign-in, sessions, preferences, blocks, Top 5, export, deletion | Security test suite | Done; shareable profile and anonymous merge deferred (stretch) |
 | **M5** | Web surfaces: Home, Artist (CUJ-5), Explore, Six degrees, Compare, Song, You | E2E + axe on phone and desktop | Done |
 | **M6** | History and playlist import (CUJ-4), playlist analysis | Parser tests per format; match precision ≥ 0.98 | Done (precision 0.993); 2,000-artist latency budget missed, see docs/perf |
-| **M7** | Play: daily connection puzzle (CUJ-2) | Fairness test over every candidate pair; E2E solve | In progress |
+| **M7** | Play: daily connection puzzle (CUJ-2) | Fairness, non-repeating schedule, archive, stats, share links and E2E solve; [details](../daily-puzzle.md) | Implemented; review pending |
 | **M8** | Hardening: load test, accessibility audit, i18n, privacy and security reviews | Budgets met or recorded; checklists complete | Next |
 | **M9** | Demo and handoff package | Sponsor sign-off | Next |
 
@@ -281,7 +281,7 @@ Every feature from the original brief and the v0 prototype, and where it stands 
 | Collaborations, compare, song credits | – | ✅ M5 | |
 | Accounts, blocks, Top 5, export, deletion | – | ✅ M4 | |
 | Playlist and history import (Spotify, YouTube Music, ListenBrainz, CSV, ZIP) | – | ✅ M6 | parsed on the device; only artist names are sent |
-| Daily connection game | ✅ prototype | M7 | |
+| Daily connection game | ✅ prototype | ✅ M7 implementation | Local-day archive and stats; [schedule decision](../adr/0004-daily-puzzle-schedule.md) |
 | Credits on Now Playing | – | Handoff | needs YouTube Music's player; specified for the integration |
 | Chat assistant (LLM) | ✅ | **Cut** (§7.2) | may return as a rephrasing layer only |
 | Agent evaluation harness | ✅ | **Cut** with the assistant | |
