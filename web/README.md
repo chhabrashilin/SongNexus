@@ -33,3 +33,11 @@ npx playwright test  # browser journeys with accessibility scans (see e2e/README
 - Every claim has its evidence one tap away; gaps are stated ("not in our data yet").
 - Listening files are parsed on the device; only artist names are sent for matching.
 - Sign-in configuration is optional locally: copy `.env.example` to `.env.local`.
+
+## Dependency override
+
+Firebase's Firestore package currently pins `@grpc/grpc-js` to the vulnerable
+1.9 line. `package.json` overrides that transitive package to 1.14.6 for
+GHSA-m9gg-hp2v-232j and GHSA-f596-whhp-79r4. Remove the override when Firebase's
+declared range includes a patched release. The app imports Firebase App/Auth,
+not Firestore; the production dependency audit still covers the installed tree.
