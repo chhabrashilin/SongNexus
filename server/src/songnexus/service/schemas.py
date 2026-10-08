@@ -502,3 +502,89 @@ class Profile(ApiModel):
 
 class Empty(ApiModel):
     """An empty response."""
+
+
+# ---------------------------------------------------------------------------
+# Playlist analysis (US-10)
+# ---------------------------------------------------------------------------
+
+
+class PlaylistTrack(ApiModel):
+    """A track as the device parsed it: a title and its artist names, nothing else."""
+
+    title: str = Field(default="", max_length=300)
+    artists: list[str] = Field(
+        min_length=1,
+        max_length=10,
+        description="Artist names as written, or `artists/{artist}` for a choice the user made.",
+    )
+
+
+class AnalyzePlaylistRequest(ApiModel):
+    """AnalyzePlaylist. Raw files never leave the device; only names and titles are sent."""
+
+    tracks: list[PlaylistTrack] = Field(min_length=1, max_length=10_000)
+    categories: list[ConnectionCategory] = Field(default_factory=list)
+
+
+class MatchStatus(enum.StrEnum):
+    """How an artist name from the playlist was matched."""
+
+    MATCHED = "MATCHED"
+    AMBIGUOUS = "AMBIGUOUS"
+    NO_MATCH = "NO_MATCH"
+
+
+class PlaylistArtist(ApiModel):
+    """One distinct artist name from the playlist and what it matched."""
+
+    query: str
+    track_count: int
+    status: MatchStatus
+    artist: ArtistSummary | None = None
+    candidates: list[ArtistSummary] = Field(
+        default_factory=list, description="For AMBIGUOUS: who it might be, best first."
+    )
+    blocked: bool = False
+
+
+class Cohesion(ApiModel):
+    """The share of matched artist pairs within 2 steps of each other."""
+
+    score: float | None = Field(description="Null with fewer than two matched artists.")
+    pairs_within_two: int
+    pairs: int
+
+
+class PlaylistConnector(ApiModel):
+    """A hidden link: an artist outside the playlist connected to several in it."""
+
+    artist: ArtistSummary
+    linked_to: list[str] = Field(description="Resource names of the playlist artists it links.")
+    score: float
+
+
+class PlaylistLink(ApiModel):
+    """A direct connection between two playlist artists."""
+
+    artist_a: str
+    artist_b: str
+    strength: float
+
+
+class PlaylistThread(ApiModel):
+    """Shortest paths between consecutive playlist artists, joined."""
+
+    artists: list[ArtistSummary]
+    breaks: int = Field(description="Consecutive pairs with no path within the step limit.")
+
+
+class AnalyzePlaylistResponse(ApiModel):
+    """AnalyzePlaylist."""
+
+    artists: list[PlaylistArtist]
+    cohesion: Cohesion
+    connectors: list[PlaylistConnector]
+    links: list[PlaylistLink]
+    thread: PlaylistThread
+    graph_version: str

@@ -9,15 +9,18 @@ from __future__ import annotations
 import logging
 import threading
 import time
-from collections.abc import Callable
-from dataclasses import dataclass
+from collections import OrderedDict
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass, field, replace
 
 from sqlalchemy import Engine
 
 from songnexus.core.graph.algorithms import weighted_degree
 from songnexus.core.graph.model import DEFAULT_CATEGORIES, ArtistGraph, kinds_for
 from songnexus.core.graph.projection import build_graph
+from songnexus.core.resolution import Resolution, resolve_batch
 from songnexus.core.search import EntityType, SearchDoc, SearchIndex, log_prior
+from songnexus.core.text import normalize
 from songnexus.service.errors import ApiError, Status
 from songnexus.storage.catalog_reader import (
     SearchEntry,
@@ -34,6 +37,39 @@ class EmptyCatalogError(RuntimeError):
     """No successful ingestion run exists, so there is nothing to serve."""
 
 
+class ResolutionCache:
+    """Name resolutions for one catalog version, shared by all requests (bounded LRU).
+
+    Batch resolution costs a few milliseconds per distinct name; popular artists
+    recur across playlists, so each is resolved once per catalog version.
+    """
+
+    def __init__(self, max_entries: int = 100_000) -> None:
+        self._entries: OrderedDict[str, Resolution] = OrderedDict()
+        self._max = max_entries
+        self._lock = threading.Lock()
+
+    def resolve(self, index: SearchIndex, names: Sequence[str]) -> list[Resolution]:
+        """Resolves artist names, from the cache where possible, in input order."""
+        keys = [normalize(name) for name in names]
+        # Snapshot hits under the lock: another request may evict entries before
+        # this one is done, so nothing below reads the shared map again.
+        with self._lock:
+            known: dict[str, Resolution] = {}
+            for key in dict.fromkeys(keys):
+                if key in self._entries:
+                    self._entries.move_to_end(key)
+                    known[key] = self._entries[key]
+        missing = [k for k in dict.fromkeys(keys) if k not in known]
+        known.update(zip(missing, resolve_batch(index, missing), strict=True))
+        with self._lock:
+            for key in missing:
+                self._entries[key] = known[key]
+            while len(self._entries) > self._max:
+                self._entries.popitem(last=False)
+        return [replace(known[key], mention=name) for name, key in zip(names, keys, strict=True)]
+
+
 @dataclass(frozen=True)
 class ReadModel:
     """Everything request handlers read, for one catalog version."""
@@ -41,6 +77,7 @@ class ReadModel:
     version: str
     graph: ArtistGraph
     search: SearchIndex
+    resolutions: ResolutionCache = field(default_factory=ResolutionCache)
 
 
 def _subtitle(entry: SearchEntry) -> str:

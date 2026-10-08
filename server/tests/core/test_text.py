@@ -1,5 +1,5 @@
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from songnexus.core.text import (
@@ -111,3 +111,46 @@ def test_similarity_prefers_typo_over_different_name() -> None:
     assert string_similarity("kendrik lamar", "kendrick lamar") > string_similarity(
         "kendrik lamar", "kevin kendrick"
     )
+
+
+@settings(max_examples=500, deadline=None)
+@given(
+    st.text(alphabet="abcdeü 방탄", max_size=14),
+    st.text(alphabet="abcdeü 방탄", max_size=14),
+    st.sampled_from([0.0, 0.3, 0.5, 0.75, 0.9]),
+)
+def test_similarity_floor_is_exact_above_and_below_it(a: str, b: str, floor: float) -> None:
+    """The bounded computation search uses must agree with the full one."""
+    exact = string_similarity(a, b)
+    bounded = string_similarity(a, b, floor=floor)
+    if exact >= floor:
+        assert bounded == exact
+    else:
+        assert bounded < floor
+
+
+def reference_osa(a: str, b: str) -> int:
+    """Pure-Python optimal string alignment distance (the reference for the native one)."""
+    previous_previous: list[int] = []
+    previous = list(range(len(b) + 1))
+    for i in range(1, len(a) + 1):
+        current = [i] + [0] * len(b)
+        for j in range(1, len(b) + 1):
+            cost = 0 if a[i - 1] == b[j - 1] else 1
+            current[j] = min(previous[j] + 1, current[j - 1] + 1, previous[j - 1] + cost)
+            if i > 1 and j > 1 and a[i - 1] == b[j - 2] and a[i - 2] == b[j - 1]:
+                current[j] = min(current[j], previous_previous[j - 2] + 1)
+        previous_previous, previous = previous, current
+    return previous[len(b)]
+
+
+@settings(max_examples=1000, deadline=None)
+@given(
+    st.text(alphabet="abcdeü 방탄", max_size=12),
+    st.text(alphabet="abcdeü 방탄", max_size=12),
+    st.integers(min_value=0, max_value=8),
+)
+def test_native_distance_matches_the_reference(a: str, b: str, cutoff: int) -> None:
+    exact = reference_osa(a, b)
+    assert damerau_levenshtein(a, b) == exact
+    assert damerau_levenshtein(a, b, max_distance=cutoff) == min(exact, cutoff + 1)

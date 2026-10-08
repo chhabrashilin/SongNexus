@@ -290,3 +290,61 @@ def test_oversized_bodies_are_rejected(client: TestClient) -> None:
         "/v1/sessions", content=chunks(), headers={"Content-Type": "application/json"}
     )
     assert error_of(streamed)["details"][0]["reason"] == "REQUEST_TOO_LARGE"
+
+
+def playlist(*tracks: list[str]) -> dict[str, Any]:
+    return {
+        "tracks": [{"title": f"song {i}", "artists": artists} for i, artists in enumerate(tracks)]
+    }
+
+
+def test_analyze_playlist(client: TestClient) -> None:
+    body = playlist(["Bob"], ["Carol", "Bob"], ["the band"], ["Nobody We Know"])
+    result = client.post("/v1/playlists:analyze", json=body).json()
+    rows = {r["query"]: r for r in result["artists"]}
+    assert rows["Bob"]["status"] == "MATCHED"
+    assert rows["Bob"]["trackCount"] == 2
+    assert rows["the band"]["artist"]["name"] == BAND
+    assert rows["Nobody We Know"]["status"] == "NO_MATCH"
+    # Bob-Carol are direct (Carol produced Bob's feature); The Band links via Alice.
+    assert result["cohesion"] == {"score": 1.0, "pairsWithinTwo": 3, "pairs": 3}
+    (connector,) = result["connectors"]
+    assert connector["artist"]["name"] == ALICE
+    assert sorted(connector["linkedTo"]) == sorted([BOB, CAROL, BAND])
+    thread = [a["name"] for a in result["thread"]["artists"]]
+    assert thread[0] == BOB
+    assert result["thread"]["breaks"] == 0
+    assert {(link["artistA"], link["artistB"]) for link in result["links"]} == {
+        tuple(sorted((BOB, CAROL)))
+    }
+
+
+def test_analyze_playlist_accepts_explicit_choices(client: TestClient) -> None:
+    result = client.post(
+        "/v1/playlists:analyze",
+        json=playlist([ALICE], ["artists/00000000-0000-0000-0000-000000000000"]),
+    ).json()
+    statuses = [r["status"] for r in result["artists"]]
+    assert statuses == ["MATCHED", "NO_MATCH"]
+
+
+def test_analyze_playlist_limits(client: TestClient) -> None:
+    too_many = playlist(*([f"Artist {i}"] for i in range(2001)))
+    response = client.post("/v1/playlists:analyze", json=too_many)
+    assert error_of(response)["details"][0]["metadata"]["field"] == "tracks"
+    empty = client.post("/v1/playlists:analyze", json=playlist(["   "]))
+    assert error_of(empty)["status"] == "INVALID_ARGUMENT"
+
+
+def test_playlist_contents_never_reach_the_logs(
+    client: TestClient, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Plan §20.3: request bodies are never logged."""
+    secret = "Zzyzx Private Listening Name"
+    with caplog.at_level("DEBUG"):
+        client.post("/v1/playlists:analyze", json=playlist([secret], ["Bob"]))
+    assert caplog.records, "expected the request log line"
+    assert all(
+        secret not in record.getMessage() and secret not in str(record.__dict__)
+        for record in caplog.records
+    )

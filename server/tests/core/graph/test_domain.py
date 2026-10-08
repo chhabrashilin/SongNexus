@@ -243,3 +243,37 @@ def test_adjacency_cache_is_bounded() -> None:
             graph.adjacency(kinds_for(combo))
     assert len(graph._adjacency_cache) == MAX_CACHED_ADJACENCIES
     assert graph.genre_ids == {"g-hiphop", "g-jazz", "g-rnb", "g-funk", "g-electronic", "g-punk"}
+
+
+def test_other_identities_are_not_hidden_links() -> None:
+    """A legal name or persona of a playlist artist is not a separate collaborator."""
+    from songnexus.core.graph.playlist import analyze_playlist
+
+    c = CreditRole
+    base = facts()
+    with_persona = CatalogFacts(
+        artists=[
+            *base.artists,
+            ArtistFact("Lotus", "Lotus", "full"),
+            ArtistFact("Ellison", "Ellison", "stub"),
+        ],
+        credits=[
+            *base.credits,
+            CreditFact(R, "rec9", "Lotus", c.PRIMARY),
+            CreditFact(R, "rec9", "Kendrick", c.FEATURED),
+            CreditFact(R, "rec8", "Ellison", c.PRODUCER),
+            CreditFact(R, "rec8", "SZA", c.PRIMARY),
+        ],
+        relations=[
+            *base.relations,
+            RelationFact("r2", "Ellison", "Lotus", RelationType.PERFORMS_AS),
+        ],
+    )
+    graph = build_graph(with_persona, "persona")
+    assert graph.other_identities(["Lotus"]) == {"Ellison"}
+    adjacency = graph.adjacency(DEFAULT)
+    members = ["Lotus", "SZA"]
+    plain = analyze_playlist(adjacency, members, {})
+    assert "Ellison" in {x.artist_id for x in plain.connectors}
+    fixed = analyze_playlist(adjacency, members, {}, not_connectors=graph.other_identities(members))
+    assert "Ellison" not in {x.artist_id for x in fixed.connectors}

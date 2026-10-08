@@ -158,7 +158,18 @@ def resolve(
     return Resolution(mention, Decision.AMBIGUOUS, method, confidence, best, ranked)
 
 
-CANDIDATES_PER_MENTION = 10
+def decisive_similarity(policy: MatchPolicy) -> float:
+    """Returns the lowest name similarity that can affect whether a mention is matched.
+
+    A candidate's score is at most (1 - w)·similarity + w (prior ≤ 1). A match
+    needs a score ≥ the accept threshold, and a runner-up can only block it from
+    within the margin, so candidates scoring below (accept - margin) never change
+    a matched-or-not decision. Lower similarities only decide whether an
+    unmatched mention is reported as ambiguous (with weak suggestions) or as no
+    match; neither is linked automatically, so precision is unaffected.
+    """
+    w = policy.prior_weight
+    return max(0.0, (policy.accept_threshold - policy.min_margin - w) / (1.0 - w))
 
 
 def resolve_batch(
@@ -169,27 +180,28 @@ def resolve_batch(
 ) -> list[Resolution]:
     """Resolves many mentions against a search index, one result per mention, in order.
 
-    Candidates come from the index (so aliases and other scripts count);
-    the decision comes from ``resolve``, so precision rules apply unchanged.
-    Mentions that normalize identically are resolved once.
+    Candidates are every indexed entity with a name or alias similar enough to
+    affect the decision (``SearchIndex.similar_docs``, complete rather than a
+    ranked top-k, and fast enough for 2,000 names); the decision comes from
+    ``resolve``, so the precision rules apply unchanged. Mentions that
+    normalize identically are resolved once.
     """
+    floor = decisive_similarity(policy)
     cache: dict[str, Resolution] = {}
     results = []
     for mention in mentions:
         key = normalize(mention)
         if key not in cache:
-            hits = index.search(
-                mention, limit=CANDIDATES_PER_MENTION, entity_types=frozenset({entity_type})
-            )
+            docs = index.similar_docs(key, entity_type, floor) if key else []
             candidates = [
                 Candidate(
-                    entity_id=h.entity_id,
-                    name=h.name,
-                    aliases=(h.matched_on,) if h.matched_on != h.name else (),
-                    prior=h.prior,
-                    description=h.subtitle,
+                    entity_id=doc.entity_id,
+                    name=doc.name,
+                    aliases=tuple(sorted(set(doc.keys.values()) - {doc.name})),
+                    prior=doc.prior,
+                    description=doc.subtitle,
                 )
-                for h in hits
+                for doc in docs
             ]
             cache[key] = resolve(mention, candidates, policy)
         cached = cache[key]
@@ -205,4 +217,64 @@ def _with_mention(resolution: Resolution, mention: str) -> Resolution:
         resolution.confidence,
         resolution.best,
         resolution.ranked,
+    )
+
+
+@dataclass(frozen=True)
+class MatchReport:
+    """How well automatic matching did on a labeled set.
+
+    Attributes:
+        cases: Labeled mentions evaluated.
+        matched: Mentions linked automatically.
+        correct: Automatic links to the labeled entity.
+        positives: Mentions that have a labeled entity.
+        precision: correct / matched (1.0 when nothing was matched).
+        recall: correct / positives.
+        errors: (mention, linked entity, expected entity or None) for each wrong link.
+        by_category: (correct, matched, positives) per category.
+    """
+
+    cases: int
+    matched: int
+    correct: int
+    positives: int
+    precision: float
+    recall: float
+    errors: tuple[tuple[str, str, str | None], ...]
+    by_category: dict[str, tuple[int, int, int]]
+
+
+def evaluate_matches(
+    resolutions: Sequence[Resolution],
+    expected: Sequence[str | None],
+    categories: Sequence[str],
+) -> MatchReport:
+    """Scores resolutions against labels (None means "must not be matched")."""
+    matched = correct = positives = 0
+    errors: list[tuple[str, str, str | None]] = []
+    per_category: dict[str, list[int]] = {}
+    for resolution, label, category in zip(resolutions, expected, categories, strict=True):
+        counts = per_category.setdefault(category, [0, 0, 0])
+        if label is not None:
+            positives += 1
+            counts[2] += 1
+        if resolution.entity_id is None:
+            continue
+        matched += 1
+        counts[1] += 1
+        if resolution.entity_id == label:
+            correct += 1
+            counts[0] += 1
+        else:
+            errors.append((resolution.mention, resolution.entity_id, label))
+    return MatchReport(
+        cases=len(resolutions),
+        matched=matched,
+        correct=correct,
+        positives=positives,
+        precision=correct / matched if matched else 1.0,
+        recall=correct / positives if positives else 0.0,
+        errors=tuple(errors),
+        by_category={k: (v[0], v[1], v[2]) for k, v in sorted(per_category.items())},
     )

@@ -32,6 +32,78 @@
         "title": "Alias",
         "type": "object"
       },
+      "AnalyzePlaylistRequest": {
+        "description": "AnalyzePlaylist. Raw files never leave the device; only names and titles are sent.",
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectionCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "tracks": {
+            "items": {
+              "$ref": "#/components/schemas/PlaylistTrack"
+            },
+            "maxItems": 10000,
+            "minItems": 1,
+            "title": "Tracks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "tracks"
+        ],
+        "title": "AnalyzePlaylistRequest",
+        "type": "object"
+      },
+      "AnalyzePlaylistResponse": {
+        "description": "AnalyzePlaylist.",
+        "properties": {
+          "artists": {
+            "items": {
+              "$ref": "#/components/schemas/PlaylistArtist"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "cohesion": {
+            "$ref": "#/components/schemas/Cohesion"
+          },
+          "connectors": {
+            "items": {
+              "$ref": "#/components/schemas/PlaylistConnector"
+            },
+            "title": "Connectors",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/PlaylistLink"
+            },
+            "title": "Links",
+            "type": "array"
+          },
+          "thread": {
+            "$ref": "#/components/schemas/PlaylistThread"
+          }
+        },
+        "required": [
+          "artists",
+          "cohesion",
+          "connectors",
+          "links",
+          "thread",
+          "graphVersion"
+        ],
+        "title": "AnalyzePlaylistResponse",
+        "type": "object"
+      },
       "Appearance": {
         "description": "A release a recording appears on.",
         "properties": {
@@ -296,6 +368,38 @@
           "createTime"
         ],
         "title": "BlockedArtist",
+        "type": "object"
+      },
+      "Cohesion": {
+        "description": "The share of matched artist pairs within 2 steps of each other.",
+        "properties": {
+          "pairs": {
+            "title": "Pairs",
+            "type": "integer"
+          },
+          "pairsWithinTwo": {
+            "title": "Pairswithintwo",
+            "type": "integer"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null with fewer than two matched artists.",
+            "title": "Score"
+          }
+        },
+        "required": [
+          "score",
+          "pairsWithinTwo",
+          "pairs"
+        ],
+        "title": "Cohesion",
         "type": "object"
       },
       "Collaboration": {
@@ -1078,6 +1182,16 @@
         "title": "ListGenresResponse",
         "type": "object"
       },
+      "MatchStatus": {
+        "description": "How an artist name from the playlist was matched.",
+        "enum": [
+          "MATCHED",
+          "AMBIGUOUS",
+          "NO_MATCH"
+        ],
+        "title": "MatchStatus",
+        "type": "string"
+      },
       "PathMode": {
         "description": "How FindPath ranks routes.",
         "enum": [
@@ -1125,6 +1239,155 @@
           "evidence"
         ],
         "title": "PathStep",
+        "type": "object"
+      },
+      "PlaylistArtist": {
+        "description": "One distinct artist name from the playlist and what it matched.",
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ArtistSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "blocked": {
+            "default": false,
+            "title": "Blocked",
+            "type": "boolean"
+          },
+          "candidates": {
+            "description": "For AMBIGUOUS: who it might be, best first.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MatchStatus"
+          },
+          "trackCount": {
+            "title": "Trackcount",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query",
+          "trackCount",
+          "status",
+          "artist",
+          "candidates",
+          "blocked"
+        ],
+        "title": "PlaylistArtist",
+        "type": "object"
+      },
+      "PlaylistConnector": {
+        "description": "A hidden link: an artist outside the playlist connected to several in it.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "linkedTo": {
+            "description": "Resource names of the playlist artists it links.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Linkedto",
+            "type": "array"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "artist",
+          "linkedTo",
+          "score"
+        ],
+        "title": "PlaylistConnector",
+        "type": "object"
+      },
+      "PlaylistLink": {
+        "description": "A direct connection between two playlist artists.",
+        "properties": {
+          "artistA": {
+            "title": "Artista",
+            "type": "string"
+          },
+          "artistB": {
+            "title": "Artistb",
+            "type": "string"
+          },
+          "strength": {
+            "title": "Strength",
+            "type": "number"
+          }
+        },
+        "required": [
+          "artistA",
+          "artistB",
+          "strength"
+        ],
+        "title": "PlaylistLink",
+        "type": "object"
+      },
+      "PlaylistThread": {
+        "description": "Shortest paths between consecutive playlist artists, joined.",
+        "properties": {
+          "artists": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "breaks": {
+            "description": "Consecutive pairs with no path within the step limit.",
+            "title": "Breaks",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artists",
+          "breaks"
+        ],
+        "title": "PlaylistThread",
+        "type": "object"
+      },
+      "PlaylistTrack": {
+        "description": "A track as the device parsed it: a title and its artist names, nothing else.",
+        "properties": {
+          "artists": {
+            "description": "Artist names as written, or `artists/{artist}` for a choice the user made.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Artists",
+            "type": "array"
+          },
+          "title": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artists"
+        ],
+        "title": "PlaylistTrack",
         "type": "object"
       },
       "Preferences-Input": {
@@ -2331,6 +2594,48 @@
         "summary": "ListGenres",
         "tags": [
           "catalog"
+        ]
+      }
+    },
+    "/v1/playlists:analyze": {
+      "post": {
+        "description": "Matches a playlist's artists, then measures how they connect.\n\nReceives track titles and artist names only (files are parsed on the\ndevice) and stores nothing. A name may be ``artists/{artist}`` when the user\npicked one of several candidates. Blocked artists never serve as hidden\nlinks or as steps on the thread.",
+        "operationId": "AnalyzePlaylist",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzePlaylistRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzePlaylistResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "AnalyzePlaylist",
+        "tags": [
+          "analysis"
         ]
       }
     },

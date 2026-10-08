@@ -15,9 +15,13 @@ Design notes:
 
 from __future__ import annotations
 
+import functools
+import math
 import re
 import unicodedata
 from functools import lru_cache
+
+from rapidfuzz.distance import OSA
 
 # Characters that read as word separators or as letters in music credits.
 _CHAR_FOLDS = str.maketrans(
@@ -94,10 +98,11 @@ def name_keys(name: str) -> set[str]:
     return keys
 
 
-def trigrams(text: str) -> set[str]:
-    """Returns the character trigrams of a padded string."""
+@functools.lru_cache(maxsize=65_536)
+def trigrams(text: str) -> frozenset[str]:
+    """Returns the character trigrams of a padded string (cached: keys repeat)."""
     padded = f"  {text} "
-    return {padded[i : i + 3] for i in range(len(padded) - 2)}
+    return frozenset(padded[i : i + 3] for i in range(len(padded) - 2))
 
 
 def trigram_similarity(a: str, b: str) -> float:
@@ -113,40 +118,40 @@ def damerau_levenshtein(a: str, b: str, max_distance: int | None = None) -> int:
 
     Adjacent transpositions cost 1, which models typos well. If ``max_distance``
     is given, returns ``max_distance + 1`` as soon as the distance must exceed it.
+    Computed by rapidfuzz (native code); tests check it against a pure-Python
+    reference implementation.
     """
-    if a == b:
-        return 0
-    if max_distance is not None and abs(len(a) - len(b)) > max_distance:
-        return max_distance + 1
-    previous_previous: list[int] = []
-    previous = list(range(len(b) + 1))
-    for i in range(1, len(a) + 1):
-        current = [i] + [0] * len(b)
-        row_min = current[0]
-        for j in range(1, len(b) + 1):
-            cost = 0 if a[i - 1] == b[j - 1] else 1
-            current[j] = min(previous[j] + 1, current[j - 1] + 1, previous[j - 1] + cost)
-            if i > 1 and j > 1 and a[i - 1] == b[j - 2] and a[i - 2] == b[j - 1]:
-                current[j] = min(current[j], previous_previous[j - 2] + 1)
-            row_min = min(row_min, current[j])
-        if max_distance is not None and row_min > max_distance:
-            return max_distance + 1
-        previous_previous, previous = previous, current
-    return previous[len(b)]
+    return int(OSA.distance(a, b, score_cutoff=max_distance))
 
 
-def string_similarity(a: str, b: str) -> float:
+def string_similarity(a: str, b: str, floor: float = 0.0) -> float:
     """Returns the similarity of two normalized strings, in [0, 1].
 
     The larger of edit-distance similarity (good for short names and typos) and
     trigram similarity (good for long names and reordered words).
+
+    Args:
+        a: A normalized string.
+        b: Another normalized string.
+        floor: Callers that ignore scores below this get the exact score when it
+            is at least ``floor`` and some value below ``floor`` otherwise. The
+            edit distance is then bounded, which skips most of its cost: search
+            scores hundreds of candidates per query.
     """
     if a == b:
         return 1.0
     if not a or not b:
         return 0.0
-    edit_similarity = 1.0 - damerau_levenshtein(a, b) / max(len(a), len(b))
-    return max(edit_similarity, trigram_similarity(a, b))
+    trigram = trigram_similarity(a, b)
+    length = max(len(a), len(b))
+    # Edit similarity only matters if it can reach max(trigram, floor): that
+    # needs distance <= (1 - threshold) * length.
+    threshold = max(trigram, floor)
+    max_distance = math.floor((1.0 - threshold) * length + 1e-9)
+    distance = damerau_levenshtein(a, b, max_distance=max_distance)
+    if distance > max_distance:
+        return trigram
+    return max(1.0 - distance / length, trigram)
 
 
 # Title decorations that don't change a song's identity for credit purposes.

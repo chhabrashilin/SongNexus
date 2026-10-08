@@ -30,7 +30,7 @@ from songnexus.service.middleware import (
 )
 from songnexus.service.ratelimit import MethodClass, RateLimiter
 from songnexus.service.readmodel import ReadModelHolder, load_read_model, probe_version
-from songnexus.service.routes import analysis, catalog, identity, ops, users
+from songnexus.service.routes import analysis, catalog, identity, ops, playlists, users
 from songnexus.service.schemas import ErrorResponse
 from songnexus.storage.db import make_engine
 
@@ -146,6 +146,7 @@ def create_app(settings: Settings | None = None, state: AppState | None = None) 
     app.include_router(ops.router)
     app.include_router(catalog.router)
     app.include_router(analysis.router)
+    app.include_router(playlists.router)
     app.include_router(identity.router)
     app.include_router(users.router)
     # The middleware added last runs outermost, so security headers cover every

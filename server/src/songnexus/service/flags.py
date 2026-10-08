@@ -18,10 +18,10 @@ DEFAULT_FLAGS: Mapping[str, bool] = MappingProxyType(
         "collaborations": True,
         "compare": True,
         "labelMates": False,
-        # Off until their screens ship (M7, M6): the client never offers a surface
-        # that doesn't exist.
+        # Off until its screen ships (M7): the client never offers a surface that
+        # doesn't exist.
         "play": False,
-        "playlistImport": False,
+        "playlistImport": True,
         "signIn": True,
     }
 )

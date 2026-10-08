@@ -1,3 +1,6 @@
+from hypothesis import example, given, settings
+from hypothesis import strategies as st
+
 from songnexus.core.search import (
     EntityType,
     EvalCase,
@@ -133,3 +136,31 @@ def test_evaluate_metrics() -> None:
     assert report.precision_at_1 == 1 / 3
     assert report.misses == ("echo", "zzzz")
     assert report.by_category == {"exact": 0.75, "missing": 0.0}
+
+
+@settings(max_examples=300, deadline=None)
+@given(
+    st.lists(st.text(alphabet="abcde xy", min_size=1, max_size=30), min_size=1, max_size=25),
+    st.text(alphabet="abcde xy", min_size=1, max_size=30),
+    st.sampled_from([0.5, 0.69, 0.8]),
+)
+# Adjacent transpositions destroy 4 trigrams; these only qualify under the 4k bound.
+@example(names=["cfdc"], query="cdfc", floor=0.69)
+@example(names=["abggccfbg"], query="agbgccfbg", floor=0.8)
+def test_similar_docs_is_complete(names: list[str], query: str, floor: float) -> None:
+    """The filtered lookup returns exactly what brute force over every key returns."""
+    from songnexus.core.text import name_keys, normalize, string_similarity
+
+    idx = SearchIndex()
+    for i, name in enumerate(names):
+        idx.add(SearchDoc(A, f"a{i}", name), [name])
+    idx.freeze()
+    q = normalize(query)
+    if not q:
+        return
+    expected = {
+        f"a{i}"
+        for i, name in enumerate(names)
+        if any(string_similarity(q, key) >= floor for key in name_keys(name))
+    }
+    assert {d.entity_id for d in idx.similar_docs(q, A, floor)} == expected

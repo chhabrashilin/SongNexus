@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterator
 
 from fastapi import Request, Response
@@ -11,6 +12,8 @@ from starlette.convertors import Convertor, register_url_convertor
 from songnexus.service.deps import Viewer, app_state
 from songnexus.storage.db import session_scope
 
+# The resource name of a catalog artist: artists/{uuid}.
+RESOURCE_ID = re.compile(r"^artists/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 MAX_QUERY_LENGTH = 120
 MAX_PATH_STEPS = 6
 MAX_ALTERNATIVES = 3

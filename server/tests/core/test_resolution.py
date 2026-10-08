@@ -1,4 +1,11 @@
-from songnexus.core.resolution import Candidate, Decision, MatchPolicy, resolve
+from songnexus.core.resolution import (
+    Candidate,
+    Decision,
+    MatchPolicy,
+    Resolution,
+    ScoredCandidate,
+    resolve,
+)
 
 
 def test_unique_exact_name_is_matched() -> None:
@@ -97,3 +104,23 @@ def test_resolve_batch_uses_the_index_and_keeps_order() -> None:
     assert results[1].decision is Decision.AMBIGUOUS  # two artists called Drake
     assert results[2].entity_id == "bts"  # releases are not artist candidates
     assert results[3].decision is Decision.NO_MATCH
+
+
+def test_evaluate_matches() -> None:
+    from songnexus.core.resolution import evaluate_matches
+
+    def res(mention: str, entity: str | None) -> Resolution:
+        decision = Decision.MATCHED if entity else Decision.NO_MATCH
+        best = ScoredCandidate(Candidate(entity, entity), 1.0, entity, 1.0) if entity else None
+        return Resolution(mention, decision, "exact_name", 1.0, best)
+
+    report = evaluate_matches(
+        [res("a", "A"), res("b", "X"), res("c", None), res("d", "D")],
+        ["A", "B", "C", None],
+        ["exact", "exact", "typo", "absent"],
+    )
+    assert (report.matched, report.correct, report.positives) == (3, 1, 3)
+    assert report.precision == 1 / 3
+    assert report.recall == 1 / 3
+    assert report.errors == (("b", "X", "B"), ("d", "D", None))
+    assert report.by_category == {"absent": (0, 1, 0), "exact": (1, 2, 2), "typo": (0, 0, 1)}

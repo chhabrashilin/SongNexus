@@ -92,6 +92,30 @@ def _cmd_purge(settings: Settings, _args: argparse.Namespace) -> int:
 
 
 MIN_SEARCH_MRR = 0.95
+MIN_IMPORT_PRECISION = 0.98
+
+
+def import_match_report(engine: Any, cases_path: Path) -> Any:
+    """Resolves the labeled import names and scores them (shared with the golden test)."""
+    from songnexus.core import ids
+    from songnexus.core.resolution import evaluate_matches, resolve_batch
+    from songnexus.service.readmodel import load_read_model
+
+    cases = json.loads(cases_path.read_text(encoding="utf-8"))["cases"]
+    model = load_read_model(engine)
+    resolutions = resolve_batch(model.search, [c["query"] for c in cases])
+    expected = [ids.artist_id(c["mbid"]) if c["mbid"] else None for c in cases]
+    return evaluate_matches(resolutions, expected, [c["category"] for c in cases])
+
+
+def _cmd_eval_import(settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.storage.db import make_engine
+
+    path = args.cases or settings.data_dir / "eval" / "import_match_cases.json"
+    report = import_match_report(make_engine(settings.database_url), path)
+    passed = report.precision >= MIN_IMPORT_PRECISION
+    _print({"gatePassed": passed, "minPrecision": MIN_IMPORT_PRECISION, **asdict(report)})
+    return EXIT_OK if passed else EXIT_FAILED
 
 
 def _cmd_eval_search(settings: Settings, args: argparse.Namespace) -> int:
@@ -202,6 +226,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     eval_search.add_argument("--cases", type=Path)
     eval_search.set_defaults(handler=_cmd_eval_search)
+
+    eval_import = commands.add_parser(
+        "eval-import",
+        help=f"evaluate import name matching (gate: precision >= {MIN_IMPORT_PRECISION})",
+    )
+    eval_import.add_argument("--cases", type=Path)
+    eval_import.set_defaults(handler=_cmd_eval_import)
 
     purge = commands.add_parser("purge", help="remove expired sessions and deleted accounts")
     purge.set_defaults(handler=_cmd_purge)

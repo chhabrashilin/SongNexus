@@ -272,6 +272,24 @@ class ArtistGraph:
             self._genre_ids = frozenset(g.genre_id for n in self.nodes.values() for g in n.genres)
         return self._genre_ids
 
+    def other_identities(self, artist_ids: Iterable[str]) -> frozenset[str]:
+        """Returns artists that are another identity of one of ``artist_ids``.
+
+        MusicBrainz models a performance name and the person behind it as two
+        artists linked by a "performs as" relation (Flying Lotus and Steven
+        Ellison). Treating one as a separate collaborator of the other misleads.
+        """
+        identity_roles = {"person", "performance name"}
+        found: set[str] = set()
+        for artist_id in artist_ids:
+            for other, edge in self.neighbors.get(artist_id, {}).items():
+                if any(
+                    e.kind is EdgeKind.MEMBER_OF and edge.role_of(artist_id, e) in identity_roles
+                    for e in edge.evidence
+                ):
+                    found.add(other)
+        return frozenset(found)
+
     def stats(self) -> dict[str, int]:
         """Returns node, edge and evidence counts."""
         return {

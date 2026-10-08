@@ -444,3 +444,14 @@ def test_signed_in_users_have_their_own_rate_limit(state: AppState) -> None:
         sign_in(second, "same-network-2")
         assert [first.get("/v1/genres").status_code for _ in range(3)] == [200, 200, 429]
         assert second.get("/v1/genres").status_code == 200
+
+
+def test_blocked_artists_are_never_hidden_links_in_playlists(client: TestClient) -> None:
+    """US-17 applies to AnalyzePlaylist: a blocked artist never links others."""
+    sign_in(client, "playlist-blocker")
+    client.post("/v1/users/me/blockedArtists", json={"artist": f"artists/{ALICE}"})
+    body = {"tracks": [{"artists": ["Bob"]}, {"artists": ["The Band"]}]}
+    result = client.post("/v1/playlists:analyze", json=body).json()
+    assert result["connectors"] == []
+    assert result["cohesion"]["pairsWithinTwo"] == 0
+    assert f"artists/{ALICE}" not in [a["name"] for a in result["thread"]["artists"]]

@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import bisect
 import enum
+import heapq
 import math
 from collections import Counter, defaultdict
 from collections.abc import Iterable
@@ -112,6 +113,8 @@ class SearchIndex:
         self._by_key: dict[str, list[int]] = defaultdict(list)
         self._sorted_keys: list[str] = []
         self._by_trigram: dict[str, set[str]] = defaultdict(set)
+        self._key_types: dict[str, frozenset[EntityType]] = {}
+        self._keys_by_length: dict[int, list[str]] = defaultdict(list)
         self._artist_index: dict[str, int] = {}
         self._frozen = False
 
@@ -143,6 +146,8 @@ class SearchIndex:
         for key in self._sorted_keys:
             for gram in trigrams(key):
                 self._by_trigram[gram].add(key)
+            self._key_types[key] = frozenset(self._docs[i].entity_type for i in self._by_key[key])
+            self._keys_by_length[len(key)].append(key)
         self._frozen = True
         return self
 
@@ -174,7 +179,7 @@ class SearchIndex:
         if not q:
             return []
         best: dict[int, tuple[float, MatchType, str]] = {}
-        for key in self._candidate_keys(q):
+        for key in self._candidate_keys(q, entity_types):
             scored = _key_score(q, key)
             if scored is None:
                 continue
@@ -241,18 +246,82 @@ class SearchIndex:
                     lifts[artist_index] = (lifted, current[1], current[2])
         scores.update(lifts)
 
-    def _candidate_keys(self, q: str) -> set[str]:
+    def similar_docs(
+        self, q: str, entity_type: EntityType, min_similarity: float
+    ) -> list[SearchDoc]:
+        """Returns every document of a type with a key at least ``min_similarity`` similar to ``q``.
+
+        Complete, not ranked: unlike ``search`` there is no candidate cap, so
+        batch resolution sees every competitor that could change a decision.
+        Two classic filters keep it fast without losing any match:
+
+        - length: names whose lengths differ by more than k are over k edits apart;
+        - q-gram count: names within k edits share at least |T(q)| - 4k padded
+          trigrams (an edit, or an adjacent transposition, destroys at most 4),
+          and trigram similarity ≥ s needs at least s·|T(q)| shared trigrams.
+
+        Here k is the most edits ``min_similarity`` allows for that key's length.
+        When the count bound reaches zero (very long names), keys sharing no
+        trigram could still qualify, so keys of a close length are also checked.
+
+        Args:
+            q: A normalized mention.
+            entity_type: The type to return.
+            min_similarity: The ``string_similarity`` floor.
+        """
+        q_grams = trigrams(q)
+        longest = math.floor(len(q) / max(min_similarity, 1e-9))
+        counts: dict[str, int] = {}
+        for gram in q_grams:
+            for key in self._by_trigram.get(gram, ()):
+                counts[key] = counts.get(key, 0) + 1
+        # Key lengths whose count bound is not positive: such keys can qualify
+        # while sharing no trigram, so they are checked directly.
+        for length in range(1, longest + 1):
+            edits = math.floor((1.0 - min_similarity) * max(len(q), length) + 1e-9)
+            if abs(length - len(q)) <= edits and len(q_grams) - 4 * edits <= 0:
+                for key in self._keys_by_length.get(length, ()):
+                    counts.setdefault(key, 0)
+        found: dict[int, SearchDoc] = {}
+        for key, shared in counts.items():
+            if entity_type not in self._key_types[key]:
+                continue
+            length = max(len(q), len(key))
+            max_edits = math.floor((1.0 - min_similarity) * length + 1e-9)
+            edit_possible = (
+                abs(len(q) - len(key)) <= max_edits and shared >= len(q_grams) - 4 * max_edits
+            )
+            trigram_possible = shared >= min_similarity * len(q_grams)
+            if not (edit_possible or trigram_possible):
+                continue
+            if string_similarity(q, key, floor=min_similarity) < min_similarity:
+                continue
+            for doc_index in self._by_key[key]:
+                doc = self._docs[doc_index]
+                if doc.entity_type is entity_type:
+                    found[doc_index] = doc
+        return [found[i] for i in sorted(found)]
+
+    def _candidate_keys(self, q: str, entity_types: frozenset[EntityType] | None) -> set[str]:
+        """Returns keys worth scoring: exact, prefix, and the best trigram overlaps.
+
+        Keys with no document of the requested types are skipped before ranking,
+        so (say) song titles never crowd artists out of the candidate budget.
+        """
+
+        def wanted(key: str) -> bool:
+            return entity_types is None or not self._key_types[key].isdisjoint(entity_types)
+
         candidates: set[str] = set()
-        if q in self._by_key:
-            candidates.add(q)
-        compact = q.replace(" ", "")
-        if compact in self._by_key:
-            candidates.add(compact)
+        for exact in (q, q.replace(" ", "")):
+            if exact in self._by_key and wanted(exact):
+                candidates.add(exact)
         start = bisect.bisect_left(self._sorted_keys, q)
         for key in self._sorted_keys[start : start + MAX_PREFIX_CANDIDATES]:
             if not key.startswith(q):
                 break
-            candidates.add(key)
+            if wanted(key):
+                candidates.add(key)
         # Keys sharing trigrams with the query or its longest token, which finds
         # token prefixes ("lamar" -> "kendrick lamar") and typos.
         longest = max(q.split(), key=len)
@@ -260,8 +329,13 @@ class SearchIndex:
         for gram in trigrams(q) | trigrams(longest):
             for key in self._by_trigram.get(gram, ()):
                 gram_counts[key] += 1
-        ranked = sorted(gram_counts.items(), key=lambda kv: (-kv[1], kv[0]))
-        candidates.update(key for key, _ in ranked[:MAX_TRIGRAM_CANDIDATES])
+        # Partial selection, same order as a full sort by (-count, key).
+        ranked = heapq.nsmallest(
+            MAX_TRIGRAM_CANDIDATES,
+            ((key, count) for key, count in gram_counts.items() if wanted(key)),
+            key=lambda kv: (-kv[1], kv[0]),
+        )
+        candidates.update(key for key, _ in ranked)
         return candidates
 
 
@@ -273,7 +347,7 @@ def _key_score(q: str, key: str) -> tuple[float, MatchType] | None:
     key_tokens = key.split()
     if all(any(kt.startswith(qt) for kt in key_tokens) for qt in q.split()):
         return 0.80, MatchType.TOKEN_PREFIX
-    similarity = string_similarity(q, key)
+    similarity = string_similarity(q, key, floor=FUZZY_FLOOR)
     if similarity >= FUZZY_FLOOR:
         return 0.75 * similarity, MatchType.FUZZY
     return None
