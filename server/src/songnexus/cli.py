@@ -62,13 +62,33 @@ def _cmd_fetch(settings: Settings, args: argparse.Namespace) -> int:
 
 
 def _cmd_ingest(settings: Settings, args: argparse.Namespace) -> int:
-    from songnexus.catalog.ingest import ingest_snapshot
+    from songnexus.catalog.ingest import QualityGateError, ingest_snapshot
     from songnexus.storage import migrate
     from songnexus.storage.db import make_engine
 
     engine = make_engine(settings.database_url)
     migrate.upgrade(engine)
-    _print(ingest_snapshot(engine, args.snapshot or settings.snapshot_path))
+    try:
+        _print(ingest_snapshot(engine, args.snapshot or settings.snapshot_path))
+    except QualityGateError as exc:
+        # Nothing was written; the previous catalog keeps serving.
+        print(f"Ingest rejected: {exc}. The previous catalog is unchanged.", file=sys.stderr)
+        return EXIT_FAILED
+    return EXIT_OK
+
+
+def _cmd_serve(settings: Settings, args: argparse.Namespace) -> int:
+    import uvicorn
+
+    # Local development only; deployments run uvicorn from the container's CMD.
+    uvicorn.run(
+        "songnexus.service.app:create_app",
+        factory=True,
+        host=args.host,
+        port=args.port,
+        reload=args.reload,
+        access_log=False,  # its log lines include query strings (QA review, privacy)
+    )
     return EXIT_OK
 
 
@@ -213,6 +233,12 @@ def build_parser() -> argparse.ArgumentParser:
     fetch.add_argument("--output", type=Path, help="snapshot path (default: data/samples)")
     fetch.add_argument("--max-profiles", type=int, default=1500)
     fetch.set_defaults(handler=_cmd_fetch)
+
+    serve = commands.add_parser("serve", help="run the API locally (default 127.0.0.1:8790)")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8790)
+    serve.add_argument("--reload", action="store_true", help="restart on code changes")
+    serve.set_defaults(handler=_cmd_serve)
 
     ingest = commands.add_parser("ingest", help="ingest a snapshot into the database")
     ingest.add_argument("--snapshot", type=Path)

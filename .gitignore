@@ -18,6 +18,7 @@ coverage/
 # Committed data lives in data/samples, data/seeds and data/eval.
 data/raw/
 data/*.db
+/*.db
 *.sqlite
 
 # Secrets and local configuration

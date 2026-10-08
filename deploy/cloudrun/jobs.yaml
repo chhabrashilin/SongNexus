@@ -1,7 +1,8 @@
 # Cloud Run jobs, using the same image as the service (build once, promote).
 #   songnexus-migrate: runs before traffic shifts; migrations are expand/contract only.
-#   songnexus-ingest:  rebuilds the catalog from the snapshot baked into the image,
-#                      then runs the quality gate (non-zero exit on violations).
+#   songnexus-ingest:  rebuilds the catalog from the snapshot baked into the image; the
+#                      quality gate runs inside the ingest transaction, so a failing
+#                      catalog is rolled back and the job exits non-zero.
 # Rendered with envsubst by .github/workflows/deploy.yml.
 apiVersion: run.googleapis.com/v1
 kind: Job
@@ -51,7 +52,7 @@ spec:
           timeoutSeconds: 3600
           containers:
             - image: ${IMAGE}
-              command: ["sh", "-c", "songnexus ingest && songnexus quality"]
+              command: ["songnexus", "ingest"]
               resources:
                 limits:
                   cpu: "2"

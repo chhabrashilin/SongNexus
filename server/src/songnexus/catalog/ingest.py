@@ -302,7 +302,11 @@ def ingest_snapshot(engine: Engine, snapshot_path: Path) -> dict[str, Any]:
                 .where(m.IngestionRun.id == run_id)
                 .values(status="failed", finished_at=datetime.now(UTC), error=repr(exc)[:2000])
             )
-        log.exception("ingestion failed", extra={"run_id": run_id})
+        if isinstance(exc, QualityGateError):
+            # An expected rejection, not a crash: one line, no stack trace.
+            log.error("ingestion rejected by the quality gate: %s", exc, extra={"run_id": run_id})
+        else:
+            log.exception("ingestion failed", extra={"run_id": run_id})
         raise
     log.info("ingestion succeeded", extra={"run_id": run_id, "elapsed_s": stats["elapsedSeconds"]})
     return stats

@@ -1,0 +1,24 @@
+# Local PostgreSQL for development (production uses Cloud SQL).
+#   docker compose up -d        then set SONGNEXUS_DATABASE_URL as in server/.env.example
+# Bound to 127.0.0.1:15432 so it never collides with another local PostgreSQL on 5432.
+name: songnexus
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: songnexus
+      POSTGRES_PASSWORD: songnexus
+      POSTGRES_DB: songnexus
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - songnexus-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U songnexus"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  songnexus-postgres:

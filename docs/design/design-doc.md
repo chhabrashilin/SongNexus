@@ -246,48 +246,49 @@ version ends at a demo plus a handoff package: this doc, the core library, the A
 
 ## 12. Milestones: the step-by-step build
 
-Each milestone is a series of small, reviewed changes. Nothing merges without tests and passing CI
-([engineering standards](../engineering-standards.md)).
+Each milestone is a series of small, reviewed changes; nothing merges without tests and passing CI
+([engineering standards](../engineering-standards.md)). Numbering follows plan rev 3; status as of 2026-10-07.
 
-| # | Milestone | Done when |
-|---|---|---|
-| **M0** | Design review + engineering standards + clean repository | This doc is reviewed and open questions are answered (§14) |
-| **M1** | Data foundation: canonical model, MusicBrainz ingestion, quality checks | Snapshot ingests idempotently; all invariants pass; CI green |
-| **M2** | `nexus-core`: projection, algorithms, explanations | Property tests vs. reference; golden-path tests on the snapshot |
-| **M3** | Service API v1 (AIP-style), search and resolution | Contract tests; search MRR ≥ 0.95; latency budget met |
-| **M4** | Reference client shell + **CUJ-5** Artist connections + **CUJ-1** Credits | E2E on mobile and desktop; accessibility audit clean |
-| **M5** | **CUJ-2** Connect daily game | Puzzle fairness tests; E2E solve flow; share card |
-| **M6** | **CUJ-4** History import (Takeout, Spotify, ListenBrainz, CSV, ZIP) | Parser tests per format; match precision ≥ 0.98 on labeled set |
-| **M7** | **CUJ-3** Your universe (connectors, explained suggestions) | Each insight carries a path; E2E |
-| **M8** | Hardening: load test, accessibility, i18n, privacy review | Budgets met; review checklist complete |
-| **M9** | Demo + handoff package | Sponsor sign-off |
+| # | Milestone | Done when | Status |
+|---|---|---|---|
+| **M0** | Design review, engineering standards, decisions | Open questions answered (§14) | Decisions adopted provisionally (ADR 0001); review pending |
+| **M1** | Catalog: canonical model, MusicBrainz ingestion, quality gate, expanded snapshot | Idempotent ingest; invariants pass; reproducible | Done |
+| **M2** | Graph core: projection, algorithms with filters, explanations, search, collaborations, compare | Property tests vs. oracles; search MRR ≥ 0.95 | Done (MRR 1.0) |
+| **M3** | Service API v1 (AIP-style), deployable | Contract tests; contract in CI | Done; not yet deployed (no GCP project) |
+| **M4** | Identity and user data: sign-in, sessions, preferences, blocks, Top 5, export, deletion | Security test suite | Done; shareable profile and anonymous merge deferred (stretch) |
+| **M5** | Web surfaces: Home, Artist (CUJ-5), Explore, Six degrees, Compare, Song, You | E2E + axe on phone and desktop | Done |
+| **M6** | History and playlist import (CUJ-4), playlist analysis | Parser tests per format; match precision ≥ 0.98 | Done (precision 0.993); 2,000-artist latency budget missed, see docs/perf |
+| **M7** | Play: daily connection puzzle (CUJ-2) | Fairness test over every candidate pair; E2E solve | In progress |
+| **M8** | Hardening: load test, accessibility audit, i18n, privacy and security reviews | Budgets met or recorded; checklists complete | Next |
+| **M9** | Demo and handoff package | Sponsor sign-off | Next |
 
 ## 13. Feature tracker
 
-Every feature from the original brief and the v0 prototype, and what happens to it in v2.
+Every feature from the original brief and the v0 prototype, and where it stands in v2.
 
-| Feature | v0 | v2 plan | Notes |
+| Feature | v0 | v2 | Notes |
 |---|---|---|---|
-| MusicBrainz ingestion with provenance | ✅ | M1 (port, tighten) | snapshot kept as data |
-| Entity resolution (refuse to guess) | ✅ | M1/M3 | extended to import matching in M6 |
-| Recording deduplication | ✅ | M1 | |
-| Data-quality invariants | ✅ | M1 | gate in CI |
-| Artist graph projection with evidence | ✅ | M2 | |
-| Shortest / strongest / alternative paths | ✅ | M2 + M4 | surfaced inside CUJ-1/3/5 rather than a standalone tool |
-| PageRank, betweenness | ✅ | M2 | powers "hidden connectors" (CUJ-3) |
-| Lexical search (typos, aliases) | ✅ | M3 | |
-| Provenance views | ✅ | M4 | "Source" on every evidence line |
-| Force-directed graph explorer | ✅ | M7 (reduced) | a small universe view, plus an accessible list; no free-form explorer |
-| Daily connection game | ✅ prototype | M5 | |
-| History upload (Spotify and others) | – | M6 | requested 2026-10-06 |
-| Your music universe | – | M7 | |
-| Credits on Now Playing | – | M4 | |
+| MusicBrainz ingestion with provenance | ✅ | ✅ M1 | every fact cites its raw record; idempotent, source-scoped |
+| Entity resolution (refuse to guess) | ✅ | ✅ M1–M6 | seeds, search, and import matching (0 homonyms auto-matched) |
+| Recording deduplication | ✅ | ✅ M1 | |
+| Data-quality invariants | ✅ | ✅ M1 | gate inside the ingest transaction |
+| Artist graph with evidence | ✅ | ✅ M2 | explanations as localizable message IDs |
+| Shortest / strongest / alternative paths | ✅ | ✅ M2, M5 | Six degrees, with genre filters and blocks inside the search |
+| Hidden connectors | designed | ✅ M6 | playlist analysis |
+| Lexical search (typos, aliases, any script) | ✅ | ✅ M2 | v0 erased non-Latin names; fixed |
+| Provenance views | ✅ | ✅ M5 | "Source" on every evidence line |
+| Connection web explorer | ✅ (SVG) | ✅ M5 | canvas renderer plus an equivalent list view |
+| Collaborations, compare, song credits | – | ✅ M5 | |
+| Accounts, blocks, Top 5, export, deletion | – | ✅ M4 | |
+| Playlist and history import (Spotify, YouTube Music, ListenBrainz, CSV, ZIP) | – | ✅ M6 | parsed on the device; only artist names are sent |
+| Daily connection game | ✅ prototype | M7 | |
+| Credits on Now Playing | – | Handoff | needs YouTube Music's player; specified for the integration |
 | Chat assistant (LLM) | ✅ | **Cut** (§7.2) | may return as a rephrasing layer only |
 | Agent evaluation harness | ✅ | **Cut** with the assistant | |
 | Community detection, similarity | designed | After M9 | |
 | Semantic / hybrid search | designed | After M9 | |
 | Second catalog source (Wikidata/Discogs) | designed | After M9 | YouTube Music would supply its own catalog |
-| Audio-feature comparison | – | **Cut** | no legally usable audio source; out of scope |
+| Audio-feature comparison | – | R2 (AcousticBrainz) | plan D15 |
 
 ## 14. Open questions for the sponsor
 

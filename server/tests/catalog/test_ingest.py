@@ -184,3 +184,28 @@ def test_a_catalog_failing_the_quality_gate_is_never_published(
         assert catalog_version(session) == good_version
         runs = session.scalars(select(m.IngestionRun).order_by(m.IngestionRun.id)).all()
     assert [r.status for r in runs] == ["succeeded", "failed"]
+
+
+def test_cli_reports_a_rejected_catalog_cleanly(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from songnexus import cli
+    from songnexus.config import get_settings
+
+    broken = fx.release_record(
+        "rel-bad",
+        "rg-bad",
+        "Broken",
+        fx.credit(("mb-alice", "Alice", "")),
+        [fx.recording("rec-bad", "Nobody's Song", [])],
+    )
+    snapshot = _snapshot(tmp_path, [*fx.small_catalog(), broken])
+    monkeypatch.setenv("SONGNEXUS_DATABASE_URL", f"sqlite:///{tmp_path / 'cli.db'}")
+    get_settings.cache_clear()
+    try:
+        assert cli.main(["ingest", "--snapshot", str(snapshot)]) == cli.EXIT_FAILED
+    finally:
+        get_settings.cache_clear()
+    err = capsys.readouterr().err
+    assert "Ingest rejected" in err
+    assert "Traceback" not in err
