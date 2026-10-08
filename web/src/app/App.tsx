@@ -3,6 +3,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {lazy, Suspense, useEffect, useState, type ReactNode} from 'react';
 import {
   createBrowserRouter,
+  redirect,
   RouterProvider,
   type RouteObject,
 } from 'react-router';
@@ -18,6 +19,7 @@ import {NotFoundScreen} from '../screens/NotFoundScreen';
 import {RouteError} from './RouteError';
 import {Shell} from './Shell';
 import {ThemeSync} from './theme';
+import {legacyDestination} from './legacyLinks';
 
 const ArtistScreen = lazy(() => import('../screens/ArtistScreen'));
 const ExploreScreen = lazy(() => import('../screens/ExploreScreen'));
@@ -28,6 +30,7 @@ const YouScreen = lazy(() => import('../screens/YouScreen'));
 const AboutScreen = lazy(() => import('../screens/AboutScreen'));
 const PrivacyScreen = lazy(() => import('../screens/PrivacyScreen'));
 const LibraryScreen = lazy(() => import('../screens/LibraryScreen'));
+const PlayScreen = lazy(() => import('../screens/PlayScreen'));
 
 function Lazy({children}: {children: ReactNode}) {
   return <Suspense fallback={<Spinner />}>{children}</Suspense>;
@@ -38,7 +41,14 @@ export const routes: RouteObject[] = [
     element: <Shell />,
     errorElement: <RouteError />,
     children: [
-      {index: true, element: <HomeScreen />},
+      {
+        index: true,
+        element: <HomeScreen />,
+        loader: ({request}) => {
+          const destination = legacyDestination(new URL(request.url).search);
+          return destination ? redirect(destination) : null;
+        },
+      },
       {
         path: 'artist/:id',
         element: (
@@ -84,6 +94,14 @@ export const routes: RouteObject[] = [
         element: (
           <Lazy>
             <SongScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'play',
+        element: (
+          <Lazy>
+            <PlayScreen />
           </Lazy>
         ),
       },

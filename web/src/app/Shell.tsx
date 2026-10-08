@@ -27,6 +27,7 @@ const NAV: NavEntry[] = [
     icon: 'route',
     flag: 'sixDegrees',
   },
+  {to: '/play', label: 'nav.play', icon: 'play', flag: 'play'},
   {
     to: '/library',
     label: 'nav.library',

@@ -327,6 +327,59 @@ export const messages = {
   'analysis.links':
     '{count, plural, =0 {No artists here worked together directly.} one {# pair worked together directly.} other {# pairs worked together directly.}}',
 
+  // Play (US-04)
+  'play.title': 'Daily puzzle',
+  'play.archive': 'Puzzle archive',
+  'play.date': 'Puzzle date',
+  'play.previous': 'Previous day',
+  'play.nextDay': 'Next day',
+  'play.today': 'Today',
+  'play.invalidDate':
+    'That puzzle date is unavailable. Showing today’s puzzle.',
+  'play.hint.empty':
+    'No closer connection is available. Try going back a step.',
+  'play.shareFailed': 'Could not share. You can copy the result text instead.',
+  'play.stats': 'Your stats',
+  'play.stats.played': 'Played',
+  'play.stats.winRate': 'Win rate',
+  'play.stats.perfect': 'At par or better',
+  'play.stats.currentStreak': 'Current streak',
+  'play.stats.maxStreak': 'Best streak',
+  'play.stats.note':
+    'Saved on this device. Archive wins count toward totals; streaks count puzzles won on their own day.',
+  'play.number': 'Puzzle #{number}',
+  'play.goal': 'Get from {start} to {target}, one collaboration at a time.',
+  'play.par': 'Par {par}',
+  'play.rules':
+    'Name an artist who worked directly with the current one. Each step shows the credit that connects them.',
+  'play.current': 'You’re at {name}',
+  'play.stepsLeft':
+    '{count, plural, =0 {You made it!} one {# step to go} other {# steps to go}}',
+  'play.noRoute':
+    'No route to {target} from here within 8 steps. Try going back.',
+  'play.next': 'Who worked with {name}?',
+  'play.miss': '{name} isn’t directly connected to {current} in our data.',
+  'play.move.closer': 'Closer',
+  'play.move.same': 'Same distance',
+  'play.move.farther': 'Farther',
+  'play.undo': 'Go back a step',
+  'play.hint': 'Hint',
+  'play.hint.lead': 'One of these gets you closer:',
+  'play.giveUp': 'Show the answer',
+  'play.won':
+    'Solved in {count, plural, one {# step} other {# steps}} (par {par}).',
+  'play.gaveUp': 'Here’s a shortest route:',
+  'play.share.won':
+    '{steps, plural, one {# step} other {# steps}} (par {par}){misses, plural, =0 {} one { · # miss} other { · # misses}}{hints, plural, =0 {} one { · # hint} other { · # hints}}',
+  'play.share.gaveUp':
+    'Gave up after {steps, plural, one {# step} other {# steps}} (par {par})',
+  'play.share': 'Share result',
+  'play.shareCopied': 'Result copied',
+  'play.blocked':
+    'Today’s puzzle includes an artist you hid. The puzzle is the same for everyone, so you may want to skip it today.',
+  'play.comeBack': 'A new puzzle arrives at midnight.',
+  'home.playCard.cta': 'Play today’s puzzle',
+
   // Pages
   'about.title': 'About our data',
   'privacy.title': 'Privacy',

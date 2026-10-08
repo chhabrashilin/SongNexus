@@ -233,6 +233,109 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/puzzles/{date}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetDailyPuzzle
+         * @description Returns the puzzle for a local date: the same for every player.
+         */
+        get: operations["GetDailyPuzzle"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/puzzles/{date}:checkMove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * CheckMove
+         * @description Checks one step. A wrong step reveals nothing about the puzzle (AC-4.2).
+         */
+        post: operations["CheckMove"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/puzzles/{date}:hint": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * GetHint
+         * @description Suggests three next steps, one of them closer. Never suggests blocked artists.
+         */
+        post: operations["GetHint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/puzzles/{date}:reveal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * RevealPuzzle
+         * @description Returns a shortest solution with its evidence and sources.
+         */
+        get: operations["RevealPuzzle"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/puzzles:share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * ReportPuzzleShare
+         * @description Emits one aggregate counter event, without player or puzzle identifiers.
+         *
+         *     Count these structured events across instances in Cloud Logging. This is a
+         *     best-effort count of successful share actions, not unique players.
+         */
+        post: operations["ReportPuzzleShare"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/recordings/{recording}": {
         parameters: {
             query?: never;
@@ -604,6 +707,43 @@ export interface components {
             name: string;
         };
         /**
+         * CheckMoveRequest
+         * @description CheckMove: is ``to`` directly connected to ``from``?
+         */
+        CheckMoveRequest: {
+            /**
+             * Fromartist
+             * @description Resource name of the current artist.
+             */
+            fromArtist: string;
+            /**
+             * Toartist
+             * @description Resource name of the artist the player named.
+             */
+            toArtist: string;
+        };
+        /**
+         * CheckMoveResponse
+         * @description A correct move shows its evidence and the steps left; a wrong move reveals nothing.
+         */
+        CheckMoveResponse: {
+            artist: components["schemas"]["ArtistSummary"] | null;
+            /** Connected */
+            connected: boolean;
+            /** Evidence */
+            evidence: components["schemas"]["Evidence"][];
+            /**
+             * Reachedtarget
+             * @default false
+             */
+            reachedTarget: boolean;
+            /**
+             * Stepstotarget
+             * @description Steps left after this move; null if far or unreachable.
+             */
+            stepsToTarget: number | null;
+        };
+        /**
          * Cohesion
          * @description The share of matched artist pairs within 2 steps of each other.
          */
@@ -889,6 +1029,22 @@ export interface components {
             catalogLoaded: boolean;
             /** Status */
             status: string;
+        };
+        /**
+         * HintRequest
+         * @description GetHint.
+         */
+        HintRequest: {
+            /** Fromartist */
+            fromArtist: string;
+        };
+        /**
+         * HintResponse
+         * @description Three connections of the current artist, at least one closer to the target.
+         */
+        HintResponse: {
+            /** Candidates */
+            candidates: components["schemas"]["ArtistSummary"][];
         };
         /**
          * Limits
@@ -1188,6 +1344,33 @@ export interface components {
             visibility: components["schemas"]["Visibility"];
         };
         /**
+         * Puzzle
+         * @description GetDailyPuzzle: the same puzzle for every player on a date.
+         */
+        Puzzle: {
+            /** Date */
+            date: string;
+            /** Graphversion */
+            graphVersion: string;
+            /**
+             * Name
+             * @description `puzzles/{date}`, the player's local date (YYYY-MM-DD).
+             */
+            name: string;
+            /**
+             * Number
+             * @description 1 on the launch day.
+             */
+            number: number;
+            /**
+             * Par
+             * @description Steps in the shortest connection (3 or 4).
+             */
+            par: number;
+            start: components["schemas"]["ArtistSummary"];
+            target: components["schemas"]["ArtistSummary"];
+        };
+        /**
          * Recording
          * @description GetRecording.
          */
@@ -1206,6 +1389,16 @@ export interface components {
             name: string;
             /** Sources */
             sources: components["schemas"]["SourceLink"][];
+        };
+        /**
+         * RevealResponse
+         * @description RevealPuzzle: a shortest solution, with evidence for every step.
+         */
+        RevealResponse: {
+            /** Graphversion */
+            graphVersion: string;
+            /** Steps */
+            steps: components["schemas"]["PathStep"][];
         };
         /**
          * SearchCatalogResponse
@@ -1725,6 +1918,165 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["AnalyzePlaylistResponse"];
                 };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetDailyPuzzle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Puzzle"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    CheckMove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckMoveRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckMoveResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetHint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HintRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HintResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    RevealPuzzle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevealResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ReportPuzzleShare: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
             default: {

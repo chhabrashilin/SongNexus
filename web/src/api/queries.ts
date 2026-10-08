@@ -337,3 +337,50 @@ export function useAnalyzePlaylist() {
       ),
   });
 }
+
+// ---------------------------------------------------------------------------
+// Play (US-04)
+// ---------------------------------------------------------------------------
+
+export function usePuzzle(date: string) {
+  return useQuery({
+    queryKey: ['puzzle', date],
+    queryFn: () =>
+      unwrap(api.GET('/v1/puzzles/{date}', {params: {path: {date}}})),
+    staleTime: 5 * MINUTE,
+  });
+}
+
+/** Best-effort aggregate share action; the response deliberately has no body. */
+export async function reportPuzzleShare(): Promise<void> {
+  const result = await api.POST('/v1/puzzles:share', {credentials: 'omit'});
+  if (!result.response.ok) throw new Error('Share reporting failed');
+}
+
+export function checkMove(date: string, fromArtist: string, toArtist: string) {
+  return unwrap(
+    api.POST('/v1/puzzles/{date}:checkMove', {
+      params: {path: {date}},
+      body: {fromArtist, toArtist},
+    }),
+  );
+}
+
+export function getHint(date: string, fromArtist: string) {
+  return unwrap(
+    api.POST('/v1/puzzles/{date}:hint', {
+      params: {path: {date}},
+      body: {fromArtist},
+    }),
+  );
+}
+
+export function useReveal(date: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ['puzzle', date, 'reveal'],
+    queryFn: () =>
+      unwrap(api.GET('/v1/puzzles/{date}:reveal', {params: {path: {date}}})),
+    enabled,
+    staleTime: 5 * MINUTE,
+  });
+}

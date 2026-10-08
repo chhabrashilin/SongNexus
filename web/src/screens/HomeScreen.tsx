@@ -1,6 +1,7 @@
 /** Home: what SongNexus is, a search, the main surfaces, and recently viewed artists. */
 import {Link, useNavigate} from 'react-router';
 
+import {useConfigFlags} from '../app/flags';
 import {usePageTitle} from '../app/Shell';
 import {useRecentArtists} from '../app/recent';
 import {ArtistRow} from '../components/ArtistRow';
@@ -14,7 +15,15 @@ const SURFACES: {
   icon: IconName;
   title: MessageId;
   body: MessageId;
+  flag?: string;
 }[] = [
+  {
+    to: '/play',
+    icon: 'play',
+    title: 'home.playCard.title',
+    body: 'home.playCard.body',
+    flag: 'play',
+  },
   {
     to: '/six-degrees',
     icon: 'route',
@@ -33,6 +42,7 @@ export function HomeScreen() {
   const {t} = useI18n();
   const navigate = useNavigate();
   const recent = useRecentArtists();
+  const flags = useConfigFlags();
   usePageTitle(undefined);
 
   return (
@@ -53,26 +63,31 @@ export function HomeScreen() {
 
       <section className="section" aria-label={t('nav.primary')}>
         <div className="row" style={{alignItems: 'stretch'}}>
-          {SURFACES.map(surface => (
-            <Link
-              key={surface.to}
-              to={surface.to}
-              className="card"
-              style={{
-                flex: '1 1 260px',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              <div className="row" style={{color: 'var(--md-primary)'}}>
-                <Icon name={surface.icon} />
-                <h2>{t(surface.title)}</h2>
-              </div>
-              <p className="muted" style={{marginBlockStart: 'var(--space-2)'}}>
-                {t(surface.body)}
-              </p>
-            </Link>
-          ))}
+          {SURFACES.filter(s => !s.flag || flags[s.flag] !== false).map(
+            surface => (
+              <Link
+                key={surface.to}
+                to={surface.to}
+                className="card"
+                style={{
+                  flex: '1 1 260px',
+                  color: 'inherit',
+                  textDecoration: 'none',
+                }}
+              >
+                <div className="row" style={{color: 'var(--md-primary)'}}>
+                  <Icon name={surface.icon} />
+                  <h2>{t(surface.title)}</h2>
+                </div>
+                <p
+                  className="muted"
+                  style={{marginBlockStart: 'var(--space-2)'}}
+                >
+                  {t(surface.body)}
+                </p>
+              </Link>
+            ),
+          )}
         </div>
       </section>
 
