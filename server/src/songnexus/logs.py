@@ -56,3 +56,5 @@ def configure_logging(level: str = "INFO", *, json_output: bool = True) -> None:
     root = logging.getLogger()
     root.handlers[:] = [handler]
     root.setLevel(level)
+    # Alembic announces each internal plugin at INFO; the migrations themselves stay visible.
+    logging.getLogger("alembic.runtime.plugins").setLevel(logging.WARNING)

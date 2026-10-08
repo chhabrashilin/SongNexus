@@ -37,7 +37,7 @@ Needs Python tooling [uv](https://docs.astral.sh/uv/) and Node 22. No database s
 cd server
 uv sync
 cp .env.example .env
-uv run songnexus ingest          # ~20 s; rejects the catalog if a quality check fails
+uv run songnexus ingest          # under a minute; rejects the catalog if a quality check fails
 uv run songnexus serve --reload
 
 # Web app, in a second terminal: http://localhost:5173 (proxies /v1 to the API)
