@@ -58,7 +58,8 @@ def test_health_and_config(client: TestClient) -> None:
     assert client.get("/healthz").json() == {"status": "ok", "catalogLoaded": True}
     config = client.get("/v1/config").json()
     assert config["flags"]["sixDegrees"] is True
-    assert config["flags"]["play"] is False  # QA Q12: not shipped yet
+    assert all(isinstance(v, bool) for v in config["flags"].values())
+    assert config["flags"]["play"] is True
     assert config["limits"] == {
         "maxQueryLength": 120,
         "maxPathSteps": 6,
@@ -348,3 +349,28 @@ def test_playlist_contents_never_reach_the_logs(
         secret not in record.getMessage() and secret not in str(record.__dict__)
         for record in caplog.records
     )
+
+
+def test_every_path_parameter_excludes_colons(client: TestClient) -> None:
+    """Custom methods (`x:verb`) only route correctly if `{param}` can't swallow `:verb`.
+
+    The default converter matches colons, which twice sent custom-method calls to the
+    wrong handler (users/me:export, puzzles/{date}:reveal). Every parameter must use `rid`.
+    """
+    import re
+
+    from fastapi.routing import APIRoute
+
+    def api_routes(routes: Any) -> Iterator[APIRoute]:
+        for route in routes:
+            if isinstance(route, APIRoute):
+                yield route
+            elif hasattr(route, "original_router"):  # an included router
+                yield from api_routes(route.original_router.routes)
+
+    app: Any = client.app  # TestClient types it as a bare ASGI callable
+    found = list(api_routes(app.routes))
+    assert len(found) > 20, "the walk must reach the API routes, or this test checks nothing"
+    for route in found:
+        for param in re.findall(r"\{([^}]+)\}", route.path):
+            assert param.endswith(":rid"), f"{route.path}: use {{{param.split(':')[0]}:rid}}"

@@ -70,6 +70,21 @@ class ResolutionCache:
         return [replace(known[key], mention=name) for name, key in zip(names, keys, strict=True)]
 
 
+class Memo:
+    """Values derived from one read model, computed once on first use (thread-safe)."""
+
+    def __init__(self) -> None:
+        self._values: dict[str, object] = {}
+        self._lock = threading.Lock()
+
+    def get[T](self, key: str, compute: Callable[[], T]) -> T:
+        """Returns the cached value for ``key``, computing it under the lock once."""
+        with self._lock:
+            if key not in self._values:
+                self._values[key] = compute()
+            return self._values[key]  # type: ignore[return-value]
+
+
 @dataclass(frozen=True)
 class ReadModel:
     """Everything request handlers read, for one catalog version."""
@@ -78,6 +93,7 @@ class ReadModel:
     graph: ArtistGraph
     search: SearchIndex
     resolutions: ResolutionCache = field(default_factory=ResolutionCache)
+    memo: Memo = field(default_factory=Memo)
 
 
 def _subtitle(entry: SearchEntry) -> str:

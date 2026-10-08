@@ -370,6 +370,79 @@
         "title": "BlockedArtist",
         "type": "object"
       },
+      "CheckMoveRequest": {
+        "description": "CheckMove: is ``to`` directly connected to ``from``?",
+        "properties": {
+          "fromArtist": {
+            "description": "Resource name of the current artist.",
+            "title": "Fromartist",
+            "type": "string"
+          },
+          "toArtist": {
+            "description": "Resource name of the artist the player named.",
+            "title": "Toartist",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fromArtist",
+          "toArtist"
+        ],
+        "title": "CheckMoveRequest",
+        "type": "object"
+      },
+      "CheckMoveResponse": {
+        "description": "A correct move shows its evidence and the steps left; a wrong move reveals nothing.",
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ArtistSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "connected": {
+            "title": "Connected",
+            "type": "boolean"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "reachedTarget": {
+            "default": false,
+            "title": "Reachedtarget",
+            "type": "boolean"
+          },
+          "stepsToTarget": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Steps left after this move; null if far or unreachable.",
+            "title": "Stepstotarget"
+          }
+        },
+        "required": [
+          "connected",
+          "artist",
+          "evidence",
+          "stepsToTarget",
+          "reachedTarget"
+        ],
+        "title": "CheckMoveResponse",
+        "type": "object"
+      },
       "Cohesion": {
         "description": "The share of matched artist pairs within 2 steps of each other.",
         "properties": {
@@ -1001,6 +1074,37 @@
         "title": "Health",
         "type": "object"
       },
+      "HintRequest": {
+        "description": "GetHint.",
+        "properties": {
+          "fromArtist": {
+            "title": "Fromartist",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fromArtist"
+        ],
+        "title": "HintRequest",
+        "type": "object"
+      },
+      "HintResponse": {
+        "description": "Three connections of the current artist, at least one closer to the target.",
+        "properties": {
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Candidates",
+            "type": "array"
+          }
+        },
+        "required": [
+          "candidates"
+        ],
+        "title": "HintResponse",
+        "type": "object"
+      },
       "Limits": {
         "description": "Request limits clients should respect (plan §14).",
         "properties": {
@@ -1579,6 +1683,51 @@
         "title": "Profile",
         "type": "object"
       },
+      "Puzzle": {
+        "description": "GetDailyPuzzle: the same puzzle for every player on a date.",
+        "properties": {
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "name": {
+            "description": "`puzzles/{date}`, the player's local date (YYYY-MM-DD).",
+            "title": "Name",
+            "type": "string"
+          },
+          "number": {
+            "description": "1 on the launch day.",
+            "title": "Number",
+            "type": "integer"
+          },
+          "par": {
+            "description": "Steps in the shortest connection (3 or 4).",
+            "title": "Par",
+            "type": "integer"
+          },
+          "start": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "target": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          }
+        },
+        "required": [
+          "name",
+          "number",
+          "date",
+          "start",
+          "target",
+          "par",
+          "graphVersion"
+        ],
+        "title": "Puzzle",
+        "type": "object"
+      },
       "Recording": {
         "description": "GetRecording.",
         "properties": {
@@ -1644,6 +1793,28 @@
           "sources"
         ],
         "title": "Recording",
+        "type": "object"
+      },
+      "RevealResponse": {
+        "description": "RevealPuzzle: a shortest solution, with evidence for every step.",
+        "properties": {
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/PathStep"
+            },
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "steps",
+          "graphVersion"
+        ],
+        "title": "RevealResponse",
         "type": "object"
       },
       "SearchCatalogResponse": {
@@ -2636,6 +2807,223 @@
         "summary": "AnalyzePlaylist",
         "tags": [
           "analysis"
+        ]
+      }
+    },
+    "/v1/puzzles/{date}": {
+      "get": {
+        "description": "Returns the puzzle for a local date: the same for every player.",
+        "operationId": "GetDailyPuzzle",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Puzzle"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetDailyPuzzle",
+        "tags": [
+          "play"
+        ]
+      }
+    },
+    "/v1/puzzles/{date}:checkMove": {
+      "post": {
+        "description": "Checks one step. A wrong step reveals nothing about the puzzle (AC-4.2).",
+        "operationId": "CheckMove",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckMoveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckMoveResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CheckMove",
+        "tags": [
+          "play"
+        ]
+      }
+    },
+    "/v1/puzzles/{date}:hint": {
+      "post": {
+        "description": "Suggests three next steps, one of them closer. Never suggests blocked artists.",
+        "operationId": "GetHint",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HintRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HintResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetHint",
+        "tags": [
+          "play"
+        ]
+      }
+    },
+    "/v1/puzzles/{date}:reveal": {
+      "get": {
+        "description": "Returns a shortest solution with its evidence and sources.",
+        "operationId": "RevealPuzzle",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevealResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "RevealPuzzle",
+        "tags": [
+          "play"
+        ]
+      }
+    },
+    "/v1/puzzles:share": {
+      "post": {
+        "description": "Emits one aggregate counter event, without player or puzzle identifiers.\n\nCount these structured events across instances in Cloud Logging. This is a\nbest-effort count of successful share actions, not unique players.",
+        "operationId": "ReportPuzzleShare",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ReportPuzzleShare",
+        "tags": [
+          "play"
         ]
       }
     },

@@ -588,3 +588,58 @@ class AnalyzePlaylistResponse(ApiModel):
     links: list[PlaylistLink]
     thread: PlaylistThread
     graph_version: str
+
+
+# ---------------------------------------------------------------------------
+# Play: the daily puzzle (US-04)
+# ---------------------------------------------------------------------------
+
+
+class Puzzle(ApiModel):
+    """GetDailyPuzzle: the same puzzle for every player on a date."""
+
+    name: str = Field(description="`puzzles/{date}`, the player's local date (YYYY-MM-DD).")
+    number: int = Field(description="1 on the launch day.")
+    date: str
+    start: ArtistSummary
+    target: ArtistSummary
+    par: int = Field(description="Steps in the shortest connection (3 or 4).")
+    graph_version: str
+
+
+class CheckMoveRequest(ApiModel):
+    """CheckMove: is ``to`` directly connected to ``from``?"""
+
+    from_artist: str = Field(description="Resource name of the current artist.")
+    to_artist: str = Field(description="Resource name of the artist the player named.")
+
+
+class CheckMoveResponse(ApiModel):
+    """A correct move shows its evidence and the steps left; a wrong move reveals nothing."""
+
+    connected: bool
+    artist: ArtistSummary | None = None
+    evidence: list[Evidence] = Field(default_factory=list)
+    steps_to_target: int | None = Field(
+        default=None, description="Steps left after this move; null if far or unreachable."
+    )
+    reached_target: bool = False
+
+
+class HintRequest(ApiModel):
+    """GetHint."""
+
+    from_artist: str
+
+
+class HintResponse(ApiModel):
+    """Three connections of the current artist, at least one closer to the target."""
+
+    candidates: list[ArtistSummary]
+
+
+class RevealResponse(ApiModel):
+    """RevealPuzzle: a shortest solution, with evidence for every step."""
+
+    steps: list[PathStep]
+    graph_version: str

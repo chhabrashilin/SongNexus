@@ -17,10 +17,8 @@ DEFAULT_FLAGS: Mapping[str, bool] = MappingProxyType(
         "sixDegrees": True,
         "collaborations": True,
         "compare": True,
-        "labelMates": False,
-        # Off until its screen ships (M7): the client never offers a surface that
-        # doesn't exist.
-        "play": False,
+        "labelMates": True,  # the LABELS category; off by default in filters
+        "play": True,
         "playlistImport": True,
         "signIn": True,
     }
