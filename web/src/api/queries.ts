@@ -319,3 +319,21 @@ export function useUpdateProfile() {
     onError: () => queryClient.invalidateQueries({queryKey: ['me', 'profile']}),
   });
 }
+
+// ---------------------------------------------------------------------------
+// Playlist analysis (US-10)
+// ---------------------------------------------------------------------------
+
+export type PlaylistAnalysis = Schemas['AnalyzePlaylistResponse'];
+
+/** Sends artist names only: titles aren't needed for the analysis, so they stay on the device. */
+export function useAnalyzePlaylist() {
+  return useMutation({
+    mutationFn: (artistsPerTrack: string[][]) =>
+      unwrap(
+        api.POST('/v1/playlists:analyze', {
+          body: {tracks: artistsPerTrack.map(artists => ({artists}))},
+        }),
+      ),
+  });
+}

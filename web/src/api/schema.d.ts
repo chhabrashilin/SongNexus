@@ -208,6 +208,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/playlists:analyze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * AnalyzePlaylist
+         * @description Matches a playlist's artists, then measures how they connect.
+         *
+         *     Receives track titles and artist names only (files are parsed on the
+         *     device) and stores nothing. A name may be ``artists/{artist}`` when the user
+         *     picked one of several candidates. Blocked artists never serve as hidden
+         *     links or as steps on the thread.
+         */
+        post: operations["AnalyzePlaylist"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/recordings/{recording}": {
         parameters: {
             query?: never;
@@ -448,6 +473,32 @@ export interface components {
             locale: string | null;
         };
         /**
+         * AnalyzePlaylistRequest
+         * @description AnalyzePlaylist. Raw files never leave the device; only names and titles are sent.
+         */
+        AnalyzePlaylistRequest: {
+            /** Categories */
+            categories?: components["schemas"]["ConnectionCategory"][];
+            /** Tracks */
+            tracks: components["schemas"]["PlaylistTrack"][];
+        };
+        /**
+         * AnalyzePlaylistResponse
+         * @description AnalyzePlaylist.
+         */
+        AnalyzePlaylistResponse: {
+            /** Artists */
+            artists: components["schemas"]["PlaylistArtist"][];
+            cohesion: components["schemas"]["Cohesion"];
+            /** Connectors */
+            connectors: components["schemas"]["PlaylistConnector"][];
+            /** Graphversion */
+            graphVersion: string;
+            /** Links */
+            links: components["schemas"]["PlaylistLink"][];
+            thread: components["schemas"]["PlaylistThread"];
+        };
+        /**
          * Appearance
          * @description A release a recording appears on.
          */
@@ -551,6 +602,21 @@ export interface components {
              * @description `users/{user}/blockedArtists/{artist}`.
              */
             name: string;
+        };
+        /**
+         * Cohesion
+         * @description The share of matched artist pairs within 2 steps of each other.
+         */
+        Cohesion: {
+            /** Pairs */
+            pairs: number;
+            /** Pairswithintwo */
+            pairsWithinTwo: number;
+            /**
+             * Score
+             * @description Null with fewer than two matched artists.
+             */
+            score: number | null;
         };
         /**
          * Collaboration
@@ -917,6 +983,12 @@ export interface components {
             totalSize: number;
         };
         /**
+         * MatchStatus
+         * @description How an artist name from the playlist was matched.
+         * @enum {string}
+         */
+        MatchStatus: "MATCHED" | "AMBIGUOUS" | "NO_MATCH";
+        /**
          * PathMode
          * @description How FindPath ranks routes.
          * @enum {string}
@@ -939,6 +1011,83 @@ export interface components {
             /** Strength */
             strength: number;
             toArtist: components["schemas"]["ArtistSummary"];
+        };
+        /**
+         * PlaylistArtist
+         * @description One distinct artist name from the playlist and what it matched.
+         */
+        PlaylistArtist: {
+            artist: components["schemas"]["ArtistSummary"] | null;
+            /**
+             * Blocked
+             * @default false
+             */
+            blocked: boolean;
+            /**
+             * Candidates
+             * @description For AMBIGUOUS: who it might be, best first.
+             */
+            candidates: components["schemas"]["ArtistSummary"][];
+            /** Query */
+            query: string;
+            status: components["schemas"]["MatchStatus"];
+            /** Trackcount */
+            trackCount: number;
+        };
+        /**
+         * PlaylistConnector
+         * @description A hidden link: an artist outside the playlist connected to several in it.
+         */
+        PlaylistConnector: {
+            artist: components["schemas"]["ArtistSummary"];
+            /**
+             * Linkedto
+             * @description Resource names of the playlist artists it links.
+             */
+            linkedTo: string[];
+            /** Score */
+            score: number;
+        };
+        /**
+         * PlaylistLink
+         * @description A direct connection between two playlist artists.
+         */
+        PlaylistLink: {
+            /** Artista */
+            artistA: string;
+            /** Artistb */
+            artistB: string;
+            /** Strength */
+            strength: number;
+        };
+        /**
+         * PlaylistThread
+         * @description Shortest paths between consecutive playlist artists, joined.
+         */
+        PlaylistThread: {
+            /** Artists */
+            artists: components["schemas"]["ArtistSummary"][];
+            /**
+             * Breaks
+             * @description Consecutive pairs with no path within the step limit.
+             */
+            breaks: number;
+        };
+        /**
+         * PlaylistTrack
+         * @description A track as the device parsed it: a title and its artist names, nothing else.
+         */
+        PlaylistTrack: {
+            /**
+             * Artists
+             * @description Artist names as written, or `artists/{artist}` for a choice the user made.
+             */
+            artists: string[];
+            /**
+             * Title
+             * @default
+             */
+            title?: string;
         };
         /**
          * Preferences
@@ -1542,6 +1691,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ListGenresResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    AnalyzePlaylist: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnalyzePlaylistRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyzePlaylistResponse"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */

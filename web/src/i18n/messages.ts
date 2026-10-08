@@ -256,6 +256,77 @@ export const messages = {
   'block.done': '{name} hidden',
   'block.undone': '{name} shown again',
 
+  // Library and import (US-10, US-08)
+  'library.title': 'Library',
+  'library.lead': 'Map your playlists and listening history.',
+  'library.privacy.title': 'Your files stay on this device',
+  'library.privacy.body':
+    'We read your export in this browser. To match artists we send their names, and nothing else: no titles, no times, no account details. Nothing is stored.',
+  'library.howTo': 'How to get your data',
+  'library.howTo.spotify':
+    'Spotify: Account → Privacy settings → Download your data. Use the ZIP you receive (Playlist and StreamingHistory files).',
+  'library.howTo.youtube':
+    'YouTube Music: Google Takeout → select YouTube and YouTube Music → history in JSON format.',
+  'library.howTo.listenbrainz': 'ListenBrainz: Settings → Export listens.',
+  'library.howTo.csv':
+    'Any CSV with an "Artist" column, for example from Exportify.',
+  'library.choose': 'Choose files',
+  'library.drop': 'or drop ZIP, JSON or CSV files here',
+  'library.reading': 'Reading {current}',
+  'library.readProgress': '{done} of {total} files',
+  'library.cancel': 'Cancel',
+  'library.failed':
+    'The import stopped unexpectedly. Try again with fewer files.',
+  'library.files': 'Files',
+  'library.reject.unsupportedType':
+    'Unsupported file type. Use the JSON, CSV or ZIP from your export.',
+  'library.reject.invalidJson': 'This file is not valid JSON.',
+  'library.reject.notListening':
+    'This JSON file isn’t a listening export we recognize.',
+  'library.reject.noArtistColumn':
+    'No artist column found. Expected a header like “Artist” or “Artist Name(s)”.',
+  'library.reject.damaged': 'This file couldn’t be read. It may be damaged.',
+  'library.reject.tooLarge': 'This file is over 100 MB.',
+  'library.reject.importTooLarge':
+    'These files together are over 500 MB. Import fewer at a time.',
+  'library.reject.zipEmpty': 'This ZIP has no listening files in it.',
+  'library.reject.zipDamaged':
+    'This ZIP couldn’t be opened. It may be damaged.',
+  'library.file.playlists':
+    '{count, plural, one {# playlist} other {# playlists}}',
+  'library.file.artists':
+    'Listening history: {count, plural, one {# artist} other {# artists}}',
+  'library.playlists': 'Playlists',
+  'library.playlist.tracks': '{count, plural, one {# track} other {# tracks}}',
+  'library.analyze': 'Map this playlist',
+  'library.yourArtists': 'Your artists',
+  'library.yourArtists.lead': 'Most listened first, from your history.',
+  'library.match': 'Find them in our catalog',
+  'library.matchedOf': '{matched} of {total} found in our data',
+  'library.top5.suggest': 'Use these as my Top 5',
+  'library.top5.saved': 'Top 5 saved',
+  'library.top5.signIn': 'Sign in to save a Top 5.',
+  'analysis.title': 'How “{name}” connects',
+  'analysis.cohesion': 'Cohesion {percent, number, ::percent}',
+  'analysis.cohesion.help':
+    'The share of artist pairs in this playlist that are at most 2 steps apart.',
+  'analysis.cohesion.none': 'Cohesion needs at least two artists we know.',
+  'analysis.found': '{matched} of {total} artists found in our data',
+  'analysis.ambiguous': 'Which one did you mean?',
+  'analysis.ambiguous.pick': 'Use {name}',
+  'analysis.notFound': 'Not in our data yet: {names}',
+  'analysis.connectors': 'Hidden links',
+  'analysis.connectors.lead':
+    'Artists outside your playlist who link several in it.',
+  'analysis.connectors.none':
+    'No hidden links between these artists in our data yet.',
+  'analysis.connector.links': 'Links {names}',
+  'analysis.thread': 'The thread through your mix',
+  'analysis.thread.breaks':
+    '{count, plural, one {# gap} other {# gaps}}: some neighbors aren’t connected within 4 steps.',
+  'analysis.links':
+    '{count, plural, =0 {No artists here worked together directly.} one {# pair worked together directly.} other {# pairs worked together directly.}}',
+
   // Pages
   'about.title': 'About our data',
   'privacy.title': 'Privacy',

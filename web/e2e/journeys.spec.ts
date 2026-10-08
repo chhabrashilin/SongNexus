@@ -153,3 +153,58 @@ test('navigation moves focus to the new page (QA Q17)', async ({page}) => {
     page.getByRole('heading', {level: 1, name: 'About our data'}),
   ).toBeFocused();
 });
+
+test('a playlist export is mapped on the device, sending only artist names (US-10)', async ({
+  page,
+}) => {
+  await page.goto('/library');
+  await expect(
+    page.getByRole('heading', {name: 'Your files stay on this device'}),
+  ).toBeVisible();
+  await page
+    .locator('input[type=file]')
+    .setInputFiles('e2e/fixtures/Playlist1.json');
+  await expect(page.getByText('1 playlist')).toBeVisible();
+
+  const request = page.waitForRequest(r =>
+    r.url().includes('/v1/playlists:analyze'),
+  );
+  await page.getByRole('button', {name: 'Map this playlist'}).click();
+  const sent = (await request).postDataJSON() as {
+    tracks: {artists: string[]}[];
+  };
+  // AC-10.1: only artist names leave the device; no titles, albums or IDs.
+  expect(sent).toEqual({
+    tracks: [
+      {artists: ['Thundercat']},
+      {artists: ['Flying Lotus']},
+      {artists: ['SZA']},
+      {artists: ['Kendrick Lamar']},
+      {artists: ['Nobody In Our Catalog Zq']},
+    ],
+  });
+  expect(JSON.stringify(sent)).not.toContain('Private Track Title Zq');
+
+  await expect(page.getByText(/Cohesion \d+%/)).toBeVisible();
+  await expect(
+    page.getByText('4 of 5 artists found in our data'),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/Not in our data yet: Nobody In Our Catalog Zq/),
+  ).toBeVisible();
+  await expectAccessible(page);
+});
+
+test('unsupported files are listed with a reason (AC-10.3)', async ({page}) => {
+  await page.goto('/library');
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'notes.pdf',
+    mimeType: 'application/pdf',
+    buffer: Buffer.from('%PDF-1.4'),
+  });
+  await expect(
+    page.getByText(
+      'Unsupported file type. Use the JSON, CSV or ZIP from your export.',
+    ),
+  ).toBeVisible();
+});

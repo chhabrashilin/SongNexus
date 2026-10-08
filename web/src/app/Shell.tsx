@@ -27,6 +27,12 @@ const NAV: NavEntry[] = [
     icon: 'route',
     flag: 'sixDegrees',
   },
+  {
+    to: '/library',
+    label: 'nav.library',
+    icon: 'library',
+    flag: 'playlistImport',
+  },
   {to: '/you', label: 'nav.you', icon: 'person'},
 ];
 

@@ -27,6 +27,7 @@ const SongScreen = lazy(() => import('../screens/SongScreen'));
 const YouScreen = lazy(() => import('../screens/YouScreen'));
 const AboutScreen = lazy(() => import('../screens/AboutScreen'));
 const PrivacyScreen = lazy(() => import('../screens/PrivacyScreen'));
+const LibraryScreen = lazy(() => import('../screens/LibraryScreen'));
 
 function Lazy({children}: {children: ReactNode}) {
   return <Suspense fallback={<Spinner />}>{children}</Suspense>;
@@ -83,6 +84,14 @@ export const routes: RouteObject[] = [
         element: (
           <Lazy>
             <SongScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'library',
+        element: (
+          <Lazy>
+            <LibraryScreen />
           </Lazy>
         ),
       },

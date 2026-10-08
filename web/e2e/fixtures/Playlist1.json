@@ -1,0 +1,56 @@
+{
+ "playlists": [
+  {
+   "name": "Late night",
+   "lastModifiedDate": "2026-09-01",
+   "items": [
+    {
+     "track": {
+      "trackName": "Them Changes",
+      "artistName": "Thundercat",
+      "albumName": "Drunk",
+      "trackUri": "spotify:track:1"
+     }
+    },
+    {
+     "track": {
+      "trackName": "Never Catch Me",
+      "artistName": "Flying Lotus",
+      "albumName": "You're Dead!",
+      "trackUri": "spotify:track:2"
+     }
+    },
+    {
+     "track": {
+      "trackName": "Doves in the Wind",
+      "artistName": "SZA",
+      "albumName": "Ctrl",
+      "trackUri": "spotify:track:3"
+     }
+    },
+    {
+     "track": {
+      "trackName": "DNA.",
+      "artistName": "Kendrick Lamar",
+      "albumName": "DAMN.",
+      "trackUri": "spotify:track:4"
+     }
+    },
+    {
+     "track": {
+      "trackName": "Private Track Title Zq",
+      "artistName": "Nobody In Our Catalog Zq",
+      "albumName": "x",
+      "trackUri": "spotify:track:5"
+     }
+    },
+    {
+     "track": null,
+     "episode": {
+      "episodeName": "A podcast"
+     }
+    }
+   ]
+  }
+ ]
+}
