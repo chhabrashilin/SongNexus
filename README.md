@@ -20,8 +20,9 @@ tag `v0-prototype`.
 | M4 | Accounts: Google Sign-In, server sessions, preferences, blocks, Top 5, export, deletion | Done |
 | M5 | Web app: Home, Artist, Explore, Six degrees, Compare, Song, You | Done |
 | M6 | Playlist and history import on the device; playlist analysis | Done |
-| M7 | Play: daily puzzle, non-repeating cycles, archive, local stats and share links | Implemented; review pending |
-| M8–M9 | Hardening, demo and handoff | Next |
+| M7 | Play: daily puzzle, non-repeating cycles, archive, local stats and share links | Done |
+| M8 | Hardening: load test, i18n sweep, security and privacy reviews, SBOM, runbooks | Done locally; [launch review](docs/launch-review.md) lists what needs a GCP project or people |
+| M9 | Demo and handoff | Next |
 
 Quality gates cover server tests (including PostgreSQL in CI), web unit tests, and browser journeys on
 phone and desktop with accessibility scans; search MRR 1.0 (gate 0.95); import match precision 0.993 (gate 0.98).

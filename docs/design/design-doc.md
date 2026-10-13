@@ -258,8 +258,8 @@ Each milestone is a series of small, reviewed changes; nothing merges without te
 | **M4** | Identity and user data: sign-in, sessions, preferences, blocks, Top 5, export, deletion | Security test suite | Done; shareable profile and anonymous merge deferred (stretch) |
 | **M5** | Web surfaces: Home, Artist (CUJ-5), Explore, Six degrees, Compare, Song, You | E2E + axe on phone and desktop | Done |
 | **M6** | History and playlist import (CUJ-4), playlist analysis | Parser tests per format; match precision ≥ 0.98 | Done (precision 0.993); 2,000-artist latency budget missed, see docs/perf |
-| **M7** | Play: daily connection puzzle (CUJ-2) | Fairness, non-repeating schedule, archive, stats, share links and E2E solve; [details](../daily-puzzle.md) | Implemented; review pending |
-| **M8** | Hardening: load test, accessibility audit, i18n, privacy and security reviews | Budgets met or recorded; checklists complete | Next |
+| **M7** | Play: daily connection puzzle (CUJ-2) | Fairness, non-repeating schedule, archive, stats, share links and E2E solve; [details](../daily-puzzle.md) | Done |
+| **M8** | Hardening: load test, accessibility audit, i18n, privacy and security reviews | Budgets met or recorded; checklists complete | Done locally; manual accessibility pass, staging load test and legal review open ([launch review](../launch-review.md)) |
 | **M9** | Demo and handoff package | Sponsor sign-off | Next |
 
 ## 13. Feature tracker
