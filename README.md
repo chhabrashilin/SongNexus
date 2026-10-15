@@ -22,7 +22,7 @@ tag `v0-prototype`.
 | M6 | Playlist and history import on the device; playlist analysis | Done |
 | M7 | Play: daily puzzle, non-repeating cycles, archive, local stats and share links | Done |
 | M8 | Hardening: load test, i18n sweep, security and privacy reviews, SBOM, runbooks | Done locally; [launch review](docs/launch-review.md) lists what needs a GCP project or people |
-| M9 | Demo and handoff | Next |
+| M9 | Demo and handoff | Package, demo script and final measurements done; replacing `main` and deleting `plan.md` await a decision |
 
 Quality gates cover server tests (including PostgreSQL in CI), web unit tests, and browser journeys on
 phone and desktop with accessibility scans; search MRR 1.0 (gate 0.95); import match precision 0.993 (gate 0.98).
@@ -117,6 +117,7 @@ docs/     design/ · adr/ · engineering-standards.md · qa/ reviews · perf/ me
 - [Engineering standards](docs/engineering-standards.md): the bar every change meets
 - [Decisions](docs/adr/): what was decided, and why
 - [Deploying](docs/deploy.md): one-time GCP setup and releases (nothing is deployed until a project exists)
+- [Handoff package](docs/handoff/README.md): integration guide, evaluations, limitations; [demo script](docs/demo-script.md)
 
 ## Data and licensing
 

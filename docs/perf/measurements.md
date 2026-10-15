@@ -69,3 +69,11 @@ Reading the results:
 - The load test found no errors, no memory growth worth noting, and no endpoint above budget at one client.
 - Finding fixed while writing the test: puzzle and path methods use the stricter "analyze" rate limit (120/min per
   client); that is intended, and the script documents raising the limits for measurement.
+
+## 2026-10-15: Final measurements (M9-04)
+
+Re-run of the gates and budgets that can be measured locally; full table in
+[../handoff/evaluations.md](handoff/evaluations.md). Search MRR 1.000 (gate 0.95), import precision 0.993 (gate 0.98),
+catalog quality 15/15, core coverage 97 %, web initial JS **131.0 KB** gzip (was 129.4 KB on 2026-10-07; still within
+200 KB). Load numbers are unchanged from 2026-10-13. Not measurable without a deployed build or participants: LCP,
+connection-web frame rate, a real 100 MB import, and SUS.
