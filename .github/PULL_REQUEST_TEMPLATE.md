@@ -1,5 +1,5 @@
 ## What and why
-<!-- One paragraph. Link the change ID from plan.md / the issue, e.g. "M1-03". -->
+<!-- One paragraph. Link the change ID or the issue, e.g. "M1-03". -->
 
 ## How it was tested
 <!-- Commands run, new tests, screenshots for UI at 390 px and 1440 px. -->

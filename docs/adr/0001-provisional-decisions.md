@@ -2,7 +2,7 @@
 
 - **Status:** Accepted *provisionally*, 2026-10-07. The team adopted the plan's recommendations so building could
   start. Any decision can be reopened at the design review; a reversal gets its own ADR.
-- **Context:** `plan.md` §6 lists 18 decisions that block work. None had been answered when building began.
+- **Context:** the build plan (§6, tag `plan-rev3`) listed 18 decisions that block work. None had been answered when building began.
 
 | ID | Decision | Adopted | Revisit trigger |
 |---|---|---|---|

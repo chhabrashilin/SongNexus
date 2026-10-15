@@ -4,6 +4,9 @@ For engineers evaluating SongNexus as a feature of YouTube Music. SongNexus show
 connection between artists comes from a published credit, with its source one tap away. This repository is a design plus a
 working reference implementation whose core logic is portable.
 
+Comments and documents cite the build plan as "plan §N" (budgets, test gates, threat model). The plan was retired when the
+work finished and is preserved at the git tag `plan-rev3`: `git show plan-rev3:plan.md`.
+
 ## Read in this order
 
 | Document | Question it answers |

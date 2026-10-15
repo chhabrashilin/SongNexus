@@ -15,6 +15,5 @@ data/*.db
 .github/
 *.md
 !server/README.md
-plan.md
 .env
 .env.*
