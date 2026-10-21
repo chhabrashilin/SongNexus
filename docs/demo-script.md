@@ -14,7 +14,7 @@ except step 7.
 | 6 | "The daily puzzle." | Play: make a wrong move, use a hint, solve; open the archive; copy the share card | Same puzzle for everyone; share text has no spoilers |
 | 7 | "Your music stays on your device." | Library: drop `web/e2e/fixtures/Playlist1.json` | Parsed locally, only artist names sent; analysis of cohesion and connectors |
 | 8 | "Built to be handed over." | Show `server/openapi.json`, `lint-imports`, and the test counts | Contract-first, layered, tested |
-| 9 | "Where it falls short." | Open `docs/handoff/limitations.md` | One missed budget, recorded |
+| 9 | "Where it falls short." | Open `docs/handoff/limitations.md` | Budgets missed or unverified, recorded |
 
 Rehearsal checklist (run twice before presenting): fresh ingest, API and web start cleanly, each step above, then the
 `?locale=ar-XB` and `?locale=en-XA` pseudo-locales on Home. Record any deviation in this file.
