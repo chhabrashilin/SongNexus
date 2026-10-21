@@ -14,8 +14,9 @@
 - **Long-form About and Privacy copy** is English-only (marked `lang="en"`).
 
 ## Engineering
-- **AnalyzePlaylist misses its budget** at 2,000 artists (about 13 s, budget 1.5 s). Mitigations and the R2 design
-  (precomputed resolutions, native candidate index) are in [perf/measurements.md](../perf/measurements.md).
+- **AnalyzePlaylist has little headroom**: 2,000 artists take 1.11 s cold on a fast laptop against a 1.5 s budget, and
+  it has not been measured on a 1 vCPU instance. The R2 design (precomputed resolutions, native candidate index) is in
+  [perf/measurements.md](../perf/measurements.md).
 - **Scale:** the whole graph lives in memory per instance. Fine for the sample catalog, not for a full music catalog.
 - **Rate limits and caches are per instance**, not global.
 - **No distributed tracing or custom metrics yet**; logs carry request ID, route, status and latency.

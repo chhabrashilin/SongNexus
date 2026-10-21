@@ -9,7 +9,7 @@ project, assistive-technology testers, or a legal contact. Nothing is deployed y
 | Accessibility (automated) | axe at WCAG 2.2 AA on every journey, zero serious or critical; the same scan in both pseudo-locales (`pseudo.spec.ts`) | Ready |
 | Accessibility (manual) | NVDA, VoiceOver and a keyboard-only pass are **not done** | **Open** |
 | Internationalization | message catalog, ICU plurals, logical CSS properties, pseudo-localization (long text and RTL) with no overflow; long-form About and Privacy copy is English-only by decision | Ready for en-US |
-| Performance | [measurements](perf/measurements.md): all read budgets met at one client; 8 concurrent clients on one process miss search and GetArtist p95; AnalyzePlaylist at 2,000 artists misses its budget (documented, R2 path) | Partly met; re-measure on Cloud Run |
+| Performance | [measurements](perf/measurements.md): all read budgets met at one client; 8 concurrent clients on one process miss search and GetArtist p95; AnalyzePlaylist at 2,000 artists met its budget locally after optimization (1.11 s cold), unverified on Cloud Run | Partly met; re-measure on Cloud Run |
 | Security | [review](security/review-2026-10-13.md): no critical or high findings; CSP and importer fuzzing now tested | Ready for testers; S4 and S6 open |
 | Privacy | [PIA](privacy/pia.md): on-device import, no third-party analytics, export and delete tested | Notice and terms need legal review |
 | Observability | [SLOs and alerts](ops/slo-and-alerting.md) and [runbooks](runbooks/README.md) written; JSON logs with request ID | Alerts not yet configured (no project) |
@@ -30,5 +30,5 @@ instruction above.
 ## Known limitations to tell testers
 
 - The catalog covers about a hundred seed artists and their credited collaborators, not all of music.
-- Importing a 2,000-artist history takes tens of seconds; typical playlists take about a second.
+- Importing a 2,000-artist history takes about a second on a fast machine and may take longer on small instances; typical playlists take about a tenth of a second.
 - Rate limits and caches are per instance.

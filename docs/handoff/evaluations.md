@@ -30,7 +30,7 @@ The two import errors are labeled near misses, the cost of typo tolerance: "The 
 | p95 SearchCatalog | ≤ 50 ms | 12.5 ms (1 client); 95 ms (8 clients, one process) | Met single-client; missed under 8-way queueing |
 | p95 GetArtist, collaborations | ≤ 100 ms | 10.7 and 8.2 ms (1 client); 126 and 96 ms (8 clients) | Met single-client; GetArtist missed at 8 |
 | p95 FindPath, CompareArtists | ≤ 150 ms | 27 and 15.7 ms (1 client); 101 and 118 ms (8 clients) | Met |
-| p95 AnalyzePlaylist, 2,000 artists | ≤ 1.5 s | about 13 s cold | **Missed**; typical playlists of 50–150 artists take 0.3–1 s |
+| p95 AnalyzePlaylist, 2,000 artists | ≤ 1.5 s | 1.11 s cold on this laptop (was about 13 s before the 2026-10-21 optimization) | Met locally, little headroom; **unverified on a 1 vCPU instance**. 150-name playlists take about 0.1 s |
 | Web initial JS | ≤ 200 KB gzip | 131.0 KB | Met |
 | 100 MB import in a worker | ≤ 15 s | not measured on a real 100 MB export | Open |
 | Connection web ≥ 55 fps at 300 nodes | 55 fps | not measured on a reference laptop | Open |

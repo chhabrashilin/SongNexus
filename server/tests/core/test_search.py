@@ -164,3 +164,34 @@ def test_similar_docs_is_complete(names: list[str], query: str, floor: float) ->
         if any(string_similarity(q, key) >= floor for key in name_keys(name))
     }
     assert {d.entity_id for d in idx.similar_docs(q, A, floor)} == expected
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    st.lists(
+        st.tuples(st.text(alphabet="abcde xy", min_size=1, max_size=20), st.booleans()),
+        min_size=1,
+        max_size=25,
+    ),
+    st.text(alphabet="abcde xy", min_size=1, max_size=20),
+    st.sampled_from([0.5, 0.8]),
+)
+def test_similar_docs_ignores_other_entity_types(
+    entries: list[tuple[str, bool]], query: str, floor: float
+) -> None:
+    """Song and release keys never appear in, or crowd out, an artist lookup."""
+    from songnexus.core.text import name_keys, normalize, string_similarity
+
+    idx = SearchIndex()
+    for i, (name, is_artist) in enumerate(entries):
+        idx.add(SearchDoc(A if is_artist else EntityType.RECORDING, f"d{i}", name), [name])
+    idx.freeze()
+    q = normalize(query)
+    if not q:
+        return
+    expected = {
+        f"d{i}"
+        for i, (name, is_artist) in enumerate(entries)
+        if is_artist and any(string_similarity(q, key) >= floor for key in name_keys(name))
+    }
+    assert {d.entity_id for d in idx.similar_docs(q, A, floor)} == expected

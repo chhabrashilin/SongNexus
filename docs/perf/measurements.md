@@ -77,3 +77,30 @@ Re-run of the gates and budgets that can be measured locally; full table in
 catalog quality 15/15, core coverage 97 %, web initial JS **131.0 KB** gzip (was 129.4 KB on 2026-10-07; still within
 200 KB). Load numbers are unchanged from 2026-10-13. Not measurable without a deployed build or participants: LCP,
 connection-web frame rate, a real 100 MB import, and SUS.
+
+## 2026-10-21: AnalyzePlaylist name matching, second pass
+
+Profiling showed the time was not edit distance but Python overhead in `SearchIndex.similar_docs`: counting shared
+trigrams per candidate key in a Python loop and scanning song and release keys for artist queries. Two exact changes:
+
+1. Posting lists and length buckets are kept per entity type, so an artist query never touches recording or release keys;
+   shared-trigram counts are computed in C (`Counter` over chained lists).
+2. The smallest shared-trigram count any qualifying key can have is computed once per query, and keys below it are
+   dropped before any per-key work. It is derived from the same bounds as before, so completeness is unchanged.
+
+Decisions are identical (same digest over mention, decision and entity ID for all 2,000 names; import precision 0.993
+and recall 0.907 unchanged; the brute-force completeness property test passes, with a new mixed-entity-type variant; a
+deliberately tightened bound is caught by that test).
+
+| Measure (`server/scripts/bench_resolve.py`: 2,000 names, 40 % exact, 25 % one typo, 15 % article changes, 20 % absent) | Before | After |
+|---|---|---|
+| `resolve_batch`, single thread | 4.46 s (2.2 ms each) | **1.33 s (0.66 ms each)** |
+
+End to end through the API (`POST /v1/playlists:analyze`, 2,000 distinct names, same laptop and process as the load
+test, SQLite): first (cold) request **1.11 s**, later requests 0.6–0.8 s once names are in the resolution cache;
+150-name playlists 0.08–0.10 s.
+
+Status of the plan §23 budget (p95 ≤ 1.5 s at 2,000 artists): **met on this laptop**, with little headroom. This laptop
+has far faster cores than a 1 vCPU Cloud Run instance, so it is **still unverified where it matters** and the R2 design
+(precomputed resolutions, native candidate index) stays documented. The earlier "13 s" figure used a harder name mix
+and an earlier code state; the 4.46 s "before" above is the same mix as the "after", for a like-for-like comparison.

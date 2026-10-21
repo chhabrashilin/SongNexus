@@ -36,6 +36,7 @@ import math
 from collections import Counter, defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass, field
+from itertools import chain
 
 from songnexus.core.text import name_keys, normalize, string_similarity, trigrams
 
@@ -115,6 +116,9 @@ class SearchIndex:
         self._by_trigram: dict[str, set[str]] = defaultdict(set)
         self._key_types: dict[str, frozenset[EntityType]] = {}
         self._keys_by_length: dict[int, list[str]] = defaultdict(list)
+        # Per entity type, for batch matching: an artist query never scans song or release keys.
+        self._typed_trigram: dict[EntityType, dict[str, list[str]]] = {}
+        self._typed_by_length: dict[EntityType, dict[int, list[str]]] = {}
         self._artist_index: dict[str, int] = {}
         self._frozen = False
 
@@ -148,6 +152,13 @@ class SearchIndex:
                 self._by_trigram[gram].add(key)
             self._key_types[key] = frozenset(self._docs[i].entity_type for i in self._by_key[key])
             self._keys_by_length[len(key)].append(key)
+            for entity_type in self._key_types[key]:
+                typed = self._typed_trigram.setdefault(entity_type, defaultdict(list))
+                for gram in trigrams(key):
+                    typed[gram].append(key)
+                self._typed_by_length.setdefault(entity_type, defaultdict(list))[len(key)].append(
+                    key
+                )
         self._frozen = True
         return self
 
@@ -271,21 +282,29 @@ class SearchIndex:
         """
         q_grams = trigrams(q)
         longest = math.floor(len(q) / max(min_similarity, 1e-9))
-        counts: dict[str, int] = {}
-        for gram in q_grams:
-            for key in self._by_trigram.get(gram, ()):
-                counts[key] = counts.get(key, 0) + 1
-        # Key lengths whose count bound is not positive: such keys can qualify
-        # while sharing no trigram, so they are checked directly.
+        postings = self._typed_trigram.get(entity_type, {})
+        by_length = self._typed_by_length.get(entity_type, {})
+        # Counting in C (Counter over chained posting lists) is several times faster than a loop.
+        counts: dict[str, int] = Counter(
+            chain.from_iterable(postings[g] for g in q_grams if g in postings)
+        )
+        # The fewest shared trigrams any qualifying key can have: a key passes the loop
+        # below only with at least this many, so the rest are dropped without any work.
+        lowest = math.ceil(min_similarity * len(q_grams) - 1e-9)
         for length in range(1, longest + 1):
             edits = math.floor((1.0 - min_similarity) * max(len(q), length) + 1e-9)
-            if abs(length - len(q)) <= edits and len(q_grams) - 4 * edits <= 0:
-                for key in self._keys_by_length.get(length, ()):
-                    counts.setdefault(key, 0)
+            if abs(length - len(q)) <= edits:
+                lowest = min(lowest, len(q_grams) - 4 * edits)
+                # Key lengths whose count bound is not positive: such keys can qualify
+                # while sharing no trigram, so they are checked directly.
+                if len(q_grams) - 4 * edits <= 0:
+                    for key in by_length.get(length, ()):
+                        counts.setdefault(key, 0)
+        candidates = (
+            counts.items() if lowest <= 0 else [kv for kv in counts.items() if kv[1] >= lowest]
+        )
         found: dict[int, SearchDoc] = {}
-        for key, shared in counts.items():
-            if entity_type not in self._key_types[key]:
-                continue
+        for key, shared in candidates:
             length = max(len(q), len(key))
             max_edits = math.floor((1.0 - min_similarity) * length + 1e-9)
             edit_possible = (
