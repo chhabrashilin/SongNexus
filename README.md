@@ -8,8 +8,17 @@ UW–Madison CS 620 capstone with Google.
 
 ## Status
 
-Release 1 is being built milestone by milestone on branch `v2` (plan rev 3). The v0 prototype is preserved at
-tag `v0-prototype`.
+Release 1 (milestones M0–M9 below) is complete; its plan is preserved at tag `plan-rev3` and the v0 prototype at
+tag `v0-prototype`. **Release 2** adds song comparison, listener overlap, commercial-safe genres, a fuller
+relationship graph and collaborations page, linked streaming accounts, and friends; it is built milestone by milestone
+on branch `r2` following [docs/plans/r2-plan.md](docs/plans/r2-plan.md).
+
+| R2 milestone | What | State |
+|---|---|---|
+| R2-0 | Data-source registry, [resources page](docs/resources.md), `ListDataSources`, [ADR 0005](docs/adr/0005-data-source-policy.md) | Done |
+| R2-1 – R2-8 | Genres, relationship graph, collaborations, song comparison, listener overlap, linked accounts, friends, hardening | Planned |
+
+Release 1:
 
 | Milestone | What | State |
 |---|---|---|
@@ -108,7 +117,7 @@ server/   Python 3.12: core library (pure), catalog pipeline, storage, identity,
 web/      React + TypeScript: the reference client                                          → web/README.md
 data/     samples/ the MusicBrainz snapshot · seeds/ seed artists and pinned decisions · eval/ labeled sets
 deploy/   Cloud Run service and jobs (deployment runbook: docs/deploy.md)
-docs/     design/ · adr/ · engineering-standards.md · qa/ reviews · perf/ measurements
+docs/     design/ · adr/ · plans/ · resources.md · engineering-standards.md · qa/ reviews · perf/ measurements
 ```
 
 ## Read first
@@ -116,11 +125,14 @@ docs/     design/ · adr/ · engineering-standards.md · qa/ reviews · perf/ me
 - [Design doc](docs/design/design-doc.md): objective, user journeys, architecture, privacy, milestones
 - [Engineering standards](docs/engineering-standards.md): the bar every change meets
 - [Decisions](docs/adr/): what was decided, and why
+- [Resources](docs/resources.md): every data source, what it feeds and its license
 - [Deploying](docs/deploy.md): one-time GCP setup and releases (nothing is deployed until a project exists)
 - [Handoff package](docs/handoff/README.md): integration guide, evaluations, limitations; [demo script](docs/demo-script.md)
 
 ## Data and licensing
 
 Catalog data comes from [MusicBrainz](https://musicbrainz.org). Its core data is CC0; genre tags are
-CC BY-NC-SA and kept apart as a separate source ([ADR 0003](docs/adr/0003-musicbrainz-licensing.md)). A YouTube
-Music integration would use Google's own catalog. The code is Apache-2.0, provisionally (ADR 0001, D4).
+CC BY-NC-SA and kept apart as a separate source ([ADR 0003](docs/adr/0003-musicbrainz-licensing.md)). Every source,
+used or planned, is listed with its license and tier in [docs/resources.md](docs/resources.md), generated from the
+registry the ingest pipeline enforces ([ADR 0005](docs/adr/0005-data-source-policy.md)). A YouTube Music integration
+would use Google's own catalog. The code is Apache-2.0, provisionally (ADR 0001, D4).

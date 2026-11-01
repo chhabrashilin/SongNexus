@@ -209,6 +209,28 @@ export function useGenres() {
   });
 }
 
+export async function fetchAllDataSources(): Promise<Schemas['DataSource'][]> {
+  const sources: Schemas['DataSource'][] = [];
+  let pageToken = '';
+  do {
+    const page = await unwrap(
+      api.GET('/v1/dataSources', {params: {query: {pageSize: 100, pageToken}}}),
+    );
+    sources.push(...page.dataSources);
+    pageToken = page.nextPageToken;
+  } while (pageToken);
+  return sources;
+}
+
+/** The data-source registry (ADR 0005), for the Resources section. */
+export function useDataSources() {
+  return useQuery({
+    queryKey: ['dataSources'],
+    queryFn: fetchAllDataSources,
+    staleTime: 60 * MINUTE,
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Signed-in user data
 // ---------------------------------------------------------------------------

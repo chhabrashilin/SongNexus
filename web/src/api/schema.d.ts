@@ -188,6 +188,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dataSources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListDataSources
+         * @description Lists every data source SongNexus uses or evaluates, with its license (the registry).
+         */
+        get: operations["ListDataSources"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/genres": {
         parameters: {
             query?: never;
@@ -912,6 +932,39 @@ export interface components {
             roleDetail: string;
         };
         /**
+         * DataSource
+         * @description A provider of data, with its license and what it feeds.
+         */
+        DataSource: {
+            /** Attribution */
+            attribution: string;
+            /**
+             * Checkedon
+             * @description ISO date the license was last checked.
+             */
+            checkedOn: string;
+            /** Displayname */
+            displayName: string;
+            /** Feeds */
+            feeds: string[];
+            /** Homepage */
+            homepage: string;
+            kind: components["schemas"]["SourceKind"];
+            /** License */
+            license: string;
+            /** Licenseurl */
+            licenseUrl: string;
+            /**
+             * Name
+             * @description Resource name, `dataSources/{source}`.
+             */
+            name: string;
+            /** Notes */
+            notes: string;
+            status: components["schemas"]["SourceStatus"];
+            tier: components["schemas"]["LicenseTier"];
+        };
+        /**
          * Empty
          * @description An empty response.
          */
@@ -1047,6 +1100,12 @@ export interface components {
             candidates: components["schemas"]["ArtistSummary"][];
         };
         /**
+         * LicenseTier
+         * @description What a data source's license allows (ADR 0005).
+         * @enum {string}
+         */
+        LicenseTier: "PRODUCTION" | "NON_COMMERCIAL" | "EVALUATION";
+        /**
          * Limits
          * @description Request limits clients should respect (plan §14).
          */
@@ -1115,6 +1174,21 @@ export interface components {
         ListBlockedArtistsResponse: {
             /** Blockedartists */
             blockedArtists: components["schemas"]["BlockedArtist"][];
+            /**
+             * Nextpagetoken
+             * @default
+             */
+            nextPageToken: string;
+            /** Totalsize */
+            totalSize: number;
+        };
+        /**
+         * ListDataSourcesResponse
+         * @description ListDataSources.
+         */
+        ListDataSourcesResponse: {
+            /** Datasources */
+            dataSources: components["schemas"]["DataSource"][];
             /**
              * Nextpagetoken
              * @default
@@ -1472,6 +1546,12 @@ export interface components {
             shareB: number;
         };
         /**
+         * SourceKind
+         * @description How the data is obtained.
+         * @enum {string}
+         */
+        SourceKind: "API" | "DATA_DUMP" | "DATASET" | "USER_ACCOUNT";
+        /**
          * SourceLink
          * @description A page where a person can check a fact.
          */
@@ -1486,6 +1566,12 @@ export interface components {
             /** Url */
             url: string;
         };
+        /**
+         * SourceStatus
+         * @description Whether SongNexus reads from the source yet.
+         * @enum {string}
+         */
+        SourceStatus: "IN_USE" | "PLANNED";
         /**
          * Status
          * @description google.rpc.Status, as JSON.
@@ -1852,6 +1938,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Config"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ListDataSources: {
+        parameters: {
+            query?: {
+                pageSize?: number;
+                pageToken?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListDataSourcesResponse"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */

@@ -354,6 +354,55 @@ class ListGenresResponse(ApiModel):
     total_size: int
 
 
+class LicenseTier(enum.StrEnum):
+    """What a data source's license allows (ADR 0005)."""
+
+    PRODUCTION = "PRODUCTION"
+    NON_COMMERCIAL = "NON_COMMERCIAL"
+    EVALUATION = "EVALUATION"
+
+
+class SourceStatus(enum.StrEnum):
+    """Whether SongNexus reads from the source yet."""
+
+    IN_USE = "IN_USE"
+    PLANNED = "PLANNED"
+
+
+class SourceKind(enum.StrEnum):
+    """How the data is obtained."""
+
+    API = "API"
+    DATA_DUMP = "DATA_DUMP"
+    DATASET = "DATASET"
+    USER_ACCOUNT = "USER_ACCOUNT"
+
+
+class DataSource(ApiModel):
+    """A provider of data, with its license and what it feeds."""
+
+    name: str = Field(description="Resource name, `dataSources/{source}`.")
+    display_name: str
+    homepage: str
+    license: str
+    license_url: str
+    tier: LicenseTier
+    status: SourceStatus
+    kind: SourceKind
+    feeds: list[str]
+    attribution: str
+    checked_on: str = Field(description="ISO date the license was last checked.")
+    notes: str
+
+
+class ListDataSourcesResponse(ApiModel):
+    """ListDataSources."""
+
+    data_sources: list[DataSource]
+    next_page_token: str = ""
+    total_size: int
+
+
 # ---------------------------------------------------------------------------
 # Ops
 # ---------------------------------------------------------------------------

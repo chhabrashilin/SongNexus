@@ -29,6 +29,8 @@ from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import (
     MAX_QUERY_LENGTH,
+    PageSize,
+    PageToken,
     db_session,
     set_cache_control,
 )
@@ -48,8 +50,6 @@ Categories = Annotated[
     ),
 ]
 Genres = Annotated[list[str], Query(description="Genre resource names to stay within.")]
-PageSize = Annotated[int, Query(alias="pageSize", ge=0, le=1000)]
-PageToken = Annotated[str, Query(alias="pageToken", max_length=512)]
 
 HIGHLIGHTS_PER_CONNECTION = 2
 

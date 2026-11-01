@@ -201,21 +201,36 @@ def _contract_state() -> Any:
     )
 
 
-def _cmd_openapi(_settings: Settings, args: argparse.Namespace) -> int:
-    document = openapi_document()
-    current = OPENAPI_PATH.read_text(encoding="utf-8") if OPENAPI_PATH.exists() else ""
-    if args.check:
+def _write_generated(path: Path, document: str, *, command: str, check: bool) -> int:
+    """Writes a generated file, or with ``check`` fails if the committed copy differs."""
+    current = path.read_text(encoding="utf-8") if path.exists() else ""
+    if check:
         in_sync = current == document
         if not in_sync:
             print(
-                f"{OPENAPI_PATH.name} is out of date; run `songnexus openapi` and review the diff.",
+                f"{path.name} is out of date; run `songnexus {command}` and review the diff.",
                 file=sys.stderr,
             )
         return EXIT_OK if in_sync else EXIT_FAILED
-    with OPENAPI_PATH.open("w", encoding="utf-8", newline="\n") as fh:
+    with path.open("w", encoding="utf-8", newline="\n") as fh:
         fh.write(document)
-    _print({"written": str(OPENAPI_PATH), "changed": current != document})
+    _print({"written": str(path), "changed": current != document})
     return EXIT_OK
+
+
+def _cmd_openapi(_settings: Settings, args: argparse.Namespace) -> int:
+    return _write_generated(OPENAPI_PATH, openapi_document(), command="openapi", check=args.check)
+
+
+RESOURCES_PATH = Path(__file__).resolve().parents[3] / "docs" / "resources.md"
+
+
+def _cmd_resources(_settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.catalog.sources import render_markdown
+
+    return _write_generated(
+        RESOURCES_PATH, render_markdown(), command="resources", check=args.check
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -266,6 +281,12 @@ def build_parser() -> argparse.ArgumentParser:
     openapi = commands.add_parser("openapi", help="write the API contract (server/openapi.json)")
     openapi.add_argument("--check", action="store_true", help="fail if the file is out of date")
     openapi.set_defaults(handler=_cmd_openapi)
+
+    resources = commands.add_parser(
+        "resources", help="write the data-source page (docs/resources.md) from the registry"
+    )
+    resources.add_argument("--check", action="store_true", help="fail if the file is out of date")
+    resources.set_defaults(handler=_cmd_resources)
     return parser
 
 

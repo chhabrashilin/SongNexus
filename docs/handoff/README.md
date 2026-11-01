@@ -18,7 +18,8 @@ work finished and is preserved at the git tag `plan-rev3`: `git show plan-rev3:p
 | [Launch review](../launch-review.md) | What stands between this and a tester launch? |
 | [Demo script](../demo-script.md) | How to see it working in ten minutes |
 | [API contract](../../server/openapi.json) | The AIP-style API, checked against the code in CI |
-| [Decision records](../adr/) | Why sessions are server-side, why MusicBrainz data is split, how the daily puzzle is scheduled |
+| [Decision records](../adr/) | Why sessions are server-side, why MusicBrainz data is split, how the daily puzzle is scheduled, how data sources are admitted |
+| [Resources](../resources.md) | Every data source, what it feeds, its license and tier |
 | [Security](../security/review-2026-10-13.md), [privacy](../privacy/pia.md), [SBOM and licenses](../sbom/README.md) | Review artifacts |
 | [Runbooks](../runbooks/README.md), [SLOs](../ops/slo-and-alerting.md), [deploy guide](../deploy.md) | Operating it |
 
