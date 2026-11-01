@@ -847,6 +847,77 @@
         "title": "Credit",
         "type": "object"
       },
+      "DataSource": {
+        "description": "A provider of data, with its license and what it feeds.",
+        "properties": {
+          "attribution": {
+            "title": "Attribution",
+            "type": "string"
+          },
+          "checkedOn": {
+            "description": "ISO date the license was last checked.",
+            "title": "Checkedon",
+            "type": "string"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "feeds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Feeds",
+            "type": "array"
+          },
+          "homepage": {
+            "title": "Homepage",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/SourceKind"
+          },
+          "license": {
+            "title": "License",
+            "type": "string"
+          },
+          "licenseUrl": {
+            "title": "Licenseurl",
+            "type": "string"
+          },
+          "name": {
+            "description": "Resource name, `dataSources/{source}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SourceStatus"
+          },
+          "tier": {
+            "$ref": "#/components/schemas/LicenseTier"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "homepage",
+          "license",
+          "licenseUrl",
+          "tier",
+          "status",
+          "kind",
+          "feeds",
+          "attribution",
+          "checkedOn",
+          "notes"
+        ],
+        "title": "DataSource",
+        "type": "object"
+      },
       "Empty": {
         "description": "An empty response.",
         "properties": {},
@@ -1105,6 +1176,16 @@
         "title": "HintResponse",
         "type": "object"
       },
+      "LicenseTier": {
+        "description": "What a data source's license allows (ADR 0005).",
+        "enum": [
+          "PRODUCTION",
+          "NON_COMMERCIAL",
+          "EVALUATION"
+        ],
+        "title": "LicenseTier",
+        "type": "string"
+      },
       "Limits": {
         "description": "Request limits clients should respect (plan §14).",
         "properties": {
@@ -1256,6 +1337,34 @@
           "totalSize"
         ],
         "title": "ListBlockedArtistsResponse",
+        "type": "object"
+      },
+      "ListDataSourcesResponse": {
+        "description": "ListDataSources.",
+        "properties": {
+          "dataSources": {
+            "items": {
+              "$ref": "#/components/schemas/DataSource"
+            },
+            "title": "Datasources",
+            "type": "array"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dataSources",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "title": "ListDataSourcesResponse",
         "type": "object"
       },
       "ListGenresResponse": {
@@ -1941,6 +2050,17 @@
         "title": "SharedGenre",
         "type": "object"
       },
+      "SourceKind": {
+        "description": "How the data is obtained.",
+        "enum": [
+          "API",
+          "DATA_DUMP",
+          "DATASET",
+          "USER_ACCOUNT"
+        ],
+        "title": "SourceKind",
+        "type": "string"
+      },
       "SourceLink": {
         "description": "A page where a person can check a fact.",
         "properties": {
@@ -1965,6 +2085,15 @@
         ],
         "title": "SourceLink",
         "type": "object"
+      },
+      "SourceStatus": {
+        "description": "Whether SongNexus reads from the source yet.",
+        "enum": [
+          "IN_USE",
+          "PLANNED"
+        ],
+        "title": "SourceStatus",
+        "type": "string"
       },
       "Status": {
         "description": "google.rpc.Status, as JSON.",
@@ -2706,6 +2835,63 @@
           }
         },
         "summary": "GetConfig",
+        "tags": [
+          "ops"
+        ]
+      }
+    },
+    "/v1/dataSources": {
+      "get": {
+        "description": "Lists every data source SongNexus uses or evaluates, with its license (the registry).",
+        "operationId": "ListDataSources",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDataSourcesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListDataSources",
         "tags": [
           "ops"
         ]

@@ -1,6 +1,69 @@
 /** About our data: where facts come from, what the licenses are, and what's missing. */
+import type {Schemas} from '../api/client';
+import {useDataSources} from '../api/queries';
 import {usePageTitle} from '../app/Shell';
+import {ErrorState, SkeletonRows} from '../components/States';
 import {useI18n} from '../i18n/i18n';
+
+const TIERS: Schemas['LicenseTier'][] = [
+  'PRODUCTION',
+  'NON_COMMERCIAL',
+  'EVALUATION',
+];
+
+/** The data-source registry, grouped by license tier. A listener's own data is covered by Privacy. */
+function Resources() {
+  const {t} = useI18n();
+  const sources = useDataSources();
+  const listed = (sources.data ?? []).filter(s => s.kind !== 'USER_ACCOUNT');
+  return (
+    <section aria-labelledby="resources">
+      <h2 id="resources">{t('about.resources')}</h2>
+      <p>{t('about.resources.intro')}</p>
+      {sources.isPending && <SkeletonRows count={4} />}
+      {sources.isError && (
+        <ErrorState error={sources.error} onRetry={() => sources.refetch()} />
+      )}
+      {TIERS.map(tier => {
+        const inTier = listed.filter(s => s.tier === tier);
+        if (inTier.length === 0) return null;
+        return (
+          <div key={tier}>
+            <h3>{t(`about.resources.tier.${tier}`)}</h3>
+            <ul className="stack">
+              {inTier.map(source => (
+                <li key={source.name}>
+                  <a
+                    href={source.homepage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {source.displayName}
+                  </a>
+                  {source.status === 'PLANNED' && (
+                    <> ({t('about.resources.planned')})</>
+                  )}
+                  <br />
+                  <a
+                    href={source.licenseUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t('about.resources.license', {license: source.license})}
+                  </a>
+                  <br />
+                  {t('about.resources.feeds', {
+                    feeds: source.feeds.join('; '),
+                  })}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </section>
+  );
+}
 
 export default function AboutScreen() {
   const {t} = useI18n();
@@ -55,6 +118,7 @@ export default function AboutScreen() {
         then contributions and samples. These weights are a starting point that
         we will calibrate with listener feedback.
       </p>
+      <Resources />
     </article>
   );
 }

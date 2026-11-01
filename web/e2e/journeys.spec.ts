@@ -154,6 +154,23 @@ test('navigation moves focus to the new page (QA Q17)', async ({page}) => {
   ).toBeFocused();
 });
 
+test('About lists every data source with its license (ADR 0005)', async ({
+  page,
+}) => {
+  await page.goto('/about');
+  const resources = page.getByRole('region', {name: 'Resources'});
+  await expect(
+    resources.getByRole('link', {name: 'MusicBrainz', exact: true}),
+  ).toBeVisible();
+  await expect(
+    resources.getByRole('heading', {level: 3, name: 'Evaluation only'}),
+  ).toBeVisible();
+  await expect(resources.getByText('License: CC0-1.0').first()).toBeVisible();
+  // A listener's own data is described on the Privacy page, not as a source.
+  await expect(resources.getByText('Your listening history')).toHaveCount(0);
+  await expectAccessible(page);
+});
+
 test('a playlist export is mapped on the device, sending only artist names (US-10)', async ({
   page,
 }) => {

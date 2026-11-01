@@ -382,6 +382,15 @@ export const messages = {
 
   // Pages
   'about.title': 'About our data',
+  'about.resources': 'Resources',
+  'about.resources.intro':
+    'Every source we use or evaluate, what it feeds and its license. Evaluation-only sources are used to check our results and are never shown in the app.',
+  'about.resources.tier.PRODUCTION': 'Open data',
+  'about.resources.tier.NON_COMMERCIAL': 'Non-commercial license',
+  'about.resources.tier.EVALUATION': 'Evaluation only',
+  'about.resources.planned': 'Coming soon',
+  'about.resources.license': 'License: {license}',
+  'about.resources.feeds': 'Used for: {feeds}',
   'privacy.title': 'Privacy',
   'footer.about': 'About our data',
   'footer.privacy': 'Privacy',

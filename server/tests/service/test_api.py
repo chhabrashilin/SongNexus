@@ -374,3 +374,28 @@ def test_every_path_parameter_excludes_colons(client: TestClient) -> None:
     for route in found:
         for param in re.findall(r"\{([^}]+)\}", route.path):
             assert param.endswith(":rid"), f"{route.path}: use {{{param.split(':')[0]}:rid}}"
+
+
+def test_list_data_sources_serves_the_registry(client: TestClient) -> None:
+    response = client.get("/v1/dataSources")
+    assert response.headers["Cache-Control"].startswith("public")
+    body = response.json()
+    by_name = {s["name"]: s for s in body["dataSources"]}
+    assert body["totalSize"] == len(by_name)
+    musicbrainz = by_name["dataSources/musicbrainz"]
+    assert musicbrainz["tier"] == "PRODUCTION"
+    assert musicbrainz["status"] == "IN_USE"
+    assert musicbrainz["attribution"] == "Data from MusicBrainz"
+    assert by_name["dataSources/musicbrainz-supplementary"]["tier"] == "NON_COMMERCIAL"
+    assert {s["tier"] for s in body["dataSources"]} == {
+        "PRODUCTION",
+        "NON_COMMERCIAL",
+        "EVALUATION",
+    }
+
+    first = client.get("/v1/dataSources", params={"pageSize": 2}).json()
+    second = client.get(
+        "/v1/dataSources", params={"pageSize": 2, "pageToken": first["nextPageToken"]}
+    ).json()
+    assert len(first["dataSources"]) == 2
+    assert first["dataSources"][0]["name"] != second["dataSources"][0]["name"]

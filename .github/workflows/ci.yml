@@ -49,6 +49,8 @@ jobs:
         run: uv run pytest --cov --cov-report=term
       - name: OpenAPI contract is up to date
         run: uv run songnexus openapi --check
+      - name: Resources page matches the source registry
+        run: uv run songnexus resources --check
       - name: Dependency audit
         run: uvx pip-audit --strict --progress-spinner off -r <(uv export --format requirements-txt --no-hashes --no-dev)
 

@@ -39,6 +39,7 @@ from songnexus.catalog.canonicalize import (
 )
 from songnexus.catalog.musicbrainz.snapshot import RawRecord, read_snapshot
 from songnexus.catalog.quality import Severity, gate_passes, run_quality_checks
+from songnexus.catalog.sources import BY_ID, Status, catalog_sources
 from songnexus.storage import models as m
 from songnexus.storage.db import session_scope
 
@@ -54,21 +55,35 @@ class QualityGateError(RuntimeError):
     """The new catalog violates an error-severity invariant; nothing was written."""
 
 
-DATA_SOURCES: tuple[Row, ...] = (
-    {
-        "id": SOURCE_ID,
-        "name": "MusicBrainz",
-        "homepage": "https://musicbrainz.org",
-        "license": "CC0-1.0",
-    },
-    {
-        "id": SUPPLEMENTARY_SOURCE_ID,
-        "name": "MusicBrainz (genres)",
-        "homepage": "https://musicbrainz.org/doc/About/Data_License",
-        "license": "CC-BY-NC-SA-3.0",
-    },
-)
-_ADAPTER_SOURCES = tuple(s["id"] for s in DATA_SOURCES)
+class UnregisteredSourceError(ValueError):
+    """A fact names a source that is not an in-use catalog source in the registry (ADR 0005)."""
+
+
+# The sources this adapter writes; each must be an in-use catalog source in the registry.
+_ADAPTER_SOURCES = (SOURCE_ID, SUPPLEMENTARY_SOURCE_ID)
+_STORABLE = frozenset(s.id for s in catalog_sources() if s.status is Status.IN_USE)
+
+
+def registered_source_rows(source_ids: Iterable[str] = _ADAPTER_SOURCES) -> list[Row]:
+    """Returns ``data_sources`` rows for ``source_ids``, from the registry.
+
+    Raises:
+        UnregisteredSourceError: A source is missing, evaluation-only, or not yet in use.
+    """
+    rows = []
+    for source_id in source_ids:
+        if source_id not in _STORABLE:
+            raise UnregisteredSourceError(f"source {source_id!r} may not be stored in the catalog")
+        source = BY_ID[source_id]
+        rows.append(
+            {
+                "id": source.id,
+                "name": source.name,
+                "homepage": source.homepage,
+                "license": source.license,
+            }
+        )
+    return rows
 
 
 def _chunks(rows: Sequence[Any], size: int = CHUNK) -> Iterable[Sequence[Any]]:
@@ -129,6 +144,8 @@ def sync_source_facts(
 def _attach_provenance(rows: Iterable[Row], raw_ids: dict[str, int], run_id: int) -> list[Row]:
     attached = []
     for row in rows:
+        if row["source_id"] not in _ADAPTER_SOURCES:
+            raise UnregisteredSourceError(f"fact from unexpected source {row['source_id']!r}")
         out = {k: v for k, v in row.items() if k != "_raw_key"}
         out["raw_record_id"] = raw_ids[row["_raw_key"]]
         out["ingestion_run_id"] = run_id
@@ -246,7 +263,7 @@ def ingest_snapshot(engine: Engine, snapshot_path: Path) -> dict[str, Any]:
     """
     started = time.perf_counter()
     with session_scope(engine) as session:
-        upsert(session, m.DataSource, DATA_SOURCES)
+        upsert(session, m.DataSource, registered_source_rows())
         run = m.IngestionRun(
             adapter=ADAPTER,
             pipeline_version=PIPELINE_VERSION,

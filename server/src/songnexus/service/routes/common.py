@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
+from typing import Annotated
 
-from fastapi import Request, Response
+from fastapi import Query, Request, Response
 from sqlalchemy.orm import Session
 from starlette.convertors import Convertor, register_url_convertor
 
@@ -18,6 +19,10 @@ MAX_QUERY_LENGTH = 120
 MAX_PATH_STEPS = 6
 MAX_ALTERNATIVES = 3
 CATALOG_MAX_AGE_S = 300
+
+# AIP-158 list parameters.
+PageSize = Annotated[int, Query(alias="pageSize", ge=0, le=1000)]
+PageToken = Annotated[str, Query(alias="pageToken", max_length=512)]
 
 
 class ResourceIdConvertor(Convertor[str]):
