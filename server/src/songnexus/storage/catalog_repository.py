@@ -10,7 +10,7 @@ from collections import defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from songnexus.storage import models as m
@@ -91,15 +91,6 @@ class RecordingDetails:
     credits: tuple[Credit, ...]
     appearances: tuple[Appearance, ...]
     sources: tuple[SourceRef, ...]
-
-
-@dataclass(frozen=True)
-class GenreCount:
-    """A genre and how many artists carry it."""
-
-    id: str
-    name: str
-    artist_count: int
 
 
 def _sources(
@@ -231,15 +222,3 @@ def subject_sources(
                 SourceRef("musicbrainz", mbid, _MUSICBRAINZ_PAGES["artist"].format(mbid))
             ]
     return found
-
-
-def genre_counts(session: Session) -> list[GenreCount]:
-    """Returns every genre with its artist count, most common first."""
-    stmt = (
-        select(m.Genre.id, m.Genre.name, func.count(m.ArtistGenre.artist_id))
-        .join(m.ArtistGenre, m.ArtistGenre.genre_id == m.Genre.id)
-        .group_by(m.Genre.id, m.Genre.name)
-    )
-    counts = [GenreCount(gid, name, int(n)) for gid, name, n in session.execute(stmt)]
-    counts.sort(key=lambda g: (-g.artist_count, g.name))
-    return counts

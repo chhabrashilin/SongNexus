@@ -18,9 +18,11 @@ FROM python:3.12-slim
 RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin app
 WORKDIR /app
 COPY --from=build /app/.venv /app/.venv
-# The catalog snapshot and evaluation set ship with the image, so a catalog
-# build is reproducible from the image alone.
+# The catalog snapshots (MusicBrainz, Wikidata, Discogs), the reviewed genre
+# table and the evaluation sets ship with the image, so a catalog build is
+# reproducible from the image alone.
 COPY data/samples /app/data/samples
+COPY data/seeds/discogs_genre_map.json /app/data/seeds/discogs_genre_map.json
 COPY data/eval /app/data/eval
 ENV PATH=/app/.venv/bin:$PATH \
     PYTHONUNBUFFERED=1 \

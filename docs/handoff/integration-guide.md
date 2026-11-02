@@ -30,6 +30,11 @@ To integrate: write a new adapter that produces the same `CanonicalBatch` from y
 Prove it with: `songnexus quality` (15 checks), the golden tests pattern in `tests/catalog/test_golden.py`, and the
 search and import evaluations on your own labeled set.
 
+Genres are a separate seam (`catalog/enrich.py`): a vocabulary (today the MusicBrainz genre list), per-source
+artist-genre votes, and parent links between genres. YouTube Music would supply its own genre taxonomy and
+associations as one more source; the read model averages shares per source and `SONGNEXUS_GENRE_SOURCES` chooses
+which sources are served. Measure agreement with `songnexus eval-genres` before switching.
+
 ### 2. Identity (replace or reuse)
 Today: Google Sign-In through Firebase Auth; the server verifies the ID token and issues its own HttpOnly session cookie
 with a CSRF token (ADR 0002). `identity/tokens.py` defines the verifier interface; swap in Google's internal identity.

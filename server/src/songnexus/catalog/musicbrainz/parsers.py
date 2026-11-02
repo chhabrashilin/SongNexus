@@ -59,6 +59,19 @@ class GenreTag(_Model):
     count: int = 0
 
 
+class Genre(_Model):
+    """An entry of the MusicBrainz genre list (CC0 core data)."""
+
+    id: str
+    name: str
+
+
+class GenreList(_Model):
+    """One page of ``genre/all``."""
+
+    genres: list[Genre] = Field(default_factory=list)
+
+
 class UrlRef(_Model):
     """A URL relationship target."""
 

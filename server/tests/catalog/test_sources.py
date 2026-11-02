@@ -14,7 +14,7 @@ from songnexus.catalog.ingest import (
     ingest_snapshot,
     registered_source_rows,
 )
-from songnexus.catalog.musicbrainz.snapshot import write_snapshot
+from songnexus.catalog.snapshot import write_snapshot
 from songnexus.catalog.sources import SOURCES, Kind, Status, Tier, render_markdown
 from songnexus.storage import migrate
 from songnexus.storage import models as m
@@ -46,7 +46,12 @@ def test_evaluation_sources_are_never_storable() -> None:
 
 def test_ingest_registers_only_in_use_catalog_sources() -> None:
     rows = registered_source_rows()
-    assert {r["id"] for r in rows} == {"musicbrainz", "musicbrainz-supplementary"}
+    assert {r["id"] for r in rows} == {
+        "musicbrainz",
+        "musicbrainz-supplementary",
+        "discogs",
+        "wikidata",
+    }
     with pytest.raises(UnregisteredSourceError):
         registered_source_rows(["kaggle-spotify-tracks"])
     with pytest.raises(UnregisteredSourceError):

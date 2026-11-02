@@ -14,16 +14,24 @@ uv run songnexus <command>       # see below; results are JSON on stdout, logs o
 | Command | What it does |
 |---|---|
 | `migrate [REVISION] [--down]` | Applies Alembic migrations (default: head) |
-| `fetch` | Fetches MusicBrainz data for `data/seeds` into a snapshot (the only networked step; rate-limited, cached) |
-| `ingest [--snapshot PATH]` | Migrates, then ingests a snapshot. The quality gate runs inside the transaction: a failing catalog is rejected and the previous one keeps serving |
+| `fetch` | Fetches MusicBrainz data for `data/seeds`, plus the genre list, into a snapshot (rate-limited, cached) |
+| `fetch-wikidata` | Fetches Discogs artist links and the genre hierarchy from Wikidata into a snapshot |
+| `fetch-discogs --dump-date YYYYMMDD` | Downloads a Discogs masters dump (~600 MB, checksum-verified, cached in `data/raw/discogs`) and extracts catalog artists' masters into a snapshot (~14 min) |
+| `ingest [--snapshot PATH] [--no-enrichment]` | Migrates, then ingests the committed snapshots (MusicBrainz, Wikidata, Discogs). The quality gate runs inside the transaction: a failing catalog is rejected and the previous one keeps serving. `--snapshot` ingests one MusicBrainz snapshot alone |
 | `quality` | Runs the data-quality checks on the current catalog |
 | `eval-search` | Search MRR on `data/eval/search_cases.json` (gate ≥ 0.95) |
 | `eval-import` | Import name-matching precision on `data/eval/import_match_cases.json` (gate ≥ 0.98) |
+| `eval-genres` | Genre coverage per source and MusicBrainz-Discogs agreement (floors in the golden tests) |
+| `resources [--check]` | Writes `docs/resources.md` from the data-source registry; `--check` fails if it is stale |
 | `openapi [--check]` | Writes `openapi.json`, the API contract; `--check` fails if code and contract differ |
 | `purge` | Removes expired sessions and accounts deleted 28+ days ago (daily job) |
 | `serve` | Local API server (deployments run uvicorn from the container) |
 
 `scripts/build_import_eval.py` regenerates the import-matching labels from the human-verified seeds.
+
+Refreshing the catalog data: `fetch`, then `fetch-wikidata`, then `fetch-discogs --dump-date <latest>`, then
+`ingest` and `eval-genres`; review the snapshot diffs and the unmapped Discogs names in the ingest output before
+committing. Only `fetch*` commands touch the network.
 
 Daily puzzle methods, date rules and share telemetry are described in
 [Daily puzzle](../docs/daily-puzzle.md); their schemas are in `openapi.json`.
@@ -34,7 +42,7 @@ Daily puzzle methods, date rules and share telemetry are described in
 |---|---|---|
 | `songnexus.core` | Pure domain logic: text, model, IDs, graph, search, resolution | standard library, rapidfuzz (no I/O, no other `songnexus` package) |
 | `songnexus.storage` | Database models, migrations, readers and repositories | `core` |
-| `songnexus.catalog` | MusicBrainz adapter, canonicalization, ingestion, quality checks | `core`, `storage` |
+| `songnexus.catalog` | Source registry; MusicBrainz, Wikidata and Discogs adapters on a shared polite HTTP client and snapshot format; canonicalization, enrichment, ingestion, quality checks | `core`, `storage` |
 | `songnexus.identity` | ID-token verification, session and CSRF tokens | `core`, `storage` |
 | `songnexus.jobs` | Batch jobs (purge) | `core`, `storage` |
 | `songnexus.service` | HTTP API (FastAPI), read model, middleware | everything above |

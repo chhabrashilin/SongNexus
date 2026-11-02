@@ -19,6 +19,7 @@ from sqlalchemy import Select, func, or_, select
 from sqlalchemy.orm import Session
 
 from songnexus.catalog.canonicalize import SUPPLEMENTARY_SOURCE_ID
+from songnexus.catalog.sources import GENRE_SOURCE_IDS
 from songnexus.core.model import CreditRole, RelationType
 from songnexus.storage import models as m
 
@@ -35,6 +36,7 @@ _FACT_MODELS: tuple[type[m.Base], ...] = (
     m.ReleaseCredit,
     m.RecordingCredit,
     m.ArtistRelation,
+    m.GenreParent,
 )
 
 
@@ -84,8 +86,8 @@ def _bad_confidence(session: Session) -> int:
 
 
 def _license_isolation(session: Session) -> int:
-    """Genre facts come only from the supplementary source, and nothing else does."""
-    misattributed = _count_where(m.ArtistGenre, m.ArtistGenre.source_id != SUPPLEMENTARY_SOURCE_ID)(
+    """Genre facts come only from genre sources; the non-commercial source asserts nothing else."""
+    misattributed = _count_where(m.ArtistGenre, m.ArtistGenre.source_id.not_in(GENRE_SOURCE_IDS))(
         session
     )
     for model in _FACT_MODELS:
@@ -197,7 +199,7 @@ CHECKS: tuple[tuple[str, Severity, str, Check], ...] = (
     (
         "license_isolation",
         Severity.ERROR,
-        "genre facts, and only genre facts, are attributed to the supplementary source",
+        "genre facts come only from genre sources; the non-commercial source asserts nothing else",
         _license_isolation,
     ),
     (

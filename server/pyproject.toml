@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 license = "Apache-2.0"
 dependencies = [
     "alembic>=1.14",
+    "defusedxml>=0.7.1",
     "fastapi>=0.115",
     "firebase-admin>=6.6",
     "httpx>=0.28",
@@ -33,6 +34,7 @@ dev = [
     "pytest-cov>=6.0",
     "ruff>=0.8",
     "scipy>=1.14",
+    "types-defusedxml>=0.7.0.20260504",
 ]
 
 [build-system]

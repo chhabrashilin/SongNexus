@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 
 from sqlalchemy import func, select
@@ -15,6 +15,7 @@ from songnexus.core.graph.projection import (
     CatalogFacts,
     CreditFact,
     GenreFact,
+    GenreInfo,
     LabelReleaseFact,
     RelationFact,
 )
@@ -52,12 +53,28 @@ def _artists(session: Session) -> Iterator[ArtistFact]:
         yield ArtistFact(*row)
 
 
-def _genres(session: Session) -> Iterator[GenreFact]:
-    stmt = select(m.ArtistGenre.artist_id, m.Genre.id, m.Genre.name, m.ArtistGenre.votes).join(
-        m.Genre, m.Genre.id == m.ArtistGenre.genre_id
-    )
+def _genres(session: Session, sources: Sequence[str] | None) -> Iterator[GenreFact]:
+    stmt = select(
+        m.ArtistGenre.artist_id,
+        m.Genre.id,
+        m.Genre.name,
+        m.ArtistGenre.votes,
+        m.ArtistGenre.source_id,
+    ).join(m.Genre, m.Genre.id == m.ArtistGenre.genre_id)
+    if sources is not None:
+        stmt = stmt.where(m.ArtistGenre.source_id.in_(sources))
     for row in session.execute(stmt):
         yield GenreFact(*row)
+
+
+def _vocabulary(session: Session) -> Iterator[GenreInfo]:
+    parents: dict[str, set[str]] = defaultdict(set)
+    for genre_id, parent_id in session.execute(
+        select(m.GenreParent.genre_id, m.GenreParent.parent_genre_id)
+    ):
+        parents[genre_id].add(parent_id)
+    for genre_id, name in session.execute(select(m.Genre.id, m.Genre.name)):
+        yield GenreInfo(genre_id, name, tuple(sorted(parents.get(genre_id, ()))))
 
 
 def _credits(session: Session) -> Iterator[CreditFact]:
@@ -101,8 +118,15 @@ def _label_releases(session: Session) -> Iterator[LabelReleaseFact]:
         yield LabelReleaseFact(label_id, release_id, artist_id, _year(date))
 
 
-def read_catalog_facts(session: Session) -> CatalogFacts:
-    """Loads every fact the projection needs (materialized; the session can close)."""
+def read_catalog_facts(
+    session: Session, genre_sources: Sequence[str] | None = None
+) -> CatalogFacts:
+    """Loads every fact the projection needs (materialized; the session can close).
+
+    Args:
+        session: An open session.
+        genre_sources: Which sources' genre associations to load; all when None.
+    """
     titles: dict[str, str] = {}
     years: dict[str, int] = {}
     for model in (m.Recording, m.Release):
@@ -116,7 +140,8 @@ def read_catalog_facts(session: Session) -> CatalogFacts:
         titles[label_id] = name
     return CatalogFacts(
         artists=list(_artists(session)),
-        genres=list(_genres(session)),
+        genres=list(_genres(session, genre_sources)),
+        vocabulary=list(_vocabulary(session)),
         credits=list(_credits(session)),
         relations=list(_relations(session)),
         label_releases=list(_label_releases(session)),

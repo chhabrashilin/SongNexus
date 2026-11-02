@@ -61,15 +61,84 @@ def _cmd_fetch(settings: Settings, args: argparse.Namespace) -> int:
     return EXIT_FAILED if result["unresolved"] else EXIT_OK
 
 
+def _musicbrainz_batch(settings: Settings) -> Any:
+    from songnexus.catalog.canonicalize import build_batch
+    from songnexus.catalog.snapshot import read_snapshot
+
+    return build_batch(read_snapshot(settings.snapshot_path))
+
+
+def _cmd_fetch_wikidata(settings: Settings, _args: argparse.Namespace) -> int:
+    from songnexus.catalog.wikidata.fetch import WikidataClient, run_fetch
+
+    batch = _musicbrainz_batch(settings)
+    mbids = [r["source_entity_id"] for r in batch.mappings.values() if r["entity_type"] == "artist"]
+    client = WikidataClient(
+        sparql_url=settings.wikidata_sparql_url,
+        cache_dir=settings.raw_dir("wikidata"),
+        contact=settings.wikidata_contact,
+    )
+    _print(
+        run_fetch(
+            client, musicbrainz_artist_ids=mbids, snapshot_path=settings.wikidata_snapshot_path
+        )
+    )
+    return EXIT_OK
+
+
+def _cmd_fetch_discogs(settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.catalog.discogs.dump import fetch_masters_dump, run_extract
+    from songnexus.catalog.enrich import discogs_links
+    from songnexus.catalog.snapshot import read_snapshot
+
+    links, _ambiguous = discogs_links(
+        _musicbrainz_batch(settings), read_snapshot(settings.wikidata_snapshot_path)
+    )
+    dump_path, sha256 = fetch_masters_dump(
+        settings.discogs_dumps_url,
+        args.dump_date,
+        settings.raw_dir("discogs"),
+        contact=settings.wikidata_contact,
+    )
+    _print(
+        run_extract(
+            dump_path,
+            sha256=sha256,
+            dumps_url=settings.discogs_dumps_url,
+            dump_date=args.dump_date,
+            discogs_artist_ids=links,
+            snapshot_path=settings.discogs_snapshot_path,
+        )
+    )
+    return EXIT_OK
+
+
+def _enrichment_inputs(settings: Settings, args: argparse.Namespace) -> Any:
+    from songnexus.catalog.ingest import EnrichmentInputs
+
+    # A custom snapshot (tests, experiments) is ingested on its own.
+    if args.no_enrichment or args.snapshot is not None:
+        return None
+    paths = (settings.wikidata_snapshot_path, settings.discogs_snapshot_path)
+    missing = [p.name for p in paths if not p.exists()]
+    if missing:
+        raise SystemExit(
+            f"missing enrichment snapshot(s): {', '.join(missing)}; "
+            "run fetch-wikidata and fetch-discogs, or pass --no-enrichment"
+        )
+    return EnrichmentInputs(*paths, settings.genre_map_path)
+
+
 def _cmd_ingest(settings: Settings, args: argparse.Namespace) -> int:
     from songnexus.catalog.ingest import QualityGateError, ingest_snapshot
     from songnexus.storage import migrate
     from songnexus.storage.db import make_engine
 
+    enrichment = _enrichment_inputs(settings, args)
     engine = make_engine(settings.database_url)
     migrate.upgrade(engine)
     try:
-        _print(ingest_snapshot(engine, args.snapshot or settings.snapshot_path))
+        _print(ingest_snapshot(engine, args.snapshot or settings.snapshot_path, enrichment))
     except QualityGateError as exc:
         # Nothing was written; the previous catalog keeps serving.
         print(f"Ingest rejected: {exc}. The previous catalog is unchanged.", file=sys.stderr)
@@ -136,6 +205,23 @@ def _cmd_eval_import(settings: Settings, args: argparse.Namespace) -> int:
     passed = report.precision >= MIN_IMPORT_PRECISION
     _print({"gatePassed": passed, "minPrecision": MIN_IMPORT_PRECISION, **asdict(report)})
     return EXIT_OK if passed else EXIT_FAILED
+
+
+def _cmd_eval_genres(settings: Settings, _args: argparse.Namespace) -> int:
+    from songnexus.catalog.canonicalize import SUPPLEMENTARY_SOURCE_ID
+    from songnexus.catalog.enrich import DISCOGS_SOURCE_ID
+    from songnexus.core.graph.genre_eval import genre_agreement
+    from songnexus.service.readmodel import load_read_model
+    from songnexus.storage.db import make_engine
+
+    engine = make_engine(settings.database_url)
+    musicbrainz = load_read_model(engine, [SUPPLEMENTARY_SOURCE_ID]).graph
+    discogs = load_read_model(engine, [DISCOGS_SOURCE_ID]).graph
+    report = genre_agreement(musicbrainz, discogs)
+    # No gate yet: this is the first measurement (plan R2-1). It is recorded in
+    # docs/handoff/evaluations.md and a gate is set from it, never before it.
+    _print({"a": SUPPLEMENTARY_SOURCE_ID, "b": DISCOGS_SOURCE_ID, **asdict(report)})
+    return EXIT_OK
 
 
 def _cmd_eval_search(settings: Settings, args: argparse.Namespace) -> int:
@@ -255,8 +341,28 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--reload", action="store_true", help="restart on code changes")
     serve.set_defaults(handler=_cmd_serve)
 
-    ingest = commands.add_parser("ingest", help="ingest a snapshot into the database")
-    ingest.add_argument("--snapshot", type=Path)
+    wikidata = commands.add_parser(
+        "fetch-wikidata", help="fetch Discogs artist links and the genre hierarchy from Wikidata"
+    )
+    wikidata.set_defaults(handler=_cmd_fetch_wikidata)
+
+    discogs = commands.add_parser(
+        "fetch-discogs", help="extract catalog artists' masters from a Discogs dump (~600 MB)"
+    )
+    discogs.add_argument("--dump-date", required=True, help="dump to use, YYYYMMDD (e.g. 20261001)")
+    discogs.set_defaults(handler=_cmd_fetch_discogs)
+
+    ingest = commands.add_parser(
+        "ingest", help="ingest the committed snapshots (MusicBrainz, Wikidata, Discogs)"
+    )
+    ingest.add_argument(
+        "--snapshot", type=Path, help="ingest this MusicBrainz snapshot alone, without enrichment"
+    )
+    ingest.add_argument(
+        "--no-enrichment",
+        action="store_true",
+        help="ingest MusicBrainz only (no Discogs, Wikidata)",
+    )
     ingest.set_defaults(handler=_cmd_ingest)
 
     quality = commands.add_parser("quality", help="run data-quality checks (the gate)")
@@ -274,6 +380,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     eval_import.add_argument("--cases", type=Path)
     eval_import.set_defaults(handler=_cmd_eval_import)
+
+    eval_genres = commands.add_parser(
+        "eval-genres", help="measure genre coverage and MusicBrainz-Discogs agreement"
+    )
+    eval_genres.set_defaults(handler=_cmd_eval_genres)
 
     purge = commands.add_parser("purge", help="remove expired sessions and deleted accounts")
     purge.set_defaults(handler=_cmd_purge)

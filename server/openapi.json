@@ -1081,7 +1081,13 @@
         "description": "A genre.",
         "properties": {
           "artistCount": {
+            "description": "Artists carrying this genre.",
             "title": "Artistcount",
+            "type": "integer"
+          },
+          "artistCountWithSubgenres": {
+            "description": "Artists carrying this genre or any genre below it.",
+            "title": "Artistcountwithsubgenres",
             "type": "integer"
           },
           "displayName": {
@@ -1091,12 +1097,22 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "parents": {
+            "description": "Direct parent genres, `genres/{genre}`.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Parents",
+            "type": "array"
           }
         },
         "required": [
           "name",
           "displayName",
-          "artistCount"
+          "artistCount",
+          "artistCountWithSubgenres",
+          "parents"
         ],
         "title": "Genre",
         "type": "object"
@@ -1114,14 +1130,24 @@
             "type": "string"
           },
           "share": {
+            "description": "Averaged over the sources with genre data for the artist.",
             "title": "Share",
             "type": "number"
+          },
+          "sources": {
+            "description": "Data sources asserting it, `dataSources/{source}`.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "array"
           }
         },
         "required": [
           "genre",
           "displayName",
-          "share"
+          "share",
+          "sources"
         ],
         "title": "GenreShare",
         "type": "object"
@@ -2286,7 +2312,7 @@
     },
     "/v1/artists/{artist}/collaborations": {
       "get": {
-        "description": "Lists an artist's collaborators of one type (features, production, bands, credits).",
+        "description": "Lists an artist's collaborators of one type (features, production, bands, credits).\n\nA genre filter keeps collaborators in the selected genres (and, by default, their subgenres).",
         "operationId": "ListArtistCollaborations",
         "parameters": [
           {
@@ -2328,6 +2354,45 @@
               "maxLength": 512,
               "title": "Pagetoken",
               "type": "string"
+            }
+          },
+          {
+            "description": "Genre resource names to stay within.",
+            "in": "query",
+            "name": "genres",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Genre resource names to stay within.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Genres",
+              "type": "array"
+            }
+          },
+          {
+            "description": "Keep artists with no genre data (often producers and session players).",
+            "in": "query",
+            "name": "includeUnknownGenre",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Keep artists with no genre data (often producers and session players).",
+              "title": "Includeunknowngenre",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "A genre includes the genres below it.",
+            "in": "query",
+            "name": "includeSubgenres",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "A genre includes the genres below it.",
+              "title": "Includesubgenres",
+              "type": "boolean"
             }
           }
         ],
@@ -2389,31 +2454,6 @@
             }
           },
           {
-            "description": "Genre resource names to stay within.",
-            "in": "query",
-            "name": "genres",
-            "required": false,
-            "schema": {
-              "default": [],
-              "description": "Genre resource names to stay within.",
-              "items": {
-                "type": "string"
-              },
-              "title": "Genres",
-              "type": "array"
-            }
-          },
-          {
-            "in": "query",
-            "name": "includeUnknownGenre",
-            "required": false,
-            "schema": {
-              "default": true,
-              "title": "Includeunknowngenre",
-              "type": "boolean"
-            }
-          },
-          {
             "in": "query",
             "name": "orderBy",
             "required": false,
@@ -2444,6 +2484,45 @@
               "maxLength": 512,
               "title": "Pagetoken",
               "type": "string"
+            }
+          },
+          {
+            "description": "Genre resource names to stay within.",
+            "in": "query",
+            "name": "genres",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Genre resource names to stay within.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Genres",
+              "type": "array"
+            }
+          },
+          {
+            "description": "Keep artists with no genre data (often producers and session players).",
+            "in": "query",
+            "name": "includeUnknownGenre",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Keep artists with no genre data (often producers and session players).",
+              "title": "Includeunknowngenre",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "A genre includes the genres below it.",
+            "in": "query",
+            "name": "includeSubgenres",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "A genre includes the genres below it.",
+              "title": "Includesubgenres",
+              "type": "boolean"
             }
           }
         ],
@@ -2544,7 +2623,7 @@
     },
     "/v1/artists/{artist}:compare": {
       "get": {
-        "description": "Compares two artists: shared genres, mutual collaborators and the path between.",
+        "description": "Compares two artists: shared genres, mutual collaborators and the path between.\n\nA genre filter applies to mutual collaborators and to the path's intermediate\nartists; the two artists themselves and their shared genres are unaffected.",
         "operationId": "CompareArtists",
         "parameters": [
           {
@@ -2580,6 +2659,45 @@
               },
               "title": "Categories",
               "type": "array"
+            }
+          },
+          {
+            "description": "Genre resource names to stay within.",
+            "in": "query",
+            "name": "genres",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Genre resource names to stay within.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Genres",
+              "type": "array"
+            }
+          },
+          {
+            "description": "Keep artists with no genre data (often producers and session players).",
+            "in": "query",
+            "name": "includeUnknownGenre",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Keep artists with no genre data (often producers and session players).",
+              "title": "Includeunknowngenre",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "A genre includes the genres below it.",
+            "in": "query",
+            "name": "includeSubgenres",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "A genre includes the genres below it.",
+              "title": "Includesubgenres",
+              "type": "boolean"
             }
           }
         ],
@@ -2700,12 +2818,26 @@
             }
           },
           {
+            "description": "Keep artists with no genre data (often producers and session players).",
             "in": "query",
             "name": "includeUnknownGenre",
             "required": false,
             "schema": {
               "default": true,
+              "description": "Keep artists with no genre data (often producers and session players).",
               "title": "Includeunknowngenre",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "A genre includes the genres below it.",
+            "in": "query",
+            "name": "includeSubgenres",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "A genre includes the genres below it.",
+              "title": "Includesubgenres",
               "type": "boolean"
             }
           }
@@ -2899,7 +3031,7 @@
     },
     "/v1/genres": {
       "get": {
-        "description": "Lists genres by how many artists carry them.",
+        "description": "Lists genres with artists (directly or through a subgenre), most artists first.\n\nCounts come from the served graph, so they reflect the configured genre sources.",
         "operationId": "ListGenres",
         "parameters": [
           {

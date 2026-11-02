@@ -15,7 +15,7 @@ from songnexus.catalog.musicbrainz.fetch import (
     resolve_seed,
     select_albums,
 )
-from songnexus.catalog.musicbrainz.snapshot import read_snapshot, request_key, write_snapshot
+from songnexus.catalog.snapshot import read_snapshot, request_key, write_snapshot
 from tests.catalog import fixtures as fx
 
 

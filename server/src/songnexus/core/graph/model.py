@@ -154,11 +154,20 @@ class Edge:
 
 @dataclass(frozen=True)
 class GenreShare:
-    """A genre and its share of an artist's genre votes."""
+    """A genre and its share of an artist's genre votes.
+
+    Attributes:
+        genre_id: The genre.
+        name: Its display name.
+        share: Share in [0, 1], averaged over the sources that have genre data
+            for the artist.
+        sources: The sources that associate the artist with this genre.
+    """
 
     genre_id: str
     name: str
     share: float
+    sources: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -201,6 +210,12 @@ class ArtistGraph:
             OrderedDict()
         )
         self._genre_ids: frozenset[str] | None = None
+        # The genre vocabulary (every known genre, carried or not) and the
+        # hierarchy: genre -> its direct parents.
+        self.genre_names: dict[str, str] = {}
+        self.genre_parents: dict[str, frozenset[str]] = {}
+        self._genre_children: dict[str, frozenset[str]] | None = None
+        self._genre_counts: dict[str, tuple[int, int]] | None = None
 
     def add_node(self, node: ArtistNode) -> None:
         """Adds or replaces an artist."""
@@ -271,6 +286,58 @@ class ArtistGraph:
         if self._genre_ids is None:
             self._genre_ids = frozenset(g.genre_id for n in self.nodes.values() for g in n.genres)
         return self._genre_ids
+
+    def genre_children(self, genre_id: str) -> frozenset[str]:
+        """Returns the direct subgenres of a genre."""
+        if self._genre_children is None:
+            children: dict[str, set[str]] = {}
+            for child, parents in self.genre_parents.items():
+                for parent in parents:
+                    children.setdefault(parent, set()).add(child)
+            self._genre_children = {g: frozenset(c) for g, c in children.items()}
+        return self._genre_children.get(genre_id, frozenset())
+
+    def genre_artist_counts(self) -> dict[str, tuple[int, int]]:
+        """Returns genre -> (artists carrying it, artists carrying it or a subgenre).
+
+        Computed once per graph. Genres with no artist at either level are absent.
+        """
+        if self._genre_counts is None:
+            direct: dict[str, int] = {}
+            total: dict[str, int] = {}
+            for node in self.nodes.values():
+                carried = {g.genre_id for g in node.genres}
+                for genre_id in carried:
+                    direct[genre_id] = direct.get(genre_id, 0) + 1
+                for genre_id in self._with_ancestors(carried):
+                    total[genre_id] = total.get(genre_id, 0) + 1
+            self._genre_counts = {g: (direct.get(g, 0), n) for g, n in total.items()}
+        return self._genre_counts
+
+    def _with_ancestors(self, genre_ids: Iterable[str]) -> set[str]:
+        found = set(genre_ids)
+        frontier = list(found)
+        while frontier:
+            for parent in self.genre_parents.get(frontier.pop(), ()):
+                if parent not in found:
+                    found.add(parent)
+                    frontier.append(parent)
+        return found
+
+    def with_subgenres(self, genre_ids: Iterable[str]) -> frozenset[str]:
+        """Returns the genres plus every subgenre below them.
+
+        The hierarchy comes from community data and may contain cycles; each
+        genre is visited once, so a cycle only means its members include each other.
+        """
+        found = set(genre_ids)
+        frontier = list(found)
+        while frontier:
+            for child in self.genre_children(frontier.pop()):
+                if child not in found:
+                    found.add(child)
+                    frontier.append(child)
+        return frozenset(found)
 
     def other_identities(self, artist_ids: Iterable[str]) -> frozenset[str]:
         """Returns artists that are another identity of one of ``artist_ids``.

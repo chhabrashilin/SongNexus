@@ -12,8 +12,8 @@ Status **Planned** means the source is approved but no code reads from it yet; t
 |---|---|---|---|---|
 | [MusicBrainz](https://musicbrainz.org) | CC0-1.0 | Production-safe | In Use | artists, recordings, releases and labels; credits and artist relationships (every connection); collaborations, six degrees, compare, the daily puzzle |
 | [MusicBrainz genres](https://musicbrainz.org/doc/Genre) | CC-BY-NC-SA-3.0 | Non-commercial | In Use | artist genres; genre filters and shared genres in compare |
-| [Discogs data dumps](https://data.discogs.com) | CC0-1.0 | Production-safe | Planned | commercial-safe genres and styles; label rosters; extra release credits |
-| [Wikidata](https://www.wikidata.org) | CC0-1.0 | Production-safe | Planned | genre hierarchy (subgenres) |
+| [Discogs data dumps](https://data.discogs.com) | CC0-1.0 | Production-safe | In Use | artist genres (commercial-safe); genre filters and shared genres in compare |
+| [Wikidata](https://www.wikidata.org) | CC0-1.0 | Production-safe | In Use | genre hierarchy (subgenres); links from MusicBrainz artists to Discogs |
 | [AcousticBrainz](https://acousticbrainz.org) | CC0-1.0 | Production-safe | Planned | song comparison: tempo, key, loudness and other audio descriptors |
 | [ListenBrainz](https://listenbrainz.org) | CC0-1.0 | Production-safe | Planned | listener overlap in artist comparison; an independent signal for evaluating song similarity |
 | [Spotify Tracks Dataset (Kaggle, maharshipandya)](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset) | CC0-1.0 (as stated by the uploader) | Evaluation only | Planned | evaluating song similarity against genre labels |
@@ -38,18 +38,18 @@ CC0 or equivalent. Usable in a commercial YouTube Music feature.
 - **ID:** `discogs`
 - **Obtained via:** published data dumps
 - **License:** [CC0-1.0](https://support.discogs.com/hc/en-us/articles/360009334593) (checked 2026-11-01)
-- **Feeds:** commercial-safe genres and styles; label rosters; extra release credits
+- **Feeds:** artist genres (commercial-safe); genre filters and shared genres in compare
 - **Attribution:** “Data from Discogs”
-- **Notes:** Monthly XML dumps of artists, labels, masters and releases are CC0. API-only 'Restricted Data' (images, marketplace) is not used. Joined through MusicBrainz Discogs URL relations, never by name alone.
+- **Notes:** Monthly XML dumps of artists, labels, masters and releases are CC0; we read the masters dump (main artists, genres, styles). API-only 'Restricted Data' (images, marketplace) is not used. Artists are joined through MusicBrainz and Wikidata links, never by name; styles map onto the MusicBrainz genre list by name or a reviewed table.
 
 ### Wikidata
 
 - **ID:** `wikidata`
 - **Obtained via:** its API
 - **License:** [CC0-1.0](https://www.wikidata.org/wiki/Wikidata:Licensing) (checked 2026-11-01)
-- **Feeds:** genre hierarchy (subgenres)
+- **Feeds:** genre hierarchy (subgenres); links from MusicBrainz artists to Discogs
 - **Attribution:** “Data from Wikidata”
-- **Notes:** Structured data is CC0. Used for 'subclass of' links between genres, joined by the Wikidata links on MusicBrainz genres.
+- **Notes:** Structured data is CC0. Used for 'subclass of' (P279) links between items carrying MusicBrainz genre IDs (P8052), and for items carrying both a MusicBrainz artist ID (P434) and a Discogs artist ID (P1953).
 
 ### AcousticBrainz
 

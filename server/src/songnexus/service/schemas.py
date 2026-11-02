@@ -110,7 +110,10 @@ class GenreShare(ApiModel):
 
     genre: str = Field(description="Resource name `genres/{genre}`.")
     display_name: str
-    share: float
+    share: float = Field(description="Averaged over the sources with genre data for the artist.")
+    sources: list[str] = Field(
+        default_factory=list, description="Data sources asserting it, `dataSources/{source}`."
+    )
 
 
 class ArtistSummary(ApiModel):
@@ -343,7 +346,13 @@ class Genre(ApiModel):
 
     name: str
     display_name: str
-    artist_count: int
+    artist_count: int = Field(description="Artists carrying this genre.")
+    artist_count_with_subgenres: int = Field(
+        description="Artists carrying this genre or any genre below it."
+    )
+    parents: list[str] = Field(
+        default_factory=list, description="Direct parent genres, `genres/{genre}`."
+    )
 
 
 class ListGenresResponse(ApiModel):

@@ -6,14 +6,17 @@ import {idOf, type Schemas} from '../api/client';
 import {
   useArtist,
   useCollaborations,
+  useDataSources,
   type CollaborationType,
 } from '../api/queries';
+import {isFiltered, useGenreSelection} from '../app/genreSelection';
 import {rememberArtist} from '../app/recent';
 import {usePageTitle} from '../app/Shell';
 import {useBlock} from '../app/useBlock';
 import {ArtistRow, Avatar} from '../components/ArtistRow';
 import {ConnectionSheet} from '../components/ConnectionSheet';
 import {hostOf} from '../components/evidence';
+import {GenreFilter} from '../components/Filters';
 import {Icon} from '../components/Icon';
 import {
   EmptyState,
@@ -45,14 +48,16 @@ function Collaborations({
   const [pageToken, setPageToken] = useState('');
   const [items, setItems] = useState<Schemas['Collaboration'][]>([]);
   const [evidenceWith, setEvidenceWith] = useState<string | null>(null);
-  const query = useCollaborations(artistId, tab, pageToken);
+  const [genreFilter, setGenreFilter] = useGenreSelection();
+  const [showFilters, setShowFilters] = useState(isFiltered(genreFilter));
+  const query = useCollaborations(artistId, tab, genreFilter, pageToken);
   const tabsId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     setItems([]);
     setPageToken('');
-  }, [artistId, tab]);
+  }, [artistId, tab, genreFilter]);
   useEffect(() => {
     const page = query.data?.collaborations;
     if (page && !query.isPlaceholderData) {
@@ -77,7 +82,21 @@ function Collaborations({
         <span className="muted" style={{font: 'var(--body-small)'}}>
           {t('collab.basis')}
         </span>
+        <button
+          type="button"
+          className="btn btn--text"
+          aria-expanded={showFilters}
+          onClick={() => setShowFilters(open => !open)}
+        >
+          <Icon name="tune" />
+          {t('collab.filter')}
+        </button>
       </div>
+      {showFilters && (
+        <div className="card stack">
+          <GenreFilter selection={genreFilter} onChange={setGenreFilter} />
+        </div>
+      )}
       <div className="tabs" role="tablist" aria-label={t('collab.title')}>
         {TABS.map((type, index) => (
           <button
@@ -181,11 +200,37 @@ function Collaborations({
   );
 }
 
+/** Names the data sources behind an artist's genres (ADR 0005). */
+function GenreSources({
+  ids,
+  sources,
+}: {
+  ids: string[];
+  sources: Schemas['DataSource'][];
+}) {
+  const {t} = useI18n();
+  const names = sources
+    .filter(s => ids.includes(s.name))
+    .map(s => s.displayName);
+  if (names.length === 0) return null;
+  return (
+    <p
+      className="muted"
+      style={{font: 'var(--body-small)', inlineSize: '100%'}}
+    >
+      {t('artist.genreSources', {sources: names.join(', ')})}
+    </p>
+  );
+}
+
 export default function ArtistScreen() {
   const {t} = useI18n();
   const {id = ''} = useParams();
   const artist = useArtist(id);
-  const counts = useCollaborations(id, 'FEATURE').data?.counts ?? {};
+  const [genreFilter] = useGenreSelection();
+  const counts =
+    useCollaborations(id, 'FEATURE', genreFilter).data?.counts ?? {};
+  const sources = useDataSources();
   const block = useBlock(artist.data);
   usePageTitle(artist.data?.displayName);
 
@@ -262,6 +307,10 @@ export default function ArtistScreen() {
                 {g.displayName}
               </span>
             ))}
+            <GenreSources
+              ids={a.genres.flatMap(g => g.sources)}
+              sources={sources.data ?? []}
+            />
           </div>
         ) : (
           <p className="muted">{t('artist.genresUnknown')}</p>

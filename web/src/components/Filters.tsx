@@ -2,6 +2,7 @@
 import {useId, useMemo, useState} from 'react';
 
 import {useGenres} from '../api/queries';
+import type {GenreSelection} from '../app/genreSelection';
 import {useI18n} from '../i18n/i18n';
 
 import {CATEGORIES, CATEGORY_ENCODING, type Category} from './encoding';
@@ -77,26 +78,20 @@ export function CategoryChips({
 }
 
 interface GenreFilterProps {
-  value: readonly string[];
-  onChange: (next: string[]) => void;
-  includeUnknown: boolean;
-  onIncludeUnknownChange: (next: boolean) => void;
+  selection: GenreSelection;
+  onChange: (next: GenreSelection) => void;
   /** Share of artists in view with genre data, shown honestly (AC-12.2). */
   coverage?: number | undefined;
 }
 
-export function GenreFilter({
-  value,
-  onChange,
-  includeUnknown,
-  onIncludeUnknownChange,
-  coverage,
-}: GenreFilterProps) {
+export function GenreFilter({selection, onChange, coverage}: GenreFilterProps) {
   const {t} = useI18n();
   const genres = useGenres();
   const [query, setQuery] = useState('');
   const labelId = useId();
   const all = genres.data ?? [];
+  const value = selection.genres;
+  const setGenres = (next: string[]) => onChange({...selection, genres: next});
   const names = useMemo(
     () => new Map(all.map(g => [g.name, g.displayName])),
     [all],
@@ -134,7 +129,7 @@ export function GenreFilter({
               type="button"
               className="chip"
               aria-pressed="true"
-              onClick={() => onChange(value.filter(v => v !== name))}
+              onClick={() => setGenres(value.filter(v => v !== name))}
             >
               {names.get(name) ?? name}
               <Icon name="close" size={18} />
@@ -160,19 +155,38 @@ export function GenreFilter({
             className="chip"
             aria-pressed="false"
             onClick={() => {
-              onChange([...value, genre.name]);
+              setGenres([...value, genre.name]);
               setQuery('');
             }}
           >
             {genre.displayName}
+            <span className="muted">
+              {t('filter.genres.artists', {
+                count: selection.includeSubgenres
+                  ? genre.artistCountWithSubgenres
+                  : genre.artistCount,
+              })}
+            </span>
           </button>
         ))}
       </div>
       <label className="row" style={{minBlockSize: 'var(--touch-target)'}}>
         <input
           type="checkbox"
-          checked={includeUnknown}
-          onChange={event => onIncludeUnknownChange(event.target.checked)}
+          checked={selection.includeSubgenres}
+          onChange={event =>
+            onChange({...selection, includeSubgenres: event.target.checked})
+          }
+        />
+        {t('filter.genres.includeSubgenres')}
+      </label>
+      <label className="row" style={{minBlockSize: 'var(--touch-target)'}}>
+        <input
+          type="checkbox"
+          checked={selection.includeUnknownGenre}
+          onChange={event =>
+            onChange({...selection, includeUnknownGenre: event.target.checked})
+          }
         />
         {t('filter.genres.includeUnknown')}
       </label>

@@ -16,6 +16,9 @@
   2. Album selection by ratings only influences *which* releases we fetch; it stores no rating data.
   3. Attribution ("Data from MusicBrainz") appears in the app's "About our data" page.
   4. Every snapshot and database derived from supplementary data is non-commercial and share-alike.
+- **Update, 2026-11-01 (R2-1):** Discogs genres (CC0) are now a second genre source, and the served sources are a
+  setting: `SONGNEXUS_GENRE_SOURCES=["discogs"]` drops the non-commercial source without deleting it, and the
+  delete by `source_id` below still removes it from the database. See [ADR 0005](0005-data-source-policy.md).
 - **Consequences:** the capstone may use genres. A commercial integration (e.g. YouTube Music) must drop the
   `musicbrainz-supplementary` source and use its own genre data, which a single delete by `source_id` does.
   Album selection would switch to a CC0 signal (e.g. number of releases per group).

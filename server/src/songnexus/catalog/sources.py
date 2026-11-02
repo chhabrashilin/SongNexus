@@ -119,14 +119,15 @@ SOURCES: tuple[DataSource, ...] = (
         license="CC0-1.0",
         license_url="https://support.discogs.com/hc/en-us/articles/360009334593",
         tier=Tier.PRODUCTION,
-        status=Status.PLANNED,
+        status=Status.IN_USE,
         kind=Kind.DATA_DUMP,
-        feeds=("commercial-safe genres and styles", "label rosters", "extra release credits"),
+        feeds=("artist genres (commercial-safe)", "genre filters and shared genres in compare"),
         attribution="Data from Discogs",
         checked_on="2026-11-01",
-        notes="Monthly XML dumps of artists, labels, masters and releases are CC0. API-only "
-        "'Restricted Data' (images, marketplace) is not used. Joined through MusicBrainz "
-        "Discogs URL relations, never by name alone.",
+        notes="Monthly XML dumps of artists, labels, masters and releases are CC0; we read the "
+        "masters dump (main artists, genres, styles). API-only 'Restricted Data' (images, "
+        "marketplace) is not used. Artists are joined through MusicBrainz and Wikidata links, "
+        "never by name; styles map onto the MusicBrainz genre list by name or a reviewed table.",
     ),
     DataSource(
         id="wikidata",
@@ -135,13 +136,14 @@ SOURCES: tuple[DataSource, ...] = (
         license="CC0-1.0",
         license_url="https://www.wikidata.org/wiki/Wikidata:Licensing",
         tier=Tier.PRODUCTION,
-        status=Status.PLANNED,
+        status=Status.IN_USE,
         kind=Kind.API,
-        feeds=("genre hierarchy (subgenres)",),
+        feeds=("genre hierarchy (subgenres)", "links from MusicBrainz artists to Discogs"),
         attribution="Data from Wikidata",
         checked_on="2026-11-01",
-        notes="Structured data is CC0. Used for 'subclass of' links between genres, joined by the "
-        "Wikidata links on MusicBrainz genres.",
+        notes="Structured data is CC0. Used for 'subclass of' (P279) links between items carrying "
+        "MusicBrainz genre IDs (P8052), and for items carrying both a MusicBrainz artist ID "
+        "(P434) and a Discogs artist ID (P1953).",
     ),
     # --- Audio descriptors and listening -------------------------------------------------
     DataSource(
@@ -228,6 +230,9 @@ SOURCES: tuple[DataSource, ...] = (
 )
 
 BY_ID: dict[str, DataSource] = {s.id: s for s in SOURCES}
+
+# Sources that may assert artist-genre associations (ADR 0003, ADR 0005).
+GENRE_SOURCE_IDS = ("musicbrainz-supplementary", "discogs")
 
 
 def catalog_sources() -> tuple[DataSource, ...]:

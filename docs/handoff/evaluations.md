@@ -23,6 +23,31 @@ method are in [perf/measurements.md](../perf/measurements.md).
 The two import errors are labeled near misses, the cost of typo tolerance: "The Beetles" → The Beatles and
 "The Weekend" → The Weeknd.
 
+## Genres (R2-1, measured 2026-11-01)
+
+`songnexus eval-genres` on the committed snapshots (MusicBrainz 2026-10-07, Wikidata 2026-11-01, Discogs masters dump
+2026-10-01). Agreement is measured on the 468 artists both genre sources describe.
+
+| Measure | MusicBrainz genres (non-commercial) | Discogs (CC0) | Either |
+|---|---|---|---|
+| Artists with genre data, of 5,854 | 526 (9.0 %) | 1,706 (29.1 %) | **1,764 (30.1 %)** |
+| Fully fetched seed artists, of 107 | 104 | 97 | |
+| Profile artists, of 591 | 422 | 422 | |
+| Credited-only artists (producers, session players), of 5,156 | 0 | 1,187 | |
+
+| Agreement (MusicBrainz top genre vs Discogs genres) | Result |
+|---|---|
+| Exact: Discogs also carries it | **82.1 %** |
+| Through the hierarchy: Discogs carries it, a subgenre or a parent | **94.2 %** |
+| Mean weighted share overlap | 0.42 (Discogs tags broad genres, MusicBrainz finer ones) |
+
+Golden-test floors, set just under these numbers: at least 1,700 artists with genre data and at least 90 % agreement
+through the hierarchy (`tests/catalog/test_golden_enrichment.py`).
+
+Linking: 2,540 catalog artists link to 3,134 Discogs artist IDs (MusicBrainz URL relations plus Wikidata P434/P1953);
+59 Discogs IDs claimed by two catalog artists are dropped as ambiguous. The Discogs extract scans 2,598,586 masters in
+about 14 minutes; a full ingest of all three snapshots takes about 31 s on the same laptop.
+
 ## Performance (plan §23)
 
 | Budget | Target | Result | Status |

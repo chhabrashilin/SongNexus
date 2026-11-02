@@ -17,7 +17,6 @@ from songnexus.service import convert
 from songnexus.service import schemas as api
 from songnexus.service.deps import (
     Viewer,
-    node_filter,
     parse_name,
     rate_limited,
     read_model,
@@ -26,11 +25,13 @@ from songnexus.service.deps import (
 )
 from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
-from songnexus.service.routes.catalog import Categories, Genres, kinds_from
+from songnexus.service.routes.catalog import Categories, kinds_from
 from songnexus.service.routes.common import (
     MAX_ALTERNATIVES,
     MAX_PATH_STEPS,
+    GenreSelectionDep,
     db_session,
+    selection_filter,
     set_cache_control,
 )
 from songnexus.storage import catalog_repository as repo
@@ -69,12 +70,11 @@ def find_path(
     session: SessionDep,
     response: Response,
     target: Annotated[str, Query(description="Resource name of the artist to reach.")],
+    genre_filter: GenreSelectionDep,
     mode: api.PathMode = api.PathMode.FEWEST_STEPS,
     max_steps: Annotated[int, Query(alias="maxSteps", ge=1, le=MAX_PATH_STEPS)] = MAX_PATH_STEPS,
     alternatives: Annotated[int, Query(ge=0, le=MAX_ALTERNATIVES)] = 0,
     categories: Categories = [],  # noqa: B006 - FastAPI copies query defaults
-    genres: Genres = [],  # noqa: B006
-    include_unknown_genre: Annotated[bool, Query(alias="includeUnknownGenre")] = True,
 ) -> api.FindPathResponse:
     """Finds how two artists connect, with evidence for every step.
 
@@ -85,9 +85,7 @@ def find_path(
     graph = model.graph
     source, goal = _endpoints(graph, (artist, "name"), (target, "target"))
     kinds = kinds_from(categories)
-    flt: NodeFilter = node_filter(
-        who, genres, include_unknown_genre=include_unknown_genre, graph=graph
-    )
+    flt: NodeFilter = selection_filter(who, genre_filter, graph)
     allowed = flt.predicate(graph)
     adjacency = graph.adjacency(kinds)
 
@@ -142,13 +140,18 @@ def compare_artists(
     who: ViewerDep,
     response: Response,
     other: Annotated[str, Query(description="Resource name of the artist to compare with.")],
+    genre_filter: GenreSelectionDep,
     categories: Categories = [],  # noqa: B006
 ) -> api.CompareArtistsResponse:
-    """Compares two artists: shared genres, mutual collaborators and the path between."""
+    """Compares two artists: shared genres, mutual collaborators and the path between.
+
+    A genre filter applies to mutual collaborators and to the path's intermediate
+    artists; the two artists themselves and their shared genres are unaffected.
+    """
     graph = model.graph
     a, b = _endpoints(graph, (artist, "name"), (other, "other"))
     kinds = kinds_from(categories)
-    flt = node_filter(who, [], include_unknown_genre=True, graph=graph)
+    flt = selection_filter(who, genre_filter, graph)
     result = compare(graph, a, b, kinds, node_filter=flt, max_depth=MAX_PATH_STEPS)
     set_cache_control(response, who)
     return api.CompareArtistsResponse(

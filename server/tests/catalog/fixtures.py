@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from songnexus.catalog.musicbrainz.snapshot import RawRecord
+from songnexus.catalog.snapshot import RawRecord
 
 
 def artist_ref(mbid: str, name: str, **extra: Any) -> dict[str, Any]:
@@ -184,4 +184,93 @@ def small_catalog() -> list[RawRecord]:
             credit(("mb-alice", "Alice", "")),
             [recording("rec-3", "Song (2020 Remaster)", alice_feat_bob)],
         ),
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Enrichment: the MusicBrainz genre list, Wikidata and Discogs (R2-1)
+# ---------------------------------------------------------------------------
+
+# Genre MBIDs for the vocabulary used by the enrichment fixtures.
+GENRE_MBIDS = {
+    "hip hop": "g-hiphop",
+    "trap": "g-trap",
+    "jazz": "g-jazz",
+    "bebop": "g-bebop",
+    "r&b": "g-rnb",
+    "funk": "g-funk",
+    "soul": "g-soul",
+}
+
+
+def genre_list_record(names: dict[str, str] = GENRE_MBIDS) -> RawRecord:
+    return RawRecord(
+        kind="genre_list",
+        request_key="genre/all?limit=100&offset=0",
+        url="https://musicbrainz.test/ws/2/genre/all?limit=100&offset=0&fmt=json",
+        retrieved_at="2026-11-01T00:00:00+00:00",
+        body={
+            "genre-count": len(names),
+            "genres": [{"id": mbid, "name": name} for name, mbid in names.items()],
+        },
+    )
+
+
+def sparql_record(key: str, rows: list[dict[str, str]]) -> RawRecord:
+    return RawRecord(
+        kind="sparql",
+        request_key=f"?form={key}",
+        url="https://query.wikidata.test/sparql",
+        retrieved_at="2026-11-01T00:00:00+00:00",
+        body={"results": {"bindings": [{k: {"value": v} for k, v in r.items()} for r in rows]}},
+    )
+
+
+def wikidata_records() -> list[RawRecord]:
+    """Alice and Bob link to Discogs; trap is a kind of hip hop, bebop a kind of jazz."""
+    links = [
+        {"item": "Q1", "musicbrainz": "mb-alice", "discogs": "101"},
+        {"item": "Q1", "musicbrainz": "mb-alice", "discogs": "102"},  # a second profile
+        {"item": "Q2", "musicbrainz": "mb-bob", "discogs": "201"},
+    ]
+    hierarchy = [
+        {"item": "Q10", "genre": "g-trap", "parent": "g-hiphop"},
+        {"item": "Q11", "genre": "g-bebop", "parent": "g-jazz"},
+        {"item": "Q12", "genre": "g-hiphop"},
+        {"item": "Q13", "genre": "g-jazz", "parent": "g-jazz"},  # a self-loop: ignored
+    ]
+    return [sparql_record("links", links), sparql_record("hierarchy", hierarchy)]
+
+
+def discogs_record(artist: str, masters: list[dict[str, Any]]) -> RawRecord:
+    return RawRecord(
+        kind="masters",
+        request_key=f"dump/20261001/masters?artist={artist}",
+        url="https://data.discogs.test/?download=masters",
+        retrieved_at="2026-10-01T00:00:00+00:00",
+        body={"artist": artist, "masters": masters},
+    )
+
+
+def master(master_id: str, genres: list[str], styles: list[str]) -> dict[str, Any]:
+    return {
+        "id": master_id,
+        "title": f"Master {master_id}",
+        "year": 2001,
+        "genres": genres,
+        "styles": styles,
+    }
+
+
+def discogs_records() -> list[RawRecord]:
+    """Alice: three masters across two profiles (one shared); Bob: one master."""
+    return [
+        discogs_record(
+            "101",
+            [master("1", ["Hip Hop"], ["Trap"]), master("2", ["Jazz", "Funk / Soul"], ["Bop"])],
+        ),
+        discogs_record(
+            "102", [master("2", ["Jazz"], []), master("3", ["Hip Hop"], ["Soundtrack"])]
+        ),
+        discogs_record("201", [master("9", ["Funk / Soul"], ["Contemporary Weirdness"])]),
     ]

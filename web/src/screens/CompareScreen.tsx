@@ -1,10 +1,14 @@
 /** Compare (S3, US-05): shared genres, who worked with both, how they connect. */
+import {useState} from 'react';
 import {Link, useSearchParams} from 'react-router';
 
 import {idOf} from '../api/client';
 import {useArtist, useCompare} from '../api/queries';
+import {isFiltered, useGenreSelection} from '../app/genreSelection';
 import {usePageTitle} from '../app/Shell';
 import {ArtistRow, artistPath} from '../components/ArtistRow';
+import {GenreFilter} from '../components/Filters';
+import {Icon} from '../components/Icon';
 import {SearchBox} from '../components/SearchBox';
 import {EmptyState, ErrorState, SkeletonRows} from '../components/States';
 import {useI18n} from '../i18n/i18n';
@@ -41,7 +45,9 @@ export default function CompareScreen() {
   const [search, setSearch] = useSearchParams();
   const a = search.get('a');
   const b = search.get('b');
-  const result = useCompare(a ?? undefined, b ?? undefined);
+  const [genreFilter, setGenreFilter] = useGenreSelection();
+  const [showFilters, setShowFilters] = useState(isFiltered(genreFilter));
+  const result = useCompare(a ?? undefined, b ?? undefined, genreFilter);
   usePageTitle(t('compare.title'));
 
   function set(key: 'a' | 'b', value: string) {
@@ -58,6 +64,25 @@ export default function CompareScreen() {
         <Picker label={t('path.from')} id={a} onPick={id => set('a', id)} />
         <Picker label={t('path.to')} id={b} onPick={id => set('b', id)} />
       </div>
+      <div className="row">
+        <button
+          type="button"
+          className="btn btn--tonal"
+          aria-expanded={showFilters}
+          onClick={() => setShowFilters(open => !open)}
+        >
+          <Icon name="tune" />
+          {t('compare.filter')}
+        </button>
+      </div>
+      {showFilters && (
+        <div className="card stack">
+          <p className="muted" style={{font: 'var(--body-small)'}}>
+            {t('compare.filterHelp')}
+          </p>
+          <GenreFilter selection={genreFilter} onChange={setGenreFilter} />
+        </div>
+      )}
       {a && a === b && <p className="banner">{t('path.sameArtist')}</p>}
       {result.isFetching && !data && <SkeletonRows count={4} />}
       {result.isError && (
