@@ -13,6 +13,9 @@ deterministic given the same upstream data:
 * Every non-seed artist credited as primary or featured on a fetched recording
   gets a profile lookup (aliases and genres), so search and filters work for
   them too. The number of profile lookups is capped.
+* The full genre list (CC0 core data) is fetched once per run: it is the genre
+  vocabulary that other sources' genres are mapped onto, and its IDs join the
+  Wikidata genre hierarchy.
 """
 
 from __future__ import annotations
@@ -27,7 +30,7 @@ from pydantic import ValidationError
 
 from songnexus.catalog.musicbrainz.client import MusicBrainzClient
 from songnexus.catalog.musicbrainz.parsers import Release, split_artist_credit
-from songnexus.catalog.musicbrainz.snapshot import write_snapshot
+from songnexus.catalog.snapshot import write_snapshot
 from songnexus.core.resolution import Candidate, Decision, resolve
 
 log = logging.getLogger(__name__)
@@ -36,6 +39,7 @@ ARTIST_INC = "aliases+genres+artist-rels+url-rels"
 ARTIST_PROFILE_INC = "aliases+genres"
 RELEASE_INC = "recordings+artist-credits+labels+artist-rels+recording-level-rels+release-groups"
 MAX_RELEASE_GROUP_PAGES = 3
+MAX_GENRE_LIST_PAGES = 50
 PAGE_SIZE = 100
 DEFAULT_MAX_PROFILES = 1500
 _COUNTRY_PREFERENCE = {"XW": 0, "US": 1, "GB": 2}
@@ -238,6 +242,22 @@ def fetch_artist_bundle(
     return fetched, performers
 
 
+def fetch_genre_list(client: MusicBrainzClient) -> int:
+    """Fetches every page of the MusicBrainz genre list; returns the number of genres.
+
+    Raises:
+        MusicBrainzError: A page failed permanently.
+    """
+    offset, total = 0, None
+    for _ in range(MAX_GENRE_LIST_PAGES):
+        body = client.get("genre_list", "genre/all", {"limit": PAGE_SIZE, "offset": offset}).body
+        total = int(body.get("genre-count", 0))
+        offset += len(body.get("genres", []))
+        if not body.get("genres") or offset >= total:
+            break
+    return offset
+
+
 def run_fetch(
     client: MusicBrainzClient,
     *,
@@ -274,6 +294,8 @@ def run_fetch(
     for mbid in profiles[:max_profiles]:
         client.get("artist_profile", f"artist/{mbid}", {"inc": ARTIST_PROFILE_INC})
 
+    genres = fetch_genre_list(client)
+
     lock_path.write_text(
         json.dumps(
             {"artists": [asdict(r) for r in resolutions], "unresolved": errors},
@@ -292,6 +314,7 @@ def run_fetch(
         "unresolved": errors,
         "profiles": min(len(profiles), max_profiles),
         "skippedProfiles": skipped_profiles,
+        "genres": genres,
         "records": written,
         "networkRequests": client.network_requests,
         "cacheHits": client.cache_hits,

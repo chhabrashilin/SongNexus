@@ -8,7 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from songnexus.catalog.ingest import ingest_snapshot
-from songnexus.catalog.musicbrainz.snapshot import write_snapshot
+from songnexus.catalog.snapshot import write_snapshot
 from songnexus.config import Settings
 from songnexus.core import ids
 from songnexus.service.app import build_state, create_app

@@ -89,9 +89,10 @@ export default function AboutScreen() {
           MusicBrainz
         </a>
         , an open music encyclopedia maintained by volunteers. Its core data is
-        in the public domain (CC0). Genre associations come from MusicBrainz
-        tags, which are licensed separately (CC BY-NC-SA 3.0); we keep them
-        apart from the rest of the data.
+        in the public domain (CC0). Genres come from Discogs (public domain) and
+        from MusicBrainz tags, which are licensed separately (CC BY-NC-SA 3.0)
+        and kept apart from the rest of the data. Which genres sit inside which
+        (trap inside hip hop) comes from Wikidata.
       </p>
       <h2>What’s missing</h2>
       <ul>
@@ -106,9 +107,9 @@ export default function AboutScreen() {
           together.
         </li>
         <li>
-          Genre data exists for the artists we looked up in full. Producers and
-          session players often have none, so the genre filter includes them
-          unless you choose otherwise.
+          About a third of artists have genre data. Producers and session
+          players often have none, so the genre filter includes them unless you
+          choose otherwise.
         </li>
       </ul>
       <h2>How strength works</h2>

@@ -20,6 +20,7 @@ import {
   useArtist,
   type ConnectionCategory,
 } from '../api/queries';
+import {NO_GENRE_FILTER, type GenreSelection} from '../app/genreSelection';
 import {usePageTitle} from '../app/Shell';
 import {ConnectionSheet} from '../components/ConnectionSheet';
 import {DEFAULT_CATEGORIES} from '../components/encoding';
@@ -133,8 +134,8 @@ export default function ExploreScreen() {
   const [categories, setCategories] = useState<ConnectionCategory[]>([
     ...DEFAULT_CATEGORIES,
   ]);
-  const [genres, setGenres] = useState<string[]>([]);
-  const [includeUnknown, setIncludeUnknown] = useState(true);
+  const [genreFilter, setGenreFilter] =
+    useState<GenreSelection>(NO_GENRE_FILTER);
   const [view, setView] = useState<'web' | 'list'>('web');
   const [selected, setSelected] = useState<string | null>(null);
   const [evidence, setEvidence] = useState<[string, string] | null>(null);
@@ -149,8 +150,8 @@ export default function ExploreScreen() {
   );
 
   const params = useMemo(
-    () => ({categories, genres, includeUnknownGenre: includeUnknown}),
-    [categories, genres, includeUnknown],
+    () => ({categories, ...genreFilter}),
+    [categories, genreFilter],
   );
 
   const load = useCallback(
@@ -265,10 +266,8 @@ export default function ExploreScreen() {
         <div className="card stack">
           <CategoryChips value={categories} onChange={setCategories} />
           <GenreFilter
-            value={genres}
-            onChange={setGenres}
-            includeUnknown={includeUnknown}
-            onIncludeUnknownChange={setIncludeUnknown}
+            selection={genreFilter}
+            onChange={setGenreFilter}
             coverage={genreCoverage(state)}
           />
         </div>

@@ -20,7 +20,7 @@ from typing import Any
 from pydantic import ValidationError
 
 from songnexus.catalog.musicbrainz import parsers as mb
-from songnexus.catalog.musicbrainz.snapshot import RawRecord
+from songnexus.catalog.snapshot import RawRecord
 from songnexus.core import ids
 from songnexus.core.model import CreditRole
 from songnexus.core.text import base_title, normalize
@@ -189,13 +189,9 @@ def _handle_artist(batch: CanonicalBatch, record: RawRecord) -> None:
         )
 
     for tag in artist.genres:
-        genre_norm = normalize(tag.name)
-        if not genre_norm:
+        genre_id = _add_genre(batch, tag.name)
+        if genre_id is None:
             continue
-        genre_id = ids.genre_id(genre_norm)
-        batch.genres.setdefault(
-            genre_id, {"id": genre_id, "name": tag.name, "normalized_name": genre_norm}
-        )
         batch.artist_genres[(artist_id, genre_id)] = {
             "artist_id": artist_id,
             "genre_id": genre_id,
@@ -464,10 +460,30 @@ def _add_recording(batch: CanonicalBatch, recording: mb.Recording, raw_key: str)
     return recording_id
 
 
+def _add_genre(batch: CanonicalBatch, name: str) -> str | None:
+    """Adds a genre by name and returns its ID, or None for an empty name."""
+    genre_norm = normalize(name)
+    if not genre_norm:
+        return None
+    genre_id = ids.genre_id(genre_norm)
+    batch.genres.setdefault(genre_id, {"id": genre_id, "name": name, "normalized_name": genre_norm})
+    return genre_id
+
+
+def _handle_genre_list(batch: CanonicalBatch, record: RawRecord) -> None:
+    """The genre vocabulary: every MusicBrainz genre, mapped by its MBID."""
+    page = mb.GenreList.model_validate(record.body)
+    for genre in page.genres:
+        genre_id = _add_genre(batch, genre.name)
+        if genre_id is not None:
+            _add_mapping(batch, "genre", genre_id, genre.id)
+
+
 _HANDLERS: dict[str, Callable[[CanonicalBatch, RawRecord], None]] = {
     "artist": _handle_artist,
     "artist_profile": _handle_artist,
     "release": _handle_release,
+    "genre_list": _handle_genre_list,
 }
 # Fuller artist lookups first, so stub references never shadow them.
 _KIND_ORDER = {"artist": 0, "artist_profile": 1}

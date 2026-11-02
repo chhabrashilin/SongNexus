@@ -8,7 +8,11 @@ Write semantics:
   are deleted, so the database is a pure function of its snapshots and
   re-ingestion is idempotent.
 * Entities are upserted by their deterministic IDs. An entity no source maps to
-  any more (and a genre no artist carries) is garbage-collected after the sync.
+  any more (and a genre neither mapped nor carried) is garbage-collected after
+  the sync.
+* MusicBrainz is the primary snapshot. Wikidata and Discogs snapshots enrich it
+  (``catalog.enrich``); when they are absent their facts sync to empty, so the
+  catalog is still a pure function of the snapshots given.
 * The whole data write is one transaction, and the quality gate runs inside it:
   a catalog that fails the gate is rolled back and never served. The run record
   is written in its own transactions, so a failed run is still visible afterwards.
@@ -21,6 +25,7 @@ import hashlib
 import logging
 import time
 from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -37,8 +42,15 @@ from songnexus.catalog.canonicalize import (
     Row,
     build_batch,
 )
-from songnexus.catalog.musicbrainz.snapshot import RawRecord, read_snapshot
+from songnexus.catalog.enrich import (
+    DISCOGS_SOURCE_ID,
+    WIKIDATA_SOURCE_ID,
+    EnrichmentBatch,
+    GenreMap,
+    build_enrichment,
+)
 from songnexus.catalog.quality import Severity, gate_passes, run_quality_checks
+from songnexus.catalog.snapshot import RawRecord, read_snapshot
 from songnexus.catalog.sources import BY_ID, Status, catalog_sources
 from songnexus.storage import models as m
 from songnexus.storage.db import session_scope
@@ -59,12 +71,23 @@ class UnregisteredSourceError(ValueError):
     """A fact names a source that is not an in-use catalog source in the registry (ADR 0005)."""
 
 
-# The sources this adapter writes; each must be an in-use catalog source in the registry.
-_ADAPTER_SOURCES = (SOURCE_ID, SUPPLEMENTARY_SOURCE_ID)
+# The sources ingest writes; each must be an in-use catalog source in the registry.
+_MUSICBRAINZ_SOURCES = (SOURCE_ID, SUPPLEMENTARY_SOURCE_ID)
+_ENRICHMENT_SOURCES = (DISCOGS_SOURCE_ID, WIKIDATA_SOURCE_ID)
+_INGESTED_SOURCES = (*_MUSICBRAINZ_SOURCES, *_ENRICHMENT_SOURCES)
 _STORABLE = frozenset(s.id for s in catalog_sources() if s.status is Status.IN_USE)
 
 
-def registered_source_rows(source_ids: Iterable[str] = _ADAPTER_SOURCES) -> list[Row]:
+@dataclass(frozen=True)
+class EnrichmentInputs:
+    """The enrichment snapshots and the reviewed genre table."""
+
+    wikidata_snapshot: Path
+    discogs_snapshot: Path
+    genre_map: Path
+
+
+def registered_source_rows(source_ids: Iterable[str] = _INGESTED_SOURCES) -> list[Row]:
     """Returns ``data_sources`` rows for ``source_ids``, from the registry.
 
     Raises:
@@ -141,13 +164,18 @@ def sync_source_facts(
     return counts
 
 
-def _attach_provenance(rows: Iterable[Row], raw_ids: dict[str, int], run_id: int) -> list[Row]:
+def _attach_provenance(
+    rows: Iterable[Row], raw_ids: dict[str, dict[str, int]], run_id: int, sources: Sequence[str]
+) -> list[Row]:
+    """Resolves each row's raw key to its raw record, refusing rows from other sources."""
     attached = []
     for row in rows:
-        if row["source_id"] not in _ADAPTER_SOURCES:
+        if row["source_id"] not in sources:
             raise UnregisteredSourceError(f"fact from unexpected source {row['source_id']!r}")
         out = {k: v for k, v in row.items() if k != "_raw_key"}
-        out["raw_record_id"] = raw_ids[row["_raw_key"]]
+        # Supplementary facts are asserted by MusicBrainz raw records.
+        raw_source = SOURCE_ID if row["source_id"] in _MUSICBRAINZ_SOURCES else row["source_id"]
+        out["raw_record_id"] = raw_ids[raw_source][row["_raw_key"]]
         out["ingestion_run_id"] = run_id
         attached.append(out)
     return attached
@@ -157,18 +185,20 @@ def _with_run(rows: Iterable[Row], run_id: int) -> list[Row]:
     return [{**row, "ingestion_run_id": run_id} for row in rows]
 
 
-def _write_raw_records(session: Session, records: list[RawRecord], run_id: int) -> dict[str, int]:
-    """Upserts raw records by request key and returns request key -> row ID."""
+def _write_raw_records(
+    session: Session, records: list[RawRecord], run_id: int, source_id: str
+) -> dict[str, int]:
+    """Upserts one source's raw records by request key and returns request key -> row ID."""
 
     def current_ids() -> dict[str, int]:
         stmt = select(m.RawRecord.request_key, m.RawRecord.id).where(
-            m.RawRecord.source_id == SOURCE_ID
+            m.RawRecord.source_id == source_id
         )
         return dict(session.execute(stmt).all())
 
     rows = [
         {
-            "source_id": SOURCE_ID,
+            "source_id": source_id,
             "kind": r.kind,
             "request_key": r.request_key,
             "url": r.url,
@@ -192,7 +222,7 @@ def _write_raw_records(session: Session, records: list[RawRecord], run_id: int) 
 
 
 def _collect_garbage(session: Session) -> dict[str, int]:
-    """Deletes entities nothing maps to, and genres no artist carries."""
+    """Deletes entities nothing maps to, and genres neither in the vocabulary nor carried."""
     deleted: dict[str, int] = {}
     for entity_type, model in m.ENTITY_MODELS.items():
         mapped = select(m.EntitySourceMapping.entity_id).where(
@@ -202,16 +232,37 @@ def _collect_garbage(session: Session) -> dict[str, int]:
         result = session.execute(delete(model).where(entity_id.not_in(mapped)))
         deleted[entity_type] = int(result.rowcount)  # type: ignore[attr-defined]
     carried = select(m.ArtistGenre.genre_id)
-    result = session.execute(delete(m.Genre).where(m.Genre.id.not_in(carried)))
+    in_vocabulary = select(m.EntitySourceMapping.entity_id).where(
+        m.EntitySourceMapping.entity_type == "genre"
+    )
+    result = session.execute(
+        delete(m.Genre).where(m.Genre.id.not_in(carried), m.Genre.id.not_in(in_vocabulary))
+    )
     deleted["genre"] = int(result.rowcount)  # type: ignore[attr-defined]
     return deleted
 
 
 def write_batch(
-    session: Session, batch: CanonicalBatch, records: list[RawRecord], run_id: int
+    session: Session,
+    batch: CanonicalBatch,
+    records: dict[str, list[RawRecord]],
+    run_id: int,
+    enrichment: EnrichmentBatch | None = None,
 ) -> dict[str, Any]:
-    """Writes a batch in dependency order and returns per-table write counts."""
-    raw_ids = _write_raw_records(session, records, run_id)
+    """Writes a batch (and its enrichment) in dependency order; returns write counts.
+
+    Args:
+        session: The open transaction.
+        batch: The MusicBrainz batch.
+        records: Raw records by source ID; sources absent here have none.
+        run_id: The ingestion run.
+        enrichment: Discogs and Wikidata rows; none when omitted.
+    """
+    enrichment = enrichment or EnrichmentBatch()
+    raw_ids = {
+        source_id: _write_raw_records(session, records.get(source_id, []), run_id, source_id)
+        for source_id in (SOURCE_ID, *_ENRICHMENT_SOURCES)
+    }
     counts: dict[str, Any] = {}
 
     # Entities before facts, so fact foreign keys always resolve.
@@ -236,10 +287,40 @@ def write_batch(
     ]
     for name, model, rows in fact_tables:
         counts[name] = sync_source_facts(
-            session, model, _attach_provenance(rows, raw_ids, run_id), _ADAPTER_SOURCES
+            session,
+            model,
+            _attach_provenance(rows, raw_ids, run_id, _MUSICBRAINZ_SOURCES),
+            _MUSICBRAINZ_SOURCES,
         )
     counts["entity_source_mappings"] = sync_source_facts(
-        session, m.EntitySourceMapping, _with_run(batch.mappings.values(), run_id), _ADAPTER_SOURCES
+        session,
+        m.EntitySourceMapping,
+        _with_run(batch.mappings.values(), run_id),
+        _MUSICBRAINZ_SOURCES,
+    )
+
+    # Enrichment: Discogs genres and artist mappings, Wikidata genre parents.
+    counts["discogs_artist_genres"] = sync_source_facts(
+        session,
+        m.ArtistGenre,
+        _attach_provenance(
+            enrichment.artist_genres.values(), raw_ids, run_id, (DISCOGS_SOURCE_ID,)
+        ),
+        (DISCOGS_SOURCE_ID,),
+    )
+    counts["genre_parents"] = sync_source_facts(
+        session,
+        m.GenreParent,
+        _attach_provenance(
+            enrichment.genre_parents.values(), raw_ids, run_id, (WIKIDATA_SOURCE_ID,)
+        ),
+        (WIKIDATA_SOURCE_ID,),
+    )
+    counts["discogs_entity_source_mappings"] = sync_source_facts(
+        session,
+        m.EntitySourceMapping,
+        _with_run(enrichment.mappings.values(), run_id),
+        (DISCOGS_SOURCE_ID,),
     )
     counts["garbage_collected"] = _collect_garbage(session)
     return counts
@@ -254,8 +335,28 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def ingest_snapshot(engine: Engine, snapshot_path: Path) -> dict[str, Any]:
-    """Ingests a snapshot into the database and returns the run statistics.
+def _read_enrichment(
+    batch: CanonicalBatch, inputs: EnrichmentInputs | None
+) -> tuple[EnrichmentBatch, dict[str, list[RawRecord]]]:
+    if inputs is None:
+        return EnrichmentBatch(), {}
+    records = {
+        WIKIDATA_SOURCE_ID: list(read_snapshot(inputs.wikidata_snapshot)),
+        DISCOGS_SOURCE_ID: list(read_snapshot(inputs.discogs_snapshot)),
+    }
+    enrichment = build_enrichment(
+        batch,
+        records[WIKIDATA_SOURCE_ID],
+        records[DISCOGS_SOURCE_ID],
+        GenreMap.load(inputs.genre_map),
+    )
+    return enrichment, records
+
+
+def ingest_snapshot(
+    engine: Engine, snapshot_path: Path, enrichment_inputs: EnrichmentInputs | None = None
+) -> dict[str, Any]:
+    """Ingests a snapshot (and optional enrichment) and returns the run statistics.
 
     Raises:
         Exception: Any failure is recorded on the run (status ``failed``) and
@@ -279,12 +380,15 @@ def ingest_snapshot(engine: Engine, snapshot_path: Path) -> dict[str, Any]:
     try:
         records = list(read_snapshot(snapshot_path))
         batch = build_batch(records)
+        enrichment, enrichment_records = _read_enrichment(batch, enrichment_inputs)
         with session_scope(engine) as session:
             if session.get_bind().dialect.name == "postgresql":
                 session.execute(
                     text("SELECT pg_advisory_xact_lock(:key)"), {"key": _INGEST_LOCK_KEY}
                 )
-            counts = write_batch(session, batch, records, run_id)
+            counts = write_batch(
+                session, batch, {SOURCE_ID: records, **enrichment_records}, run_id, enrichment
+            )
             session.flush()
             quality = run_quality_checks(session)
             if not gate_passes(quality):
@@ -304,6 +408,10 @@ def ingest_snapshot(engine: Engine, snapshot_path: Path) -> dict[str, Any]:
                 "batch": dict(sorted(batch.stats.items())),
                 "rejected": batch.rejected,
                 "ignoredRelationTypes": dict(batch.ignored_relation_types.most_common()),
+                "enrichment": {
+                    **dict(sorted(enrichment.stats.items())),
+                    "unmappedDiscogsNames": dict(enrichment.unmapped_names.most_common(25)),
+                },
                 "writes": counts,
                 "quality": {r.name: r.violations for r in quality},
             }

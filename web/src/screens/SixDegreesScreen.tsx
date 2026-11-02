@@ -12,6 +12,7 @@ import {
   type ConnectionCategory,
   type PathMode,
 } from '../api/queries';
+import {useGenreSelection} from '../app/genreSelection';
 import {usePageTitle} from '../app/Shell';
 import {ArtistRow, artistPath} from '../components/ArtistRow';
 import {EvidenceList} from '../components/ConnectionSheet';
@@ -73,11 +74,7 @@ export default function SixDegreesScreen() {
       : 'FEWEST_STEPS'
   ) as PathMode;
   const categories = readCategories(search.get('categories'));
-  const genres = useMemo(
-    () => (search.get('genres') ?? '').split(',').filter(Boolean),
-    [search],
-  );
-  const includeUnknown = search.get('unknown') !== '0';
+  const [genreFilter, setGenreFilter] = useGenreSelection();
   const [showFilters, setShowFilters] = useState(false);
   const [revealed, setRevealed] = useState(0);
   usePageTitle(t('path.title'));
@@ -99,8 +96,7 @@ export default function SixDegreesScreen() {
           to,
           mode,
           categories,
-          genres,
-          includeUnknownGenre: includeUnknown,
+          ...genreFilter,
           alternatives: 2,
         }
       : null,
@@ -212,14 +208,7 @@ export default function SixDegreesScreen() {
             value={categories}
             onChange={next => update({categories: next.join(',')})}
           />
-          <GenreFilter
-            value={genres}
-            onChange={next => update({genres: next.join(',')})}
-            includeUnknown={includeUnknown}
-            onIncludeUnknownChange={next =>
-              update({unknown: next ? null : '0'})
-            }
-          />
+          <GenreFilter selection={genreFilter} onChange={setGenreFilter} />
         </div>
       )}
 

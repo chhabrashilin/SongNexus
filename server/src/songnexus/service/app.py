@@ -88,7 +88,9 @@ def build_state(settings: Settings) -> AppState:
     """
     validate_for_serving(settings, os.environ)
     engine = make_engine(settings.database_url)
-    holder = ReadModelHolder(lambda: load_read_model(engine), lambda: probe_version(engine))
+    holder = ReadModelHolder(
+        lambda: load_read_model(engine, settings.genre_sources), lambda: probe_version(engine)
+    )
     limiter = RateLimiter(
         {
             MethodClass.READ: settings.rate_limit_read_per_minute,

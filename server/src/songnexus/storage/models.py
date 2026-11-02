@@ -205,7 +205,7 @@ class EntitySourceMapping(Base):
     )
 
     id: Mapped[str] = mapped_column(ID, primary_key=True)
-    entity_type: Mapped[str] = mapped_column(String(16))  # artist|release|recording|label
+    entity_type: Mapped[str] = mapped_column(String(16))  # artist|release|recording|label|genre
     entity_id: Mapped[str] = mapped_column(ID)
     source_id: Mapped[str] = mapped_column(ForeignKey("data_sources.id"), index=True)
     source_entity_id: Mapped[str] = mapped_column(String(128))
@@ -247,7 +247,11 @@ class ArtistLink(ProvenanceMixin, Base):
 
 
 class ArtistGenre(ProvenanceMixin, Base):
-    """A genre association with its vote count (licensed separately, ADR 0003)."""
+    """A genre association with its vote count, per source (ADR 0003, ADR 0005).
+
+    Sources count votes in their own unit (MusicBrainz tag votes, Discogs masters
+    tagged), so the source is part of the key and shares are computed per source.
+    """
 
     __tablename__ = "artist_genres"
 
@@ -255,7 +259,26 @@ class ArtistGenre(ProvenanceMixin, Base):
         ForeignKey("artists.id", ondelete="CASCADE"), primary_key=True
     )
     genre_id: Mapped[str] = mapped_column(ForeignKey("genres.id"), primary_key=True, index=True)
+    source_id: Mapped[str] = mapped_column(
+        ForeignKey("data_sources.id"), primary_key=True, index=True
+    )
     votes: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class GenreParent(ProvenanceMixin, Base):
+    """``genre_id`` is a kind of ``parent_genre_id`` (e.g. trap is a kind of hip hop)."""
+
+    __tablename__ = "genre_parents"
+
+    genre_id: Mapped[str] = mapped_column(
+        ForeignKey("genres.id", ondelete="CASCADE"), primary_key=True
+    )
+    parent_genre_id: Mapped[str] = mapped_column(
+        ForeignKey("genres.id", ondelete="CASCADE"), primary_key=True, index=True
+    )
+    source_id: Mapped[str] = mapped_column(
+        ForeignKey("data_sources.id"), primary_key=True, index=True
+    )
 
 
 class ReleaseArtist(ProvenanceMixin, Base):

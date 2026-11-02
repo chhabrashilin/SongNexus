@@ -54,6 +54,8 @@ export interface paths {
         /**
          * ListArtistCollaborations
          * @description Lists an artist's collaborators of one type (features, production, bands, credits).
+         *
+         *     A genre filter keeps collaborators in the selected genres (and, by default, their subgenres).
          */
         get: operations["ListArtistCollaborations"];
         put?: never;
@@ -114,6 +116,9 @@ export interface paths {
         /**
          * CompareArtists
          * @description Compares two artists: shared genres, mutual collaborators and the path between.
+         *
+         *     A genre filter applies to mutual collaborators and to the path's intermediate
+         *     artists; the two artists themselves and their shared genres are unaffected.
          */
         get: operations["CompareArtists"];
         put?: never;
@@ -217,7 +222,9 @@ export interface paths {
         };
         /**
          * ListGenres
-         * @description Lists genres by how many artists carry them.
+         * @description Lists genres with artists (directly or through a subgenre), most artists first.
+         *
+         *     Counts come from the served graph, so they reflect the configured genre sources.
          */
         get: operations["ListGenres"];
         put?: never;
@@ -1051,12 +1058,25 @@ export interface components {
          * @description A genre.
          */
         Genre: {
-            /** Artistcount */
+            /**
+             * Artistcount
+             * @description Artists carrying this genre.
+             */
             artistCount: number;
+            /**
+             * Artistcountwithsubgenres
+             * @description Artists carrying this genre or any genre below it.
+             */
+            artistCountWithSubgenres: number;
             /** Displayname */
             displayName: string;
             /** Name */
             name: string;
+            /**
+             * Parents
+             * @description Direct parent genres, `genres/{genre}`.
+             */
+            parents: string[];
         };
         /**
          * GenreShare
@@ -1070,8 +1090,16 @@ export interface components {
              * @description Resource name `genres/{genre}`.
              */
             genre: string;
-            /** Share */
+            /**
+             * Share
+             * @description Averaged over the sources with genre data for the artist.
+             */
             share: number;
+            /**
+             * Sources
+             * @description Data sources asserting it, `dataSources/{source}`.
+             */
+            sources: string[];
         };
         /**
          * Health
@@ -1707,6 +1735,12 @@ export interface operations {
                 type?: components["schemas"]["CollaborationType"];
                 pageSize?: number;
                 pageToken?: string;
+                /** @description Genre resource names to stay within. */
+                genres?: string[];
+                /** @description Keep artists with no genre data (often producers and session players). */
+                includeUnknownGenre?: boolean;
+                /** @description A genre includes the genres below it. */
+                includeSubgenres?: boolean;
             };
             header?: never;
             path: {
@@ -1741,12 +1775,15 @@ export interface operations {
             query?: {
                 /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
                 categories?: components["schemas"]["ConnectionCategory"][];
-                /** @description Genre resource names to stay within. */
-                genres?: string[];
-                includeUnknownGenre?: boolean;
                 orderBy?: string;
                 pageSize?: number;
                 pageToken?: string;
+                /** @description Genre resource names to stay within. */
+                genres?: string[];
+                /** @description Keep artists with no genre data (often producers and session players). */
+                includeUnknownGenre?: boolean;
+                /** @description A genre includes the genres below it. */
+                includeSubgenres?: boolean;
             };
             header?: never;
             path: {
@@ -1818,6 +1855,12 @@ export interface operations {
                 other: string;
                 /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
                 categories?: components["schemas"]["ConnectionCategory"][];
+                /** @description Genre resource names to stay within. */
+                genres?: string[];
+                /** @description Keep artists with no genre data (often producers and session players). */
+                includeUnknownGenre?: boolean;
+                /** @description A genre includes the genres below it. */
+                includeSubgenres?: boolean;
             };
             header?: never;
             path: {
@@ -1859,7 +1902,10 @@ export interface operations {
                 categories?: components["schemas"]["ConnectionCategory"][];
                 /** @description Genre resource names to stay within. */
                 genres?: string[];
+                /** @description Keep artists with no genre data (often producers and session players). */
                 includeUnknownGenre?: boolean;
+                /** @description A genre includes the genres below it. */
+                includeSubgenres?: boolean;
             };
             header?: never;
             path: {

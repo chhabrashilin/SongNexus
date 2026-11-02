@@ -73,6 +73,52 @@ test('artist page shows collaborations with evidence and sources', async ({
   await expect(sheet).toBeHidden();
 });
 
+test('genres name their sources, and collaborations filter by genre with subgenres (R2-1)', async ({
+  page,
+}) => {
+  await openArtist(page, 'Kendrick Lamar', 'Kendrick Lamar');
+  await expect(page.getByText(/^Genres from .*Discogs/)).toBeVisible();
+  await page.getByRole('button', {name: 'Filter by genre'}).click();
+  await page.getByRole('searchbox', {name: 'Find a genre'}).fill('hip hop');
+  await page
+    .getByRole('button', {name: /^hip hop\b/})
+    .first()
+    .click();
+  await expect(page).toHaveURL(/genres=genres%2F/);
+  await expect(
+    page.getByRole('checkbox', {name: 'Include subgenres'}),
+  ).toBeChecked();
+  await page.getByRole('checkbox', {name: 'Include subgenres'}).uncheck();
+  await expect(page).toHaveURL(/subgenres=0/);
+  await expect(page.getByRole('tab', {name: /Features/})).toBeVisible();
+  await expectAccessible(page);
+});
+
+test('compare filters who worked with both by genre (R2-1)', async ({page}) => {
+  await page.goto('/compare');
+  await page.getByRole('combobox', {name: 'From'}).fill('Kendrick Lamar');
+  await page
+    .getByRole('option', {name: /^Kendrick Lamar/})
+    .first()
+    .click();
+  await page.getByRole('combobox', {name: 'To'}).fill('SZA');
+  await page.getByRole('option', {name: /^SZA/}).first().click();
+  await expect(
+    page.getByRole('heading', {name: 'Worked with both'}),
+  ).toBeVisible();
+  await page.getByRole('button', {name: 'Filter by genre'}).click();
+  await page.getByRole('searchbox', {name: 'Find a genre'}).fill('jazz');
+  await page
+    .getByRole('button', {name: /^jazz\b/})
+    .first()
+    .click();
+  await expect(page).toHaveURL(/genres=genres%2F/);
+  await expect(
+    page.getByRole('heading', {name: 'Worked with both'}),
+  ).toBeVisible();
+  await expectAccessible(page);
+});
+
 test('six degrees connects two artists and the link is shareable', async ({
   page,
 }) => {

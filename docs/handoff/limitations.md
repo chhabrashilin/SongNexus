@@ -4,8 +4,15 @@
 - **Catalog scope:** about a hundred seed artists plus everyone credited on their best-known albums (5,854 artists), from
   MusicBrainz. A missing credit means missing data, and the product says so; it is not proof two artists never worked
   together.
-- **Genres** come from MusicBrainz tags (CC BY-NC-SA 3.0), kept apart from the CC0 core. Producers and session players
-  often have none. Commercial use needs a different genre source (ADR 0003).
+- **Genres** come from two sources: Discogs (CC0, from the monthly masters dump) and MusicBrainz tags
+  (CC BY-NC-SA 3.0, kept apart from the CC0 core). Together they cover 30 % of catalog artists; most credited-only
+  artists (producers, session players) still have none. A commercial build sets `SONGNEXUS_GENRE_SOURCES=["discogs"]`
+  (ADR 0003). Discogs genres describe an artist's own masters, so a producer's genres reflect the records they
+  released under their own name, not every record they worked on.
+- **Discogs names outside the MusicBrainz vocabulary** (e.g. "Vocal", "Modern", "Holiday") are not used. Ingest lists
+  them by frequency; `data/seeds/discogs_genre_map.json` maps the unambiguous ones after review.
+- **The genre hierarchy** comes from Wikidata "subclass of" links and inherits their gaps and occasional cycles
+  (cycles are handled; a selected genre includes everything below it).
 - **No playback, no recommendations, no social features, no assistant.** Out of scope for R1 by decision.
 - **History import** supports the formats in `web/src/importers/formats.ts`; unrecognized files are rejected with a reason.
   Name matching is conservative: ambiguous names are offered for review, never auto-matched.

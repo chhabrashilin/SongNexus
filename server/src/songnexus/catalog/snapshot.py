@@ -22,9 +22,13 @@ from urllib.parse import urlencode
 class RawRecord:
     """One upstream response, exactly as received.
 
+    For a data dump, a record holds the dump's elements for one entity, verbatim.
+
     Attributes:
-        kind: What was requested: ``artist_search``, ``artist``, ``artist_profile``,
-            ``release_groups``, ``releases`` or ``release``.
+        kind: What was requested, per source. MusicBrainz: ``artist_search``,
+            ``artist``, ``artist_profile``, ``release_groups``, ``releases``,
+            ``release``, ``genre_list``. Wikidata: ``sparql``. Discogs:
+            ``dump_manifest``, ``masters``.
         request_key: Stable identity of the request (path plus sorted query).
         url: The full URL that was fetched.
         retrieved_at: ISO-8601 UTC retrieval time.

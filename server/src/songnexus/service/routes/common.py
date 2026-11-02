@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
+from dataclasses import dataclass
 from typing import Annotated
 
-from fastapi import Query, Request, Response
+from fastapi import Depends, Query, Request, Response
 from sqlalchemy.orm import Session
 from starlette.convertors import Convertor, register_url_convertor
 
-from songnexus.service.deps import Viewer, app_state
+from songnexus.core.graph.filters import NodeFilter
+from songnexus.core.graph.model import ArtistGraph
+from songnexus.service.deps import Viewer, app_state, node_filter
 from songnexus.storage.db import session_scope
 
 # The resource name of a catalog artist: artists/{uuid}.
@@ -19,6 +22,50 @@ MAX_QUERY_LENGTH = 120
 MAX_PATH_STEPS = 6
 MAX_ALTERNATIVES = 3
 CATALOG_MAX_AGE_S = 300
+
+Genres = Annotated[list[str], Query(description="Genre resource names to stay within.")]
+
+
+@dataclass(frozen=True)
+class GenreSelection:
+    """The genre filter a request asked for."""
+
+    genres: list[str]
+    include_unknown_genre: bool
+    include_subgenres: bool
+
+
+def genre_selection(
+    genres: Genres = [],  # noqa: B006 - FastAPI copies query defaults
+    include_unknown_genre: Annotated[
+        bool,
+        Query(
+            alias="includeUnknownGenre",
+            description="Keep artists with no genre data (often producers and session players).",
+        ),
+    ] = True,
+    include_subgenres: Annotated[
+        bool,
+        Query(alias="includeSubgenres", description="A genre includes the genres below it."),
+    ] = True,
+) -> GenreSelection:
+    """Parses the genre filter parameters shared by graph methods."""
+    return GenreSelection(list(genres), include_unknown_genre, include_subgenres)
+
+
+def selection_filter(viewer: Viewer, selection: GenreSelection, graph: ArtistGraph) -> NodeFilter:
+    """Builds the node filter for a genre selection and the viewer's blocks."""
+    return node_filter(
+        viewer,
+        selection.genres,
+        include_unknown_genre=selection.include_unknown_genre,
+        include_subgenres=selection.include_subgenres,
+        graph=graph,
+    )
+
+
+GenreSelectionDep = Annotated[GenreSelection, Depends(genre_selection)]
+
 
 # AIP-158 list parameters.
 PageSize = Annotated[int, Query(alias="pageSize", ge=0, le=1000)]

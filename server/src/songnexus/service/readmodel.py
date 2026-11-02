@@ -127,8 +127,12 @@ def build_search_index(entries: list[SearchEntry], graph: ArtistGraph) -> Search
     return index.freeze()
 
 
-def load_read_model(engine: Engine) -> ReadModel:
+def load_read_model(engine: Engine, genre_sources: Sequence[str] | None = None) -> ReadModel:
     """Builds the read model from the database.
+
+    Args:
+        engine: The catalog database.
+        genre_sources: Which genre sources to use (``Settings.genre_sources``); all when None.
 
     Raises:
         EmptyCatalogError: The catalog has never been ingested successfully.
@@ -138,7 +142,7 @@ def load_read_model(engine: Engine) -> ReadModel:
         version = catalog_version(session)
         if version is None:
             raise EmptyCatalogError("no successful ingestion run; run `songnexus ingest`")
-        facts = read_catalog_facts(session)
+        facts = read_catalog_facts(session, genre_sources)
         entries = read_search_entries(session)
     graph = build_graph(facts, version)
     search = build_search_index(entries, graph)

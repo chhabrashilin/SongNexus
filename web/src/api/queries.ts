@@ -7,6 +7,8 @@ import {
   type QueryClient,
 } from '@tanstack/react-query';
 
+import type {GenreSelection} from '../app/genreSelection';
+
 import {api, ApiError, unwrap, type Schemas} from './client';
 
 export type ConnectionCategory = Schemas['ConnectionCategory'];
@@ -42,10 +44,8 @@ export function useArtist(id: string | undefined) {
   });
 }
 
-export interface ConnectionParams {
+export interface ConnectionParams extends GenreSelection {
   categories: ConnectionCategory[];
-  genres: string[];
-  includeUnknownGenre: boolean;
   pageSize?: number;
   pageToken?: string;
 }
@@ -92,14 +92,18 @@ export function useConnection(
 export function useCollaborations(
   id: string | undefined,
   type: CollaborationType,
+  selection: GenreSelection,
   pageToken = '',
 ) {
   return useQuery({
-    queryKey: ['collaborations', id, type, pageToken],
+    queryKey: ['collaborations', id, type, selection, pageToken],
     queryFn: () =>
       unwrap(
         api.GET('/v1/artists/{artist}/collaborations', {
-          params: {path: {artist: id!}, query: {type, pageSize: 25, pageToken}},
+          params: {
+            path: {artist: id!},
+            query: {type, pageSize: 25, pageToken, ...selection},
+          },
         }),
       ),
     enabled: Boolean(id),
@@ -108,13 +112,11 @@ export function useCollaborations(
   });
 }
 
-export interface PathParams {
+export interface PathParams extends GenreSelection {
   from: string;
   to: string;
   mode: PathMode;
   categories: ConnectionCategory[];
-  genres: string[];
-  includeUnknownGenre: boolean;
   alternatives: number;
 }
 
@@ -132,6 +134,7 @@ export function usePath(params: PathParams | null) {
               categories: params!.categories,
               genres: params!.genres,
               includeUnknownGenre: params!.includeUnknownGenre,
+              includeSubgenres: params!.includeSubgenres,
               alternatives: params!.alternatives,
             },
           },
@@ -142,13 +145,20 @@ export function usePath(params: PathParams | null) {
   });
 }
 
-export function useCompare(a: string | undefined, b: string | undefined) {
+export function useCompare(
+  a: string | undefined,
+  b: string | undefined,
+  selection: GenreSelection,
+) {
   return useQuery({
-    queryKey: ['compare', a, b],
+    queryKey: ['compare', a, b, selection],
     queryFn: () =>
       unwrap(
         api.GET('/v1/artists/{artist}:compare', {
-          params: {path: {artist: a!}, query: {other: `artists/${b!}`}},
+          params: {
+            path: {artist: a!},
+            query: {other: `artists/${b!}`, ...selection},
+          },
         }),
       ),
     enabled: Boolean(a && b && a !== b),

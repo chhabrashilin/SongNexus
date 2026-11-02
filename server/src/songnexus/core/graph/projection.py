@@ -20,7 +20,9 @@ from songnexus.core.model import CONTRIBUTOR_ROLES, PERFORMER_ROLES, CreditRole,
 MAX_LABEL_ARTISTS = 40
 # Releases on the same label within this many years make two artists label mates.
 LABEL_MATE_YEARS = 3
-MAX_NODE_GENRES = 5
+# Genres kept per artist for filtering and counts. Two sources give artists more
+# genres than one; keeping only a top 5 would hide real ones from filters.
+MAX_NODE_GENRES = 10
 
 
 @dataclass(frozen=True)
@@ -38,12 +40,22 @@ class ArtistFact:
 
 @dataclass(frozen=True)
 class GenreFact:
-    """An artist-genre association with its vote count."""
+    """An artist-genre association with its vote count, from one source."""
 
     artist_id: str
     genre_id: str
     genre_name: str
     votes: int
+    source_id: str = "musicbrainz-supplementary"
+
+
+@dataclass(frozen=True)
+class GenreInfo:
+    """A vocabulary genre and its direct parents."""
+
+    id: str
+    name: str
+    parent_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -82,6 +94,7 @@ class CatalogFacts:
 
     artists: Iterable[ArtistFact]
     genres: Iterable[GenreFact] = ()
+    vocabulary: Iterable[GenreInfo] = ()
     credits: Iterable[CreditFact] = ()
     relations: Iterable[RelationFact] = ()
     label_releases: Iterable[LabelReleaseFact] = ()
@@ -101,16 +114,31 @@ _RELATION_EDGES: Mapping[RelationType, tuple[EdgeKind, str, str]] = {
 
 
 def _genre_shares(facts: Iterable[GenreFact]) -> dict[str, tuple[GenreShare, ...]]:
-    by_artist: dict[str, list[GenreFact]] = defaultdict(list)
+    """Per artist: each source's vote shares, averaged over the sources with data.
+
+    Sources count in different units (tag votes, tagged masters), so votes are
+    never added across sources; each source contributes a distribution that sums
+    to 1, and a genre one source lacks counts as 0 from that source.
+    """
+    votes: dict[str, dict[str, dict[str, int]]] = defaultdict(lambda: defaultdict(dict))
+    names: dict[str, str] = {}
     for fact in facts:
         if fact.votes > 0:
-            by_artist[fact.artist_id].append(fact)
+            votes[fact.artist_id][fact.source_id][fact.genre_id] = fact.votes
+            names[fact.genre_id] = fact.genre_name
     shares: dict[str, tuple[GenreShare, ...]] = {}
-    for artist_id, artist_facts in by_artist.items():
-        total = sum(f.votes for f in artist_facts)
-        ranked = sorted(artist_facts, key=lambda f: (-f.votes, f.genre_name))
+    for artist_id, by_source in votes.items():
+        combined: dict[str, float] = defaultdict(float)
+        asserted_by: dict[str, set[str]] = defaultdict(set)
+        for source_id, genre_votes in by_source.items():
+            total = sum(genre_votes.values())
+            for genre_id, count in genre_votes.items():
+                combined[genre_id] += count / total / len(by_source)
+                asserted_by[genre_id].add(source_id)
+        ranked = sorted(combined.items(), key=lambda kv: (-kv[1], names[kv[0]]))
         shares[artist_id] = tuple(
-            GenreShare(f.genre_id, f.genre_name, f.votes / total) for f in ranked[:MAX_NODE_GENRES]
+            GenreShare(g, names[g], share, tuple(sorted(asserted_by[g])))
+            for g, share in ranked[:MAX_NODE_GENRES]
         )
     return shares
 
@@ -214,6 +242,13 @@ def build_graph(facts: CatalogFacts, version: str) -> ArtistGraph:
         )
 
     _add_label_mates(graph, facts.label_releases)
+    for genre in facts.vocabulary:
+        graph.genre_names[genre.id] = genre.name
+        if genre.parent_ids:
+            graph.genre_parents[genre.id] = frozenset(genre.parent_ids)
+    for node in graph.nodes.values():
+        for share in node.genres:
+            graph.genre_names.setdefault(share.genre_id, share.name)
     graph.subject_titles.update(facts.titles)
     graph.subject_years.update(facts.years)
     return graph

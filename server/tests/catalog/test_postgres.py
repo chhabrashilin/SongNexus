@@ -11,8 +11,8 @@ import pytest
 from sqlalchemy import inspect
 
 from songnexus.catalog.ingest import ingest_snapshot
-from songnexus.catalog.musicbrainz.snapshot import write_snapshot
 from songnexus.catalog.quality import gate_passes, run_quality_checks
+from songnexus.catalog.snapshot import write_snapshot
 from songnexus.storage import migrate
 from songnexus.storage.db import make_engine, session_scope
 from tests.catalog import fixtures as fx

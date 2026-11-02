@@ -382,6 +382,13 @@ export const messages = {
 
   // Pages
   'about.title': 'About our data',
+  'artist.genreSources': 'Genres from {sources}',
+  'compare.filter': 'Filter by genre',
+  'compare.filterHelp':
+    'Filters who worked with both and the path between them. The two artists and their shared genres are not filtered.',
+  'collab.filter': 'Filter by genre',
+  'filter.genres.includeSubgenres': 'Include subgenres',
+  'filter.genres.artists': '{count, plural, one {# artist} other {# artists}}',
   'about.resources': 'Resources',
   'about.resources.intro':
     'Every source we use or evaluate, what it feeds and its license. Evaluation-only sources are used to check our results and are never shown in the app.',

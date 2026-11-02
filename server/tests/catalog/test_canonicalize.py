@@ -5,7 +5,7 @@ from songnexus.catalog.canonicalize import (
     build_batch,
 )
 from songnexus.catalog.musicbrainz.parsers import ArtistCreditEntry, split_artist_credit
-from songnexus.catalog.musicbrainz.snapshot import RawRecord
+from songnexus.catalog.snapshot import RawRecord
 from songnexus.core import ids
 from songnexus.core.model import CreditRole
 from tests.catalog import fixtures as fx

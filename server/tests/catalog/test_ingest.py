@@ -4,9 +4,9 @@ from typing import Any
 import pytest
 from sqlalchemy import Engine, func, inspect, select
 
-from songnexus.catalog.ingest import ingest_snapshot
-from songnexus.catalog.musicbrainz.snapshot import RawRecord, write_snapshot
+from songnexus.catalog.ingest import EnrichmentInputs, ingest_snapshot
 from songnexus.catalog.quality import Severity, gate_passes, run_quality_checks
+from songnexus.catalog.snapshot import RawRecord, write_snapshot
 from songnexus.storage import migrate
 from songnexus.storage import models as m
 from songnexus.storage.db import create_schema, make_engine, session_scope
@@ -61,6 +61,7 @@ def test_migrations_match_the_models(tmp_path: Path) -> None:
                 ),
                 sorted(str(i["name"]) for i in inspector.get_indexes(t)),
                 sorted(str(u["column_names"]) for u in inspector.get_unique_constraints(t)),
+                sorted(inspector.get_pk_constraint(t)["constrained_columns"]),
             )
             for t in inspector.get_table_names()
             if t != "alembic_version"
@@ -209,3 +210,75 @@ def test_cli_reports_a_rejected_catalog_cleanly(
     err = capsys.readouterr().err
     assert "Ingest rejected" in err
     assert "Traceback" not in err
+
+
+GENRE_MAP = Path(__file__).resolve().parents[3] / "data" / "seeds" / "discogs_genre_map.json"
+
+
+def _enrichment(tmp_path: Path) -> EnrichmentInputs:
+    return EnrichmentInputs(
+        wikidata_snapshot=_snapshot(tmp_path, fx.wikidata_records(), "wikidata.jsonl.gz"),
+        discogs_snapshot=_snapshot(tmp_path, fx.discogs_records(), "discogs.jsonl.gz"),
+        genre_map=GENRE_MAP,
+    )
+
+
+def _genre_rows_by_source(engine: Engine) -> dict[str, int]:
+    with session_scope(engine) as session:
+        rows = session.execute(
+            select(m.ArtistGenre.source_id, func.count()).group_by(m.ArtistGenre.source_id)
+        )
+        return {source: int(n) for source, n in rows}
+
+
+def test_enrichment_adds_discogs_genres_and_the_hierarchy(engine: Engine, tmp_path: Path) -> None:
+    snapshot = _snapshot(tmp_path, [*fx.small_catalog(), fx.genre_list_record()])
+    stats = ingest_snapshot(engine, snapshot, _enrichment(tmp_path))
+    assert stats["enrichment"]["discogs_ids_linked"] == 3
+    assert stats["enrichment"]["unmappedDiscogsNames"] == {"Contemporary Weirdness": 1}
+    by_source = _genre_rows_by_source(engine)
+    assert by_source["musicbrainz-supplementary"] == 3
+    assert by_source["discogs"] >= 5
+    assert _count(engine, m.GenreParent) == 2
+    # Every vocabulary genre stays, carried or not (parents must resolve).
+    assert _count(engine, m.Genre) >= len(fx.GENRE_MBIDS)
+    with session_scope(engine) as session:
+        assert gate_passes(run_quality_checks(session))
+        discogs_raw = session.scalar(
+            select(func.count()).select_from(m.RawRecord).where(m.RawRecord.source_id == "discogs")
+        )
+    assert discogs_raw == len(fx.discogs_records())
+
+
+def test_ingesting_without_enrichment_removes_its_facts(engine: Engine, tmp_path: Path) -> None:
+    snapshot = _snapshot(tmp_path, [*fx.small_catalog(), fx.genre_list_record()])
+    ingest_snapshot(engine, snapshot, _enrichment(tmp_path))
+    ingest_snapshot(engine, snapshot)
+    assert set(_genre_rows_by_source(engine)) == {"musicbrainz-supplementary"}
+    assert _count(engine, m.GenreParent) == 0
+    with session_scope(engine) as session:
+        discogs_mappings = session.scalar(
+            select(func.count())
+            .select_from(m.EntitySourceMapping)
+            .where(m.EntitySourceMapping.source_id == "discogs")
+        )
+    assert discogs_mappings == 0
+
+
+def test_enriched_ingest_is_idempotent(engine: Engine, tmp_path: Path) -> None:
+    snapshot = _snapshot(tmp_path, [*fx.small_catalog(), fx.genre_list_record()])
+    ingest_snapshot(engine, snapshot, _enrichment(tmp_path))
+    first = _dump(engine)
+    ingest_snapshot(engine, snapshot, _enrichment(tmp_path))
+    assert _dump(engine) == first
+
+
+def test_migration_0003_downgrades_with_discogs_genres_present(
+    engine: Engine, tmp_path: Path
+) -> None:
+    snapshot = _snapshot(tmp_path, [*fx.small_catalog(), fx.genre_list_record()])
+    ingest_snapshot(engine, snapshot, _enrichment(tmp_path))
+    migrate.downgrade(engine, "0002")
+    assert "genre_parents" not in inspect(engine).get_table_names()
+    assert set(_genre_rows_by_source(engine)) == {"musicbrainz-supplementary"}
+    migrate.upgrade(engine)

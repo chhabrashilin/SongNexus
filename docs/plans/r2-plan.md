@@ -64,8 +64,14 @@ screen, unit + browser tests with axe scans, a flag (kill switch), docs, and a m
 ### R2-1 Commercial-safe genres and genre selection everywhere (S4, part of S2)
 - Ingest Discogs genres/styles (CC0) mapped to MusicBrainz artists via existing Discogs URL relations; Wikidata
   `subclass of` for a genre hierarchy (selecting "hip hop" includes its subgenres, shown and togglable).
-- Genre filter in Compare, Collaborations and Play's practice mode; the filter state is in the URL.
+- Genre filter in Compare and Collaborations (Explore and Six degrees already had it); the filter state is in the URL.
+  Play is not filtered: the daily puzzle is the same for everyone by design.
 - Eval: genre-assignment agreement between Discogs and MusicBrainz on the overlap; coverage reported per source.
+- **Done 2026-11-01.** As built: the MusicBrainz genre list (CC0) is the vocabulary; artists link to Discogs through
+  MusicBrainz URL relations and Wikidata P434/P1953 (Wikidata linked far more: 2,540 artists vs 107); genre shares
+  are averaged per source; `SONGNEXUS_GENRE_SOURCES` picks the served sources. Coverage 9 % → 30 % of artists;
+  agreement 94 % through the hierarchy ([evaluations](../handoff/evaluations.md#genres-r2-1-measured-2026-11-01)).
+  Only the masters dump is read; the 10.5 GB releases dump (credits) is not needed for genres.
 
 ### R2-2 Relationship graph (S5) and connection web polish (S3)
 - Labels as first-class: label view ("artists on this label, by era"), label-mate edges togglable in the UI.

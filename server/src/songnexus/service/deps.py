@@ -214,18 +214,27 @@ def check_write_origin(request: Request, who: Viewer) -> None:
 
 
 def node_filter(
-    viewer: Viewer, genre_ids: list[str], *, include_unknown_genre: bool, graph: ArtistGraph
+    viewer: Viewer,
+    genre_ids: list[str],
+    *,
+    include_unknown_genre: bool,
+    graph: ArtistGraph,
+    include_subgenres: bool = True,
 ) -> NodeFilter:
     """Builds the node filter for a request.
 
+    A selected genre includes its subgenres unless ``include_subgenres`` is off.
+
     Raises:
-        ApiError: INVALID_ARGUMENT for an unknown genre.
+        ApiError: NOT_FOUND for a genre outside the vocabulary.
     """
     ids = frozenset(parse_name(g, "genres", field="genres") for g in genre_ids)
     if ids:
-        unknown = sorted(ids - graph.genre_ids)
+        unknown = sorted(ids - graph.genre_names.keys())
         if unknown:
             raise not_found(f"genres/{unknown[0]}", reason="GENRE_NOT_FOUND")
+        if include_subgenres:
+            ids = graph.with_subgenres(ids)
     return NodeFilter(
         genre_ids=ids, include_unknown_genre=include_unknown_genre, blocked=viewer.blocked
     )

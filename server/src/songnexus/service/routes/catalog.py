@@ -16,7 +16,6 @@ from songnexus.service import convert
 from songnexus.service import schemas as api
 from songnexus.service.deps import (
     Viewer,
-    node_filter,
     parse_name,
     rate_limited,
     read_model,
@@ -29,9 +28,11 @@ from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import (
     MAX_QUERY_LENGTH,
+    GenreSelectionDep,
     PageSize,
     PageToken,
     db_session,
+    selection_filter,
     set_cache_control,
 )
 from songnexus.storage import catalog_repository as repo
@@ -49,9 +50,10 @@ Categories = Annotated[
         description="Connection categories to include (default: all except LABELS, ENGINEERING)."
     ),
 ]
-Genres = Annotated[list[str], Query(description="Genre resource names to stay within.")]
 
 HIGHLIGHTS_PER_CONNECTION = 2
+# Genres shown on an artist page; the graph keeps more for filtering.
+DISPLAY_GENRES = 5
 
 
 def kinds_from(categories: list[api.ConnectionCategory]) -> frozenset[EdgeKind]:
@@ -78,9 +80,12 @@ def get_artist(
         detail_level=node.detail_level,
         genres=[
             api.GenreShare(
-                genre=f"genres/{g.genre_id}", display_name=g.name, share=round(g.share, 4)
+                genre=f"genres/{g.genre_id}",
+                display_name=g.name,
+                share=round(g.share, 4),
+                sources=[f"dataSources/{s}" for s in g.sources],
             )
-            for g in node.genres
+            for g in node.genres[:DISPLAY_GENRES]
         ],
         aliases=[
             api.Alias(display_name=a.name, alias_type=a.alias_type, locale=a.locale)
@@ -103,9 +108,8 @@ def list_artist_connections(
     model: ReadModelDep,
     who: ViewerDep,
     response: Response,
+    genre_filter: GenreSelectionDep,
     categories: Categories = [],  # noqa: B006 - FastAPI copies query defaults
-    genres: Genres = [],  # noqa: B006
-    include_unknown_genre: Annotated[bool, Query(alias="includeUnknownGenre")] = True,
     order_by: Annotated[str, Query(alias="orderBy")] = "strength desc",
     page_size: PageSize = 25,
     page_token: PageToken = "",
@@ -115,7 +119,7 @@ def list_artist_connections(
     graph = model.graph
     require_artist(graph, artist_id)
     kinds = kinds_from(categories)
-    flt = node_filter(who, genres, include_unknown_genre=include_unknown_genre, graph=graph)
+    flt = selection_filter(who, genre_filter, graph)
     adjacency = graph.adjacency(kinds)
     neighbors = [n for n in adjacency[artist_id] if flt.allows(graph.nodes[n])]
     if order_by == "strength desc":
@@ -130,7 +134,11 @@ def list_artist_connections(
         page_token=page_token,
         version=model.version,
         params=fingerprint(
-            artist_id, sorted(kinds), sorted(flt.genre_ids), order_by, include_unknown_genre
+            artist_id,
+            sorted(kinds),
+            sorted(flt.genre_ids),
+            order_by,
+            genre_filter.include_unknown_genre,
         ),
     )
     connections = []
@@ -205,15 +213,19 @@ def list_artist_collaborations(
     model: ReadModelDep,
     who: ViewerDep,
     response: Response,
+    genre_filter: GenreSelectionDep,
     type_: Annotated[api.CollaborationType, Query(alias="type")] = api.CollaborationType.FEATURE,
     page_size: PageSize = 25,
     page_token: PageToken = "",
 ) -> api.ListArtistCollaborationsResponse:
-    """Lists an artist's collaborators of one type (features, production, bands, credits)."""
+    """Lists an artist's collaborators of one type (features, production, bands, credits).
+
+    A genre filter keeps collaborators in the selected genres (and, by default, their subgenres).
+    """
     artist_id = parse_name(artist, "artists", field="parent")
     graph = model.graph
     require_artist(graph, artist_id)
-    flt = node_filter(who, [], include_unknown_genre=True, graph=graph)
+    flt = selection_filter(who, genre_filter, graph)
     core_type = convert.collaboration_type(type_)
     items = collab.collaborations(graph, artist_id, core_type, flt)
     page = paginate(
@@ -221,7 +233,9 @@ def list_artist_collaborations(
         page_size=page_size,
         page_token=page_token,
         version=model.version,
-        params=fingerprint(artist_id, type_.value),
+        params=fingerprint(
+            artist_id, type_.value, sorted(flt.genre_ids), genre_filter.include_unknown_genre
+        ),
     )
     kinds = collab.TYPE_KINDS[core_type]
     results = []
@@ -326,20 +340,32 @@ def search_catalog(
 @router.get("/genres", response_model=api.ListGenresResponse, summary="ListGenres")
 def list_genres(
     model: ReadModelDep,
-    session: SessionDep,
     response: Response,
     page_size: PageSize = 100,
     page_token: PageToken = "",
 ) -> api.ListGenresResponse:
-    """Lists genres by how many artists carry them."""
-    genres = repo.genre_counts(session)
+    """Lists genres with artists (directly or through a subgenre), most artists first.
+
+    Counts come from the served graph, so they reflect the configured genre sources.
+    """
+    graph = model.graph
+    counts = graph.genre_artist_counts()
+    ordered = sorted(counts, key=lambda g: (-counts[g][1], -counts[g][0], graph.genre_names[g]))
     page = paginate(
-        genres, page_size=page_size, page_token=page_token, version=model.version, params="genres"
+        ordered, page_size=page_size, page_token=page_token, version=model.version, params="genres"
     )
     set_cache_control(response, None)
     return api.ListGenresResponse(
         genres=[
-            api.Genre(name=f"genres/{g.id}", display_name=g.name, artist_count=g.artist_count)
+            api.Genre(
+                name=f"genres/{g}",
+                display_name=graph.genre_names[g],
+                artist_count=counts[g][0],
+                artist_count_with_subgenres=counts[g][1],
+                parents=[
+                    f"genres/{p}" for p in sorted(graph.genre_parents.get(g, ())) if p in counts
+                ],
+            )
             for g in page.items
         ],
         next_page_token=page.next_page_token,

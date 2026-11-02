@@ -21,7 +21,9 @@ class NodeFilter:
 
     Attributes:
         genre_ids: When non-empty, an artist with genre data must have at least
-            ``min_genre_share`` of its genre votes in one of these genres.
+            ``min_genre_share`` of its genre votes in these genres combined.
+            Callers expand a selection with ``ArtistGraph.with_subgenres`` first
+            when subgenres should count.
         min_genre_share: The share threshold (tunable, plan US-12).
         include_unknown_genre: Whether artists with no genre data pass a genre
             filter. They often are the producers and session players who bridge
@@ -47,9 +49,8 @@ class NodeFilter:
             return True
         if not node.genres:
             return self.include_unknown_genre
-        return any(
-            g.genre_id in self.genre_ids and g.share >= self.min_genre_share for g in node.genres
-        )
+        in_selection = sum(g.share for g in node.genres if g.genre_id in self.genre_ids)
+        return in_selection >= self.min_genre_share
 
     def predicate(self, graph: ArtistGraph) -> NodePredicate | None:
         """Returns a node predicate over ``graph``, or None when nothing is filtered."""

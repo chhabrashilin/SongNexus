@@ -14,7 +14,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 from songnexus.catalog.ingest import ingest_snapshot
-from songnexus.catalog.musicbrainz.snapshot import write_snapshot
+from songnexus.catalog.snapshot import write_snapshot
 from songnexus.config import Settings
 from songnexus.core import ids
 from songnexus.identity.sessions import SESSION_COOKIE, hash_token

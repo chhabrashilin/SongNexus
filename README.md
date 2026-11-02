@@ -16,7 +16,8 @@ on branch `r2` following [docs/plans/r2-plan.md](docs/plans/r2-plan.md).
 | R2 milestone | What | State |
 |---|---|---|
 | R2-0 | Data-source registry, [resources page](docs/resources.md), `ListDataSources`, [ADR 0005](docs/adr/0005-data-source-policy.md) | Done |
-| R2-1 – R2-8 | Genres, relationship graph, collaborations, song comparison, listener overlap, linked accounts, friends, hardening | Planned |
+| R2-1 | Commercial-safe genres (Discogs, Wikidata hierarchy), genre filters in Compare and Collaborations, subgenres | Done |
+| R2-2 – R2-8 | Relationship graph, collaborations page, song comparison, listener overlap, linked accounts, friends, hardening | Planned |
 
 Release 1:
 
@@ -115,7 +116,7 @@ Browser tests: [web/e2e/README.md](web/e2e/README.md).
 ```
 server/   Python 3.12: core library (pure), catalog pipeline, storage, identity, HTTP API     → server/README.md
 web/      React + TypeScript: the reference client                                          → web/README.md
-data/     samples/ the MusicBrainz snapshot · seeds/ seed artists and pinned decisions · eval/ labeled sets
+data/     samples/ MusicBrainz, Wikidata and Discogs snapshots · seeds/ seed artists, pinned decisions, genre table · eval/ labeled sets
 deploy/   Cloud Run service and jobs (deployment runbook: docs/deploy.md)
 docs/     design/ · adr/ · plans/ · resources.md · engineering-standards.md · qa/ reviews · perf/ measurements
 ```

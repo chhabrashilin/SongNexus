@@ -10,8 +10,10 @@ from collections.abc import Mapping
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from songnexus.catalog.sources import GENRE_SOURCE_IDS
 
 
 def _default_data_dir() -> Path:
@@ -54,6 +56,24 @@ class Settings(BaseSettings):
     musicbrainz_base_url: str = "https://musicbrainz.org/ws/2"
     musicbrainz_contact: str = ""
     musicbrainz_min_interval_s: float = 1.1
+    # Wikimedia asks for an identifying User-Agent; the contact is optional here too.
+    wikidata_sparql_url: str = "https://query.wikidata.org/sparql"
+    wikidata_contact: str = ""
+    discogs_dumps_url: str = "https://data.discogs.com/"
+
+    # Which genre sources the read model uses (ADR 0003, ADR 0005). A commercial
+    # build sets ["discogs"] to drop the non-commercial MusicBrainz genres.
+    genre_sources: list[str] = Field(
+        default_factory=lambda: ["musicbrainz-supplementary", "discogs"]
+    )
+
+    @field_validator("genre_sources")
+    @classmethod
+    def _known_genre_sources(cls, value: list[str]) -> list[str]:
+        unknown = sorted(set(value) - set(GENRE_SOURCE_IDS))
+        if unknown:
+            raise ValueError(f"unknown genre sources {unknown}; choose from {GENRE_SOURCE_IDS}")
+        return value
 
     @property
     def snapshot_path(self) -> Path:
@@ -66,9 +86,28 @@ class Settings(BaseSettings):
         return self.data_dir / "seeds" / "seed_artists.json"
 
     @property
+    def wikidata_snapshot_path(self) -> Path:
+        """The committed Wikidata snapshot (artist links to Discogs, genre hierarchy)."""
+        return self.data_dir / "samples" / "wikidata_snapshot.jsonl.gz"
+
+    @property
+    def discogs_snapshot_path(self) -> Path:
+        """The committed extract of the Discogs masters dump for catalog artists."""
+        return self.data_dir / "samples" / "discogs_snapshot.jsonl.gz"
+
+    @property
+    def genre_map_path(self) -> Path:
+        """The reviewed Discogs-to-MusicBrainz genre table."""
+        return self.data_dir / "seeds" / "discogs_genre_map.json"
+
+    @property
     def raw_cache_dir(self) -> Path:
         """Local HTTP cache for the fetch pipeline (git-ignored)."""
-        return self.data_dir / "raw" / "musicbrainz"
+        return self.raw_dir("musicbrainz")
+
+    def raw_dir(self, source: str) -> Path:
+        """Local, git-ignored cache for one source's downloads."""
+        return self.data_dir / "raw" / source
 
 
 class ConfigError(RuntimeError):
