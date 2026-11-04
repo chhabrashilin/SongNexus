@@ -89,20 +89,29 @@ export function useConnection(
   });
 }
 
+export type ProductionDirection = Schemas['ProductionDirection'];
+
 export function useCollaborations(
   id: string | undefined,
   type: CollaborationType,
   selection: GenreSelection,
   pageToken = '',
+  direction: ProductionDirection | null = null,
 ) {
   return useQuery({
-    queryKey: ['collaborations', id, type, selection, pageToken],
+    queryKey: ['collaborations', id, type, selection, direction, pageToken],
     queryFn: () =>
       unwrap(
         api.GET('/v1/artists/{artist}/collaborations', {
           params: {
             path: {artist: id!},
-            query: {type, pageSize: 25, pageToken, ...selection},
+            query: {
+              type,
+              pageSize: 25,
+              pageToken,
+              ...selection,
+              ...(direction ? {direction} : {}),
+            },
           },
         }),
       ),
@@ -162,6 +171,16 @@ export function useCompare(
         }),
       ),
     enabled: Boolean(a && b && a !== b),
+    staleTime: 5 * MINUTE,
+  });
+}
+
+export function useLabel(id: string | undefined) {
+  return useQuery({
+    queryKey: ['label', id],
+    queryFn: () =>
+      unwrap(api.GET('/v1/labels/{label}', {params: {path: {label: id!}}})),
+    enabled: Boolean(id),
     staleTime: 5 * MINUTE,
   });
 }

@@ -79,7 +79,8 @@ export function CategoryChips({
 
 interface GenreFilterProps {
   selection: GenreSelection;
-  onChange: (next: GenreSelection) => void;
+  /** Receives only the fields that changed. */
+  onChange: (change: Partial<GenreSelection>) => void;
   /** Share of artists in view with genre data, shown honestly (AC-12.2). */
   coverage?: number | undefined;
 }
@@ -91,7 +92,7 @@ export function GenreFilter({selection, onChange, coverage}: GenreFilterProps) {
   const labelId = useId();
   const all = genres.data ?? [];
   const value = selection.genres;
-  const setGenres = (next: string[]) => onChange({...selection, genres: next});
+  const setGenres = (next: string[]) => onChange({genres: next});
   const names = useMemo(
     () => new Map(all.map(g => [g.name, g.displayName])),
     [all],
@@ -174,9 +175,7 @@ export function GenreFilter({selection, onChange, coverage}: GenreFilterProps) {
         <input
           type="checkbox"
           checked={selection.includeSubgenres}
-          onChange={event =>
-            onChange({...selection, includeSubgenres: event.target.checked})
-          }
+          onChange={event => onChange({includeSubgenres: event.target.checked})}
         />
         {t('filter.genres.includeSubgenres')}
       </label>
@@ -185,7 +184,7 @@ export function GenreFilter({selection, onChange, coverage}: GenreFilterProps) {
           type="checkbox"
           checked={selection.includeUnknownGenre}
           onChange={event =>
-            onChange({...selection, includeUnknownGenre: event.target.checked})
+            onChange({includeUnknownGenre: event.target.checked})
           }
         />
         {t('filter.genres.includeUnknown')}

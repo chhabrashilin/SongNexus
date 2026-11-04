@@ -222,3 +222,113 @@ def subject_sources(
                 SourceRef("musicbrainz", mbid, _MUSICBRAINZ_PAGES["artist"].format(mbid))
             ]
     return found
+
+
+def _year_of(date: str | None) -> int | None:
+    return int(date[:4]) if date and date[:4].isdigit() else None
+
+
+@dataclass(frozen=True)
+class LabelRelease:
+    """A release on a label, with its primary artists."""
+
+    release_id: str
+    title: str
+    year: int | None
+    catalog_numbers: tuple[str, ...]
+    artist_ids: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class LabelDetails:
+    """What the label page shows: identity, releases in our data, and sources."""
+
+    id: str
+    name: str
+    label_type: str | None
+    disambiguation: str | None
+    releases: tuple[LabelRelease, ...]
+    sources: tuple[SourceRef, ...]
+
+
+@dataclass(frozen=True)
+class ArtistLabel:
+    """A label an artist released on, with how many releases and when."""
+
+    label_id: str
+    name: str
+    release_count: int
+    first_year: int | None
+    last_year: int | None
+
+
+def label_details(session: Session, label_id: str) -> LabelDetails | None:
+    """Returns a label with its releases (oldest first), or None if unknown."""
+    row = session.execute(
+        select(m.Label.id, m.Label.name, m.Label.label_type, m.Label.disambiguation).where(
+            m.Label.id == label_id
+        )
+    ).first()
+    if row is None:
+        return None
+    catalog_numbers: dict[str, set[str]] = defaultdict(set)
+    releases: dict[str, tuple[str, str | None]] = {}
+    for release_id, title, date, catalog_number in session.execute(
+        select(
+            m.Release.id,
+            m.Release.title,
+            m.Release.first_release_date,
+            m.ReleaseLabel.catalog_number,
+        )
+        .join(m.ReleaseLabel, m.ReleaseLabel.release_id == m.Release.id)
+        .where(m.ReleaseLabel.label_id == label_id)
+    ):
+        releases[release_id] = (title, date)
+        if catalog_number:
+            catalog_numbers[release_id].add(catalog_number)
+    artists: dict[str, list[str]] = defaultdict(list)
+    for release_id, artist_id in session.execute(
+        select(m.ReleaseArtist.release_id, m.ReleaseArtist.artist_id)
+        .where(m.ReleaseArtist.release_id.in_(list(releases)))
+        .order_by(m.ReleaseArtist.release_id, m.ReleaseArtist.artist_id)
+    ):
+        artists[release_id].append(artist_id)
+    items = sorted(
+        (
+            LabelRelease(
+                release_id,
+                title,
+                _year_of(date),
+                tuple(sorted(catalog_numbers[release_id])),
+                tuple(artists[release_id]),
+            )
+            for release_id, (title, date) in releases.items()
+        ),
+        key=lambda r: (r.year is None, r.year or 0, r.title, r.release_id),
+    )
+    sources = tuple(_sources(session, "label", [label_id]).get(label_id, []))
+    return LabelDetails(row.id, row.name, row.label_type, row.disambiguation, tuple(items), sources)
+
+
+def artist_labels(session: Session, artist_id: str) -> list[ArtistLabel]:
+    """Returns the labels an artist's releases came out on, most releases first."""
+    by_label: dict[str, tuple[str, list[int | None]]] = {}
+    for label_id, name, _release_id, date in session.execute(
+        select(m.Label.id, m.Label.name, m.Release.id, m.Release.first_release_date)
+        .join(m.ReleaseLabel, m.ReleaseLabel.label_id == m.Label.id)
+        .join(m.Release, m.Release.id == m.ReleaseLabel.release_id)
+        .join(m.ReleaseArtist, m.ReleaseArtist.release_id == m.Release.id)
+        .where(m.ReleaseArtist.artist_id == artist_id)
+        .distinct()
+    ):
+        by_label.setdefault(label_id, (name, []))[1].append(_year_of(date))
+    labels = []
+    for label_id, (name, years) in by_label.items():
+        known = [y for y in years if y is not None]
+        labels.append(
+            ArtistLabel(
+                label_id, name, len(years), min(known, default=None), max(known, default=None)
+            )
+        )
+    labels.sort(key=lambda lb: (-lb.release_count, lb.name, lb.label_id))
+    return labels

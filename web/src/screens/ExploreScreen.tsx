@@ -36,6 +36,7 @@ import {
   emptyGraph,
   genreCoverage,
   graphReducer,
+  strongestUnexpanded,
   neighborsOf,
   type GraphState,
 } from '../explore/graphState';
@@ -124,6 +125,9 @@ function ListView({
     : null;
 }
 
+/** How many artists "expand the strongest" opens at once. */
+const EXPAND_STRONGEST = 5;
+
 export default function ExploreScreen() {
   const {t} = useI18n();
   const navigate = useNavigate();
@@ -204,6 +208,28 @@ export default function ExploreScreen() {
     [load, state.expansions, state.nodes],
   );
 
+  /** Expands the strongest unexpanded neighbors of the selected artist (or the center). */
+  const [growing, setGrowing] = useState(false);
+  const expandStrongest = useCallback(() => {
+    const from = selected ?? state.centerId;
+    if (!from || growing) return;
+    const targets = strongestUnexpanded(state, from, EXPAND_STRONGEST);
+    setGrowing(true);
+    // One at a time, so each expansion is its own undo step and the web grows in order.
+    void targets
+      .reduce<Promise<void>>(
+        (chain, nodeId) =>
+          chain.then(() =>
+            load(nodeId, '').then(page =>
+              dispatch({type: 'expand', id: nodeId, page, append: false}),
+            ),
+          ),
+        Promise.resolve(),
+      )
+      .catch((e: unknown) => setError(e))
+      .finally(() => setGrowing(false));
+  }, [growing, load, selected, state]);
+
   const nodes = useMemo(() => Object.values(state.nodes), [state.nodes]);
   const edges = useMemo(() => Object.values(state.edges), [state.edges]);
   const selectedNode = selected ? state.nodes[selected] : undefined;
@@ -262,12 +288,56 @@ export default function ExploreScreen() {
         </div>
       </div>
 
+      <div className="row" role="toolbar" aria-label={t('explore.tools')}>
+        <button
+          type="button"
+          className="btn btn--tonal"
+          disabled={state.past.length === 0}
+          onClick={() => dispatch({type: 'undo'})}
+        >
+          {t('explore.undo')}
+        </button>
+        <button
+          type="button"
+          className="btn btn--tonal"
+          disabled={
+            growing ||
+            !state.centerId ||
+            strongestUnexpanded(state, selected ?? state.centerId, 1).length ===
+              0
+          }
+          onClick={expandStrongest}
+        >
+          {t('explore.expandStrongest', {count: EXPAND_STRONGEST})}
+        </button>
+      </div>
+      {state.trail.length > 1 && (
+        <nav aria-label={t('explore.trail')}>
+          <ol className="chips" style={{listStyle: 'none', padding: 0}}>
+            {state.trail.map(nodeId => (
+              <li key={nodeId}>
+                <button
+                  type="button"
+                  className="chip"
+                  aria-pressed={selected === nodeId}
+                  onClick={() => setSelected(nodeId)}
+                >
+                  <bdi>{state.nodes[nodeId]?.name ?? nodeId}</bdi>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
       {showFilters && (
         <div className="card stack">
           <CategoryChips value={categories} onChange={setCategories} />
           <GenreFilter
             selection={genreFilter}
-            onChange={setGenreFilter}
+            onChange={change =>
+              setGenreFilter(previous => ({...previous, ...change}))
+            }
             coverage={genreCoverage(state)}
           />
         </div>

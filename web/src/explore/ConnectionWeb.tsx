@@ -100,6 +100,10 @@ function distanceToSegment(
   return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
 }
 
+const MAX_PIXEL_RATIO = 2;
+/** Below this simulation alpha the layout reads as still; full-quality labels return. */
+const SETTLED_ALPHA = 0.05;
+
 export const ConnectionWeb = forwardRef<ConnectionWebHandle, Props>(
   (
     {nodes, edges, centerId, selectedId, label, onSelectNode, onSelectEdge},
@@ -123,7 +127,14 @@ export const ConnectionWeb = forwardRef<ConnectionWebHandle, Props>(
       const canvas = canvasRef.current;
       const context = canvas?.getContext('2d');
       if (!canvas || !context) return;
-      const ratio = window.devicePixelRatio || 1;
+      // While the layout is still moving, labels skip their halo (a second text
+      // raster) and the canvas draws at 1x: moving frames are seen only briefly,
+      // and pixel count dominates their cost. Settled frames are drawn sharp, at
+      // up to 2x (more is not visible on a phone but costs far more to raster).
+      const settling = (simRef.current?.alpha() ?? 0) > SETTLED_ALPHA;
+      const ratio = settling
+        ? 1
+        : Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
       const {width, height} = canvas.getBoundingClientRect();
       if (
         canvas.width !== Math.round(width * ratio) ||
@@ -140,20 +151,45 @@ export const ConnectionWeb = forwardRef<ConnectionWebHandle, Props>(
       context.scale(k, k);
 
       const selected = props.current.selectedId;
+      // Lines that look the same are stroked as one path: one raster pass per
+      // style instead of one per line (dashed strokes are the costly part).
+      const groups = new Map<
+        string,
+        {
+          path: Path2D;
+          alpha: number;
+          color: string;
+          width: number;
+          dash: readonly number[];
+        }
+      >();
       for (const link of simLinks.current) {
         const a = link.source as SimNode;
         const b = link.target as SimNode;
-        const encoding = CATEGORY_ENCODING[dominantCategory(link.data.kinds)];
+        const category = dominantCategory(link.data.kinds);
+        const encoding = CATEGORY_ENCODING[category];
         const highlighted =
           selected !== null && (a.id === selected || b.id === selected);
-        context.globalAlpha = selected === null || highlighted ? 0.85 : 0.18;
-        context.strokeStyle = color(encoding.color);
-        context.lineWidth = lineWidth(link.data) / Math.sqrt(k);
-        context.setLineDash(encoding.dash.map(d => d / Math.sqrt(k)));
-        context.beginPath();
-        context.moveTo(a.x ?? 0, a.y ?? 0);
-        context.lineTo(b.x ?? 0, b.y ?? 0);
-        context.stroke();
+        const alpha = selected === null || highlighted ? 0.85 : 0.18;
+        const width = lineWidth(link.data);
+        const key = `${category}|${alpha}|${width}`;
+        const group = groups.get(key) ?? {
+          path: new Path2D(),
+          alpha,
+          color: encoding.color,
+          width,
+          dash: encoding.dash,
+        };
+        groups.set(key, group);
+        group.path.moveTo(a.x ?? 0, a.y ?? 0);
+        group.path.lineTo(b.x ?? 0, b.y ?? 0);
+      }
+      for (const group of groups.values()) {
+        context.globalAlpha = group.alpha;
+        context.strokeStyle = color(group.color);
+        context.lineWidth = group.width / Math.sqrt(k);
+        context.setLineDash(group.dash.map(d => d / Math.sqrt(k)));
+        context.stroke(group.path);
       }
       context.setLineDash([]);
       context.globalAlpha = 1;
@@ -161,31 +197,54 @@ export const ConnectionWeb = forwardRef<ConnectionWebHandle, Props>(
       const fontSize = 12 / Math.sqrt(k);
       context.font = `500 ${fontSize}px system-ui, sans-serif`;
       context.textAlign = 'center';
+      // Ordinary nodes share one fill and one stroke; the center and the
+      // selected artist are drawn on top with their own colors.
+      const plain = new Path2D();
+      const special: SimNode[] = [];
+      const labelled: SimNode[] = [];
       for (const node of simNodes.current.values()) {
-        const radius = nodeRadius(node, props.current.centerId);
+        const isSelected = node.id === selected;
+        if (node.id === props.current.centerId || isSelected)
+          special.push(node);
+        else {
+          const radius = nodeRadius(node, props.current.centerId);
+          plain.moveTo((node.x ?? 0) + radius, node.y ?? 0);
+          plain.arc(node.x ?? 0, node.y ?? 0, radius, 0, 2 * Math.PI);
+        }
+        // Labels: always for expanded nodes; for others once zoomed in enough.
+        if (node.data.expanded || k > 1.4 || isSelected) labelled.push(node);
+      }
+      context.fillStyle = color('--md-surface-container-highest');
+      context.fill(plain);
+      context.lineWidth = 1.5 / Math.sqrt(k);
+      context.strokeStyle = color('--md-outline');
+      context.stroke(plain);
+      for (const node of special) {
         const isSelected = node.id === selected;
         context.beginPath();
-        context.arc(node.x ?? 0, node.y ?? 0, radius, 0, 2 * Math.PI);
-        context.fillStyle = color(
-          node.id === props.current.centerId || isSelected
-            ? '--md-primary'
-            : '--md-surface-container-highest',
+        context.arc(
+          node.x ?? 0,
+          node.y ?? 0,
+          nodeRadius(node, props.current.centerId),
+          0,
+          2 * Math.PI,
         );
+        context.fillStyle = color('--md-primary');
         context.fill();
-        context.lineWidth = isSelected ? 3 / Math.sqrt(k) : 1.5 / Math.sqrt(k);
+        context.lineWidth = (isSelected ? 3 : 1.5) / Math.sqrt(k);
         context.strokeStyle = color(
           isSelected ? '--md-on-surface' : '--md-outline',
         );
         context.stroke();
-        // Labels: always for expanded nodes; for others once zoomed in enough.
-        if (node.data.expanded || k > 1.4 || isSelected) {
-          context.fillStyle = color('--md-on-surface');
-          context.strokeStyle = color('--md-surface');
-          context.lineWidth = 3 / Math.sqrt(k);
-          const ty = (node.y ?? 0) + radius + fontSize + 2;
-          context.strokeText(node.data.name, node.x ?? 0, ty);
-          context.fillText(node.data.name, node.x ?? 0, ty);
-        }
+      }
+      context.fillStyle = color('--md-on-surface');
+      context.strokeStyle = color('--md-surface');
+      context.lineWidth = 3 / Math.sqrt(k);
+      for (const node of labelled) {
+        const radius = nodeRadius(node, props.current.centerId);
+        const ty = (node.y ?? 0) + radius + fontSize + 2;
+        if (!settling) context.strokeText(node.data.name, node.x ?? 0, ty);
+        context.fillText(node.data.name, node.x ?? 0, ty);
       }
     }, []);
 
@@ -205,7 +264,8 @@ export const ConnectionWeb = forwardRef<ConnectionWebHandle, Props>(
         .force('collide', forceCollide<SimNode>(18))
         .force('x', forceX<SimNode>(0).strength(0.04))
         .force('y', forceY<SimNode>(0).strength(0.04))
-        .on('tick', scheduleDraw);
+        .on('tick', scheduleDraw)
+        .on('end', scheduleDraw);
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
         simulation.alphaDecay(0.2);
       simRef.current = simulation;
@@ -314,6 +374,7 @@ export const ConnectionWeb = forwardRef<ConnectionWebHandle, Props>(
         ref={canvasRef}
         role="img"
         aria-label={label}
+        data-node-count={nodes.length}
         style={{
           inlineSize: '100%',
           blockSize: '100%',

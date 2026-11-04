@@ -8,6 +8,8 @@ import {idOf} from '../api/client';
 
 /** Above this, the web gets hard to read and slow on mid-tier phones (plan US-02). */
 export const MAX_VISIBLE_NODES = 300;
+/** Undo depth: each step keeps a snapshot of the web, so it is bounded. */
+export const MAX_UNDO = 25;
 
 export interface WebNode {
   id: string;
@@ -37,7 +39,13 @@ export interface GraphState {
   expansions: Record<string, Expansion>;
   /** Connections not shown because the visible-node cap was reached. */
   capped: number;
+  /** Artists expanded so far, in order (the breadcrumb trail). */
+  trail: string[];
+  /** Earlier webs, most recent last, for undo. */
+  past: Snapshot[];
 }
+
+export type Snapshot = Omit<GraphState, 'past'>;
 
 export const emptyGraph: GraphState = {
   centerId: null,
@@ -45,7 +53,20 @@ export const emptyGraph: GraphState = {
   edges: {},
   expansions: {},
   capped: 0,
+  trail: [],
+  past: [],
 };
+
+function snapshot({
+  centerId,
+  nodes,
+  edges,
+  expansions,
+  capped,
+  trail,
+}: GraphState): Snapshot {
+  return {centerId, nodes, edges, expansions, capped, trail};
+}
 
 export function edgeKey(a: string, b: string): string {
   return a < b ? `${a}|${b}` : `${b}|${a}`;
@@ -59,6 +80,7 @@ type Page = Pick<
 export type GraphAction =
   | {type: 'start'; center: ArtistSummary; page: Page}
   | {type: 'expand'; id: string; page: Page; append: boolean}
+  | {type: 'undo'}
   | {type: 'clear'};
 
 function addNode(
@@ -130,15 +152,30 @@ export function graphReducer(
       const nodes: Record<string, WebNode> = {};
       const centerId = addNode(nodes, action.center);
       return merge(
-        {...emptyGraph, centerId, nodes},
+        {...emptyGraph, centerId, nodes, trail: [centerId]},
         centerId,
         action.page,
         false,
       );
     }
-    case 'expand':
+    case 'expand': {
       if (!(action.id in state.nodes)) return state;
-      return merge(state, action.id, action.page, action.append);
+      const next = merge(state, action.id, action.page, action.append);
+      const trail =
+        action.append || state.trail.includes(action.id)
+          ? state.trail
+          : [...state.trail, action.id];
+      return {
+        ...next,
+        trail,
+        past: [...state.past, snapshot(state)].slice(-MAX_UNDO),
+      };
+    }
+    case 'undo': {
+      const previous = state.past.at(-1);
+      if (!previous) return state;
+      return {...previous, past: state.past.slice(0, -1)};
+    }
     case 'clear':
       return emptyGraph;
   }
@@ -165,4 +202,16 @@ export function neighborsOf(
         y.edge.strength - x.edge.strength ||
         x.node.name.localeCompare(y.node.name),
     );
+}
+
+/** The strongest visible neighbors of a node that are not expanded yet ("expand the strongest N"). */
+export function strongestUnexpanded(
+  state: GraphState,
+  id: string,
+  count: number,
+): string[] {
+  return neighborsOf(state, id)
+    .filter(({node}) => !node.expanded)
+    .slice(0, count)
+    .map(({node}) => node.id);
 }

@@ -78,6 +78,12 @@ screen, unit + browser tests with axe scans, a flag (kill switch), docs, and a m
 - Producer view: "produced by" hub around a producer.
 - Explore: expansion breadcrumbs, undo, "expand the strongest N", edge-type legend that matches toggles.
 - Budget: Explore stays ≥ 50 fps at 300 nodes on a mid-range phone profile (measured in the browser tests).
+- **Done 2026-11-04.** As built: `GetLabel` and label pages (roster grouped by decade, releases, sources); labels on
+  artist pages; label-mate and song evidence link to their pages; the Labels category chip already existed. The
+  producer view is a direction on production collaborations (produced for / produced by / co-produced) with a
+  filter. Explore: expansion trail, undo (25 steps), "Expand the 5 strongest". Frame rate: met when settled and on a
+  fast CPU; a moving 300-artist web measured 22 fps median in mid-tier-phone emulation, so the phone budget stays
+  **unverified** until measured on a device ([measurements](../perf/measurements.md)).
 
 ### R2-3 Collaborations breakdown (S6)
 - Dedicated `/artist/:id/collaborations`: features, co-productions, side projects and bands, credits; timeline by year;

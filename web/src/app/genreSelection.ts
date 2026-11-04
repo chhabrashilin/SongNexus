@@ -5,7 +5,7 @@
  * result to anyone: `genres` (comma-separated resource names), `unknown=0` to drop
  * artists without genre data, `subgenres=0` to match selected genres exactly.
  */
-import {useCallback, useMemo} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useSearchParams} from 'react-router';
 
 export interface GenreSelection {
@@ -46,18 +46,36 @@ export function isFiltered(selection: GenreSelection): boolean {
   return selection.genres.length > 0;
 }
 
-/** The genre selection held in the URL, and a setter that replaces the history entry. */
+/**
+ * The genre selection held in the URL, and a setter that replaces the history entry.
+ *
+ * The setter takes only what changed and merges it into the URL as it is when the
+ * update applies, so two quick changes (add a genre, then untick subgenres) never
+ * overwrite each other. The router applies URL changes asynchronously, so the
+ * selection is also held locally and updated at once: a checkbox reflects a tap
+ * immediately instead of snapping back until the URL catches up.
+ */
 export function useGenreSelection(): [
   GenreSelection,
-  (next: GenreSelection) => void,
+  (change: Partial<GenreSelection>) => void,
 ] {
   const [search, setSearch] = useSearchParams();
-  const selection = useMemo(() => readGenreSelection(search), [search]);
+  const fromUrl = useMemo(() => readGenreSelection(search), [search]);
+  const [selection, setSelection] = useState(fromUrl);
+  // The URL wins whenever it changes (back and forward, shared links).
+  useEffect(() => setSelection(fromUrl), [fromUrl]);
   const update = useCallback(
-    (next: GenreSelection) =>
-      setSearch(current => writeGenreSelection(current, next), {
-        replace: true,
-      }),
+    (change: Partial<GenreSelection>) => {
+      setSelection(previous => ({...previous, ...change}));
+      setSearch(
+        current =>
+          writeGenreSelection(current, {
+            ...readGenreSelection(current),
+            ...change,
+          }),
+        {replace: true},
+      );
+    },
     [setSearch],
   );
   return [selection, update];

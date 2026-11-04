@@ -33,7 +33,7 @@ export interface paths {
         };
         /**
          * GetArtist
-         * @description Returns an artist with genres, aliases, links and sources.
+         * @description Returns an artist with genres, aliases, links, labels and sources.
          */
         get: operations["GetArtist"];
         put?: never;
@@ -227,6 +227,29 @@ export interface paths {
          *     Counts come from the served graph, so they reflect the configured genre sources.
          */
         get: operations["ListGenres"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/labels/{label}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetLabel
+         * @description Returns a label: its roster by era and its releases in our data.
+         *
+         *     The roster lists the primary artists of the label's releases we hold, so it
+         *     is "artists on this label in our data", never a complete roster.
+         */
+        get: operations["GetLabel"];
         put?: never;
         post?: never;
         delete?: never;
@@ -681,6 +704,11 @@ export interface components {
             genres: components["schemas"]["GenreShare"][];
             /** Graphversion */
             graphVersion: string;
+            /**
+             * Labels
+             * @description Labels the artist's releases in our data came out on.
+             */
+            labels: components["schemas"]["ArtistLabel"][];
             /** Links */
             links: components["schemas"]["Link"][];
             /**
@@ -691,6 +719,25 @@ export interface components {
             name: string;
             /** Sources */
             sources: components["schemas"]["SourceLink"][];
+        };
+        /**
+         * ArtistLabel
+         * @description A label an artist released on.
+         */
+        ArtistLabel: {
+            /** Displayname */
+            displayName: string;
+            /** Firstyear */
+            firstYear: number | null;
+            /**
+             * Label
+             * @description Resource name `labels/{label}`.
+             */
+            label: string;
+            /** Lastyear */
+            lastYear: number | null;
+            /** Releasecount */
+            releaseCount: number;
         };
         /**
          * ArtistSummary
@@ -793,6 +840,11 @@ export interface components {
             artist: components["schemas"]["ArtistSummary"];
             /** Count */
             count: number;
+            /**
+             * Directions
+             * @description For PRODUCTION: which ways it went; empty otherwise.
+             */
+            directions: components["schemas"]["ProductionDirection"][];
             /** Evidence */
             evidence: components["schemas"]["Evidence"][];
             /** Firstyear */
@@ -1128,6 +1180,69 @@ export interface components {
             candidates: components["schemas"]["ArtistSummary"][];
         };
         /**
+         * Label
+         * @description GetLabel: a record label, its roster by era, and its releases in our data.
+         */
+        Label: {
+            /**
+             * Artists
+             * @description Roster, by first release year.
+             */
+            artists: components["schemas"]["LabelArtist"][];
+            /** Disambiguation */
+            disambiguation: string | null;
+            /** Displayname */
+            displayName: string;
+            /** Graphversion */
+            graphVersion: string;
+            /** Labeltype */
+            labelType: string | null;
+            /**
+             * Name
+             * @description Resource name `labels/{label}`.
+             */
+            name: string;
+            /**
+             * Releases
+             * @description Releases, oldest first.
+             */
+            releases: components["schemas"]["LabelRelease"][];
+            /** Sources */
+            sources: components["schemas"]["SourceLink"][];
+        };
+        /**
+         * LabelArtist
+         * @description An artist on a label's roster, with when they released there.
+         */
+        LabelArtist: {
+            artist: components["schemas"]["ArtistSummary"];
+            /** Firstyear */
+            firstYear: number | null;
+            /** Lastyear */
+            lastYear: number | null;
+            /** Releasecount */
+            releaseCount: number;
+        };
+        /**
+         * LabelRelease
+         * @description A release on a label.
+         */
+        LabelRelease: {
+            /** Artists */
+            artists: components["schemas"]["ArtistSummary"][];
+            /** Catalognumbers */
+            catalogNumbers: string[];
+            /** Displayname */
+            displayName: string;
+            /**
+             * Release
+             * @description Resource name `releases/{release}`.
+             */
+            release: string;
+            /** Year */
+            year: number | null;
+        };
+        /**
          * LicenseTier
          * @description What a data source's license allows (ADR 0005).
          * @enum {string}
@@ -1395,6 +1510,12 @@ export interface components {
             /** Updatetime */
             updateTime: string | null;
         };
+        /**
+         * ProductionDirection
+         * @description Who produced whom, from the requested artist's side.
+         * @enum {string}
+         */
+        ProductionDirection: "PRODUCED_FOR" | "PRODUCED_BY" | "CO_PRODUCED";
         /**
          * Profile
          * @description GetProfile / UpdateProfile: Top 5 artists (US-09).
@@ -1733,6 +1854,8 @@ export interface operations {
         parameters: {
             query?: {
                 type?: components["schemas"]["CollaborationType"];
+                /** @description With type PRODUCTION: only collaborations that went this way. */
+                direction?: components["schemas"]["ProductionDirection"] | null;
                 pageSize?: number;
                 pageToken?: string;
                 /** @description Genre resource names to stay within. */
@@ -2048,6 +2171,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ListGenresResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetLabel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                label: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Label"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */

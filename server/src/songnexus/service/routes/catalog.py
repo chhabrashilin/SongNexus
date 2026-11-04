@@ -1,4 +1,4 @@
-"""Catalog methods: artists, connections, collaborations, recordings, search, genres."""
+"""Catalog methods: artists, connections, collaborations, labels, recordings, search, genres."""
 
 from __future__ import annotations
 
@@ -67,7 +67,7 @@ def kinds_from(categories: list[api.ConnectionCategory]) -> frozenset[EdgeKind]:
 def get_artist(
     artist: str, model: ReadModelDep, session: SessionDep, response: Response
 ) -> api.Artist:
-    """Returns an artist with genres, aliases, links and sources."""
+    """Returns an artist with genres, aliases, links, labels and sources."""
     artist_id = parse_name(artist, "artists", field="name")
     graph = model.graph
     require_artist(graph, artist_id)
@@ -93,6 +93,16 @@ def get_artist(
         ],
         links=[api.Link(link_type=link.link_type, url=link.url) for link in details.links],
         connection_count=len(graph.adjacency(kinds_for(DEFAULT_CATEGORIES))[artist_id]),
+        labels=[
+            api.ArtistLabel(
+                label=f"labels/{lb.label_id}",
+                display_name=lb.name,
+                release_count=lb.release_count,
+                first_year=lb.first_year,
+                last_year=lb.last_year,
+            )
+            for lb in repo.artist_labels(session, artist_id)
+        ],
         sources=convert.source_links(details.sources),
         graph_version=model.version,
     )
@@ -215,6 +225,10 @@ def list_artist_collaborations(
     response: Response,
     genre_filter: GenreSelectionDep,
     type_: Annotated[api.CollaborationType, Query(alias="type")] = api.CollaborationType.FEATURE,
+    direction: Annotated[
+        api.ProductionDirection | None,
+        Query(description="With type PRODUCTION: only collaborations that went this way."),
+    ] = None,
     page_size: PageSize = 25,
     page_token: PageToken = "",
 ) -> api.ListArtistCollaborationsResponse:
@@ -227,14 +241,21 @@ def list_artist_collaborations(
     require_artist(graph, artist_id)
     flt = selection_filter(who, genre_filter, graph)
     core_type = convert.collaboration_type(type_)
-    items = collab.collaborations(graph, artist_id, core_type, flt)
+    if direction is not None and core_type is not collab.CollaborationType.PRODUCTION:
+        raise invalid_argument("direction applies only to type PRODUCTION.", field="direction")
+    core_direction = None if direction is None else collab.ProductionDirection(direction.value)
+    items = collab.collaborations(graph, artist_id, core_type, flt, core_direction)
     page = paginate(
         items,
         page_size=page_size,
         page_token=page_token,
         version=model.version,
         params=fingerprint(
-            artist_id, type_.value, sorted(flt.genre_ids), genre_filter.include_unknown_genre
+            artist_id,
+            type_.value,
+            direction,
+            sorted(flt.genre_ids),
+            genre_filter.include_unknown_genre,
         ),
     )
     kinds = collab.TYPE_KINDS[core_type]
@@ -249,7 +270,12 @@ def list_artist_collaborations(
                 count=item.count,
                 first_year=item.first_year,
                 last_year=item.last_year,
-                evidence=[convert.evidence(e) for e in explain_edge(graph, edge, artist_id, kinds)],
+                evidence=[
+                    convert.evidence(e)
+                    for e in explain_edge(graph, edge, artist_id, kinds)
+                    if core_direction is None or e.subject_id in _item_subjects(item)
+                ],
+                directions=sorted(api.ProductionDirection(d.value) for d in item.directions),
             )
         )
     counts = collab.collaboration_counts(graph, artist_id, flt)
@@ -259,6 +285,69 @@ def list_artist_collaborations(
         counts={api.CollaborationType(t.value): n for t, n in counts.items()},
         next_page_token=page.next_page_token,
         total_size=page.total_size,
+        graph_version=model.version,
+    )
+
+
+def _item_subjects(item: collab.Collaboration) -> frozenset[str]:
+    """The subjects behind one collaboration (to keep only direction-matching evidence)."""
+    return frozenset(e.subject_id for e in item.evidence)
+
+
+@router.get("/labels/{label:rid}", response_model=api.Label, summary="GetLabel")
+def get_label(
+    label: str, model: ReadModelDep, who: ViewerDep, session: SessionDep, response: Response
+) -> api.Label:
+    """Returns a label: its roster by era and its releases in our data.
+
+    The roster lists the primary artists of the label's releases we hold, so it
+    is "artists on this label in our data", never a complete roster.
+    """
+    label_id = parse_name(label, "labels", field="name")
+    details = repo.label_details(session, label_id)
+    if details is None:
+        raise not_found(f"labels/{label_id}", reason="LABEL_NOT_FOUND")
+    graph = model.graph
+
+    def visible(artist_id: str) -> bool:
+        return artist_id in graph.nodes and artist_id not in who.blocked
+
+    roster: dict[str, list[int | None]] = {}
+    for release in details.releases:
+        for artist_id in release.artist_ids:
+            if visible(artist_id):
+                roster.setdefault(artist_id, []).append(release.year)
+
+    def era(artist_id: str) -> tuple[bool, int, str]:
+        known = [y for y in roster[artist_id] if y is not None]
+        return (not known, min(known, default=0), graph.nodes[artist_id].name)
+
+    set_cache_control(response, who)
+    return api.Label(
+        name=f"labels/{details.id}",
+        display_name=details.name,
+        label_type=details.label_type,
+        disambiguation=details.disambiguation,
+        artists=[
+            api.LabelArtist(
+                artist=convert.artist_summary(graph, artist_id),
+                release_count=len(years),
+                first_year=min((y for y in years if y is not None), default=None),
+                last_year=max((y for y in years if y is not None), default=None),
+            )
+            for artist_id, years in sorted(roster.items(), key=lambda kv: era(kv[0]))
+        ],
+        releases=[
+            api.LabelRelease(
+                release=f"releases/{r.release_id}",
+                display_name=r.title,
+                year=r.year,
+                catalog_numbers=list(r.catalog_numbers),
+                artists=[convert.artist_summary(graph, a) for a in r.artist_ids if visible(a)],
+            )
+            for r in details.releases
+        ],
+        sources=convert.source_links(details.sources),
         graph_version=model.version,
     )
 
