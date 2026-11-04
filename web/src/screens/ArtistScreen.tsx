@@ -1,245 +1,25 @@
-/** Artist page (S4): header, genres, actions, Collaborations tabs (US-16), aliases, links, sources. */
-import {useEffect, useId, useRef, useState, type KeyboardEvent} from 'react';
+/** Artist page (S4): header, genres, actions, collaborations (US-16), labels, aliases, links, sources. */
+import {useEffect} from 'react';
 import {Link, useParams} from 'react-router';
 
 import {idOf, type Schemas} from '../api/client';
-import {
-  useArtist,
-  useCollaborations,
-  useDataSources,
-  type CollaborationType,
-  type ProductionDirection,
-} from '../api/queries';
-import {isFiltered, useGenreSelection} from '../app/genreSelection';
+import {useArtist, useDataSources} from '../api/queries';
 import {rememberArtist} from '../app/recent';
 import {usePageTitle} from '../app/Shell';
 import {useBlock} from '../app/useBlock';
-import {ArtistRow, Avatar} from '../components/ArtistRow';
-import {ConnectionSheet} from '../components/ConnectionSheet';
+import {CollaborationsPanel} from '../collaborations/CollaborationsPanel';
+import {Avatar} from '../components/ArtistRow';
 import {hostOf} from '../components/evidence';
-import {GenreFilter} from '../components/Filters';
 import {Icon} from '../components/Icon';
-import {
-  EmptyState,
-  ErrorState,
-  SkeletonRows,
-  Spinner,
-} from '../components/States';
+import {ErrorState, Spinner} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 import type {MessageId} from '../i18n/messages';
-
-const TABS: CollaborationType[] = ['FEATURE', 'PRODUCTION', 'BAND', 'CREDIT'];
-const DIRECTIONS: (ProductionDirection | null)[] = [
-  null,
-  'PRODUCED_FOR',
-  'PRODUCED_BY',
-  'CO_PRODUCED',
-];
 
 function typeLabel(type: string | null | undefined): MessageId {
   const known = ['Person', 'Group', 'Orchestra', 'Choir', 'Character'];
   return (
     type && known.includes(type) ? `artist.type.${type}` : 'artist.type.other'
   ) as MessageId;
-}
-
-function Collaborations({
-  artistId,
-  counts,
-}: {
-  artistId: string;
-  counts: Partial<Record<CollaborationType, number>>;
-}) {
-  const {t} = useI18n();
-  const [tab, setTab] = useState<CollaborationType>('FEATURE');
-  const [pageToken, setPageToken] = useState('');
-  const [items, setItems] = useState<Schemas['Collaboration'][]>([]);
-  const [evidenceWith, setEvidenceWith] = useState<string | null>(null);
-  const [genreFilter, setGenreFilter] = useGenreSelection();
-  const [showFilters, setShowFilters] = useState(isFiltered(genreFilter));
-  const [direction, setDirection] = useState<ProductionDirection | null>(null);
-  const activeDirection = tab === 'PRODUCTION' ? direction : null;
-  const query = useCollaborations(
-    artistId,
-    tab,
-    genreFilter,
-    pageToken,
-    activeDirection,
-  );
-  const tabsId = useId();
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  useEffect(() => {
-    setItems([]);
-    setPageToken('');
-  }, [artistId, tab, genreFilter, activeDirection]);
-  useEffect(() => {
-    const page = query.data?.collaborations;
-    if (page && !query.isPlaceholderData) {
-      setItems(previous => (pageToken ? [...previous, ...page] : page));
-    }
-  }, [query.data, query.isPlaceholderData, pageToken]);
-
-  function onTabKey(event: KeyboardEvent, index: number) {
-    const step =
-      event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
-    if (!step) return;
-    const rtl = document.documentElement.dir === 'rtl';
-    const next = (index + (rtl ? -step : step) + TABS.length) % TABS.length;
-    setTab(TABS[next]!);
-    tabRefs.current[next]?.focus();
-  }
-
-  return (
-    <section className="section">
-      <div className="section__header">
-        <h2>{t('collab.title')}</h2>
-        <span className="muted" style={{font: 'var(--body-small)'}}>
-          {t('collab.basis')}
-        </span>
-        <button
-          type="button"
-          className="btn btn--text"
-          aria-expanded={showFilters}
-          onClick={() => setShowFilters(open => !open)}
-        >
-          <Icon name="tune" />
-          {t('collab.filter')}
-        </button>
-      </div>
-      {showFilters && (
-        <div className="card stack">
-          <GenreFilter selection={genreFilter} onChange={setGenreFilter} />
-        </div>
-      )}
-      <div className="tabs" role="tablist" aria-label={t('collab.title')}>
-        {TABS.map((type, index) => (
-          <button
-            key={type}
-            ref={element => {
-              tabRefs.current[index] = element;
-            }}
-            id={`${tabsId}-${type}`}
-            type="button"
-            role="tab"
-            className="tab"
-            aria-selected={tab === type}
-            aria-controls={`${tabsId}-panel`}
-            tabIndex={tab === type ? 0 : -1}
-            onClick={() => setTab(type)}
-            onKeyDown={event => onTabKey(event, index)}
-          >
-            {t(`collab.tab.${type}`)}
-            <span className="badge">{counts[type] ?? 0}</span>
-          </button>
-        ))}
-      </div>
-      <div
-        id={`${tabsId}-panel`}
-        role="tabpanel"
-        aria-labelledby={`${tabsId}-${tab}`}
-      >
-        {tab === 'PRODUCTION' && (
-          <div
-            className="chips"
-            role="group"
-            aria-label={t('collab.tab.PRODUCTION')}
-          >
-            {DIRECTIONS.map(option => (
-              <button
-                key={option ?? 'ALL'}
-                type="button"
-                className="chip"
-                aria-pressed={direction === option}
-                onClick={() => setDirection(option)}
-              >
-                {t(`collab.direction.${option ?? 'ALL'}`)}
-              </button>
-            ))}
-          </div>
-        )}
-        {query.isError && (
-          <ErrorState
-            error={query.error}
-            onRetry={() => void query.refetch()}
-          />
-        )}
-        {query.isPending && items.length === 0 && <SkeletonRows />}
-        {query.isSuccess && items.length === 0 && !query.isPlaceholderData && (
-          <EmptyState title={t('collab.empty', {type: tab})} />
-        )}
-        <ul className="list">
-          {items.map(item => (
-            <ArtistRow
-              key={item.artist.name}
-              artist={item.artist}
-              meta={
-                <>
-                  {t('collab.count', {count: item.count})}
-                  {item.directions.length > 0 && (
-                    <>
-                      {' · '}
-                      {item.directions
-                        .map(d => t(`collab.direction.${d}`))
-                        .join(', ')}
-                    </>
-                  )}
-                  {item.firstYear !== null && item.lastYear !== null && (
-                    <>
-                      {' · '}
-                      {item.firstYear === item.lastYear
-                        ? t('collab.year', {year: item.firstYear})
-                        : t('collab.years', {
-                            first: item.firstYear,
-                            last: item.lastYear,
-                          })}
-                    </>
-                  )}
-                </>
-              }
-              action={
-                <button
-                  type="button"
-                  className="icon-btn"
-                  onClick={() => setEvidenceWith(idOf(item.artist.name))}
-                >
-                  <Icon
-                    name="chevron"
-                    label={t('connection.showEvidence', {
-                      name: item.artist.displayName,
-                    })}
-                  />
-                </button>
-              }
-            />
-          ))}
-        </ul>
-        {query.data?.nextPageToken && (
-          <button
-            type="button"
-            className="btn btn--text"
-            disabled={query.isFetching}
-            onClick={() => setPageToken(query.data.nextPageToken)}
-          >
-            {t('action.showMore')}
-          </button>
-        )}
-      </div>
-      <ConnectionSheet
-        a={evidenceWith ? artistId : null}
-        b={evidenceWith}
-        categories={[
-          'FEATURES',
-          'PRODUCERS',
-          'CONTRIBUTIONS',
-          'SAMPLES',
-          'BANDS',
-          'ENGINEERING',
-        ]}
-        onClose={() => setEvidenceWith(null)}
-      />
-    </section>
-  );
 }
 
 /** Names the data sources behind an artist's genres (ADR 0005). */
@@ -269,9 +49,6 @@ export default function ArtistScreen() {
   const {t} = useI18n();
   const {id = ''} = useParams();
   const artist = useArtist(id);
-  const [genreFilter] = useGenreSelection();
-  const counts =
-    useCollaborations(id, 'FEATURE', genreFilter).data?.counts ?? {};
   const sources = useDataSources();
   const block = useBlock(artist.data);
   usePageTitle(artist.data?.displayName);
@@ -359,7 +136,7 @@ export default function ArtistScreen() {
         )}
       </section>
 
-      <Collaborations artistId={id} counts={counts} />
+      <CollaborationsPanel artistId={id} />
 
       {a.aliases.length > 0 && (
         <section className="section">

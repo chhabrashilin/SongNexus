@@ -18,7 +18,8 @@ on branch `r2` following [docs/plans/r2-plan.md](docs/plans/r2-plan.md).
 | R2-0 | Data-source registry, [resources page](docs/resources.md), `ListDataSources`, [ADR 0005](docs/adr/0005-data-source-policy.md) | Done |
 | R2-1 | Commercial-safe genres (Discogs, Wikidata hierarchy), genre filters in Compare and Collaborations, subgenres | Done |
 | R2-2 | Relationship graph: label pages and rosters by era, producer direction, Explore trail, undo and "expand the strongest" | Done (phone frame rate unverified) |
-| R2-3 – R2-8 | Collaborations page, song comparison, listener overlap, linked accounts, friends, hardening | Planned |
+| R2-3 | Collaborations page: timeline by year, year range, chronological order; recall 1.000 vs raw data | Done |
+| R2-4 – R2-8 | Song comparison, listener overlap, linked accounts, friends, hardening | Planned |
 
 Release 1:
 

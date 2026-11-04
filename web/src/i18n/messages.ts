@@ -405,6 +405,32 @@ export const messages = {
   'compare.filterHelp':
     'Filters who worked with both and the path between them. The two artists and their shared genres are not filtered.',
   'collab.filter': 'Filter by genre',
+  'collab.seeAll': 'See all, by year',
+  'collab.page.title': 'Collaborations of {name}',
+  'collab.page.back': 'Back to the artist',
+  'collab.order': 'Order',
+  'collab.order.COUNT': 'Most collaborations',
+  'collab.order.FIRST_YEAR': 'Chronological',
+  'collab.range.from': 'From',
+  'collab.range.to': 'To',
+  'collab.range.any': 'Any year',
+  'collab.range.clear': 'All years',
+  'collab.range.undatedNote':
+    'With a year range, only dated recordings and releases count; band memberships and other undated links are left out.',
+  'collab.timeline.title': 'Collaborations per year',
+  'collab.timeline.hint':
+    'Tap a year to see only that year; shift-tap to extend the range.',
+  'collab.timeline.yearTotal':
+    '{year}: {count, plural, one {# recording or release} other {# recordings and releases}}',
+  'collab.timeline.single':
+    'All dated collaborations are from {year} ({count, plural, one {# recording or release} other {# recordings and releases}}).',
+  'collab.timeline.none': 'No dated collaborations in our data.',
+  'collab.timeline.undated':
+    '{count, plural, one {# undated link} other {# undated links}} (such as band memberships).',
+  'collab.timeline.asTable': 'Show as table',
+  'collab.timeline.asChart': 'Show as chart',
+  'collab.timeline.year': 'Year',
+  'collab.timeline.total': 'Total',
   'filter.genres.includeSubgenres': 'Include subgenres',
   'filter.genres.artists': '{count, plural, one {# artist} other {# artists}}',
   'about.resources': 'Resources',

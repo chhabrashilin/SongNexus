@@ -23,6 +23,20 @@ method are in [perf/measurements.md](../perf/measurements.md).
 The two import errors are labeled near misses, the cost of typo tolerance: "The Beetles" → The Beatles and
 "The Weekend" → The Weeknd.
 
+## Collaborations recall (R2-3, measured 2026-11-04)
+
+`songnexus eval-collaborations` (gate ≥ 0.95, enforced by `tests/catalog/test_golden.py`): for the first 20 seed
+artists, collaborators are re-derived from the raw MusicBrainz responses with the product's definitions, without the
+pipeline's parsers or projection, and compared with `ListArtistCollaborations`.
+
+| Type | Pairs in the raw data | Shown | Recall |
+|---|---|---|---|
+| Features (credited together on a recording) | 412 | 412 | **1.000** |
+| Production (producer credit on a recording) | 838 | 838 | **1.000** |
+| Bands ("member of band") | 78 | 78 | **1.000** |
+
+Recall measures loss between the data and the page; it says nothing about collaborations MusicBrainz lacks.
+
 ## Genres (R2-1, measured 2026-11-01)
 
 `songnexus eval-genres` on the committed snapshots (MusicBrainz 2026-10-07, Wikidata 2026-11-01, Discogs masters dump

@@ -39,6 +39,9 @@
   --md-on-surface-variant: light-dark(#48454e, #c9c5d0);
   --md-outline: light-dark(#79757f, #938f99);
   --md-outline-variant: light-dark(#c9c5d0, #48454e);
+  /* Chart series 1: the primary hue, re-stepped for dark mode so data marks pass
+     the dataviz checks (lightness band, chroma floor, 3:1 vs surface). */
+  --chart-series-1: light-dark(#5446a5, #8f7de8);
   --md-inverse-surface: light-dark(#313033, #e5e1e6);
   --md-inverse-on-surface: light-dark(#f4eff4, #313033);
   --md-inverse-primary: light-dark(#c4b8ff, #5446a5);

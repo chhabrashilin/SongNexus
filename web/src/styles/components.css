@@ -613,3 +613,96 @@ button.list-row {
 .play-stats > div { flex: 1 1 90px; }
 .play-stats dt { font: var(--label-large); }
 .play-stats dd { margin: 0; font: var(--headline-small); font-variant-numeric: tabular-nums; }
+
+/* Collaborations timeline (R2-3): one series per the dataviz rules: one color,
+   bars <= 24px with a 4px rounded data end and a square baseline, 2px gaps,
+   a solid hairline baseline, and a hit target the full height of the column. */
+.timeline {
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.timeline__caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font: var(--title-small);
+}
+.timeline__readout {
+  min-block-size: 1.5em;
+  margin: 0;
+  font: var(--body-small);
+}
+.timeline__plot {
+  position: relative;
+  padding-block-start: var(--space-3);
+}
+.timeline__max {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  font: var(--label-medium);
+}
+.timeline__bars {
+  display: flex;
+  align-items: flex-end;
+  block-size: 120px;
+  border-block-end: 1px solid var(--md-outline-variant);
+}
+.timeline__column {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  block-size: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 1px; /* the 2px surface gap between neighbors */
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.timeline__bar {
+  inline-size: 100%;
+  max-inline-size: 24px;
+  min-block-size: 0;
+  border-start-start-radius: 4px;
+  border-start-end-radius: 4px;
+  background: var(--chart-series-1);
+}
+.timeline__column[data-in-range='false'] .timeline__bar {
+  background: var(--md-outline);
+}
+.timeline__column:hover .timeline__bar {
+  filter: brightness(1.15);
+}
+.timeline__column:focus-visible {
+  outline: 2px solid var(--md-on-surface);
+  outline-offset: 1px;
+}
+.timeline__axis {
+  display: flex;
+  justify-content: space-between;
+  font: var(--label-medium);
+}
+.timeline__table {
+  border-collapse: collapse;
+  font: var(--body-small);
+}
+.timeline__table th,
+.timeline__table td {
+  padding: var(--space-1) var(--space-2);
+  text-align: end;
+  border-block-end: 1px solid var(--md-outline-variant);
+}
+.timeline__table th[scope='row'],
+.timeline__table thead th:first-child {
+  text-align: start;
+}
+@media (forced-colors: active) {
+  .timeline__bar {
+    background: CanvasText;
+  }
+  .timeline__column[data-in-range='false'] .timeline__bar {
+    background: GrayText;
+  }
+}

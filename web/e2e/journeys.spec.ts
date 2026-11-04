@@ -173,6 +173,40 @@ test('explore keeps a trail of expanded artists and can undo (R2-2)', async ({
   await expectAccessible(page);
 });
 
+test('the collaborations page has a timeline, a year range and a table view (R2-3)', async ({
+  page,
+}) => {
+  await openArtist(page, 'Kendrick Lamar', 'Kendrick Lamar');
+  await page.getByRole('link', {name: 'See all, by year'}).click();
+  await expect(
+    page.getByRole('heading', {
+      level: 1,
+      name: 'Collaborations of Kendrick Lamar',
+    }),
+  ).toBeVisible();
+  const chart = page.getByRole('group', {name: 'Collaborations per year'});
+  const bars = chart.getByRole('button');
+  await expect(bars.first()).toBeVisible();
+  // Pick the busiest year through the keyboard-reachable From/To controls.
+  const from = page.getByRole('combobox', {name: 'From'});
+  const firstYear = await from.locator('option').nth(1).textContent();
+  await from.selectOption(firstYear!);
+  await expect(page).toHaveURL(new RegExp(`from=${firstYear}`));
+  await expect(
+    page.getByText(/only dated recordings and releases count/),
+  ).toBeVisible();
+  // A tap on a column narrows to that year.
+  await bars.last().click();
+  await expect(page).toHaveURL(/from=\d{4}&to=\d{4}|to=\d{4}.*from=\d{4}/);
+  await page.getByRole('button', {name: 'Chronological'}).click();
+  await expect(page).toHaveURL(/order=FIRST_YEAR/);
+  await page.getByRole('button', {name: 'Show as table'}).click();
+  await expect(page.getByRole('table')).toBeVisible();
+  await page.getByRole('button', {name: 'All years'}).click();
+  await expect(page).not.toHaveURL(/from=/);
+  await expectAccessible(page);
+});
+
 test('six degrees connects two artists and the link is shareable', async ({
   page,
 }) => {

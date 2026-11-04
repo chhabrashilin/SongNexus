@@ -224,6 +224,25 @@ def _cmd_eval_genres(settings: Settings, _args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+MIN_COLLABORATION_RECALL = 0.95
+COLLABORATION_EVAL_ARTISTS = 20
+
+
+def _cmd_eval_collaborations(settings: Settings, _args: argparse.Namespace) -> int:
+    from songnexus.catalog.collab_eval import collaboration_recall
+    from songnexus.catalog.snapshot import read_snapshot
+    from songnexus.service.readmodel import load_read_model
+    from songnexus.storage.db import make_engine
+
+    lock = json.loads(settings.seeds_path.with_suffix(".lock.json").read_text(encoding="utf-8"))
+    seeds = [a["mbid"] for a in lock["artists"]][:COLLABORATION_EVAL_ARTISTS]
+    graph = load_read_model(make_engine(settings.database_url)).graph
+    report = collaboration_recall(graph, read_snapshot(settings.snapshot_path), seeds)
+    passed = report.overall is not None and report.overall >= MIN_COLLABORATION_RECALL
+    _print({"gatePassed": passed, "minRecall": MIN_COLLABORATION_RECALL, **asdict(report)})
+    return EXIT_OK if passed else EXIT_FAILED
+
+
 def _cmd_eval_search(settings: Settings, args: argparse.Namespace) -> int:
     from songnexus.core.search import EvalCase, evaluate
     from songnexus.service.readmodel import load_read_model
@@ -380,6 +399,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     eval_import.add_argument("--cases", type=Path)
     eval_import.set_defaults(handler=_cmd_eval_import)
+
+    eval_collaborations = commands.add_parser(
+        "eval-collaborations",
+        help=f"collaborations recall vs raw MusicBrainz data (gate >= {MIN_COLLABORATION_RECALL})",
+    )
+    eval_collaborations.set_defaults(handler=_cmd_eval_collaborations)
 
     eval_genres = commands.add_parser(
         "eval-genres", help="measure genre coverage and MusicBrainz-Discogs agreement"

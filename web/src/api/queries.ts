@@ -91,15 +91,33 @@ export function useConnection(
 
 export type ProductionDirection = Schemas['ProductionDirection'];
 
+export interface CollaborationOptions {
+  startYear?: number | null;
+  endYear?: number | null;
+  orderBy?: Schemas['CollaborationOrder'];
+}
+
 export function useCollaborations(
   id: string | undefined,
   type: CollaborationType,
   selection: GenreSelection,
   pageToken = '',
   direction: ProductionDirection | null = null,
+  options: CollaborationOptions = {},
 ) {
+  const {startYear = null, endYear = null, orderBy = 'COUNT'} = options;
   return useQuery({
-    queryKey: ['collaborations', id, type, selection, direction, pageToken],
+    queryKey: [
+      'collaborations',
+      id,
+      type,
+      selection,
+      direction,
+      startYear,
+      endYear,
+      orderBy,
+      pageToken,
+    ],
     queryFn: () =>
       unwrap(
         api.GET('/v1/artists/{artist}/collaborations', {
@@ -111,6 +129,9 @@ export function useCollaborations(
               pageToken,
               ...selection,
               ...(direction ? {direction} : {}),
+              ...(startYear !== null ? {startYear} : {}),
+              ...(endYear !== null ? {endYear} : {}),
+              orderBy,
             },
           },
         }),

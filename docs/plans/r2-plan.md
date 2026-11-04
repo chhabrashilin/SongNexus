@@ -89,6 +89,14 @@ screen, unit + browser tests with axe scans, a flag (kill switch), docs, and a m
 - Dedicated `/artist/:id/collaborations`: features, co-productions, side projects and bands, credits; timeline by year;
   filters (type, years, genre); each item opens its evidence. `ListCollaborations` gains year and type facets.
 - Gate: on a hand-labeled set of 20 artists, recall of official collaborations present in MusicBrainz ≥ 0.95.
+- **Done 2026-11-04.** As built: `/artist/:id/collaborations` with a per-year timeline (chart, keyboard, table view),
+  a year range (`startYear`, `endYear`; undated links fall outside any range, and the page says so), most-first or
+  chronological order, the genre filter and the producer direction; all state in the URL. The artist page keeps the
+  compact panel with a link to the page. Gate, made independent of the pipeline instead of hand-labeled:
+  `eval-collaborations` re-derives features, production and band links for the first 20 seed artists straight from
+  the raw MusicBrainz JSON and checks the API shows them: **recall 1.000** (412 feature, 838 production, 78 band
+  pairs); a unit test proves a dropped collaboration is caught. Chart colors validated with the dataviz checks;
+  dark mode uses its own step (`--chart-series-1`).
 
 ### R2-4 Song comparison (S1)
 - Recording descriptors from **AcousticBrainz** (CC0, by recording MBID): tempo, key and mode, time signature,

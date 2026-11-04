@@ -60,7 +60,22 @@ export function useGenreSelection(): [
   (change: Partial<GenreSelection>) => void,
 ] {
   const [search, setSearch] = useSearchParams();
-  const fromUrl = useMemo(() => readGenreSelection(search), [search]);
+  // Depend on this filter's own parameters only: other URL changes (a tab, a
+  // year) must not hand out a new object, or effects keyed on it re-run.
+  const genres = search.get('genres');
+  const unknown = search.get('unknown');
+  const subgenres = search.get('subgenres');
+  const fromUrl = useMemo(
+    () =>
+      readGenreSelection(
+        new URLSearchParams({
+          ...(genres !== null && {genres}),
+          ...(unknown !== null && {unknown}),
+          ...(subgenres !== null && {subgenres}),
+        }),
+      ),
+    [genres, unknown, subgenres],
+  );
   const [selection, setSelection] = useState(fromUrl);
   // The URL wins whenever it changes (back and forward, shared links).
   useEffect(() => setSelection(fromUrl), [fromUrl]);

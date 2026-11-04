@@ -854,6 +854,12 @@ export interface components {
             type: components["schemas"]["CollaborationType"];
         };
         /**
+         * CollaborationOrder
+         * @description How collaborators are listed.
+         * @enum {string}
+         */
+        CollaborationOrder: "COUNT" | "FIRST_YEAR";
+        /**
          * CollaborationType
          * @description A collaborations tab.
          * @enum {string}
@@ -1290,8 +1296,20 @@ export interface components {
              * @default
              */
             nextPageToken: string;
+            /**
+             * Timeline
+             * @description Every type, the genre filter applied, the year range not applied.
+             */
+            timeline: components["schemas"]["TimelineYear"][];
             /** Totalsize */
             totalSize: number;
+            /**
+             * Undated
+             * @description Subjects with no known year, by type.
+             */
+            undated: {
+                [key: string]: number;
+            };
         };
         /**
          * ListArtistConnectionsResponse
@@ -1766,6 +1784,18 @@ export interface components {
          */
         Theme: "SYSTEM" | "LIGHT" | "DARK";
         /**
+         * TimelineYear
+         * @description Distinct collaborative recordings and releases in one year, by type.
+         */
+        TimelineYear: {
+            /** Counts */
+            counts: {
+                [key: string]: number;
+            };
+            /** Year */
+            year: number;
+        };
+        /**
          * User
          * @description GetUser. Email and name stay with the identity provider.
          */
@@ -1856,6 +1886,11 @@ export interface operations {
                 type?: components["schemas"]["CollaborationType"];
                 /** @description With type PRODUCTION: only collaborations that went this way. */
                 direction?: components["schemas"]["ProductionDirection"] | null;
+                /** @description Only evidence from this year on. */
+                startYear?: number | null;
+                /** @description Only evidence up to this year. */
+                endYear?: number | null;
+                orderBy?: components["schemas"]["CollaborationOrder"];
                 pageSize?: number;
                 pageToken?: string;
                 /** @description Genre resource names to stay within. */

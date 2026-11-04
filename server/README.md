@@ -21,6 +21,7 @@ uv run songnexus <command>       # see below; results are JSON on stdout, logs o
 | `quality` | Runs the data-quality checks on the current catalog |
 | `eval-search` | Search MRR on `data/eval/search_cases.json` (gate ≥ 0.95) |
 | `eval-import` | Import name-matching precision on `data/eval/import_match_cases.json` (gate ≥ 0.98) |
+| `eval-collaborations` | Collaborations recall against the raw MusicBrainz data for 20 seed artists (gate ≥ 0.95) |
 | `eval-genres` | Genre coverage per source and MusicBrainz-Discogs agreement (floors in the golden tests) |
 | `resources [--check]` | Writes `docs/resources.md` from the data-source registry; `--check` fails if it is stale |
 | `openapi [--check]` | Writes `openapi.json`, the API contract; `--check` fails if code and contract differ |

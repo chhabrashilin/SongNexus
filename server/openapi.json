@@ -596,6 +596,15 @@
         "title": "Collaboration",
         "type": "object"
       },
+      "CollaborationOrder": {
+        "description": "How collaborators are listed.",
+        "enum": [
+          "COUNT",
+          "FIRST_YEAR"
+        ],
+        "title": "CollaborationOrder",
+        "type": "string"
+      },
       "CollaborationType": {
         "description": "A collaborations tab.",
         "enum": [
@@ -1521,14 +1530,35 @@
             "title": "Nextpagetoken",
             "type": "string"
           },
+          "timeline": {
+            "description": "Every type, the genre filter applied, the year range not applied.",
+            "items": {
+              "$ref": "#/components/schemas/TimelineYear"
+            },
+            "title": "Timeline",
+            "type": "array"
+          },
           "totalSize": {
             "title": "Totalsize",
             "type": "integer"
+          },
+          "undated": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Subjects with no known year, by type.",
+            "propertyNames": {
+              "$ref": "#/components/schemas/CollaborationType"
+            },
+            "title": "Undated",
+            "type": "object"
           }
         },
         "required": [
           "collaborations",
           "counts",
+          "timeline",
+          "undated",
           "nextPageToken",
           "totalSize",
           "graphVersion"
@@ -2441,6 +2471,31 @@
         "title": "Theme",
         "type": "string"
       },
+      "TimelineYear": {
+        "description": "Distinct collaborative recordings and releases in one year, by type.",
+        "properties": {
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/CollaborationType"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "counts"
+        ],
+        "title": "TimelineYear",
+        "type": "object"
+      },
       "User": {
         "description": "GetUser. Email and name stay with the identity provider.",
         "properties": {
@@ -2591,6 +2646,55 @@
               ],
               "description": "With type PRODUCTION: only collaborations that went this way.",
               "title": "Direction"
+            }
+          },
+          {
+            "description": "Only evidence from this year on.",
+            "in": "query",
+            "name": "startYear",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 3000,
+                  "minimum": 1000,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only evidence from this year on.",
+              "title": "Startyear"
+            }
+          },
+          {
+            "description": "Only evidence up to this year.",
+            "in": "query",
+            "name": "endYear",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 3000,
+                  "minimum": 1000,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only evidence up to this year.",
+              "title": "Endyear"
+            }
+          },
+          {
+            "in": "query",
+            "name": "orderBy",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/CollaborationOrder",
+              "default": "COUNT"
             }
           },
           {
