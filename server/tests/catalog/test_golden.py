@@ -105,3 +105,21 @@ def test_import_matching_meets_the_precision_gate(engine: Engine) -> None:
     assert report.precision >= MIN_IMPORT_PRECISION, report.errors
     _, matched, _ = report.by_category["homonym"]
     assert matched == 0, [e for e in report.errors if e[2] is None]
+
+
+def test_collaborations_recall_against_raw_data_meets_the_gate(engine: Engine) -> None:
+    import json
+
+    from songnexus.catalog.collab_eval import collaboration_recall
+    from songnexus.catalog.snapshot import read_snapshot
+    from songnexus.cli import COLLABORATION_EVAL_ARTISTS, MIN_COLLABORATION_RECALL
+    from songnexus.service.readmodel import load_read_model
+
+    lock = SNAPSHOT.parents[1] / "seeds" / "seed_artists.lock.json"
+    seeds = [a["mbid"] for a in json.loads(lock.read_text(encoding="utf-8"))["artists"]]
+    report = collaboration_recall(
+        load_read_model(engine).graph, read_snapshot(SNAPSHOT), seeds[:COLLABORATION_EVAL_ARTISTS]
+    )
+    assert report.artists == COLLABORATION_EVAL_ARTISTS
+    assert report.overall is not None
+    assert report.overall >= MIN_COLLABORATION_RECALL, report.by_type

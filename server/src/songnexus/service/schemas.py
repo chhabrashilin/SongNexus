@@ -252,11 +252,32 @@ class Collaboration(ApiModel):
     )
 
 
+class CollaborationOrder(enum.StrEnum):
+    """How collaborators are listed."""
+
+    COUNT = "COUNT"
+    FIRST_YEAR = "FIRST_YEAR"
+
+
+class TimelineYear(ApiModel):
+    """Distinct collaborative recordings and releases in one year, by type."""
+
+    year: int
+    counts: dict[CollaborationType, int]
+
+
 class ListArtistCollaborationsResponse(ApiModel):
     """ListArtistCollaborations. Counts are based on releases in our data."""
 
     collaborations: list[Collaboration]
     counts: dict[CollaborationType, int]
+    timeline: list[TimelineYear] = Field(
+        default_factory=list,
+        description="Every type, the genre filter applied, the year range not applied.",
+    )
+    undated: dict[CollaborationType, int] = Field(
+        default_factory=dict, description="Subjects with no known year, by type."
+    )
     next_page_token: str = ""
     total_size: int
     graph_version: str

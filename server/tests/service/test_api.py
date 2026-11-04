@@ -172,6 +172,27 @@ def test_collaborations(client: TestClient) -> None:
     assert response["counts"] == {"FEATURE": 1, "PRODUCTION": 1, "BAND": 1, "CREDIT": 0}
 
 
+def test_collaborations_have_a_timeline_year_range_and_order(client: TestClient) -> None:
+    def get(**params: Any) -> dict[str, Any]:
+        response = client.get(f"/v1/{ALICE}/collaborations", params={"type": "FEATURE", **params})
+        assert response.status_code == 200, response.text
+        return dict(response.json())
+
+    body = get()
+    # The remaster is merged into the same canonical recording, so it counts once.
+    assert body["timeline"] == [{"year": 2020, "counts": {"FEATURE": 1, "PRODUCTION": 1}}]
+    assert body["undated"] == {"BAND": 1}  # band membership has no year
+    assert [c["artist"]["name"] for c in get(startYear=2020, endYear=2020)["collaborations"]] == [
+        BOB
+    ]
+    outside = get(startYear=2021)
+    assert outside["collaborations"] == []
+    assert outside["counts"]["BAND"] == 0  # undated evidence is outside every range
+    assert get(orderBy="FIRST_YEAR")["collaborations"][0]["artist"]["name"] == BOB
+    bad = client.get(f"/v1/{ALICE}/collaborations", params={"startYear": 2021, "endYear": 2020})
+    assert bad.status_code == 400
+
+
 def test_production_collaborations_say_who_produced_whom(client: TestClient) -> None:
     def production(artist: str, **params: str) -> list[dict[str, Any]]:
         body = client.get(

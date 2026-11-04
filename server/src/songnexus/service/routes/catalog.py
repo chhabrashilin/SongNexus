@@ -229,6 +229,17 @@ def list_artist_collaborations(
         api.ProductionDirection | None,
         Query(description="With type PRODUCTION: only collaborations that went this way."),
     ] = None,
+    start_year: Annotated[
+        int | None,
+        Query(alias="startYear", ge=1000, le=3000, description="Only evidence from this year on."),
+    ] = None,
+    end_year: Annotated[
+        int | None,
+        Query(alias="endYear", ge=1000, le=3000, description="Only evidence up to this year."),
+    ] = None,
+    order_by: Annotated[
+        api.CollaborationOrder, Query(alias="orderBy")
+    ] = api.CollaborationOrder.COUNT,
     page_size: PageSize = 25,
     page_token: PageToken = "",
 ) -> api.ListArtistCollaborationsResponse:
@@ -244,7 +255,20 @@ def list_artist_collaborations(
     if direction is not None and core_type is not collab.CollaborationType.PRODUCTION:
         raise invalid_argument("direction applies only to type PRODUCTION.", field="direction")
     core_direction = None if direction is None else collab.ProductionDirection(direction.value)
-    items = collab.collaborations(graph, artist_id, core_type, flt, core_direction)
+    if start_year is not None and end_year is not None and start_year > end_year:
+        raise invalid_argument("startYear must not be after endYear.", field="startYear")
+    years = (
+        None if start_year is None and end_year is None else collab.YearRange(start_year, end_year)
+    )
+    items = collab.collaborations(
+        graph,
+        artist_id,
+        core_type,
+        flt,
+        direction=core_direction,
+        years=years,
+        order=collab.CollaborationOrder(order_by.value),
+    )
     page = paginate(
         items,
         page_size=page_size,
@@ -254,6 +278,9 @@ def list_artist_collaborations(
             artist_id,
             type_.value,
             direction,
+            start_year,
+            end_year,
+            order_by,
             sorted(flt.genre_ids),
             genre_filter.include_unknown_genre,
         ),
@@ -278,11 +305,20 @@ def list_artist_collaborations(
                 directions=sorted(api.ProductionDirection(d.value) for d in item.directions),
             )
         )
-    counts = collab.collaboration_counts(graph, artist_id, flt)
+    counts = collab.collaboration_counts(graph, artist_id, flt, years)
+    timeline = collab.collaboration_timeline(graph, artist_id, flt)
     set_cache_control(response, who)
     return api.ListArtistCollaborationsResponse(
         collaborations=results,
         counts={api.CollaborationType(t.value): n for t, n in counts.items()},
+        timeline=[
+            api.TimelineYear(
+                year=year,
+                counts={api.CollaborationType(t.value): n for t, n in per_type.items()},
+            )
+            for year, per_type in timeline.years.items()
+        ],
+        undated={api.CollaborationType(t.value): n for t, n in timeline.undated.items()},
         next_page_token=page.next_page_token,
         total_size=page.total_size,
         graph_version=model.version,
