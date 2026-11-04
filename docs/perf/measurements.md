@@ -104,3 +104,34 @@ Status of the plan §23 budget (p95 ≤ 1.5 s at 2,000 artists): **met on this l
 has far faster cores than a 1 vCPU Cloud Run instance, so it is **still unverified where it matters** and the R2 design
 (precomputed resolutions, native candidate index) stays documented. The earlier "13 s" figure used a harder name mix
 and an earlier code state; the 4.46 s "before" above is the same mix as the "after", for a like-for-like comparison.
+
+## 2026-11-04: Explore frame rate with a large web (R2-2)
+
+Budget (plan R2-2): Explore at ≥ 50 fps with 300 artists on a mid-range phone. Method: `e2e/perf.spec.ts`
+(opt-in, `SONGNEXUS_PERF=1 npx playwright test perf --project=mobile`), Pixel 7 emulation, the web grown to the
+300-artist cap with "Expand the 5 strongest", frames counted with `requestAnimationFrame` over 2.5 s. "Moving" is
+measured right after a change restarts the layout; "settled" after the layout stops. CPU slowdown 4× is Chrome's
+mid-tier-mobile preset.
+
+Finding first: headless Chromium rasterizes canvas in **software** by default; a profile showed 66–90 % of the time
+in native raster, not in our code. Numbers below use the GPU (`--enable-gpu`); software-raster numbers are not
+representative of a phone and are not reported as results.
+
+Changes made: lines that look alike are stroked as one path; ordinary nodes are one fill and one stroke; the canvas
+draws at 1× while the layout is moving and at up to 2× once settled; label halos are skipped while moving. At 81
+artists and 4× slowdown (software raster) this alone took the moving web from 11–17 fps to 34–36 fps.
+
+| 300 artists, GPU on | Runs (5) | Median |
+|---|---|---|
+| Moving, normal CPU | 59.5, 13.1, 60.2, 3.2, 60.3 | **59.5 fps** |
+| Moving, 4× CPU slowdown | 22.4, 41.4, 8.7, 37.1, 0.2 | **22.4 fps** |
+| Settled, 4× CPU slowdown | 60.7, 59.2, 60.5, 60.2, 60.1 | **60.2 fps** |
+
+Runs are noisy on this shared laptop: the outliers (0.2, 3.2) are a single frame stalled for seconds, which a
+profile could not attribute to our code. A static page in the same setup reads 47–57 fps at 4×, which bounds what
+the harness can show.
+
+Status: **met for a settled web and for a moving web on a fast CPU; unverified for a moving 300-artist web on a
+mid-range phone** (22 fps median in emulation). The remaining step is measuring on a real mid-range Android phone;
+if it confirms the emulation, the next lever is warming the layout up off-screen (running the first ticks without
+drawing), which shortens the moving phase rather than speeding it up.

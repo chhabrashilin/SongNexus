@@ -172,6 +172,48 @@ def test_collaborations(client: TestClient) -> None:
     assert response["counts"] == {"FEATURE": 1, "PRODUCTION": 1, "BAND": 1, "CREDIT": 0}
 
 
+def test_production_collaborations_say_who_produced_whom(client: TestClient) -> None:
+    def production(artist: str, **params: str) -> list[dict[str, Any]]:
+        body = client.get(
+            f"/v1/{artist}/collaborations", params={"type": "PRODUCTION", **params}
+        ).json()
+        return list(body["collaborations"])
+
+    (carol,) = production(ALICE)
+    assert carol["artist"]["name"] == CAROL
+    assert carol["directions"] == ["PRODUCED_BY"]
+    # Carol produced the song Alice made with Bob: she produced for both.
+    produced_for = production(CAROL)
+    assert {c["artist"]["name"] for c in produced_for} == {ALICE, BOB}
+    assert all(c["directions"] == ["PRODUCED_FOR"] for c in produced_for)
+    assert production(CAROL, direction="PRODUCED_FOR") == produced_for
+    assert production(CAROL, direction="PRODUCED_BY") == []
+    # Other types carry no direction, and reject the parameter.
+    feature = client.get(f"/v1/{ALICE}/collaborations", params={"type": "FEATURE"}).json()
+    assert feature["collaborations"][0]["directions"] == []
+    bad = client.get(
+        f"/v1/{ALICE}/collaborations", params={"type": "FEATURE", "direction": "PRODUCED_BY"}
+    )
+    assert bad.status_code == 400
+
+
+def test_label_pages_list_the_roster_and_releases(client: TestClient) -> None:
+    artist = client.get(f"/v1/{ALICE}").json()
+    (label,) = artist["labels"]
+    assert label["displayName"] == "Label Records"
+    assert label["releaseCount"] == 1
+    body = client.get(f"/v1/{label['label']}").json()
+    assert body["displayName"] == "Label Records"
+    assert [a["artist"]["name"] for a in body["artists"]] == [ALICE]
+    (release,) = body["releases"]
+    assert release["displayName"] == "First Album"
+    assert release["catalogNumbers"] in (["LR-001"], ["LR-002"])  # one per release and label
+    assert body["sources"][0]["url"].startswith("https://musicbrainz.org/label/")
+    missing = client.get("/v1/labels/00000000-0000-0000-0000-000000000000")
+    assert missing.status_code == 404
+    assert error_of(missing)["details"][0]["reason"] == "LABEL_NOT_FOUND"
+
+
 def test_find_path(client: TestClient) -> None:
     found = client.get(f"/v1/{BOB}:findPath", params={"target": BAND}).json()
     assert found["outcome"] == "FOUND"

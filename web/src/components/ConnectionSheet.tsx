@@ -1,5 +1,6 @@
 /** Every credit connecting two artists, each with its source. Evidence is one tap away (plan §8). */
 import {useMemo} from 'react';
+import {Link} from 'react-router';
 
 import type {Evidence} from '../api/client';
 import {useConnection, type ConnectionCategory} from '../api/queries';
@@ -23,6 +24,12 @@ export function EvidenceList({
       {evidence.map((e, index) => (
         <li key={`${e.subject.name}-${e.kind}-${index}`} className="evidence">
           <span>{evidenceText(e, nameOf, t)}</span>
+          {subjectPath(e.subject.name) && (
+            <Link to={subjectPath(e.subject.name)!}>
+              {t('connection.openSubject')}
+              {e.subject.displayName ? ` “${e.subject.displayName}”` : ''}
+            </Link>
+          )}
           {e.sources.length > 0 && (
             <span className="evidence__sources">
               {e.sources.map(source => (
@@ -42,6 +49,15 @@ export function EvidenceList({
       ))}
     </ul>
   );
+}
+
+/** The in-app page for an evidence subject, when there is one. */
+export function subjectPath(name: string): string | null {
+  const [collection, id] = name.split('/');
+  if (!id) return null;
+  if (collection === 'recordings') return `/song/${id}`;
+  if (collection === 'labels') return `/label/${id}`;
+  return null;
 }
 
 interface Props {

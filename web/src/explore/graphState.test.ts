@@ -3,11 +3,13 @@ import {describe, expect, it} from 'vitest';
 import type {Schemas} from '../api/client';
 
 import {
+  MAX_UNDO,
   MAX_VISIBLE_NODES,
   edgeKey,
   emptyGraph,
   graphReducer,
   neighborsOf,
+  strongestUnexpanded,
 } from './graphState';
 
 const artist = (id: string) => ({
@@ -122,5 +124,65 @@ describe('graphReducer', () => {
       'b',
       'c',
     ]);
+  });
+
+  it('records the expansion trail and undoes one step at a time', () => {
+    let state = graphReducer(emptyGraph, {
+      type: 'start',
+      center: artist('k'),
+      page: page(['s', 't']),
+    });
+    const afterStart = state;
+    state = graphReducer(state, {
+      type: 'expand',
+      id: 's',
+      page: page(['x']),
+      append: false,
+    });
+    state = graphReducer(state, {
+      type: 'expand',
+      id: 's',
+      page: page(['y']),
+      append: true,
+    });
+    expect(state.trail).toEqual(['k', 's']); // "show more" adds no breadcrumb
+    expect(state.past).toHaveLength(2);
+    state = graphReducer(state, {type: 'undo'});
+    expect(Object.keys(state.nodes).sort()).toEqual(['k', 's', 't', 'x']);
+    state = graphReducer(state, {type: 'undo'});
+    expect({...state, past: []}).toEqual({...afterStart, past: []});
+    expect(graphReducer(state, {type: 'undo'})).toBe(state);
+  });
+
+  it('bounds the undo history', () => {
+    let state = graphReducer(emptyGraph, {
+      type: 'start',
+      center: artist('k'),
+      page: page(['s']),
+    });
+    for (let i = 0; i < MAX_UNDO + 5; i++) {
+      state = graphReducer(state, {
+        type: 'expand',
+        id: 's',
+        page: page([`n${i}`]),
+        append: true,
+      });
+    }
+    expect(state.past).toHaveLength(MAX_UNDO);
+  });
+
+  it('picks the strongest neighbors not yet expanded', () => {
+    let state = graphReducer(emptyGraph, {
+      type: 'start',
+      center: artist('k'),
+      page: page(['s', 't', 'u']),
+    });
+    state = graphReducer(state, {
+      type: 'expand',
+      id: 's',
+      page: page([]),
+      append: false,
+    });
+    expect(strongestUnexpanded(state, 'k', 2)).toEqual(['t', 'u']);
   });
 });

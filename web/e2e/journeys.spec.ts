@@ -119,6 +119,60 @@ test('compare filters who worked with both by genre (R2-1)', async ({page}) => {
   await expectAccessible(page);
 });
 
+test('labels: an artist page lists labels, and a label page shows its roster by era (R2-2)', async ({
+  page,
+}) => {
+  await openArtist(page, 'Kendrick Lamar', 'Kendrick Lamar');
+  const labels = page.getByRole('heading', {level: 2, name: 'Labels'});
+  await expect(labels).toBeVisible();
+  await page
+    .locator('section', {has: labels})
+    .getByRole('link')
+    .first()
+    .click();
+  await expect(
+    page.getByRole('heading', {level: 2, name: 'Artists on this label'}),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', {level: 3, name: /\d{4}s/}).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', {name: 'Kendrick Lamar'}).first(),
+  ).toBeVisible();
+  await expectAccessible(page);
+});
+
+test('production collaborations can be narrowed to who produced whom (R2-2)', async ({
+  page,
+}) => {
+  await openArtist(page, 'Kendrick Lamar', 'Kendrick Lamar');
+  await page.getByRole('tab', {name: /Production/}).click();
+  const producedBy = page.getByRole('button', {
+    name: 'Produced by',
+    exact: true,
+  });
+  await producedBy.click();
+  await expect(producedBy).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByText(/Produced by/).nth(1)).toBeVisible();
+  await expectAccessible(page);
+});
+
+test('explore keeps a trail of expanded artists and can undo (R2-2)', async ({
+  page,
+}) => {
+  await openArtist(page, 'Kendrick Lamar', 'Kendrick Lamar');
+  await page.getByRole('link', {name: 'Explore connections'}).click();
+  const undo = page.getByRole('button', {name: 'Undo'});
+  await expect(undo).toBeDisabled();
+  await page.getByRole('button', {name: 'Expand the 5 strongest'}).click();
+  const trail = page.getByRole('navigation', {name: 'Artists you expanded'});
+  await expect(trail.getByRole('button')).toHaveCount(6);
+  await expect(undo).toBeEnabled();
+  await undo.click();
+  await expect(trail.getByRole('button')).toHaveCount(5);
+  await expectAccessible(page);
+});
+
 test('six degrees connects two artists and the link is shareable', async ({
   page,
 }) => {

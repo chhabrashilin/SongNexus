@@ -230,6 +230,14 @@
             "title": "Graphversion",
             "type": "string"
           },
+          "labels": {
+            "description": "Labels the artist's releases in our data came out on.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistLabel"
+            },
+            "title": "Labels",
+            "type": "array"
+          },
           "links": {
             "items": {
               "$ref": "#/components/schemas/Link"
@@ -266,10 +274,60 @@
           "aliases",
           "links",
           "connectionCount",
+          "labels",
           "sources",
           "graphVersion"
         ],
         "title": "Artist",
+        "type": "object"
+      },
+      "ArtistLabel": {
+        "description": "A label an artist released on.",
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "firstYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firstyear"
+          },
+          "label": {
+            "description": "Resource name `labels/{label}`.",
+            "title": "Label",
+            "type": "string"
+          },
+          "lastYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastyear"
+          },
+          "releaseCount": {
+            "title": "Releasecount",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "label",
+          "displayName",
+          "releaseCount",
+          "firstYear",
+          "lastYear"
+        ],
+        "title": "ArtistLabel",
         "type": "object"
       },
       "ArtistSummary": {
@@ -485,6 +543,14 @@
             "title": "Count",
             "type": "integer"
           },
+          "directions": {
+            "description": "For PRODUCTION: which ways it went; empty otherwise.",
+            "items": {
+              "$ref": "#/components/schemas/ProductionDirection"
+            },
+            "title": "Directions",
+            "type": "array"
+          },
           "evidence": {
             "items": {
               "$ref": "#/components/schemas/Evidence"
@@ -524,7 +590,8 @@
           "count",
           "firstYear",
           "lastYear",
-          "evidence"
+          "evidence",
+          "directions"
         ],
         "title": "Collaboration",
         "type": "object"
@@ -1202,6 +1269,171 @@
         "title": "HintResponse",
         "type": "object"
       },
+      "Label": {
+        "description": "GetLabel: a record label, its roster by era, and its releases in our data.",
+        "properties": {
+          "artists": {
+            "description": "Roster, by first release year.",
+            "items": {
+              "$ref": "#/components/schemas/LabelArtist"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "disambiguation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disambiguation"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "labelType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Labeltype"
+          },
+          "name": {
+            "description": "Resource name `labels/{label}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "releases": {
+            "description": "Releases, oldest first.",
+            "items": {
+              "$ref": "#/components/schemas/LabelRelease"
+            },
+            "title": "Releases",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceLink"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "labelType",
+          "disambiguation",
+          "artists",
+          "releases",
+          "sources",
+          "graphVersion"
+        ],
+        "title": "Label",
+        "type": "object"
+      },
+      "LabelArtist": {
+        "description": "An artist on a label's roster, with when they released there.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "firstYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firstyear"
+          },
+          "lastYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastyear"
+          },
+          "releaseCount": {
+            "title": "Releasecount",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artist",
+          "releaseCount",
+          "firstYear",
+          "lastYear"
+        ],
+        "title": "LabelArtist",
+        "type": "object"
+      },
+      "LabelRelease": {
+        "description": "A release on a label.",
+        "properties": {
+          "artists": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "catalogNumbers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Catalognumbers",
+            "type": "array"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "release": {
+            "description": "Resource name `releases/{release}`.",
+            "title": "Release",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "release",
+          "displayName",
+          "year",
+          "catalogNumbers",
+          "artists"
+        ],
+        "title": "LabelRelease",
+        "type": "object"
+      },
       "LicenseTier": {
         "description": "What a data source's license allows (ADR 0005).",
         "enum": [
@@ -1730,6 +1962,16 @@
         ],
         "title": "Preferences",
         "type": "object"
+      },
+      "ProductionDirection": {
+        "description": "Who produced whom, from the requested artist's side.",
+        "enum": [
+          "PRODUCED_FOR",
+          "PRODUCED_BY",
+          "CO_PRODUCED"
+        ],
+        "title": "ProductionDirection",
+        "type": "string"
       },
       "Profile-Input": {
         "description": "GetProfile / UpdateProfile: Top 5 artists (US-09).",
@@ -2269,7 +2511,7 @@
     },
     "/v1/artists/{artist}": {
       "get": {
-        "description": "Returns an artist with genres, aliases, links and sources.",
+        "description": "Returns an artist with genres, aliases, links, labels and sources.",
         "operationId": "GetArtist",
         "parameters": [
           {
@@ -2331,6 +2573,24 @@
             "schema": {
               "$ref": "#/components/schemas/CollaborationType",
               "default": "FEATURE"
+            }
+          },
+          {
+            "description": "With type PRODUCTION: only collaborations that went this way.",
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ProductionDirection"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "With type PRODUCTION: only collaborations that went this way.",
+              "title": "Direction"
             }
           },
           {
@@ -3081,6 +3341,49 @@
           }
         },
         "summary": "ListGenres",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/labels/{label}": {
+      "get": {
+        "description": "Returns a label: its roster by era and its releases in our data.\n\nThe roster lists the primary artists of the label's releases we hold, so it\nis \"artists on this label in our data\", never a complete roster.",
+        "operationId": "GetLabel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "label",
+            "required": true,
+            "schema": {
+              "title": "Label",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Label"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetLabel",
         "tags": [
           "catalog"
         ]

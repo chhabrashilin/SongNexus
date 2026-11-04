@@ -92,6 +92,14 @@ class CollaborationType(enum.StrEnum):
     CREDIT = "CREDIT"
 
 
+class ProductionDirection(enum.StrEnum):
+    """Who produced whom, from the requested artist's side."""
+
+    PRODUCED_FOR = "PRODUCED_FOR"
+    PRODUCED_BY = "PRODUCED_BY"
+    CO_PRODUCED = "CO_PRODUCED"
+
+
 # ---------------------------------------------------------------------------
 # Shared parts
 # ---------------------------------------------------------------------------
@@ -172,6 +180,16 @@ class Link(ApiModel):
     url: str
 
 
+class ArtistLabel(ApiModel):
+    """A label an artist released on."""
+
+    label: str = Field(description="Resource name `labels/{label}`.")
+    display_name: str
+    release_count: int
+    first_year: int | None = None
+    last_year: int | None = None
+
+
 class Artist(ArtistSummary):
     """GetArtist."""
 
@@ -183,6 +201,9 @@ class Artist(ArtistSummary):
     aliases: list[Alias]
     links: list[Link]
     connection_count: int = Field(description="Direct connections under the default categories.")
+    labels: list[ArtistLabel] = Field(
+        default_factory=list, description="Labels the artist's releases in our data came out on."
+    )
     sources: list[SourceLink]
     graph_version: str
 
@@ -226,6 +247,9 @@ class Collaboration(ApiModel):
     first_year: int | None = None
     last_year: int | None = None
     evidence: list[Evidence]
+    directions: list[ProductionDirection] = Field(
+        default_factory=list, description="For PRODUCTION: which ways it went; empty otherwise."
+    )
 
 
 class ListArtistCollaborationsResponse(ApiModel):
@@ -361,6 +385,38 @@ class ListGenresResponse(ApiModel):
     genres: list[Genre]
     next_page_token: str = ""
     total_size: int
+
+
+class LabelArtist(ApiModel):
+    """An artist on a label's roster, with when they released there."""
+
+    artist: ArtistSummary
+    release_count: int
+    first_year: int | None = None
+    last_year: int | None = None
+
+
+class LabelRelease(ApiModel):
+    """A release on a label."""
+
+    release: str = Field(description="Resource name `releases/{release}`.")
+    display_name: str
+    year: int | None = None
+    catalog_numbers: list[str]
+    artists: list[ArtistSummary]
+
+
+class Label(ApiModel):
+    """GetLabel: a record label, its roster by era, and its releases in our data."""
+
+    name: str = Field(description="Resource name `labels/{label}`.")
+    display_name: str
+    label_type: str | None = None
+    disambiguation: str | None = None
+    artists: list[LabelArtist] = Field(description="Roster, by first release year.")
+    releases: list[LabelRelease] = Field(description="Releases, oldest first.")
+    sources: list[SourceLink]
+    graph_version: str
 
 
 class LicenseTier(enum.StrEnum):

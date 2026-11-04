@@ -8,6 +8,7 @@ import {
   useCollaborations,
   useDataSources,
   type CollaborationType,
+  type ProductionDirection,
 } from '../api/queries';
 import {isFiltered, useGenreSelection} from '../app/genreSelection';
 import {rememberArtist} from '../app/recent';
@@ -28,6 +29,12 @@ import {useI18n} from '../i18n/i18n';
 import type {MessageId} from '../i18n/messages';
 
 const TABS: CollaborationType[] = ['FEATURE', 'PRODUCTION', 'BAND', 'CREDIT'];
+const DIRECTIONS: (ProductionDirection | null)[] = [
+  null,
+  'PRODUCED_FOR',
+  'PRODUCED_BY',
+  'CO_PRODUCED',
+];
 
 function typeLabel(type: string | null | undefined): MessageId {
   const known = ['Person', 'Group', 'Orchestra', 'Choir', 'Character'];
@@ -50,14 +57,22 @@ function Collaborations({
   const [evidenceWith, setEvidenceWith] = useState<string | null>(null);
   const [genreFilter, setGenreFilter] = useGenreSelection();
   const [showFilters, setShowFilters] = useState(isFiltered(genreFilter));
-  const query = useCollaborations(artistId, tab, genreFilter, pageToken);
+  const [direction, setDirection] = useState<ProductionDirection | null>(null);
+  const activeDirection = tab === 'PRODUCTION' ? direction : null;
+  const query = useCollaborations(
+    artistId,
+    tab,
+    genreFilter,
+    pageToken,
+    activeDirection,
+  );
   const tabsId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     setItems([]);
     setPageToken('');
-  }, [artistId, tab, genreFilter]);
+  }, [artistId, tab, genreFilter, activeDirection]);
   useEffect(() => {
     const page = query.data?.collaborations;
     if (page && !query.isPlaceholderData) {
@@ -124,6 +139,25 @@ function Collaborations({
         role="tabpanel"
         aria-labelledby={`${tabsId}-${tab}`}
       >
+        {tab === 'PRODUCTION' && (
+          <div
+            className="chips"
+            role="group"
+            aria-label={t('collab.tab.PRODUCTION')}
+          >
+            {DIRECTIONS.map(option => (
+              <button
+                key={option ?? 'ALL'}
+                type="button"
+                className="chip"
+                aria-pressed={direction === option}
+                onClick={() => setDirection(option)}
+              >
+                {t(`collab.direction.${option ?? 'ALL'}`)}
+              </button>
+            ))}
+          </div>
+        )}
         {query.isError && (
           <ErrorState
             error={query.error}
@@ -142,6 +176,14 @@ function Collaborations({
               meta={
                 <>
                   {t('collab.count', {count: item.count})}
+                  {item.directions.length > 0 && (
+                    <>
+                      {' · '}
+                      {item.directions
+                        .map(d => t(`collab.direction.${d}`))
+                        .join(', ')}
+                    </>
+                  )}
                   {item.firstYear !== null && item.lastYear !== null && (
                     <>
                       {' · '}
@@ -330,6 +372,41 @@ export default function ArtistScreen() {
               </span>
             ))}
           </p>
+        </section>
+      )}
+
+      {a.labels.length > 0 && (
+        <section className="section">
+          <h2>{t('artist.labels')}</h2>
+          <ul className="list">
+            {a.labels.map(label => (
+              <li key={label.label} className="list-row">
+                <span className="avatar" aria-hidden="true">
+                  <Icon name="album" />
+                </span>
+                <span className="list-row__body">
+                  <Link
+                    className="list-row__title"
+                    to={`/label/${idOf(label.label)}`}
+                  >
+                    <bdi>{label.displayName}</bdi>
+                  </Link>
+                  <span className="list-row__subtitle">
+                    {[
+                      t('label.releases', {count: label.releaseCount}),
+                      label.firstYear !== null && label.lastYear !== null
+                        ? label.firstYear === label.lastYear
+                          ? String(label.firstYear)
+                          : `${label.firstYear}–${label.lastYear}`
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

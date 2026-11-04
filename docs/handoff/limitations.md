@@ -11,6 +11,11 @@
   released under their own name, not every record they worked on.
 - **Discogs names outside the MusicBrainz vocabulary** (e.g. "Vocal", "Modern", "Holiday") are not used. Ingest lists
   them by frequency; `data/seeds/discogs_genre_map.json` maps the unambiguous ones after review.
+- **Label rosters** list the primary artists of the releases we hold for each label (the best-known albums of seed
+  artists), so they are "artists on this label in our data", never a complete roster. One catalog number is kept
+  per release and label.
+- **Explore frame rate** with 300 artists while the layout moves is unverified on a real phone (22 fps median in
+  mid-tier emulation; 60 fps settled). See [perf/measurements.md](../perf/measurements.md).
 - **The genre hierarchy** comes from Wikidata "subclass of" links and inherits their gaps and occasional cycles
   (cycles are handled; a selected genre includes everything below it).
 - **No playback, no recommendations, no social features, no assistant.** Out of scope for R1 by decision.
