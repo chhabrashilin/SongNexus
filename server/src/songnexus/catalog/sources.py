@@ -153,13 +153,14 @@ SOURCES: tuple[DataSource, ...] = (
         license="CC0-1.0",
         license_url="https://acousticbrainz.org/download",
         tier=Tier.PRODUCTION,
-        status=Status.PLANNED,
-        kind=Kind.DATA_DUMP,
-        feeds=("song comparison: tempo, key, loudness and other audio descriptors",),
+        status=Status.IN_USE,
+        kind=Kind.API,
+        feeds=("song comparison: tempo, key, loudness, mood and other audio descriptors",),
         attribution="Audio data from AcousticBrainz",
         checked_on="2026-11-01",
-        notes="Data collection stopped in 2022; the final dump (2022-07-06) is frozen. Coverage is "
-        "partial and keyed by MusicBrainz recording ID; songs without data say so.",
+        notes="Data collection stopped in 2022; the API still serves the final dataset. Coverage "
+        "is partial and keyed by MusicBrainz recording ID; songs without data say so. The "
+        "voice-gender and genre classifiers are not used.",
     ),
     DataSource(
         id="listenbrainz",
@@ -168,16 +169,17 @@ SOURCES: tuple[DataSource, ...] = (
         license="CC0-1.0",
         license_url="https://listenbrainz.org/terms-of-service/",
         tier=Tier.PRODUCTION,
-        status=Status.PLANNED,
+        status=Status.IN_USE,
         kind=Kind.API,
         feeds=(
             "listener overlap in artist comparison",
-            "an independent signal for evaluating song similarity",
+            "'often played with' on artist pages",
         ),
         attribution="Listening data from ListenBrainz",
         checked_on="2026-11-01",
-        notes="Public listens are CC0. Aggregates are shown only above a minimum listener count "
-        "(k-anonymity), always with their sample size.",
+        notes="Public listens are CC0. Only aggregates are fetched: listener and listen counts per "
+        "artist, and the session-based similar-artists ranking. Overlap is shown only when both "
+        "artists have at least 50 listeners, always with the counts.",
     ),
     # --- Offline evaluation only ---------------------------------------------------------
     DataSource(
@@ -194,7 +196,8 @@ SOURCES: tuple[DataSource, ...] = (
         checked_on="2026-11-01",
         notes="About 114,000 tracks across 125 genres with audio features. The uploader states "
         "CC0, but the values come from the Spotify Web API, whose terms the uploader cannot waive. "
-        "Treated as evaluation-only: results are reported, the data is never served.",
+        "Treated as evaluation-only. Not used yet: downloading needs a Kaggle account, so song "
+        "similarity is evaluated against genre agreement instead (eval-songs).",
     ),
     DataSource(
         id="lastfm-360k",
@@ -203,7 +206,7 @@ SOURCES: tuple[DataSource, ...] = (
         license="Non-commercial research use, with permission of Last.fm",
         license_url="https://zenodo.org/records/6090214",
         tier=Tier.EVALUATION,
-        status=Status.PLANNED,
+        status=Status.IN_USE,
         kind=Kind.DATASET,
         feeds=("evaluating listener overlap against an independent population",),
         attribution="Last.fm dataset, Ò. Celma (2010)",

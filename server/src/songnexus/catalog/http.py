@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
 import time
 from datetime import UTC, datetime
@@ -55,6 +56,8 @@ class PoliteClient:
         min_interval_s: float = 1.1,
         max_retries: int = 5,
         accept: str = "application/json",
+        timeout_s: float = 60.0,
+        remember: bool = True,
         http: httpx.Client | None = None,
     ) -> None:
         """Creates a client.
@@ -67,6 +70,10 @@ class PoliteClient:
             min_interval_s: Minimum seconds between network requests.
             max_retries: Attempts per request before giving up.
             accept: The Accept header.
+            timeout_s: Read timeout per request.
+            remember: Keep every record served in ``session_records`` (for building a
+                snapshot from them). Off for large responses that callers digest as
+                they arrive, which would otherwise all stay in memory.
             http: Injected HTTP client (tests use a mock transport).
         """
         self._source = source
@@ -76,9 +83,10 @@ class PoliteClient:
         self._max_retries = max_retries
         self._last_request_at = 0.0
         self._http = http or httpx.Client(
-            timeout=httpx.Timeout(60.0, connect=10.0),
+            timeout=httpx.Timeout(timeout_s, connect=10.0),
             headers={"User-Agent": user_agent(contact), "Accept": accept},
         )
+        self._remember = remember
         self.network_requests = 0
         self.cache_hits = 0
         # Every record served during this client's lifetime, cached or fresh. A
@@ -93,6 +101,10 @@ class PoliteClient:
         """
         return self._request(kind, path, request_key(path, params), params=params)
 
+    def cached_get(self, path: str, params: dict[str, str | int]) -> RawRecord | None:
+        """Returns the cached response to a GET, or None, without touching the network."""
+        return self._read_cache(request_key(path, params))
+
     def post_form(self, kind: str, path: str, form: dict[str, str]) -> RawRecord:
         """Returns the response to a form POST (long queries), from cache when available.
 
@@ -105,6 +117,19 @@ class PoliteClient:
         digest = hashlib.sha256(repr(sorted(form.items())).encode()).hexdigest()[:32]
         return self._request(kind, path, f"{path}?form={digest}", form=form)
 
+    def post_json(self, kind: str, path: str, payload: Any) -> RawRecord:
+        """Returns the response to a JSON POST, from cache when available.
+
+        The request key is the path plus a hash of the payload. A response that
+        is a JSON list is stored as ``{"items": [...]}`` (records hold objects).
+
+        Raises:
+            SourceRequestError: The request failed permanently.
+        """
+        canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        digest = hashlib.sha256(canonical.encode()).hexdigest()[:32]
+        return self._request(kind, path, f"{path}?json={digest}", json_body=payload)
+
     def _request(
         self,
         kind: str,
@@ -113,16 +138,18 @@ class PoliteClient:
         *,
         params: dict[str, str | int] | None = None,
         form: dict[str, str] | None = None,
+        json_body: Any = None,
     ) -> RawRecord:
         cached = self._read_cache(key)
         if cached is not None:
             self.cache_hits += 1
-            self.session_records[key] = cached
+            if self._remember:
+                self.session_records[key] = cached
             return cached
 
         url = f"{self._base_url}/{path}" if path else self._base_url
         full_params = self.extra_params() | (params or {})
-        body = self._fetch_with_retries(url, full_params, form)
+        body = self._fetch_with_retries(url, full_params, form, json_body)
         record = RawRecord(
             kind=kind,
             request_key=key,
@@ -131,7 +158,8 @@ class PoliteClient:
             body=body,
         )
         self._write_cache(record)
-        self.session_records[key] = record
+        if self._remember:
+            self.session_records[key] = record
         return record
 
     def extra_params(self) -> dict[str, str | int]:
@@ -139,14 +167,18 @@ class PoliteClient:
         return {}
 
     def _fetch_with_retries(
-        self, url: str, params: dict[str, str | int], form: dict[str, str] | None
+        self,
+        url: str,
+        params: dict[str, str | int],
+        form: dict[str, str] | None,
+        json_body: Any = None,
     ) -> dict[str, Any]:
-        method = "POST" if form is not None else "GET"
+        method = "POST" if form is not None or json_body is not None else "GET"
         delay = 2.0
         for attempt in range(1, self._max_retries + 1):
             self._throttle()
             try:
-                response = self._http.request(method, url, params=params, data=form)
+                response = self._http.request(method, url, params=params, data=form, json=json_body)
                 self.network_requests += 1
             except httpx.TransportError as exc:
                 log.warning(
@@ -156,7 +188,10 @@ class PoliteClient:
                 )
             else:
                 if response.status_code == HTTP_OK:
-                    payload: dict[str, Any] = response.json()
+                    decoded = response.json()
+                    payload: dict[str, Any] = (
+                        decoded if isinstance(decoded, dict) else {"items": decoded}
+                    )
                     return payload
                 if response.status_code not in RETRYABLE_STATUS:
                     raise self.error_type(

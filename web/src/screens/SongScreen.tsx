@@ -1,5 +1,5 @@
 /** Song (S5): credits grouped by role, and the albums the song appears on. */
-import {useParams} from 'react-router';
+import {Link, useParams} from 'react-router';
 
 import type {Schemas} from '../api/client';
 import {useRecording} from '../api/queries';
@@ -8,6 +8,7 @@ import {ArtistRow} from '../components/ArtistRow';
 import {hostOf} from '../components/evidence';
 import {Icon} from '../components/Icon';
 import {EmptyState, ErrorState, Spinner} from '../components/States';
+import {SoundProfile} from '../songs/Descriptors';
 import {useI18n} from '../i18n/i18n';
 import type {MessageId} from '../i18n/messages';
 
@@ -76,6 +77,20 @@ export default function SongScreen() {
             .join(' · ')}
         </p>
       </header>
+
+      <section className="section">
+        <div className="section__header">
+          <h2>{t('song.sound')}</h2>
+          <Link className="btn btn--tonal" to={`/compare/songs?a=${id}`}>
+            {t('song.compare')}
+          </Link>
+        </div>
+        {song.descriptors ? (
+          <SoundProfile descriptors={song.descriptors} />
+        ) : (
+          <p className="muted">{t('song.sound.none')}</p>
+        )}
+      </section>
 
       <section className="section">
         <h2>{t('song.credits')}</h2>

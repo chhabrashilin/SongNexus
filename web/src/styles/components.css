@@ -706,3 +706,67 @@ button.list-row {
     background: GrayText;
   }
 }
+
+/* Thin meters for a magnitude per named quality (one series color; the number
+   beside it carries the reading). */
+.meter {
+  display: grid;
+  grid-template-columns: minmax(7rem, 12rem) 1fr 3.5rem;
+  align-items: center;
+  gap: var(--space-2);
+  font: var(--body-small);
+}
+.meter__track {
+  block-size: 8px;
+  border-radius: 4px;
+  background: var(--md-surface-container-highest);
+  overflow: hidden;
+}
+.meter__fill {
+  display: block;
+  block-size: 100%;
+  border-radius: 4px;
+  background: var(--chart-series-1);
+}
+.meter__value {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0;
+}
+.facts dt {
+  font: var(--label-medium);
+  color: var(--md-on-surface-variant);
+}
+.facts dd {
+  margin: 0;
+  font: var(--title-small);
+}
+.hero-number {
+  margin: 0;
+  font: 600 3rem/1 var(--font);
+  font-variant-numeric: tabular-nums;
+}
+.compare-table {
+  border-collapse: collapse;
+  inline-size: 100%;
+  font: var(--body-small);
+}
+.compare-table th,
+.compare-table td {
+  padding: var(--space-1) var(--space-2);
+  border-block-end: 1px solid var(--md-outline-variant);
+  text-align: start;
+}
+.compare-table td {
+  font-variant-numeric: tabular-nums;
+}
+@media (forced-colors: active) {
+  .meter__fill {
+    background: CanvasText;
+  }
+}

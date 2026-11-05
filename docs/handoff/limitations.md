@@ -11,6 +11,12 @@
   released under their own name, not every record they worked on.
 - **Discogs names outside the MusicBrainz vocabulary** (e.g. "Vocal", "Modern", "Holiday") are not used. Ingest lists
   them by frequency; `data/seeds/discogs_genre_map.json` maps the unambiguous ones after review.
+- **Song comparison** uses AcousticBrainz, which stopped collecting in 2022: 85.8 % of catalog recordings have
+  descriptors, newer releases mostly do not, and its mood classifiers are noisy. The similarity score separates
+  same-genre from different-genre pairs only modestly (AUC 0.6); it describes sound, not taste. Time signature,
+  recording-level samples and covers are not available.
+- **Listener overlap** comes from ListenBrainz, a smaller and more technical community than YouTube Music's; it is
+  shown only above 50 listeners per artist and only as ranks among each artist's top 100 co-listened artists.
 - **Label rosters** list the primary artists of the releases we hold for each label (the best-known albums of seed
   artists), so they are "artists on this label in our data", never a complete roster. One catalog number is kept
   per release and label.

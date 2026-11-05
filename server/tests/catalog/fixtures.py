@@ -274,3 +274,86 @@ def discogs_records() -> list[RawRecord]:
         ),
         discogs_record("201", [master("9", ["Funk / Soul"], ["Contemporary Weirdness"])]),
     ]
+
+
+# ---------------------------------------------------------------------------
+# AcousticBrainz bulk responses (R2-4)
+# ---------------------------------------------------------------------------
+
+
+def acousticbrainz_low(mbid: str, bpm: float, key: str, scale: str) -> dict[str, Any]:
+    return {
+        "metadata": {"audio_properties": {"length": 201.5}},
+        "rhythm": {"bpm": bpm, "danceability": 1.2},
+        "tonal": {"key_key": key, "key_scale": scale, "key_strength": 0.6},
+        "lowlevel": {"average_loudness": 0.8, "dynamic_complexity": 3.0},
+    }
+
+
+def acousticbrainz_high(happy: float, instrumental: float) -> dict[str, Any]:
+    def classifier(name: str, p: float) -> dict[str, Any]:
+        return {"all": {name: p, f"not_{name}": 1 - p}, "probability": max(p, 1 - p)}
+
+    return {
+        "highlevel": {
+            "mood_happy": classifier("happy", happy),
+            "voice_instrumental": {
+                "all": {"instrumental": instrumental, "voice": 1 - instrumental}
+            },
+            "gender": {"all": {"female": 0.9, "male": 0.1}},  # present upstream, never kept
+        }
+    }
+
+
+def acousticbrainz_responses() -> list[RawRecord]:
+    """Bulk responses for rec-1 and rec-2; rec-3 (the remaster) has no data."""
+    low = {
+        "rec-1": {"0": acousticbrainz_low("rec-1", 96.0, "A", "minor")},
+        "rec-2": {"0": acousticbrainz_low("rec-2", 192.5, "C", "major")},
+        "mbid_mapping": {},
+    }
+    high = {
+        "rec-1": {"0": acousticbrainz_high(0.7, 0.1)},
+        "rec-2": {"0": acousticbrainz_high(0.6, 0.2)},
+        "mbid_mapping": {},
+    }
+    return [
+        RawRecord(
+            "low-level",
+            "low-level?recording_ids=x",
+            "https://ab.test/low",
+            "2026-11-04T00:00:00+00:00",
+            low,
+        ),
+        RawRecord(
+            "high-level",
+            "high-level?recording_ids=x",
+            "https://ab.test/high",
+            "2026-11-04T00:00:00+00:00",
+            high,
+        ),
+    ]
+
+
+def listenbrainz_records() -> list[RawRecord]:
+    """Alice and Bob share an audience; Carol's is too small to describe."""
+
+    def record(mbid: str, body: dict[str, Any]) -> RawRecord:
+        return RawRecord(
+            "listening",
+            f"artist/{mbid}",
+            f"https://listenbrainz.org/artist/{mbid}/",
+            "2026-11-04T00:00:00+00:00",
+            {"artist": mbid, **body},
+        )
+
+    return [
+        record("mb-alice", {"listeners": 5000, "listens": 90000, "similar": [
+            {"artist": "mb-bob", "score": 300, "rank": 3},
+            {"artist": "mb-carol", "score": 20, "rank": 60},
+        ]}),
+        record("mb-bob", {"listeners": 800, "listens": 7000, "similar": [
+            {"artist": "mb-alice", "score": 300, "rank": 1},
+        ]}),
+        record("mb-carol", {"listeners": 12, "listens": 40}),
+    ]  # fmt: skip

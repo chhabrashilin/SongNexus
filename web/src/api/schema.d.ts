@@ -406,6 +406,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/recordings/{recording}:compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * CompareRecordings
+         * @description Compares two songs: descriptors, an explained similarity, credits, artist path.
+         *
+         *     Audio descriptors sit side by side, credits are compared by role, and the
+         *     path shows how the songs' primary artists connect. The similarity is a
+         *     documented weighted mean of named parts (``core.songs``), never an opaque
+         *     model, and is null when AcousticBrainz has no data for either.
+         */
+        get: operations["CompareRecordings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/sessions": {
         parameters: {
             query?: never;
@@ -717,6 +742,11 @@ export interface components {
              * @example artists/0b2c…
              */
             name: string;
+            /**
+             * Oftenplayedwith
+             * @description Catalog artists ListenBrainz listeners most often play with this one.
+             */
+            oftenPlayedWith: components["schemas"]["CoListener"][];
             /** Sources */
             sources: components["schemas"]["SourceLink"][];
         };
@@ -764,6 +794,46 @@ export interface components {
              * @example artists/0b2c…
              */
             name: string;
+        };
+        /**
+         * AudioDescriptors
+         * @description What AcousticBrainz measured for a recording (CC0). Any field may be missing.
+         */
+        AudioDescriptors: {
+            /**
+             * Averageloudness
+             * @description In [0, 1].
+             */
+            averageLoudness: number | null;
+            /** Bpm */
+            bpm: number | null;
+            /**
+             * Dynamiccomplexity
+             * @description In dB.
+             */
+            dynamicComplexity: number | null;
+            /**
+             * Key
+             * @description Tonic, e.g. `C#`.
+             */
+            key: string | null;
+            /** Keystrength */
+            keyStrength: number | null;
+            /** Lengths */
+            lengthS: number | null;
+            /**
+             * Moods
+             * @description Probability of each class: danceable, acoustic, aggressive, electronic, happy, party, relaxed, sad, instrumental, bright.
+             */
+            moods: {
+                [key: string]: number;
+            };
+            /**
+             * Scale
+             * @description `major` or `minor`.
+             */
+            scale: string | null;
+            source: components["schemas"]["SourceLink"];
         };
         /**
          * BlockedArtist
@@ -816,6 +886,15 @@ export interface components {
              * @description Steps left after this move; null if far or unreachable.
              */
             stepsToTarget: number | null;
+        };
+        /**
+         * CoListener
+         * @description An artist often played with another, by rank (ListenBrainz).
+         */
+        CoListener: {
+            artist: components["schemas"]["ArtistSummary"];
+            /** Rank */
+            rank: number;
         };
         /**
          * Cohesion
@@ -889,12 +968,43 @@ export interface components {
             genreOverlap: number | null;
             /** Graphversion */
             graphVersion: string;
+            /** @description Null when either artist has fewer than 50 listeners or no data. */
+            listening: components["schemas"]["ListenerOverlap"] | null;
             /** Mutualcollaborators */
             mutualCollaborators: components["schemas"]["ArtistSummary"][];
             /** Path */
             path: components["schemas"]["ArtistSummary"][];
             /** Sharedgenres */
             sharedGenres: components["schemas"]["SharedGenre"][];
+        };
+        /**
+         * CompareRecordingsResponse
+         * @description CompareRecordings: structure side by side, an explained similarity, shared credits.
+         */
+        CompareRecordingsResponse: {
+            /**
+             * Artistpath
+             * @description Fewest-steps path between the songs' first primary artists; empty when they are the same artist or not connected in our data.
+             */
+            artistPath: components["schemas"]["ArtistSummary"][];
+            descriptorsA: components["schemas"]["AudioDescriptors"] | null;
+            descriptorsB: components["schemas"]["AudioDescriptors"] | null;
+            /** Graphversion */
+            graphVersion: string;
+            /** Parts */
+            parts: components["schemas"]["SimilarityPart"][];
+            recordingA: components["schemas"]["RecordingSummary"];
+            recordingB: components["schemas"]["RecordingSummary"];
+            /**
+             * Sharedcredits
+             * @description Roles with someone in common first.
+             */
+            sharedCredits: components["schemas"]["SharedCredit"][];
+            /**
+             * Similarity
+             * @description Weighted mean of the parts; null when neither song has data.
+             */
+            similarity: number | null;
         };
         /**
          * Config
@@ -1374,11 +1484,41 @@ export interface components {
             totalSize: number;
         };
         /**
+         * ListenerOverlap
+         * @description Shared audience, from aggregate ListenBrainz data; never about individual listeners.
+         */
+        ListenerOverlap: {
+            /** Listenersa */
+            listenersA: number;
+            /** Listenersb */
+            listenersB: number;
+            /** Listensa */
+            listensA: number;
+            /** Listensb */
+            listensB: number;
+            /** Rankaforb */
+            rankAForB: number | null;
+            /**
+             * Rankbfora
+             * @description B's rank among the artists A's listeners most often also play (1 = most).
+             */
+            rankBForA: number | null;
+            source: components["schemas"]["SourceLink"];
+            /** @description From the better rank: STRONG <= 10, MODERATE <= 50, WEAK <= 100, else NONE. */
+            strength: components["schemas"]["OverlapStrength"];
+        };
+        /**
          * MatchStatus
          * @description How an artist name from the playlist was matched.
          * @enum {string}
          */
         MatchStatus: "MATCHED" | "AMBIGUOUS" | "NO_MATCH";
+        /**
+         * OverlapStrength
+         * @description How strongly two audiences overlap (``core.listening``).
+         * @enum {string}
+         */
+        OverlapStrength: "STRONG" | "MODERATE" | "WEAK" | "NONE";
         /**
          * PathMode
          * @description How FindPath ranks routes.
@@ -1620,6 +1760,8 @@ export interface components {
             appearances: components["schemas"]["Appearance"][];
             /** Credits */
             credits: components["schemas"]["Credit"][];
+            /** @description Absent when AcousticBrainz has no data for the recording. */
+            descriptors: components["schemas"]["AudioDescriptors"] | null;
             /** Displayname */
             displayName: string;
             /** Firstreleasedate */
@@ -1630,6 +1772,25 @@ export interface components {
             name: string;
             /** Sources */
             sources: components["schemas"]["SourceLink"][];
+        };
+        /**
+         * RecordingSummary
+         * @description A recording as shown in a comparison.
+         */
+        RecordingSummary: {
+            /**
+             * Artists
+             * @description Primary artists.
+             */
+            artists: components["schemas"]["ArtistSummary"][];
+            /** Displayname */
+            displayName: string;
+            /** Firstreleasedate */
+            firstReleaseDate: string | null;
+            /** Lengthms */
+            lengthMs: number | null;
+            /** Name */
+            name: string;
         };
         /**
          * RevealResponse
@@ -1699,6 +1860,20 @@ export interface components {
             user: string;
         };
         /**
+         * SharedCredit
+         * @description A credit role compared across the two songs.
+         */
+        SharedCredit: {
+            /** Both */
+            both: components["schemas"]["ArtistSummary"][];
+            /** Onlya */
+            onlyA: components["schemas"]["ArtistSummary"][];
+            /** Onlyb */
+            onlyB: components["schemas"]["ArtistSummary"][];
+            /** Role */
+            role: string;
+        };
+        /**
          * SharedGenre
          * @description A genre both compared artists carry.
          */
@@ -1711,6 +1886,29 @@ export interface components {
             shareA: number;
             /** Shareb */
             shareB: number;
+        };
+        /**
+         * SimilarityPart
+         * @description One named part of the similarity score.
+         */
+        SimilarityPart: {
+            /**
+             * Contribution
+             * @description similarity x weight: what it adds to the score.
+             */
+            contribution: number;
+            /**
+             * Name
+             * @description `mood`, `tempo`, `key` or `energy`.
+             */
+            name: string;
+            /** Similarity */
+            similarity: number;
+            /**
+             * Weight
+             * @description Its weight among the parts present; they sum to 1.
+             */
+            weight: number;
         };
         /**
          * SourceKind
@@ -2460,6 +2658,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Recording"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    CompareRecordings: {
+        parameters: {
+            query: {
+                /** @description Resource name of the recording to compare with. */
+                other: string;
+            };
+            header?: never;
+            path: {
+                recording: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompareRecordingsResponse"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */

@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -332,3 +333,102 @@ def artist_labels(session: Session, artist_id: str) -> list[ArtistLabel]:
         )
     labels.sort(key=lambda lb: (-lb.release_count, lb.name, lb.label_id))
     return labels
+
+
+def recording_descriptors(session: Session, recording_id: str) -> dict[str, Any] | None:
+    """Returns a recording's audio descriptor fields (AcousticBrainz), or None."""
+    row = session.scalars(
+        select(m.RecordingDescriptors).where(m.RecordingDescriptors.recording_id == recording_id)
+    ).first()
+    if row is None:
+        return None
+    return {
+        "source_id": row.source_id,
+        "source_recording_id": row.source_recording_id,
+        "bpm": row.bpm,
+        "key": row.key,
+        "scale": row.scale,
+        "key_strength": row.key_strength,
+        "length_s": row.length_s,
+        "average_loudness": row.average_loudness,
+        "dynamic_complexity": row.dynamic_complexity,
+        **(row.moods or {}),
+    }
+
+
+def descriptors_by_primary_artist(session: Session) -> list[tuple[str, str, dict[str, Any]]]:
+    """Returns (recording ID, first primary artist ID, descriptor fields), for evaluation.
+
+    Only recordings with descriptors and a primary artist are included.
+    """
+    primary: dict[str, str] = {}
+    for recording_id, artist_id in session.execute(
+        select(m.RecordingCredit.recording_id, m.RecordingCredit.artist_id)
+        .where(m.RecordingCredit.role == "primary")
+        .order_by(m.RecordingCredit.recording_id, m.RecordingCredit.artist_id)
+    ):
+        primary.setdefault(recording_id, artist_id)
+    out = []
+    for row in session.scalars(
+        select(m.RecordingDescriptors).order_by(m.RecordingDescriptors.recording_id)
+    ):
+        if row.recording_id in primary:
+            fields = {
+                "bpm": row.bpm,
+                "key": row.key,
+                "scale": row.scale,
+                "key_strength": row.key_strength,
+                "length_s": row.length_s,
+                "average_loudness": row.average_loudness,
+                "dynamic_complexity": row.dynamic_complexity,
+                **(row.moods or {}),
+            }
+            out.append((row.recording_id, primary[row.recording_id], fields))
+    return out
+
+
+@dataclass(frozen=True)
+class Listening:
+    """Aggregate listening for a set of artists: audiences and co-listening ranks."""
+
+    audiences: dict[str, tuple[int, int]]  # artist -> (listeners, listens)
+    ranks: dict[tuple[str, str], int]  # (artist, other) -> rank of other for artist
+
+
+def listening(session: Session, artist_ids: list[str]) -> Listening:
+    """Returns audiences of the artists and co-listening ranks among them."""
+    audiences = {
+        artist_id: (listeners, listens)
+        for artist_id, listeners, listens in session.execute(
+            select(
+                m.ArtistAudience.artist_id, m.ArtistAudience.listeners, m.ArtistAudience.listens
+            ).where(m.ArtistAudience.artist_id.in_(artist_ids))
+        )
+    }
+    ranks = {
+        (artist_id, other): rank
+        for artist_id, other, rank in session.execute(
+            select(
+                m.ArtistCoListening.artist_id,
+                m.ArtistCoListening.other_artist_id,
+                m.ArtistCoListening.rank,
+            ).where(
+                m.ArtistCoListening.artist_id.in_(artist_ids),
+                m.ArtistCoListening.other_artist_id.in_(artist_ids),
+            )
+        )
+    }
+    return Listening(audiences, ranks)
+
+
+def colisteners(session: Session, artist_id: str, limit: int) -> list[tuple[str, int]]:
+    """Returns (other artist, rank) for the artists most often played with ``artist_id``."""
+    return [
+        (other, rank)
+        for other, rank in session.execute(
+            select(m.ArtistCoListening.other_artist_id, m.ArtistCoListening.rank)
+            .where(m.ArtistCoListening.artist_id == artist_id)
+            .order_by(m.ArtistCoListening.rank)
+            .limit(limit)
+        )
+    ]

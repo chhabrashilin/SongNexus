@@ -17,11 +17,15 @@ uv run songnexus <command>       # see below; results are JSON on stdout, logs o
 | `fetch` | Fetches MusicBrainz data for `data/seeds`, plus the genre list, into a snapshot (rate-limited, cached) |
 | `fetch-wikidata` | Fetches Discogs artist links and the genre hierarchy from Wikidata into a snapshot |
 | `fetch-discogs --dump-date YYYYMMDD` | Downloads a Discogs masters dump (~600 MB, checksum-verified, cached in `data/raw/discogs`) and extracts catalog artists' masters into a snapshot (~14 min) |
+| `fetch-acousticbrainz [--cached-only]` | Fetches audio descriptors for catalog recordings (slow service: resumable from the cache; `--cached-only` builds the snapshot offline) |
+| `fetch-listenbrainz` | Fetches listener counts for all artists and co-listening rankings for artists with pages |
 | `ingest [--snapshot PATH] [--no-enrichment]` | Migrates, then ingests the committed snapshots (MusicBrainz, Wikidata, Discogs). The quality gate runs inside the transaction: a failing catalog is rejected and the previous one keeps serving. `--snapshot` ingests one MusicBrainz snapshot alone |
 | `quality` | Runs the data-quality checks on the current catalog |
 | `eval-search` | Search MRR on `data/eval/search_cases.json` (gate ≥ 0.95) |
 | `eval-import` | Import name-matching precision on `data/eval/import_match_cases.json` (gate ≥ 0.98) |
 | `eval-collaborations` | Collaborations recall against the raw MusicBrainz data for 20 seed artists (gate ≥ 0.95) |
+| `eval-songs [--fit-weights]` | Song similarity vs genre agreement (AUC); `--fit-weights` reruns the held-out weight fit |
+| `eval-listening [--lastfm PATH]` | ListenBrainz co-listening vs Last.fm 360K listener overlap (offline research data) |
 | `eval-genres` | Genre coverage per source and MusicBrainz-Discogs agreement (floors in the golden tests) |
 | `resources [--check]` | Writes `docs/resources.md` from the data-source registry; `--check` fails if it is stale |
 | `openapi [--check]` | Writes `openapi.json`, the API contract; `--check` fails if code and contract differ |
@@ -30,8 +34,8 @@ uv run songnexus <command>       # see below; results are JSON on stdout, logs o
 
 `scripts/build_import_eval.py` regenerates the import-matching labels from the human-verified seeds.
 
-Refreshing the catalog data: `fetch`, then `fetch-wikidata`, then `fetch-discogs --dump-date <latest>`, then
-`ingest` and `eval-genres`; review the snapshot diffs and the unmapped Discogs names in the ingest output before
+Refreshing the catalog data: `fetch`, then `fetch-wikidata`, `fetch-discogs --dump-date <latest>`,
+`fetch-acousticbrainz` and `fetch-listenbrainz`, then `ingest` and the evaluations; review the snapshot diffs and the unmapped Discogs names in the ingest output before
 committing. Only `fetch*` commands touch the network.
 
 Daily puzzle methods, date rules and share telemetry are described in

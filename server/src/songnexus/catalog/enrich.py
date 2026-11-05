@@ -30,10 +30,22 @@ from songnexus.catalog.canonicalize import CanonicalBatch, Row
 from songnexus.catalog.snapshot import RawRecord
 from songnexus.catalog.wikidata.fetch import bindings
 from songnexus.core import ids
+from songnexus.core.songs import MOOD_FIELDS
 from songnexus.core.text import normalize
 
 DISCOGS_SOURCE_ID = "discogs"
 WIKIDATA_SOURCE_ID = "wikidata"
+ACOUSTICBRAINZ_SOURCE_ID = "acousticbrainz"
+LISTENBRAINZ_SOURCE_ID = "listenbrainz"
+_DESCRIPTOR_COLUMNS = (
+    "bpm",
+    "key",
+    "scale",
+    "key_strength",
+    "length_s",
+    "average_loudness",
+    "dynamic_complexity",
+)
 MUSICBRAINZ_LINK_CONFIDENCE = 1.0
 WIKIDATA_LINK_CONFIDENCE = 0.9
 
@@ -76,6 +88,9 @@ class EnrichmentBatch:
 
     mappings: dict[str, Row] = field(default_factory=dict)
     artist_genres: dict[tuple[str, str, str], Row] = field(default_factory=dict)
+    descriptors: dict[str, Row] = field(default_factory=dict)
+    audiences: dict[str, Row] = field(default_factory=dict)
+    colistening: dict[tuple[str, str], Row] = field(default_factory=dict)
     genre_parents: dict[tuple[str, str, str], Row] = field(default_factory=dict)
     stats: Counter[str] = field(default_factory=Counter)
     unmapped_names: Counter[str] = field(default_factory=Counter)
@@ -187,13 +202,85 @@ def _add_genre_parents(
                 }
 
 
+def _add_descriptors(
+    out: EnrichmentBatch, batch: CanonicalBatch, records: Iterable[RawRecord]
+) -> None:
+    """One row per canonical recording; merged recordings take their fullest submission."""
+    recordings = _entity_index(batch, "recording")
+    best: dict[str, tuple[int, str, RawRecord]] = {}
+    for record in records:
+        if record.kind != "descriptors":
+            continue
+        mbid = str(record.body.get("recording", ""))
+        recording_id = recordings.get(mbid)
+        if recording_id is None:
+            out.stats["descriptors_unmapped"] += 1
+            continue
+        fields = len(record.body)
+        current = best.get(recording_id)
+        if current is None or (-fields, mbid) < (-current[0], current[1]):
+            best[recording_id] = (fields, mbid, record)
+    for recording_id, (_fields, mbid, record) in sorted(best.items()):
+        body = record.body
+        out.descriptors[recording_id] = {
+            "recording_id": recording_id,
+            "source_id": ACOUSTICBRAINZ_SOURCE_ID,
+            "source_recording_id": mbid,
+            **{c: body.get(c) for c in _DESCRIPTOR_COLUMNS},
+            "moods": {m: body[m] for m in MOOD_FIELDS if m in body},
+            "_raw_key": record.request_key,
+            "confidence": 1.0,
+        }
+    out.stats["recordings_with_descriptors"] = len(out.descriptors)
+
+
+def _add_listening(
+    out: EnrichmentBatch, batch: CanonicalBatch, records: Iterable[RawRecord]
+) -> None:
+    artists = _entity_index(batch, "artist")
+    for record in records:
+        if record.kind != "listening":
+            continue
+        artist_id = artists.get(str(record.body.get("artist", "")))
+        if artist_id is None:
+            continue
+        body = record.body
+        if isinstance(body.get("listeners"), int) and isinstance(body.get("listens"), int):
+            out.audiences[artist_id] = {
+                "artist_id": artist_id,
+                "source_id": LISTENBRAINZ_SOURCE_ID,
+                "listeners": body["listeners"],
+                "listens": body["listens"],
+                "_raw_key": record.request_key,
+                "confidence": 1.0,
+            }
+        for row in body.get("similar", []):
+            other_id = artists.get(str(row.get("artist", "")))
+            if other_id is None or other_id == artist_id:
+                continue
+            out.colistening[(artist_id, other_id)] = {
+                "artist_id": artist_id,
+                "other_artist_id": other_id,
+                "source_id": LISTENBRAINZ_SOURCE_ID,
+                "score": float(row["score"]),
+                "rank": int(row["rank"]),
+                "_raw_key": record.request_key,
+                "confidence": 1.0,
+            }
+    out.stats["artists_with_audience"] = len(out.audiences)
+    out.stats["colistening_pairs"] = len(out.colistening)
+
+
 def build_enrichment(
     batch: CanonicalBatch,
     wikidata_records: Iterable[RawRecord],
     discogs_records: Iterable[RawRecord],
     genre_map: GenreMap,
+    *,
+    acousticbrainz_records: Iterable[RawRecord] = (),
+    listenbrainz_records: Iterable[RawRecord] = (),
 ) -> EnrichmentBatch:
-    """Builds the Discogs and Wikidata rows for an already-built MusicBrainz batch."""
+    """Builds the Discogs, Wikidata and AcousticBrainz rows for an already-built batch."""
     wikidata_records, discogs_records = list(wikidata_records), list(discogs_records)
     out = EnrichmentBatch()
     links, ambiguous = discogs_links(batch, wikidata_records)
@@ -215,4 +302,6 @@ def build_enrichment(
     _add_discogs_genres(out, batch, links, discogs_records, genre_map)
     _add_genre_parents(out, batch, wikidata_records)
     out.stats["genre_parent_links"] = len(out.genre_parents)
+    _add_descriptors(out, batch, acousticbrainz_records)
+    _add_listening(out, batch, listenbrainz_records)
     return out

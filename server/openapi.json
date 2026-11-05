@@ -253,6 +253,14 @@
             "title": "Name",
             "type": "string"
           },
+          "oftenPlayedWith": {
+            "description": "Catalog artists ListenBrainz listeners most often play with this one.",
+            "items": {
+              "$ref": "#/components/schemas/CoListener"
+            },
+            "title": "Oftenplayedwith",
+            "type": "array"
+          },
           "sources": {
             "items": {
               "$ref": "#/components/schemas/SourceLink"
@@ -275,6 +283,7 @@
           "links",
           "connectionCount",
           "labels",
+          "oftenPlayedWith",
           "sources",
           "graphVersion"
         ],
@@ -396,6 +405,116 @@
         "title": "ArtistSummary",
         "type": "object"
       },
+      "AudioDescriptors": {
+        "description": "What AcousticBrainz measured for a recording (CC0). Any field may be missing.",
+        "properties": {
+          "averageLoudness": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "In [0, 1].",
+            "title": "Averageloudness"
+          },
+          "bpm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bpm"
+          },
+          "dynamicComplexity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "In dB.",
+            "title": "Dynamiccomplexity"
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Tonic, e.g. `C#`.",
+            "title": "Key"
+          },
+          "keyStrength": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keystrength"
+          },
+          "lengthS": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lengths"
+          },
+          "moods": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "Probability of each class: danceable, acoustic, aggressive, electronic, happy, party, relaxed, sad, instrumental, bright.",
+            "title": "Moods",
+            "type": "object"
+          },
+          "scale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "`major` or `minor`.",
+            "title": "Scale"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceLink"
+          }
+        },
+        "required": [
+          "bpm",
+          "key",
+          "scale",
+          "keyStrength",
+          "lengthS",
+          "averageLoudness",
+          "dynamicComplexity",
+          "moods",
+          "source"
+        ],
+        "title": "AudioDescriptors",
+        "type": "object"
+      },
       "BlockedArtist": {
         "description": "An artist the user never wants to see in lists or paths.",
         "properties": {
@@ -499,6 +618,24 @@
           "reachedTarget"
         ],
         "title": "CheckMoveResponse",
+        "type": "object"
+      },
+      "CoListener": {
+        "description": "An artist often played with another, by rank (ListenBrainz).",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artist",
+          "rank"
+        ],
+        "title": "CoListener",
         "type": "object"
       },
       "Cohesion": {
@@ -665,6 +802,17 @@
             "title": "Graphversion",
             "type": "string"
           },
+          "listening": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ListenerOverlap"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null when either artist has fewer than 50 listeners or no data."
+          },
           "mutualCollaborators": {
             "items": {
               "$ref": "#/components/schemas/ArtistSummary"
@@ -697,9 +845,93 @@
           "path",
           "countsA",
           "countsB",
+          "listening",
           "graphVersion"
         ],
         "title": "CompareArtistsResponse",
+        "type": "object"
+      },
+      "CompareRecordingsResponse": {
+        "description": "CompareRecordings: structure side by side, an explained similarity, shared credits.",
+        "properties": {
+          "artistPath": {
+            "description": "Fewest-steps path between the songs' first primary artists; empty when they are the same artist or not connected in our data.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artistpath",
+            "type": "array"
+          },
+          "descriptorsA": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AudioDescriptors"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "descriptorsB": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AudioDescriptors"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "parts": {
+            "items": {
+              "$ref": "#/components/schemas/SimilarityPart"
+            },
+            "title": "Parts",
+            "type": "array"
+          },
+          "recordingA": {
+            "$ref": "#/components/schemas/RecordingSummary"
+          },
+          "recordingB": {
+            "$ref": "#/components/schemas/RecordingSummary"
+          },
+          "sharedCredits": {
+            "description": "Roles with someone in common first.",
+            "items": {
+              "$ref": "#/components/schemas/SharedCredit"
+            },
+            "title": "Sharedcredits",
+            "type": "array"
+          },
+          "similarity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Weighted mean of the parts; null when neither song has data.",
+            "title": "Similarity"
+          }
+        },
+        "required": [
+          "recordingA",
+          "recordingB",
+          "descriptorsA",
+          "descriptorsB",
+          "similarity",
+          "parts",
+          "sharedCredits",
+          "artistPath",
+          "graphVersion"
+        ],
+        "title": "CompareRecordingsResponse",
         "type": "object"
       },
       "Config": {
@@ -1683,6 +1915,69 @@
         "title": "ListGenresResponse",
         "type": "object"
       },
+      "ListenerOverlap": {
+        "description": "Shared audience, from aggregate ListenBrainz data; never about individual listeners.",
+        "properties": {
+          "listenersA": {
+            "title": "Listenersa",
+            "type": "integer"
+          },
+          "listenersB": {
+            "title": "Listenersb",
+            "type": "integer"
+          },
+          "listensA": {
+            "title": "Listensa",
+            "type": "integer"
+          },
+          "listensB": {
+            "title": "Listensb",
+            "type": "integer"
+          },
+          "rankAForB": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rankaforb"
+          },
+          "rankBForA": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "B's rank among the artists A's listeners most often also play (1 = most).",
+            "title": "Rankbfora"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceLink"
+          },
+          "strength": {
+            "$ref": "#/components/schemas/OverlapStrength",
+            "description": "From the better rank: STRONG <= 10, MODERATE <= 50, WEAK <= 100, else NONE."
+          }
+        },
+        "required": [
+          "listenersA",
+          "listenersB",
+          "listensA",
+          "listensB",
+          "rankBForA",
+          "rankAForB",
+          "strength",
+          "source"
+        ],
+        "title": "ListenerOverlap",
+        "type": "object"
+      },
       "MatchStatus": {
         "description": "How an artist name from the playlist was matched.",
         "enum": [
@@ -1691,6 +1986,17 @@
           "NO_MATCH"
         ],
         "title": "MatchStatus",
+        "type": "string"
+      },
+      "OverlapStrength": {
+        "description": "How strongly two audiences overlap (``core.listening``).",
+        "enum": [
+          "STRONG",
+          "MODERATE",
+          "WEAK",
+          "NONE"
+        ],
+        "title": "OverlapStrength",
         "type": "string"
       },
       "PathMode": {
@@ -2152,6 +2458,17 @@
             "title": "Credits",
             "type": "array"
           },
+          "descriptors": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AudioDescriptors"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Absent when AcousticBrainz has no data for the recording."
+          },
           "displayName": {
             "title": "Displayname",
             "type": "string"
@@ -2197,9 +2514,62 @@
           "firstReleaseDate",
           "credits",
           "appearances",
+          "descriptors",
           "sources"
         ],
         "title": "Recording",
+        "type": "object"
+      },
+      "RecordingSummary": {
+        "description": "A recording as shown in a comparison.",
+        "properties": {
+          "artists": {
+            "description": "Primary artists.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "firstReleaseDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firstreleasedate"
+          },
+          "lengthMs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lengthms"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "artists",
+          "firstReleaseDate",
+          "lengthMs"
+        ],
+        "title": "RecordingSummary",
         "type": "object"
       },
       "RevealResponse": {
@@ -2319,6 +2689,44 @@
         "title": "SessionInfo",
         "type": "object"
       },
+      "SharedCredit": {
+        "description": "A credit role compared across the two songs.",
+        "properties": {
+          "both": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Both",
+            "type": "array"
+          },
+          "onlyA": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Onlya",
+            "type": "array"
+          },
+          "onlyB": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Onlyb",
+            "type": "array"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "both",
+          "onlyA",
+          "onlyB"
+        ],
+        "title": "SharedCredit",
+        "type": "object"
+      },
       "SharedGenre": {
         "description": "A genre both compared artists carry.",
         "properties": {
@@ -2346,6 +2754,38 @@
           "shareB"
         ],
         "title": "SharedGenre",
+        "type": "object"
+      },
+      "SimilarityPart": {
+        "description": "One named part of the similarity score.",
+        "properties": {
+          "contribution": {
+            "description": "similarity x weight: what it adds to the score.",
+            "title": "Contribution",
+            "type": "number"
+          },
+          "name": {
+            "description": "`mood`, `tempo`, `key` or `energy`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "similarity": {
+            "title": "Similarity",
+            "type": "number"
+          },
+          "weight": {
+            "description": "Its weight among the parts present; they sum to 1.",
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "similarity",
+          "weight",
+          "contribution"
+        ],
+        "title": "SimilarityPart",
         "type": "object"
       },
       "SourceKind": {
@@ -3790,6 +4230,60 @@
           }
         },
         "summary": "GetRecording",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/recordings/{recording}:compare": {
+      "get": {
+        "description": "Compares two songs: descriptors, an explained similarity, credits, artist path.\n\nAudio descriptors sit side by side, credits are compared by role, and the\npath shows how the songs' primary artists connect. The similarity is a\ndocumented weighted mean of named parts (``core.songs``), never an opaque\nmodel, and is null when AcousticBrainz has no data for either.",
+        "operationId": "CompareRecordings",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recording",
+            "required": true,
+            "schema": {
+              "title": "Recording",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Resource name of the recording to compare with.",
+            "in": "query",
+            "name": "other",
+            "required": true,
+            "schema": {
+              "description": "Resource name of the recording to compare with.",
+              "title": "Other",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareRecordingsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CompareRecordings",
         "tags": [
           "catalog"
         ]

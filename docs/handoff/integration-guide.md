@@ -30,6 +30,11 @@ To integrate: write a new adapter that produces the same `CanonicalBatch` from y
 Prove it with: `songnexus quality` (15 checks), the golden tests pattern in `tests/catalog/test_golden.py`, and the
 search and import evaluations on your own labeled set.
 
+Audio descriptors and listening aggregates are enrichment seams too: `recording_descriptors` (tempo, key, mood
+probabilities) and `artist_audiences` / `artist_colistening` (listener counts, co-listening ranks). YouTube Music
+would fill them from its own audio analysis and first-party aggregates, keeping the 50-listener floor
+(`core/listening.py`), and re-run `eval-songs` and `eval-listening` against them.
+
 Genres are a separate seam (`catalog/enrich.py`): a vocabulary (today the MusicBrainz genre list), per-source
 artist-genre votes, and parent links between genres. YouTube Music would supply its own genre taxonomy and
 associations as one more source; the read model averages shares per source and `SONGNEXUS_GENRE_SOURCES` chooses

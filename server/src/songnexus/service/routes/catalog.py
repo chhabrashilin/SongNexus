@@ -2,16 +2,19 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.orm import Session
 
 from songnexus.core.graph import collaborations as collab
+from songnexus.core.graph.algorithms import bidirectional_bfs_path
 from songnexus.core.graph.explain import explain_edge
+from songnexus.core.graph.filters import NodeFilter
 from songnexus.core.graph.model import DEFAULT_CATEGORIES, EdgeKind, kinds_for
 from songnexus.core.search import EntityType as CoreEntityType
 from songnexus.core.search import MatchType
+from songnexus.core.songs import Descriptors, shared_credits, similarity
 from songnexus.service import convert
 from songnexus.service import schemas as api
 from songnexus.service.deps import (
@@ -27,6 +30,7 @@ from songnexus.service.pagination import fingerprint, paginate
 from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import (
+    MAX_PATH_STEPS,
     MAX_QUERY_LENGTH,
     GenreSelectionDep,
     PageSize,
@@ -54,6 +58,7 @@ Categories = Annotated[
 HIGHLIGHTS_PER_CONNECTION = 2
 # Genres shown on an artist page; the graph keeps more for filtering.
 DISPLAY_GENRES = 5
+OFTEN_PLAYED_WITH = 10
 
 
 def kinds_from(categories: list[api.ConnectionCategory]) -> frozenset[EdgeKind]:
@@ -102,6 +107,11 @@ def get_artist(
                 last_year=lb.last_year,
             )
             for lb in repo.artist_labels(session, artist_id)
+        ],
+        often_played_with=[
+            api.CoListener(artist=convert.artist_summary(graph, other), rank=rank)
+            for other, rank in repo.colisteners(session, artist_id, OFTEN_PLAYED_WITH)
+            if other in graph.nodes
         ],
         sources=convert.source_links(details.sources),
         graph_version=model.version,
@@ -388,6 +398,28 @@ def get_label(
     )
 
 
+def _descriptors(fields: dict[str, Any] | None) -> api.AudioDescriptors | None:
+    if fields is None:
+        return None
+    core = Descriptors.from_fields(fields)
+    mbid = fields["source_recording_id"]
+    return api.AudioDescriptors(
+        bpm=None if core.bpm is None else round(core.bpm, 1),
+        key=core.key,
+        scale=core.scale,
+        key_strength=core.key_strength,
+        length_s=core.length_s,
+        average_loudness=core.average_loudness,
+        dynamic_complexity=core.dynamic_complexity,
+        moods={k: round(v, 3) for k, v in (core.moods or {}).items()},
+        source=api.SourceLink(
+            source=f"dataSources/{fields['source_id']}",
+            source_id=mbid,
+            url=f"https://acousticbrainz.org/{mbid}",
+        ),
+    )
+
+
 @router.get("/recordings/{recording:rid}", response_model=api.Recording, summary="GetRecording")
 def get_recording(
     recording: str, model: ReadModelDep, who: ViewerDep, session: SessionDep, response: Response
@@ -424,7 +456,110 @@ def get_recording(
             )
             for a in details.appearances
         ],
+        descriptors=_descriptors(repo.recording_descriptors(session, recording_id)),
         sources=convert.source_links(details.sources),
+    )
+
+
+@router.get(
+    "/recordings/{recording:rid}:compare",
+    response_model=api.CompareRecordingsResponse,
+    summary="CompareRecordings",
+)
+def compare_recordings(
+    recording: str,
+    model: ReadModelDep,
+    who: ViewerDep,
+    session: SessionDep,
+    response: Response,
+    other: Annotated[str, Query(description="Resource name of the recording to compare with.")],
+) -> api.CompareRecordingsResponse:
+    """Compares two songs: descriptors, an explained similarity, credits, artist path.
+
+    Audio descriptors sit side by side, credits are compared by role, and the
+    path shows how the songs' primary artists connect. The similarity is a
+    documented weighted mean of named parts (``core.songs``), never an opaque
+    model, and is null when AcousticBrainz has no data for either.
+    """
+    ids_ = (
+        parse_name(recording, "recordings", field="name"),
+        parse_name(other, "recordings", field="other"),
+    )
+    graph = model.graph
+    details = []
+    for recording_id in ids_:
+        found = repo.recording_details(session, recording_id)
+        if found is None:
+            raise not_found(f"recordings/{recording_id}", reason="RECORDING_NOT_FOUND")
+        details.append(found)
+    a, b = details
+
+    def visible(artist_id: str) -> bool:
+        return artist_id in graph.nodes and artist_id not in who.blocked
+
+    def primary(d: repo.RecordingDetails) -> list[str]:
+        return [c.artist_id for c in d.credits if c.role == "primary" and visible(c.artist_id)]
+
+    def summary(d: repo.RecordingDetails) -> api.RecordingSummary:
+        return api.RecordingSummary(
+            name=f"recordings/{d.id}",
+            display_name=d.title,
+            artists=[convert.artist_summary(graph, x) for x in primary(d)],
+            first_release_date=d.first_release_date,
+            length_ms=d.length_ms,
+        )
+
+    fields = [repo.recording_descriptors(session, d.id) for d in details]
+    descriptors_a, descriptors_b = (
+        Descriptors() if f is None else Descriptors.from_fields(f) for f in fields
+    )
+    result = similarity(descriptors_a, descriptors_b)
+    credits = shared_credits(
+        ((c.artist_id, c.role) for c in a.credits if visible(c.artist_id)),
+        ((c.artist_id, c.role) for c in b.credits if visible(c.artist_id)),
+    )
+    path: list[str] = []
+    primaries = primary(a), primary(b)
+    if primaries[0] and primaries[1] and primaries[0][0] != primaries[1][0]:
+        found_path = bidirectional_bfs_path(
+            graph.adjacency(kinds_for(DEFAULT_CATEGORIES)),
+            primaries[0][0],
+            primaries[1][0],
+            max_depth=MAX_PATH_STEPS,
+            allowed=NodeFilter(blocked=who.blocked).predicate(graph),
+        ).path
+        path = list(found_path or [])
+    set_cache_control(response, who)
+
+    def people(artist_ids: tuple[str, ...]) -> list[api.ArtistSummary]:
+        return [convert.artist_summary(graph, x) for x in artist_ids]
+
+    return api.CompareRecordingsResponse(
+        recording_a=summary(a),
+        recording_b=summary(b),
+        descriptors_a=_descriptors(fields[0]),
+        descriptors_b=_descriptors(fields[1]),
+        similarity=None if result.score is None else round(result.score, 4),
+        parts=[
+            api.SimilarityPart(
+                name=p.name,
+                similarity=round(p.similarity, 4),
+                weight=round(p.weight, 4),
+                contribution=round(p.contribution, 4),
+            )
+            for p in result.parts
+        ],
+        shared_credits=[
+            api.SharedCredit(
+                role=row.role,
+                both=people(row.both),
+                only_a=people(row.only_a),
+                only_b=people(row.only_b),
+            )
+            for row in credits
+        ],
+        artist_path=[convert.artist_summary(graph, x) for x in path],
+        graph_version=model.version,
     )
 
 

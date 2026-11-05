@@ -14,10 +14,10 @@ Status **Planned** means the source is approved but no code reads from it yet; t
 | [MusicBrainz genres](https://musicbrainz.org/doc/Genre) | CC-BY-NC-SA-3.0 | Non-commercial | In Use | artist genres; genre filters and shared genres in compare |
 | [Discogs data dumps](https://data.discogs.com) | CC0-1.0 | Production-safe | In Use | artist genres (commercial-safe); genre filters and shared genres in compare |
 | [Wikidata](https://www.wikidata.org) | CC0-1.0 | Production-safe | In Use | genre hierarchy (subgenres); links from MusicBrainz artists to Discogs |
-| [AcousticBrainz](https://acousticbrainz.org) | CC0-1.0 | Production-safe | Planned | song comparison: tempo, key, loudness and other audio descriptors |
-| [ListenBrainz](https://listenbrainz.org) | CC0-1.0 | Production-safe | Planned | listener overlap in artist comparison; an independent signal for evaluating song similarity |
+| [AcousticBrainz](https://acousticbrainz.org) | CC0-1.0 | Production-safe | In Use | song comparison: tempo, key, loudness, mood and other audio descriptors |
+| [ListenBrainz](https://listenbrainz.org) | CC0-1.0 | Production-safe | In Use | listener overlap in artist comparison; 'often played with' on artist pages |
 | [Spotify Tracks Dataset (Kaggle, maharshipandya)](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset) | CC0-1.0 (as stated by the uploader) | Evaluation only | Planned | evaluating song similarity against genre labels |
-| [Last.fm 360K and 1K users (Celma, 2010)](https://zenodo.org/records/6090214) | Non-commercial research use, with permission of Last.fm | Evaluation only | Planned | evaluating listener overlap against an independent population |
+| [Last.fm 360K and 1K users (Celma, 2010)](https://zenodo.org/records/6090214) | Non-commercial research use, with permission of Last.fm | Evaluation only | In Use | evaluating listener overlap against an independent population |
 | Your listening history | The listener's own data | Production-safe | In Use | Library: your artists and playlist analysis |
 
 ## Production-safe
@@ -54,20 +54,20 @@ CC0 or equivalent. Usable in a commercial YouTube Music feature.
 ### AcousticBrainz
 
 - **ID:** `acousticbrainz`
-- **Obtained via:** published data dumps
+- **Obtained via:** its API
 - **License:** [CC0-1.0](https://acousticbrainz.org/download) (checked 2026-11-01)
-- **Feeds:** song comparison: tempo, key, loudness and other audio descriptors
+- **Feeds:** song comparison: tempo, key, loudness, mood and other audio descriptors
 - **Attribution:** “Audio data from AcousticBrainz”
-- **Notes:** Data collection stopped in 2022; the final dump (2022-07-06) is frozen. Coverage is partial and keyed by MusicBrainz recording ID; songs without data say so.
+- **Notes:** Data collection stopped in 2022; the API still serves the final dataset. Coverage is partial and keyed by MusicBrainz recording ID; songs without data say so. The voice-gender and genre classifiers are not used.
 
 ### ListenBrainz
 
 - **ID:** `listenbrainz`
 - **Obtained via:** its API
 - **License:** [CC0-1.0](https://listenbrainz.org/terms-of-service/) (checked 2026-11-01)
-- **Feeds:** listener overlap in artist comparison; an independent signal for evaluating song similarity
+- **Feeds:** listener overlap in artist comparison; 'often played with' on artist pages
 - **Attribution:** “Listening data from ListenBrainz”
-- **Notes:** Public listens are CC0. Aggregates are shown only above a minimum listener count (k-anonymity), always with their sample size.
+- **Notes:** Public listens are CC0. Only aggregates are fetched: listener and listen counts per artist, and the session-based similar-artists ranking. Overlap is shown only when both artists have at least 50 listeners, always with the counts.
 
 ### Your listening history
 
@@ -100,7 +100,7 @@ Used offline to check our results against an independent signal. Never stored in
 - **Obtained via:** a published dataset
 - **License:** [CC0-1.0 (as stated by the uploader)](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset) (checked 2026-11-01)
 - **Feeds:** evaluating song similarity against genre labels
-- **Notes:** About 114,000 tracks across 125 genres with audio features. The uploader states CC0, but the values come from the Spotify Web API, whose terms the uploader cannot waive. Treated as evaluation-only: results are reported, the data is never served.
+- **Notes:** About 114,000 tracks across 125 genres with audio features. The uploader states CC0, but the values come from the Spotify Web API, whose terms the uploader cannot waive. Treated as evaluation-only. Not used yet: downloading needs a Kaggle account, so song similarity is evaluated against genre agreement instead (eval-songs).
 
 ### Last.fm 360K and 1K users (Celma, 2010)
 

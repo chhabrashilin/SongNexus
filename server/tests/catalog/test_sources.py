@@ -51,11 +51,13 @@ def test_ingest_registers_only_in_use_catalog_sources() -> None:
         "musicbrainz-supplementary",
         "discogs",
         "wikidata",
+        "acousticbrainz",
+        "listenbrainz",
     }
     with pytest.raises(UnregisteredSourceError):
         registered_source_rows(["kaggle-spotify-tracks"])
     with pytest.raises(UnregisteredSourceError):
-        registered_source_rows(["acousticbrainz"])  # planned: no code reads it yet
+        registered_source_rows(["lastfm-360k"])  # evaluation data never enters the catalog
     with pytest.raises(UnregisteredSourceError):
         registered_source_rows(["made-up"])
 

@@ -207,6 +207,51 @@ test('the collaborations page has a timeline, a year range and a table view (R2-
   await expectAccessible(page);
 });
 
+test('compare shows a shared audience from aggregate listening (R2-5)', async ({
+  page,
+}) => {
+  await page.goto('/compare');
+  await page.getByRole('combobox', {name: 'From'}).fill('Kendrick Lamar');
+  await page
+    .getByRole('option', {name: /^Kendrick Lamar/})
+    .first()
+    .click();
+  await page.getByRole('combobox', {name: 'To'}).fill('SZA');
+  await page.getByRole('option', {name: /^SZA/}).first().click();
+  await expect(
+    page.getByRole('heading', {name: 'Shared audience'}),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/listeners? · .* is #\d+ among/).first(),
+  ).toBeVisible();
+  await expect(page.getByText(/never individual listeners/)).toBeVisible();
+  await expectAccessible(page);
+});
+
+test('a song page shows its sound and compares with another song (R2-4)', async ({
+  page,
+}) => {
+  await page.goto('/compare/songs');
+  await page.getByRole('combobox', {name: 'First song'}).fill('HUMBLE.');
+  await page
+    .getByRole('option', {name: /^HUMBLE\./})
+    .first()
+    .click();
+  await page.getByRole('combobox', {name: 'Second song'}).fill('DNA.');
+  await page
+    .getByRole('option', {name: /^DNA\./})
+    .first()
+    .click();
+  await expect(
+    page.getByRole('heading', {name: 'How alike they sound'}),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', {name: 'Who worked on both'}),
+  ).toBeVisible();
+  await expect(page.getByRole('table')).toBeVisible();
+  await expectAccessible(page);
+});
+
 test('six degrees connects two artists and the link is shareable', async ({
   page,
 }) => {

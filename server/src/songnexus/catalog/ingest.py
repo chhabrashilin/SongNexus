@@ -43,7 +43,9 @@ from songnexus.catalog.canonicalize import (
     build_batch,
 )
 from songnexus.catalog.enrich import (
+    ACOUSTICBRAINZ_SOURCE_ID,
     DISCOGS_SOURCE_ID,
+    LISTENBRAINZ_SOURCE_ID,
     WIKIDATA_SOURCE_ID,
     EnrichmentBatch,
     GenreMap,
@@ -73,7 +75,12 @@ class UnregisteredSourceError(ValueError):
 
 # The sources ingest writes; each must be an in-use catalog source in the registry.
 _MUSICBRAINZ_SOURCES = (SOURCE_ID, SUPPLEMENTARY_SOURCE_ID)
-_ENRICHMENT_SOURCES = (DISCOGS_SOURCE_ID, WIKIDATA_SOURCE_ID)
+_ENRICHMENT_SOURCES = (
+    DISCOGS_SOURCE_ID,
+    WIKIDATA_SOURCE_ID,
+    ACOUSTICBRAINZ_SOURCE_ID,
+    LISTENBRAINZ_SOURCE_ID,
+)
 _INGESTED_SOURCES = (*_MUSICBRAINZ_SOURCES, *_ENRICHMENT_SOURCES)
 _STORABLE = frozenset(s.id for s in catalog_sources() if s.status is Status.IN_USE)
 
@@ -85,6 +92,8 @@ class EnrichmentInputs:
     wikidata_snapshot: Path
     discogs_snapshot: Path
     genre_map: Path
+    acousticbrainz_snapshot: Path | None = None
+    listenbrainz_snapshot: Path | None = None
 
 
 def registered_source_rows(source_ids: Iterable[str] = _INGESTED_SOURCES) -> list[Row]:
@@ -316,6 +325,24 @@ def write_batch(
         ),
         (WIKIDATA_SOURCE_ID,),
     )
+    counts["recording_descriptors"] = sync_source_facts(
+        session,
+        m.RecordingDescriptors,
+        _attach_provenance(
+            enrichment.descriptors.values(), raw_ids, run_id, (ACOUSTICBRAINZ_SOURCE_ID,)
+        ),
+        (ACOUSTICBRAINZ_SOURCE_ID,),
+    )
+    for name, model, rows in (
+        ("artist_audiences", m.ArtistAudience, enrichment.audiences.values()),
+        ("artist_colistening", m.ArtistCoListening, enrichment.colistening.values()),
+    ):
+        counts[name] = sync_source_facts(
+            session,
+            model,
+            _attach_provenance(rows, raw_ids, run_id, (LISTENBRAINZ_SOURCE_ID,)),
+            (LISTENBRAINZ_SOURCE_ID,),
+        )
     counts["discogs_entity_source_mappings"] = sync_source_facts(
         session,
         m.EntitySourceMapping,
@@ -343,12 +370,24 @@ def _read_enrichment(
     records = {
         WIKIDATA_SOURCE_ID: list(read_snapshot(inputs.wikidata_snapshot)),
         DISCOGS_SOURCE_ID: list(read_snapshot(inputs.discogs_snapshot)),
+        ACOUSTICBRAINZ_SOURCE_ID: (
+            list(read_snapshot(inputs.acousticbrainz_snapshot))
+            if inputs.acousticbrainz_snapshot
+            else []
+        ),
+        LISTENBRAINZ_SOURCE_ID: (
+            list(read_snapshot(inputs.listenbrainz_snapshot))
+            if inputs.listenbrainz_snapshot
+            else []
+        ),
     }
     enrichment = build_enrichment(
         batch,
         records[WIKIDATA_SOURCE_ID],
         records[DISCOGS_SOURCE_ID],
         GenreMap.load(inputs.genre_map),
+        acousticbrainz_records=records[ACOUSTICBRAINZ_SOURCE_ID],
+        listenbrainz_records=records[LISTENBRAINZ_SOURCE_ID],
     )
     return enrichment, records
 
