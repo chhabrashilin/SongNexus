@@ -196,6 +196,23 @@ export function useCompare(
   });
 }
 
+export function useRecordingComparison(
+  a: string | undefined,
+  b: string | undefined,
+) {
+  return useQuery({
+    queryKey: ['recordingComparison', a, b],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/recordings/{recording}:compare', {
+          params: {path: {recording: a!}, query: {other: `recordings/${b!}`}},
+        }),
+      ),
+    enabled: Boolean(a && b),
+    staleTime: 5 * MINUTE,
+  });
+}
+
 export function useLabel(id: string | undefined) {
   return useQuery({
     queryKey: ['label', id],

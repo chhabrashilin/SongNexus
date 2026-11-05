@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     wikidata_sparql_url: str = "https://query.wikidata.org/sparql"
     wikidata_contact: str = ""
     discogs_dumps_url: str = "https://data.discogs.com/"
+    acousticbrainz_base_url: str = "https://acousticbrainz.org/api/v1"
+    listenbrainz_api_url: str = "https://api.listenbrainz.org"
+    listenbrainz_labs_url: str = "https://labs.api.listenbrainz.org"
 
     # Which genre sources the read model uses (ADR 0003, ADR 0005). A commercial
     # build sets ["discogs"] to drop the non-commercial MusicBrainz genres.
@@ -94,6 +97,16 @@ class Settings(BaseSettings):
     def discogs_snapshot_path(self) -> Path:
         """The committed extract of the Discogs masters dump for catalog artists."""
         return self.data_dir / "samples" / "discogs_snapshot.jsonl.gz"
+
+    @property
+    def acousticbrainz_snapshot_path(self) -> Path:
+        """The committed AcousticBrainz descriptors for catalog recordings."""
+        return self.data_dir / "samples" / "acousticbrainz_snapshot.jsonl.gz"
+
+    @property
+    def listenbrainz_snapshot_path(self) -> Path:
+        """The committed ListenBrainz listener counts and co-listening for catalog artists."""
+        return self.data_dir / "samples" / "listenbrainz_snapshot.jsonl.gz"
 
     @property
     def genre_map_path(self) -> Path:

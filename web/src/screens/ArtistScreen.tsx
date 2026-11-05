@@ -8,7 +8,7 @@ import {rememberArtist} from '../app/recent';
 import {usePageTitle} from '../app/Shell';
 import {useBlock} from '../app/useBlock';
 import {CollaborationsPanel} from '../collaborations/CollaborationsPanel';
-import {Avatar} from '../components/ArtistRow';
+import {ArtistRow, Avatar} from '../components/ArtistRow';
 import {hostOf} from '../components/evidence';
 import {Icon} from '../components/Icon';
 import {ErrorState, Spinner} from '../components/States';
@@ -149,6 +149,26 @@ export default function ArtistScreen() {
               </span>
             ))}
           </p>
+        </section>
+      )}
+
+      {a.oftenPlayedWith.length > 0 && (
+        <section className="section">
+          <div className="section__header">
+            <h2>{t('artist.oftenPlayedWith')}</h2>
+            <span className="muted" style={{font: 'var(--body-small)'}}>
+              {t('artist.oftenPlayedWith.basis')}
+            </span>
+          </div>
+          <ul className="list">
+            {a.oftenPlayedWith.map(entry => (
+              <ArtistRow
+                key={entry.artist.name}
+                artist={entry.artist}
+                meta={t('artist.oftenPlayedWith.rank', {rank: entry.rank})}
+              />
+            ))}
+          </ul>
         </section>
       )}
 

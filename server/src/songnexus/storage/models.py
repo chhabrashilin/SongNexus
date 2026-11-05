@@ -265,6 +265,65 @@ class ArtistGenre(ProvenanceMixin, Base):
     votes: Mapped[int] = mapped_column(Integer, default=0)
 
 
+class RecordingDescriptors(ProvenanceMixin, Base):
+    """Audio descriptors of a recording (AcousticBrainz, CC0), for song comparison.
+
+    ``moods`` maps classifier names (``happy``, ``instrumental``, ...) to the
+    probability of that class; see ``catalog.acousticbrainz``.
+    """
+
+    __tablename__ = "recording_descriptors"
+
+    recording_id: Mapped[str] = mapped_column(
+        ForeignKey("recordings.id", ondelete="CASCADE"), primary_key=True
+    )
+    source_id: Mapped[str] = mapped_column(
+        ForeignKey("data_sources.id"), primary_key=True, index=True
+    )
+    source_recording_id: Mapped[str] = mapped_column(String(64))
+    bpm: Mapped[float | None] = mapped_column(Float)
+    key: Mapped[str | None] = mapped_column(String(4))
+    scale: Mapped[str | None] = mapped_column(String(8))
+    key_strength: Mapped[float | None] = mapped_column(Float)
+    length_s: Mapped[float | None] = mapped_column(Float)
+    average_loudness: Mapped[float | None] = mapped_column(Float)
+    dynamic_complexity: Mapped[float | None] = mapped_column(Float)
+    moods: Mapped[dict[str, Any]] = mapped_column(JsonType, default=dict)
+
+
+class ArtistAudience(ProvenanceMixin, Base):
+    """An artist's aggregate audience on a listening service (ListenBrainz)."""
+
+    __tablename__ = "artist_audiences"
+
+    artist_id: Mapped[str] = mapped_column(
+        ForeignKey("artists.id", ondelete="CASCADE"), primary_key=True
+    )
+    source_id: Mapped[str] = mapped_column(
+        ForeignKey("data_sources.id"), primary_key=True, index=True
+    )
+    listeners: Mapped[int] = mapped_column(Integer)
+    listens: Mapped[int] = mapped_column(Integer)
+
+
+class ArtistCoListening(ProvenanceMixin, Base):
+    """``other_artist_id`` is often played with ``artist_id`` (rank 1 = most), per a service."""
+
+    __tablename__ = "artist_colistening"
+
+    artist_id: Mapped[str] = mapped_column(
+        ForeignKey("artists.id", ondelete="CASCADE"), primary_key=True
+    )
+    other_artist_id: Mapped[str] = mapped_column(
+        ForeignKey("artists.id", ondelete="CASCADE"), primary_key=True, index=True
+    )
+    source_id: Mapped[str] = mapped_column(
+        ForeignKey("data_sources.id"), primary_key=True, index=True
+    )
+    score: Mapped[float] = mapped_column(Float)
+    rank: Mapped[int] = mapped_column(Integer)
+
+
 class GenreParent(ProvenanceMixin, Base):
     """``genre_id`` is a kind of ``parent_genre_id`` (e.g. trap is a kind of hip hop)."""
 

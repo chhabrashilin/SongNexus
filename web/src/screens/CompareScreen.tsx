@@ -60,6 +60,9 @@ export default function CompareScreen() {
   return (
     <div className="stack" style={{gap: 'var(--space-5)'}}>
       <h1>{t('compare.title')}</h1>
+      <p className="muted">
+        <Link to="/compare/songs">{t('compare.songsInstead')}</Link>
+      </p>
       <div className="row" style={{alignItems: 'flex-end'}}>
         <Picker label={t('path.from')} id={a} onPick={id => set('a', id)} />
         <Picker label={t('path.to')} id={b} onPick={id => set('b', id)} />
@@ -112,6 +115,49 @@ export default function CompareScreen() {
                   ))}
                 </div>
               </>
+            )}
+          </section>
+
+          <section className="section">
+            <h2>{t('compare.audience')}</h2>
+            {data.listening ? (
+              <>
+                <p>
+                  {t(`compare.audience.${data.listening.strength}`, {
+                    a: data.artistA.displayName,
+                    b: data.artistB.displayName,
+                  })}
+                </p>
+                <ul className="list">
+                  <li>
+                    {t('compare.audience.counts', {
+                      name: data.artistA.displayName,
+                      listeners: data.listening.listenersA,
+                    })}
+                    {data.listening.rankBForA !== null &&
+                      ` · ${t('compare.audience.rank', {
+                        other: data.artistB.displayName,
+                        rank: data.listening.rankBForA,
+                      })}`}
+                  </li>
+                  <li>
+                    {t('compare.audience.counts', {
+                      name: data.artistB.displayName,
+                      listeners: data.listening.listenersB,
+                    })}
+                    {data.listening.rankAForB !== null &&
+                      ` · ${t('compare.audience.rank', {
+                        other: data.artistA.displayName,
+                        rank: data.listening.rankAForB,
+                      })}`}
+                  </li>
+                </ul>
+                <p className="muted" style={{font: 'var(--body-small)'}}>
+                  {t('compare.audience.basis')}
+                </p>
+              </>
+            ) : (
+              <p className="muted">{t('compare.audience.none')}</p>
             )}
           </section>
 

@@ -37,6 +37,9 @@ _FACT_MODELS: tuple[type[m.Base], ...] = (
     m.RecordingCredit,
     m.ArtistRelation,
     m.GenreParent,
+    m.RecordingDescriptors,
+    m.ArtistAudience,
+    m.ArtistCoListening,
 )
 
 

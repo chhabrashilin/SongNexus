@@ -23,6 +23,39 @@ method are in [perf/measurements.md](../perf/measurements.md).
 The two import errors are labeled near misses, the cost of typo tolerance: "The Beetles" → The Beatles and
 "The Weekend" → The Weeknd.
 
+## Song similarity (R2-4, measured 2026-11-05)
+
+`songnexus eval-songs`: the similarity score against an independent signal, genre agreement. Pairs of recordings by
+different artists are labelled same-genre (shared top genre) or different-genre (no genre in common); the AUC is the
+chance a same-genre pair scores above a different-genre pair (0.5 is chance). Descriptors cover 4,106 of 4,786
+recordings (85.8 %).
+
+| Measure | Result |
+|---|---|
+| AUC, all artists (391 same-genre, 764 different-genre pairs) | **0.598** |
+| Held-out half, current weights (fitted on the other half; 2,010 / 2,656 pairs) | **0.601** |
+| Held-out half, the first hand-picked weights | 0.581 |
+| Per part on the development half: mood, energy, tempo, key | 0.554, 0.557, 0.528, 0.505 |
+
+Reproduce the fit with `songnexus eval-songs --fit-weights`. Sound similarity is a modest predictor of genre, which is
+expected: genre is a coarse label and the AcousticBrainz classifiers are noisy. The page calls it "how alike they
+sound", never a recommendation, and shows every part.
+
+## Listener overlap (R2-5, measured 2026-11-05)
+
+`songnexus eval-listening`: does ListenBrainz co-listening agree with a different population? For catalog artists
+present in Last.fm 360K (Celma 2010, research use; read from the archive, never stored), pairs ListenBrainz lists as
+co-listened are compared with random unlisted pairs by the Jaccard overlap of their Last.fm listener sets.
+
+| Measure | Result |
+|---|---|
+| Catalog artists in both | 1,096 |
+| Listed pairs / random pairs | 9,247 / 9,247 |
+| **AUC** | **0.889** |
+| Median Jaccard, listed vs random | 0.0087 vs 0.0 |
+
+Coverage: listener counts for 2,980 of 5,854 artists; co-listening rankings for 637 of the 698 artists with pages.
+
 ## Collaborations recall (R2-3, measured 2026-11-04)
 
 `songnexus eval-collaborations` (gate ≥ 0.95, enforced by `tests/catalog/test_golden.py`): for the first 20 seed

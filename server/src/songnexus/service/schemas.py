@@ -190,6 +190,13 @@ class ArtistLabel(ApiModel):
     last_year: int | None = None
 
 
+class CoListener(ApiModel):
+    """An artist often played with another, by rank (ListenBrainz)."""
+
+    artist: ArtistSummary
+    rank: int
+
+
 class Artist(ArtistSummary):
     """GetArtist."""
 
@@ -203,6 +210,10 @@ class Artist(ArtistSummary):
     connection_count: int = Field(description="Direct connections under the default categories.")
     labels: list[ArtistLabel] = Field(
         default_factory=list, description="Labels the artist's releases in our data came out on."
+    )
+    often_played_with: list[CoListener] = Field(
+        default_factory=list,
+        description="Catalog artists ListenBrainz listeners most often play with this one.",
     )
     sources: list[SourceLink]
     graph_version: str
@@ -312,6 +323,33 @@ class SharedGenre(ApiModel):
     share_b: float
 
 
+class OverlapStrength(enum.StrEnum):
+    """How strongly two audiences overlap (``core.listening``)."""
+
+    STRONG = "STRONG"
+    MODERATE = "MODERATE"
+    WEAK = "WEAK"
+    NONE = "NONE"
+
+
+class ListenerOverlap(ApiModel):
+    """Shared audience, from aggregate ListenBrainz data; never about individual listeners."""
+
+    listeners_a: int
+    listeners_b: int
+    listens_a: int
+    listens_b: int
+    rank_b_for_a: int | None = Field(
+        default=None,
+        description="B's rank among the artists A's listeners most often also play (1 = most).",
+    )
+    rank_a_for_b: int | None = None
+    strength: OverlapStrength = Field(
+        description="From the better rank: STRONG <= 10, MODERATE <= 50, WEAK <= 100, else NONE."
+    )
+    source: SourceLink
+
+
 class CompareArtistsResponse(ApiModel):
     """CompareArtists."""
 
@@ -324,6 +362,10 @@ class CompareArtistsResponse(ApiModel):
     path: list[ArtistSummary]
     counts_a: dict[CollaborationType, int]
     counts_b: dict[CollaborationType, int]
+    listening: ListenerOverlap | None = Field(
+        default=None,
+        description="Null when either artist has fewer than 50 listeners or no data.",
+    )
     graph_version: str
 
 
@@ -351,6 +393,24 @@ class Appearance(ApiModel):
     position: int
 
 
+class AudioDescriptors(ApiModel):
+    """What AcousticBrainz measured for a recording (CC0). Any field may be missing."""
+
+    bpm: float | None = None
+    key: str | None = Field(default=None, description="Tonic, e.g. `C#`.")
+    scale: str | None = Field(default=None, description="`major` or `minor`.")
+    key_strength: float | None = None
+    length_s: float | None = None
+    average_loudness: float | None = Field(default=None, description="In [0, 1].")
+    dynamic_complexity: float | None = Field(default=None, description="In dB.")
+    moods: dict[str, float] = Field(
+        default_factory=dict,
+        description="Probability of each class: danceable, acoustic, aggressive, electronic, "
+        "happy, party, relaxed, sad, instrumental, bright.",
+    )
+    source: SourceLink
+
+
 class Recording(ApiModel):
     """GetRecording."""
 
@@ -360,7 +420,57 @@ class Recording(ApiModel):
     first_release_date: str | None = None
     credits: list[Credit]
     appearances: list[Appearance]
+    descriptors: AudioDescriptors | None = Field(
+        default=None, description="Absent when AcousticBrainz has no data for the recording."
+    )
     sources: list[SourceLink]
+
+
+class RecordingSummary(ApiModel):
+    """A recording as shown in a comparison."""
+
+    name: str
+    display_name: str
+    artists: list[ArtistSummary] = Field(description="Primary artists.")
+    first_release_date: str | None = None
+    length_ms: int | None = None
+
+
+class SimilarityPart(ApiModel):
+    """One named part of the similarity score."""
+
+    name: str = Field(description="`mood`, `tempo`, `key` or `energy`.")
+    similarity: float
+    weight: float = Field(description="Its weight among the parts present; they sum to 1.")
+    contribution: float = Field(description="similarity x weight: what it adds to the score.")
+
+
+class SharedCredit(ApiModel):
+    """A credit role compared across the two songs."""
+
+    role: str
+    both: list[ArtistSummary]
+    only_a: list[ArtistSummary]
+    only_b: list[ArtistSummary]
+
+
+class CompareRecordingsResponse(ApiModel):
+    """CompareRecordings: structure side by side, an explained similarity, shared credits."""
+
+    recording_a: RecordingSummary
+    recording_b: RecordingSummary
+    descriptors_a: AudioDescriptors | None = None
+    descriptors_b: AudioDescriptors | None = None
+    similarity: float | None = Field(
+        default=None, description="Weighted mean of the parts; null when neither song has data."
+    )
+    parts: list[SimilarityPart]
+    shared_credits: list[SharedCredit] = Field(description="Roles with someone in common first.")
+    artist_path: list[ArtistSummary] = Field(
+        description="Fewest-steps path between the songs' first primary artists; empty when "
+        "they are the same artist or not connected in our data."
+    )
+    graph_version: str
 
 
 class SearchResult(ApiModel):

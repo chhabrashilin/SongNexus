@@ -19,7 +19,9 @@ on branch `r2` following [docs/plans/r2-plan.md](docs/plans/r2-plan.md).
 | R2-1 | Commercial-safe genres (Discogs, Wikidata hierarchy), genre filters in Compare and Collaborations, subgenres | Done |
 | R2-2 | Relationship graph: label pages and rosters by era, producer direction, Explore trail, undo and "expand the strongest" | Done (phone frame rate unverified) |
 | R2-3 | Collaborations page: timeline by year, year range, chronological order; recall 1.000 vs raw data | Done |
-| R2-4 – R2-8 | Song comparison, listener overlap, linked accounts, friends, hardening | Planned |
+| R2-4 | Song comparison: AcousticBrainz sound profiles, an explained similarity, shared credits | Done |
+| R2-5 | Listener overlap and "often played with" from ListenBrainz aggregates (Last.fm check AUC 0.889) | Done |
+| R2-6 – R2-8 | Linked accounts, friends, hardening | Planned |
 
 Release 1:
 
@@ -118,7 +120,7 @@ Browser tests: [web/e2e/README.md](web/e2e/README.md).
 ```
 server/   Python 3.12: core library (pure), catalog pipeline, storage, identity, HTTP API     → server/README.md
 web/      React + TypeScript: the reference client                                          → web/README.md
-data/     samples/ MusicBrainz, Wikidata and Discogs snapshots · seeds/ seed artists, pinned decisions, genre table · eval/ labeled sets
+data/     samples/ MusicBrainz, Wikidata, Discogs, AcousticBrainz and ListenBrainz snapshots · seeds/ seed artists, pinned decisions, genre table · eval/ labeled sets
 deploy/   Cloud Run service and jobs (deployment runbook: docs/deploy.md)
 docs/     design/ · adr/ · plans/ · resources.md · engineering-standards.md · qa/ reviews · perf/ measurements
 ```

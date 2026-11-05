@@ -86,6 +86,60 @@ def _cmd_fetch_wikidata(settings: Settings, _args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_fetch_acousticbrainz(settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.catalog.acousticbrainz import AcousticBrainzClient, run_fetch
+
+    batch = _musicbrainz_batch(settings)
+    mbids = [
+        r["source_entity_id"] for r in batch.mappings.values() if r["entity_type"] == "recording"
+    ]
+    client = AcousticBrainzClient(
+        base_url=settings.acousticbrainz_base_url,
+        cache_dir=settings.raw_dir("acousticbrainz"),
+        contact=settings.wikidata_contact,
+    )
+    _print(
+        run_fetch(
+            client,
+            recording_ids=mbids,
+            snapshot_path=settings.acousticbrainz_snapshot_path,
+            cached_only=args.cached_only,
+        )
+    )
+    return EXIT_OK
+
+
+def _cmd_fetch_listenbrainz(settings: Settings, _args: argparse.Namespace) -> int:
+    from songnexus.catalog.listenbrainz import ListenBrainzClient, run_fetch
+
+    batch = _musicbrainz_batch(settings)
+    artists = {
+        r["source_entity_id"]: r["entity_id"]
+        for r in batch.mappings.values()
+        if r["entity_type"] == "artist"
+    }
+    # Co-listening for every artist with a page of its own (seeds and profiles).
+    detailed = [
+        mbid
+        for mbid, artist_id in artists.items()
+        if batch.artists[artist_id]["detail_level"] != "stub"
+    ]
+    cache = settings.raw_dir("listenbrainz")
+    clients = [
+        ListenBrainzClient(base_url=url, cache_dir=cache, contact=settings.wikidata_contact)
+        for url in (settings.listenbrainz_api_url, settings.listenbrainz_labs_url)
+    ]
+    _print(
+        run_fetch(
+            *clients,
+            artist_ids=artists,
+            similar_for=detailed,
+            snapshot_path=settings.listenbrainz_snapshot_path,
+        )
+    )
+    return EXIT_OK
+
+
 def _cmd_fetch_discogs(settings: Settings, args: argparse.Namespace) -> int:
     from songnexus.catalog.discogs.dump import fetch_masters_dump, run_extract
     from songnexus.catalog.enrich import discogs_links
@@ -119,14 +173,25 @@ def _enrichment_inputs(settings: Settings, args: argparse.Namespace) -> Any:
     # A custom snapshot (tests, experiments) is ingested on its own.
     if args.no_enrichment or args.snapshot is not None:
         return None
-    paths = (settings.wikidata_snapshot_path, settings.discogs_snapshot_path)
+    paths = (
+        settings.wikidata_snapshot_path,
+        settings.discogs_snapshot_path,
+        settings.acousticbrainz_snapshot_path,
+        settings.listenbrainz_snapshot_path,
+    )
     missing = [p.name for p in paths if not p.exists()]
     if missing:
         raise SystemExit(
             f"missing enrichment snapshot(s): {', '.join(missing)}; "
-            "run fetch-wikidata and fetch-discogs, or pass --no-enrichment"
+            "run the fetch-* commands for them, or pass --no-enrichment"
         )
-    return EnrichmentInputs(*paths, settings.genre_map_path)
+    return EnrichmentInputs(
+        settings.wikidata_snapshot_path,
+        settings.discogs_snapshot_path,
+        settings.genre_map_path,
+        settings.acousticbrainz_snapshot_path,
+        settings.listenbrainz_snapshot_path,
+    )
 
 
 def _cmd_ingest(settings: Settings, args: argparse.Namespace) -> int:
@@ -205,6 +270,56 @@ def _cmd_eval_import(settings: Settings, args: argparse.Namespace) -> int:
     passed = report.precision >= MIN_IMPORT_PRECISION
     _print({"gatePassed": passed, "minPrecision": MIN_IMPORT_PRECISION, **asdict(report)})
     return EXIT_OK if passed else EXIT_FAILED
+
+
+def _cmd_eval_songs(settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.core.songs import Descriptors, genre_separation, weight_study
+    from songnexus.service.readmodel import load_read_model
+    from songnexus.storage import catalog_repository as repo
+    from songnexus.storage.db import make_engine, session_scope
+
+    engine = make_engine(settings.database_url)
+    graph = load_read_model(engine, settings.genre_sources).graph
+    with session_scope(engine) as session:
+        rows = repo.descriptors_by_primary_artist(session)
+    recordings = {}
+    for recording_id, artist_id, fields in rows:
+        node = graph.nodes.get(artist_id)
+        if node is not None and node.genres:
+            recordings[recording_id] = (
+                Descriptors.from_fields(fields),
+                artist_id,
+                frozenset(g.genre_id for g in node.genres),
+                node.genres[0].genre_id,
+            )
+    if args.fit_weights:
+        _print(asdict(weight_study(recordings)))
+        return EXIT_OK
+    report = genre_separation(recordings)
+    # No gate yet: this is the first measurement (plan R2-4); it is recorded in
+    # docs/handoff/evaluations.md and a floor is set from it, never before it.
+    _print({**asdict(report), "recordingsWithDescriptors": len(rows)})
+    return EXIT_OK
+
+
+def _cmd_eval_listening(settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.catalog.listening_eval import lastfm_rows, listener_sets, listening_agreement
+    from songnexus.catalog.snapshot import read_snapshot
+
+    archive: Path = args.lastfm or settings.raw_dir("lastfm") / "lastfm-dataset-360K.tar.gz"
+    colistened = {
+        r.body["artist"]: [row["artist"] for row in r.body.get("similar", [])]
+        for r in read_snapshot(settings.listenbrainz_snapshot_path)
+    }
+    catalog = {
+        r["source_entity_id"]
+        for r in _musicbrainz_batch(settings).mappings.values()
+        if r["entity_type"] == "artist"
+    }
+    report = listening_agreement(colistened, listener_sets(lastfm_rows(archive), catalog))
+    # Research data (registry tier EVALUATION): only this aggregate is reported.
+    _print(asdict(report))
+    return EXIT_OK
 
 
 def _cmd_eval_genres(settings: Settings, _args: argparse.Namespace) -> int:
@@ -360,11 +475,6 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--reload", action="store_true", help="restart on code changes")
     serve.set_defaults(handler=_cmd_serve)
 
-    wikidata = commands.add_parser(
-        "fetch-wikidata", help="fetch Discogs artist links and the genre hierarchy from Wikidata"
-    )
-    wikidata.set_defaults(handler=_cmd_fetch_wikidata)
-
     discogs = commands.add_parser(
         "fetch-discogs", help="extract catalog artists' masters from a Discogs dump (~600 MB)"
     )
@@ -372,7 +482,7 @@ def build_parser() -> argparse.ArgumentParser:
     discogs.set_defaults(handler=_cmd_fetch_discogs)
 
     ingest = commands.add_parser(
-        "ingest", help="ingest the committed snapshots (MusicBrainz, Wikidata, Discogs)"
+        "ingest", help="ingest the committed snapshots (MusicBrainz and its enrichment sources)"
     )
     ingest.add_argument(
         "--snapshot", type=Path, help="ingest this MusicBrainz snapshot alone, without enrichment"
@@ -380,12 +490,9 @@ def build_parser() -> argparse.ArgumentParser:
     ingest.add_argument(
         "--no-enrichment",
         action="store_true",
-        help="ingest MusicBrainz only (no Discogs, Wikidata)",
+        help="ingest MusicBrainz only, without the enrichment snapshots",
     )
     ingest.set_defaults(handler=_cmd_ingest)
-
-    quality = commands.add_parser("quality", help="run data-quality checks (the gate)")
-    quality.set_defaults(handler=_cmd_quality)
 
     eval_search = commands.add_parser(
         "eval-search", help=f"evaluate search on the labeled set (gate: MRR >= {MIN_SEARCH_MRR})"
@@ -400,19 +507,57 @@ def build_parser() -> argparse.ArgumentParser:
     eval_import.add_argument("--cases", type=Path)
     eval_import.set_defaults(handler=_cmd_eval_import)
 
-    eval_collaborations = commands.add_parser(
-        "eval-collaborations",
-        help=f"collaborations recall vs raw MusicBrainz data (gate >= {MIN_COLLABORATION_RECALL})",
-    )
-    eval_collaborations.set_defaults(handler=_cmd_eval_collaborations)
+    # Commands without options.
+    for name, help_text, handler in (
+        (
+            "fetch-wikidata",
+            "fetch Discogs artist links and the genre hierarchy from Wikidata",
+            _cmd_fetch_wikidata,
+        ),
+        (
+            "fetch-listenbrainz",
+            "fetch listener counts and co-listening for catalog artists",
+            _cmd_fetch_listenbrainz,
+        ),
+        ("quality", "run data-quality checks (the gate)", _cmd_quality),
+        (
+            "eval-collaborations",
+            f"collaborations recall vs raw MusicBrainz data (gate >= {MIN_COLLABORATION_RECALL})",
+            _cmd_eval_collaborations,
+        ),
+        (
+            "eval-genres",
+            "measure genre coverage and MusicBrainz-Discogs agreement",
+            _cmd_eval_genres,
+        ),
+        ("purge", "remove expired sessions and deleted accounts", _cmd_purge),
+    ):
+        commands.add_parser(name, help=help_text).set_defaults(handler=handler)
 
-    eval_genres = commands.add_parser(
-        "eval-genres", help="measure genre coverage and MusicBrainz-Discogs agreement"
+    acousticbrainz = commands.add_parser(
+        "fetch-acousticbrainz", help="fetch audio descriptors for catalog recordings"
     )
-    eval_genres.set_defaults(handler=_cmd_eval_genres)
+    acousticbrainz.add_argument(
+        "--cached-only", action="store_true", help="build the snapshot from the local cache only"
+    )
+    acousticbrainz.set_defaults(handler=_cmd_fetch_acousticbrainz)
 
-    purge = commands.add_parser("purge", help="remove expired sessions and deleted accounts")
-    purge.set_defaults(handler=_cmd_purge)
+    eval_songs = commands.add_parser(
+        "eval-songs", help="song similarity vs genre agreement (AUC; 0.5 is chance)"
+    )
+    eval_songs.add_argument(
+        "--fit-weights",
+        action="store_true",
+        help="refit the similarity weights on half the artists, measure on the other half",
+    )
+    eval_songs.set_defaults(handler=_cmd_eval_songs)
+
+    eval_listening = commands.add_parser(
+        "eval-listening",
+        help="ListenBrainz co-listening vs Last.fm 360K listener overlap (AUC; offline)",
+    )
+    eval_listening.add_argument("--lastfm", type=Path, help="the 360K archive (default: data/raw)")
+    eval_listening.set_defaults(handler=_cmd_eval_listening)
 
     openapi = commands.add_parser("openapi", help="write the API contract (server/openapi.json)")
     openapi.add_argument("--check", action="store_true", help="fail if the file is out of date")

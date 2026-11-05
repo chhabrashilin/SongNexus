@@ -13,6 +13,7 @@ from songnexus.core.graph.compare import compare
 from songnexus.core.graph.explain import explain_path
 from songnexus.core.graph.filters import NodeFilter
 from songnexus.core.graph.model import ArtistGraph
+from songnexus.core.listening import Audience, overlap
 from songnexus.service import convert
 from songnexus.service import schemas as api
 from songnexus.service.deps import (
@@ -141,6 +142,7 @@ def compare_artists(
     response: Response,
     other: Annotated[str, Query(description="Resource name of the artist to compare with.")],
     genre_filter: GenreSelectionDep,
+    session: SessionDep,
     categories: Categories = [],  # noqa: B006
 ) -> api.CompareArtistsResponse:
     """Compares two artists: shared genres, mutual collaborators and the path between.
@@ -153,6 +155,17 @@ def compare_artists(
     kinds = kinds_from(categories)
     flt = selection_filter(who, genre_filter, graph)
     result = compare(graph, a, b, kinds, node_filter=flt, max_depth=MAX_PATH_STEPS)
+    listening = repo.listening(session, [a, b])
+    audiences = {
+        artist_id: Audience(listeners, listens)
+        for artist_id, (listeners, listens) in listening.audiences.items()
+    }
+    shared = overlap(
+        audiences.get(a),
+        audiences.get(b),
+        listening.ranks.get((a, b)),
+        listening.ranks.get((b, a)),
+    )
     set_cache_control(response, who)
     return api.CompareArtistsResponse(
         artist_a=convert.artist_summary(graph, a),
@@ -174,5 +187,21 @@ def compare_artists(
         path=[convert.artist_summary(graph, n) for n in result.path.path or ()],
         counts_a={api.CollaborationType(t.value): n for t, n in result.counts_a.items()},
         counts_b={api.CollaborationType(t.value): n for t, n in result.counts_b.items()},
+        listening=None
+        if shared is None
+        else api.ListenerOverlap(
+            listeners_a=shared.audience_a.listeners,
+            listeners_b=shared.audience_b.listeners,
+            listens_a=shared.audience_a.listens,
+            listens_b=shared.audience_b.listens,
+            rank_b_for_a=shared.rank_b_for_a,
+            rank_a_for_b=shared.rank_a_for_b,
+            strength=api.OverlapStrength(shared.strength.value),
+            source=api.SourceLink(
+                source="dataSources/listenbrainz",
+                source_id="",
+                url="https://listenbrainz.org/",
+            ),
+        ),
         graph_version=model.version,
     )

@@ -27,6 +27,7 @@ const SixDegreesScreen = lazy(() => import('../screens/SixDegreesScreen'));
 const CompareScreen = lazy(() => import('../screens/CompareScreen'));
 const SongScreen = lazy(() => import('../screens/SongScreen'));
 const LabelScreen = lazy(() => import('../screens/LabelScreen'));
+const SongCompareScreen = lazy(() => import('../screens/SongCompareScreen'));
 const CollaborationsScreen = lazy(
   () => import('../screens/CollaborationsScreen'),
 );
@@ -106,6 +107,14 @@ export const routes: RouteObject[] = [
         element: (
           <Lazy>
             <CollaborationsScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'compare/songs',
+        element: (
+          <Lazy>
+            <SongCompareScreen />
           </Lazy>
         ),
       },

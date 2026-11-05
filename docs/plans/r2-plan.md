@@ -107,11 +107,24 @@ screen, unit + browser tests with axe scans, a flag (kill switch), docs, and a m
   documented weighted distance over named descriptors, each shown with its contribution (no opaque model).
 - Eval: similarity vs. an independent signal (ListenBrainz co-listening, Kaggle features in research tier) on a fixed
   pair set; report rank correlation. No launch gate on a number we have not measured yet.
+- **Done 2026-11-05.** As built: descriptors for 4,106 of 4,786 recordings (85.8 %) from the AcousticBrainz API
+  (time signature is not in AcousticBrainz, so it is not shown); a "Sound" section on song pages; `/compare/songs`
+  with the similarity broken into named parts, a side-by-side table, shared credits by role and the artist path.
+  Recording-to-recording sample and cover links are not in our catalog, so they are not shown. The independent signal
+  used is genre agreement (Kaggle needs an account; ListenBrainz has no per-recording similarity we could use):
+  AUC 0.598; the weights were fitted on half the artists and score 0.601 on the other half, against 0.581 for the
+  first hand-picked weights ([evaluations](../handoff/evaluations.md)).
 
 ### R2-5 Listener overlap (S2)
 - From ListenBrainz public data (CC0): for artists A and B, the share of A's listeners who also listen to B, plus
   Jaccard. Shown only when both have ≥ 50 listeners (k-anonymity threshold), always with its sample size.
 - Production note in the integration guide: YouTube Music substitutes first-party aggregates with the same threshold.
+- **Done 2026-11-05.** As built: per-user listener sets are not public, so overlap is measured from public aggregates
+  only: listener counts (2,980 artists) and ListenBrainz's session-based "similar artists" ranking (637 of 698
+  detailed artists; 22,203 catalog pairs). Compare shows both counts, both ranks and a strength (STRONG ≤ 10,
+  MODERATE ≤ 50, WEAK ≤ 100); artist pages list "Often played with". Below 50 listeners nothing is shown. Checked
+  offline against Last.fm 360K (research data, never stored): listed pairs overlap far more than random pairs there,
+  **AUC 0.889** over 9,247 pairs.
 
 ### R2-6 Linked accounts and sync (S7)
 - Connector interface (`fetch_since(cursor) -> listens, next_cursor`) for every provider in decision 1; YouTube
