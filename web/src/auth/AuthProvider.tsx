@@ -207,9 +207,13 @@ export function AuthProvider({children}: {children: ReactNode}) {
     setPendingToken(null);
   }, [createSession, createLocalSession, pendingToken]);
 
+  // The age dialog also calls this when it closes after a successful confirm;
+  // only a pending confirmation is cancelled, never a session that just started.
   const cancelSignIn = useCallback(() => {
     setPendingToken(null);
-    setStatus('signedOut');
+    setStatus(current =>
+      current === 'needsAgeConfirmation' ? 'signedOut' : current,
+    );
   }, []);
 
   const signOut = useCallback(async () => {

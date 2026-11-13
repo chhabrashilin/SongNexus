@@ -30,6 +30,8 @@ const PATHS = {
   check: 'M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
   add: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
   chevron: 'M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z',
+  chevronStart: 'M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z',
+  flag: 'M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6z',
   tune: 'M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z',
   compare:
     'M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z',
@@ -54,7 +56,11 @@ const PATHS = {
 export type IconName = keyof typeof PATHS;
 
 /** Icons whose meaning depends on reading direction. */
-const MIRRORED: ReadonlySet<IconName> = new Set(['back', 'chevron']);
+const MIRRORED: ReadonlySet<IconName> = new Set([
+  'back',
+  'chevron',
+  'chevronStart',
+]);
 
 export function Icon({
   name,

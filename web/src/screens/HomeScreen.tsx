@@ -4,9 +4,12 @@ import {Link, useNavigate} from 'react-router';
 import {useConfigFlags} from '../app/flags';
 import {usePageTitle} from '../app/Shell';
 import {useRecentArtists} from '../app/recent';
-import {ArtistRow} from '../components/ArtistRow';
+import {useListening} from '../api/queries';
+import {useAuth} from '../auth/AuthProvider';
+import {artistPath} from '../components/ArtistRow';
 import {Icon, type IconName} from '../components/Icon';
 import {SearchBox, resultPath} from '../components/SearchBox';
+import {CoverCard, Shelf} from '../components/Shelf';
 import {useI18n} from '../i18n/i18n';
 import type {MessageId} from '../i18n/messages';
 
@@ -55,6 +58,43 @@ const SURFACES: {
   },
 ];
 
+/** "Good morning" and friends, from the listener's own clock. */
+function greeting(hour: number): MessageId {
+  if (hour < 5) return 'home.greeting.night';
+  if (hour < 12) return 'home.greeting.morning';
+  if (hour < 18) return 'home.greeting.afternoon';
+  return 'home.greeting.evening';
+}
+
+function TopArtists() {
+  const {t} = useI18n();
+  const auth = useAuth();
+  const listening = useListening(auth.status === 'signedIn', 20);
+  const artists = listening.data?.artists ?? [];
+  if (artists.length === 0) return null;
+  return (
+    <Shelf
+      eyebrow={t('home.shelf.top.eyebrow')}
+      title={t('home.shelf.top.title')}
+      action={
+        <Link className="btn btn--outlined btn--compact" to="/library">
+          {t('action.showMore')}
+        </Link>
+      }
+    >
+      {artists.map(row => (
+        <CoverCard
+          key={row.artist.name}
+          to={artistPath(row.artist)}
+          title={row.artist.displayName}
+          subtitle={t('library.listening.plays', {count: row.plays})}
+          round
+        />
+      ))}
+    </Shelf>
+  );
+}
+
 export function HomeScreen() {
   const {t} = useI18n();
   const navigate = useNavigate();
@@ -63,26 +103,29 @@ export function HomeScreen() {
   usePageTitle(undefined);
 
   return (
-    <div className="stack" style={{gap: 'var(--space-6)'}}>
-      <section
-        className="stack"
-        style={{paddingBlock: 'var(--space-5)', maxInlineSize: 720}}
-      >
-        <h1 style={{font: 'var(--display-small)'}}>{t('home.hub.title')}</h1>
-        <p className="muted" style={{font: 'var(--body-large)'}}>
-          {t('home.hub.lead')}
-        </p>
-        <SearchBox
-          label={t('search.label')}
-          onPick={result => void navigate(resultPath(result))}
-        />
+    <div className="stack home">
+      <section className="hero">
+        <p className="hero__eyebrow">{t(greeting(new Date().getHours()))}</p>
+        <h1 className="hero__title">{t('home.hub.title')}</h1>
+        <p className="hero__lead">{t('home.hub.lead')}</p>
+        <div className="hero__search">
+          <SearchBox
+            label={t('search.label')}
+            onPick={result => void navigate(resultPath(result))}
+          />
+        </div>
       </section>
 
       <section className="section" aria-label={t('nav.primary')}>
         <div className="hub-grid">
           {SURFACES.filter(s => !s.flag || flags[s.flag] !== false).map(
-            surface => (
-              <Link key={surface.to} to={surface.to} className="hub-card">
+            (surface, index) => (
+              <Link
+                key={surface.to}
+                to={surface.to}
+                className="hub-card"
+                data-tone={index % 6}
+              >
                 <span className="hub-card__icon">
                   <Icon name={surface.icon} />
                 </span>
@@ -94,15 +137,23 @@ export function HomeScreen() {
         </div>
       </section>
 
+      <TopArtists />
+
       {recent.length > 0 && (
-        <section className="section">
-          <h2>{t('home.recent')}</h2>
-          <ul className="list">
-            {recent.map(artist => (
-              <ArtistRow key={artist.name} artist={artist} />
-            ))}
-          </ul>
-        </section>
+        <Shelf
+          eyebrow={t('home.shelf.recent.eyebrow')}
+          title={t('home.recent')}
+        >
+          {recent.map(artist => (
+            <CoverCard
+              key={artist.name}
+              to={artistPath(artist)}
+              title={artist.displayName}
+              subtitle={artist.disambiguation || undefined}
+              round
+            />
+          ))}
+        </Shelf>
       )}
     </div>
   );

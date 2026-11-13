@@ -23,6 +23,22 @@ export const messages = {
   'nav.reels': 'Reels',
   'nav.yourMusic': 'Your music',
   'nav.primary': 'Main',
+  'nav.friends': 'Friends',
+  'nav.yours': 'Yours',
+  'shell.account': 'Your account',
+  'shell.signIn': 'Sign in',
+  'shell.promo.title': 'Bring your listening',
+  'shell.promo.body':
+    'Connect YouTube Music, Spotify, Last.fm and more to see your artists here.',
+  'shelf.previous': 'Previous',
+  'shelf.next': 'Next',
+  'home.greeting.night': 'Up late',
+  'home.greeting.morning': 'Good morning',
+  'home.greeting.afternoon': 'Good afternoon',
+  'home.greeting.evening': 'Good evening',
+  'home.shelf.top.eyebrow': 'From your connected services',
+  'home.shelf.top.title': 'Your top artists',
+  'home.shelf.recent.eyebrow': 'Pick up where you left off',
 
   // Generic states
   'state.loading': 'Loading…',
@@ -330,6 +346,7 @@ export const messages = {
 
   // Account
   'auth.signIn': 'Sign in with Google',
+  'auth.signIn.local': 'Sign in (development)',
   'auth.signOut': 'Sign out',
   'auth.signOutEverywhere': 'Sign out on all devices',
   'auth.signingIn': 'Signing in…',
