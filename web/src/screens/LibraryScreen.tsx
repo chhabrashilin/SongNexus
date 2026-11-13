@@ -9,6 +9,7 @@ import {Link} from 'react-router';
 import {idOf, type ArtistSummary} from '../api/client';
 import {
   useAnalyzePlaylist,
+  useListening,
   useProfile,
   useUpdateProfile,
   type PlaylistAnalysis,
@@ -370,6 +371,40 @@ function YourArtists({listening}: {listening: ArtistListening[]}) {
   );
 }
 
+/** Artists from linked accounts (R2-6): synced on the server, aggregates only. */
+function ConnectedListening() {
+  const {t} = useI18n();
+  const auth = useAuth();
+  const listening = useListening(auth.status === 'signedIn', 20);
+  if (auth.status !== 'signedIn') return null;
+  const artists = listening.data?.artists ?? [];
+  return (
+    <section className="section">
+      <h2>{t('library.listening.title')}</h2>
+      {listening.isPending && <SkeletonRows count={3} />}
+      {listening.isSuccess && artists.length === 0 && (
+        <div className="card row" style={{justifyContent: 'space-between'}}>
+          <p className="muted" style={{flex: '1 1 240px'}}>
+            {t('library.listening.empty')}
+          </p>
+          <Link className="btn btn--tonal" to="/you">
+            {t('library.listening.connect')}
+          </Link>
+        </div>
+      )}
+      <ol className="list">
+        {artists.map(row => (
+          <ArtistRow
+            key={row.artist.name}
+            artist={row.artist}
+            meta={t('library.listening.plays', {count: row.plays})}
+          />
+        ))}
+      </ol>
+    </section>
+  );
+}
+
 export default function LibraryScreen() {
   const {t} = useI18n();
   const {state, start, cancel} = useImport();
@@ -406,6 +441,7 @@ export default function LibraryScreen() {
         <h1>{t('library.title')}</h1>
         <p className="muted">{t('library.lead')}</p>
       </header>
+      <ConnectedListening />
       <PrivacyCard />
 
       {state.status === 'running' ? (

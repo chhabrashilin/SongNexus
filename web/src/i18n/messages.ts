@@ -16,6 +16,12 @@ export const messages = {
   'nav.play': 'Play',
   'nav.library': 'Library',
   'nav.you': 'You',
+  'nav.discover': 'Discover',
+  'nav.guide': 'Ask',
+  'nav.games': 'Games',
+  'nav.aroundYou': 'Around you',
+  'nav.reels': 'Reels',
+  'nav.yourMusic': 'Your music',
   'nav.primary': 'Main',
 
   // Generic states
@@ -62,6 +68,114 @@ export const messages = {
   'home.import.title': 'Map your playlist',
   'home.import.body': 'See the hidden links between the artists you listen to.',
   'home.recent': 'Recently viewed',
+  'home.hub.title': 'Your music universe',
+  'home.hub.lead': 'Find the people, stories, and sounds behind every song.',
+  'home.hub.discover.title': 'Discover',
+  'home.hub.discover.body':
+    'Trace credits, connections, collaborations, and sound.',
+  'home.hub.guide.title': 'Ask SongNexus',
+  'home.hub.guide.body':
+    'Get a guided path through the music you are curious about.',
+  'home.hub.games.title': 'Games',
+  'home.hub.games.body': 'Play daily puzzles and test your music knowledge.',
+  'home.hub.around.title': 'Around you',
+  'home.hub.around.body':
+    'See what your city, school, or campus is discovering.',
+  'home.hub.reels.title': 'Reels',
+  'home.hub.reels.body':
+    'Scroll through quick connections, credits, and discoveries.',
+  'home.hub.music.title': 'Your music',
+  'home.hub.music.body':
+    'Map your library, save trails, and tune your experience.',
+
+  // Product surfaces
+  'discover.title': 'Discover',
+  'discover.lead':
+    'Move from a song to the people, places, and sounds around it.',
+  'discover.explore.title': 'Explore connections',
+  'discover.explore.body':
+    'Open a living map of artists and the credits between them.',
+  'discover.compare.title': 'Compare artists',
+  'discover.compare.body':
+    'See shared genres, audiences, collaborators, and paths.',
+  'discover.songs.title': 'Compare two songs',
+  'discover.songs.body': 'Put sound profiles and shared credits side by side.',
+  'discover.games.title': 'Find a path',
+  'discover.games.body':
+    'Connect any two artists through the shortest or strongest route.',
+  'discover.search.title': 'Search the catalog',
+  'discover.search.body': 'Start with an artist, album, label, or song.',
+  'guide.title': 'Ask SongNexus',
+  'guide.lead':
+    'A guided music companion for questions, connections, and next listens.',
+  'guide.inputLabel': 'Ask about music',
+  'guide.inputPlaceholder': 'Try “How are these artists connected?”',
+  'guide.ask': 'Ask',
+  'guide.suggestions': 'Try one of these',
+  'guide.suggestion.path': 'Show me a path between two artists',
+  'guide.suggestion.songs': 'Compare two songs I choose',
+  'guide.suggestion.discover': 'Help me discover a new connection',
+  'guide.reply.path':
+    'Let’s open the path builder so you can choose both artists.',
+  'guide.reply.songs':
+    'Let’s put two songs side by side and look at sound and credits.',
+  'guide.reply.discover':
+    'Let’s start with the connection web and follow the strongest link.',
+  'guide.reply.default':
+    'I can guide you through the catalog. Start with a song, artist, or connection.',
+  'games.title': 'Games',
+  'games.lead': 'Turn music knowledge into a daily habit.',
+  'games.daily.title': 'Daily puzzle',
+  'games.daily.body': 'Link two artists one collaboration at a time.',
+  'games.path.title': 'Six degrees',
+  'games.path.body': 'Pick any two artists and find how they connect.',
+  'games.trivia.title': 'Credit trivia',
+  'games.trivia.body': 'A future game about the people behind the recording.',
+  'games.comingSoon': 'Coming soon',
+  'around.title': 'Around you',
+  'around.lead': 'Discover listening patterns at a broad, privacy-safe level.',
+  'around.location.label': 'Choose a place',
+  'around.location.state': 'State',
+  'around.location.city': 'City',
+  'around.location.country': 'Country',
+  'around.location.placeholder': 'Enter a state, city, or country',
+  'around.community.label': 'Choose a community',
+  'around.community.university': 'University',
+  'around.community.school': 'School',
+  'around.community.workplace': 'Workplace',
+  'around.community.placeholder': 'Enter a university, school, or workplace',
+  'around.apply': 'Show listening',
+  'around.selection': 'Your selected view',
+  'around.city.title': 'What this place is discovering',
+  'around.school.title': 'What this community is discovering',
+  'around.empty':
+    'Location-based listening will appear here once an aggregate source is connected.',
+  'around.privacy.title': 'Built for groups, not individuals',
+  'around.privacy.body':
+    'We will only show anonymous, aggregated patterns with minimum group sizes. No one’s listening history will be exposed.',
+  'reels.title': 'Reels',
+  'reels.lead': 'Short ways into the people and ideas behind the music.',
+  'reels.save': 'Save',
+  'reels.saved': 'Saved',
+  'reels.open': 'Open discovery',
+  'reels.card.credits.title': 'A song is a small network',
+  'reels.card.credits.body':
+    'Follow the credits and you may find the next artist before the algorithm does.',
+  'reels.card.path.title': 'Take the long way around',
+  'reels.card.path.body':
+    'Two artists can be only a few credited collaborations apart.',
+  'reels.card.sound.title': 'Listen with your eyes',
+  'reels.card.sound.body':
+    'Compare tempo, key, mood, and the people who shaped each recording.',
+  'yourMusic.title': 'Your music',
+  'yourMusic.lead':
+    'Bring your listening world into SongNexus and make it yours.',
+  'yourMusic.library.title': 'Map your library',
+  'yourMusic.library.body':
+    'Import playlists or history locally and uncover hidden links.',
+  'yourMusic.profile.title': 'Your profile',
+  'yourMusic.profile.body':
+    'Manage your Top 5, hidden artists, theme, and account data.',
 
   // Artist page
   'artist.connections':
@@ -504,6 +618,61 @@ export const messages = {
   'about.resources.license': 'License: {license}',
   'about.resources.feeds': 'Used for: {feeds}',
   'privacy.title': 'Privacy',
+  // Connected services (R2-6)
+  'accounts.title': 'Connected services',
+  'accounts.lead':
+    'Link a service and your listening flows in automatically, every {minutes} minutes or when you tap sync. We keep only how often you play each artist: no song titles, no play times.',
+  'accounts.count': '{count} connected',
+  'accounts.off': 'Connected services are switched off right now.',
+  'accounts.provider.YOUTUBE_MUSIC': 'YouTube Music',
+  'accounts.provider.SPOTIFY': 'Spotify',
+  'accounts.provider.APPLE_MUSIC': 'Apple Music',
+  'accounts.provider.LASTFM': 'Last.fm',
+  'accounts.provider.LISTENBRAINZ': 'ListenBrainz',
+  'accounts.provider.DEEZER': 'Deezer',
+  'accounts.provider.LIBREFM': 'Libre.fm',
+  'accounts.blurb.YOUTUBE_MUSIC': 'Songs you like, through your Google account',
+  'accounts.blurb.SPOTIFY': 'Your recently played tracks',
+  'accounts.blurb.APPLE_MUSIC': 'Your recently played tracks',
+  'accounts.blurb.LASTFM':
+    'Your full scrobble history (Tidal can scrobble here too)',
+  'accounts.blurb.LISTENBRAINZ': 'Your full listen history, with a user token',
+  'accounts.blurb.DEEZER': 'Your listening history',
+  'accounts.blurb.LIBREFM': 'Your full scrobble history',
+  'accounts.notOffered': 'Not set up on this server yet',
+  'accounts.fileOnly': 'Import your Google Takeout history file',
+  'accounts.firstSync': 'Connected · first sync on its way',
+  'accounts.syncedAgo':
+    '{minutes, plural, =0 {Synced just now} one {Synced # minute ago} other {Synced # minutes ago}}',
+  'accounts.needsRelink': 'Access expired. Reconnect to keep syncing.',
+  'accounts.connect': 'Connect',
+  'accounts.relink': 'Reconnect',
+  'accounts.import': 'Import',
+  'accounts.syncNow': 'Sync {name} now',
+  'accounts.synced':
+    'Synced {plays, plural, one {# play} other {# plays}} from {artists, plural, one {# artist} other {# artists}}',
+  'accounts.syncFailed': '{name} didn’t answer. We’ll try again soon.',
+  'accounts.syncTooSoon': 'Synced a moment ago. Try again in a minute.',
+  'accounts.startFailed': 'Couldn’t start connecting {name}. Try again.',
+  'accounts.linked': '{name} connected',
+  'accounts.declined': 'Nothing was connected.',
+  'accounts.linkFailed': 'That didn’t connect. Try again.',
+  'accounts.disconnect': 'Disconnect {name}',
+  'accounts.disconnect.title': 'Disconnect {name}?',
+  'accounts.disconnect.body':
+    'We’ll delete our access to {name} and every play count that came from it.',
+  'accounts.disconnect.confirm': 'Disconnect',
+  'accounts.disconnected': '{name} disconnected',
+  'accounts.token.title': 'Connect {name}',
+  'accounts.token.body':
+    'Paste your user token from listenbrainz.org → Settings. It is encrypted and only used to read your listens.',
+  'accounts.token.label': 'User token',
+  'accounts.token.refused': '{name} didn’t accept that token.',
+  'library.listening.title': 'From your connected services',
+  'library.listening.plays': '{count, plural, one {# play} other {# plays}}',
+  'library.listening.empty':
+    'Connect a service on the You page and your most-played artists appear here.',
+  'library.listening.connect': 'Connect a service',
   'footer.about': 'About our data',
   'footer.privacy': 'Privacy',
 } as const;

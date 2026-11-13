@@ -42,10 +42,12 @@ describe('App', () => {
     expect(
       await screen.findByRole('heading', {
         level: 1,
-        name: 'Discover who made the music you love',
+        name: 'Your music universe',
       }),
     ).toBeDefined();
     expect(screen.getByRole('navigation', {name: 'Main'})).toBeDefined();
+    expect(screen.getByRole('link', {name: /Ask SongNexus/})).toBeDefined();
+    expect(screen.getAllByRole('link', {name: /Around you/})).toHaveLength(2);
     expect(
       screen.getByRole('combobox', {name: 'Search artists and songs'}),
     ).toBeDefined();

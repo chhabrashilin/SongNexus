@@ -20,21 +20,20 @@ interface NavEntry {
 
 const NAV: NavEntry[] = [
   {to: '/', label: 'nav.home', icon: 'home'},
-  {to: '/explore', label: 'nav.explore', icon: 'explore', flag: 'explore'},
+  {to: '/discover', label: 'nav.discover', icon: 'explore', flag: 'explore'},
   {
-    to: '/six-degrees',
-    label: 'nav.sixDegrees',
-    icon: 'route',
-    flag: 'sixDegrees',
+    to: '/guide',
+    label: 'nav.guide',
+    icon: 'spark',
   },
-  {to: '/play', label: 'nav.play', icon: 'play', flag: 'play'},
+  {to: '/games', label: 'nav.games', icon: 'play', flag: 'play'},
   {
-    to: '/library',
-    label: 'nav.library',
-    icon: 'library',
-    flag: 'playlistImport',
+    to: '/around-you',
+    label: 'nav.aroundYou',
+    icon: 'place',
   },
-  {to: '/you', label: 'nav.you', icon: 'person'},
+  {to: '/reels', label: 'nav.reels', icon: 'movie'},
+  {to: '/your-music', label: 'nav.yourMusic', icon: 'library'},
 ];
 
 /** Sets the document title ("Kendrick Lamar · SongNexus"). */

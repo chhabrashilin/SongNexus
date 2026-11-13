@@ -36,6 +36,29 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
+/** Marks a pending age confirmation for local (development) sign-in. */
+const LOCAL = 'local-session';
+
+/**
+ * Which local listener to sign in as (development only). `?listener=name` picks
+ * one and is remembered, so two browser profiles can be two friends.
+ */
+export function localListener(): string {
+  const valid = /^[a-z0-9-]{1,32}$/;
+  try {
+    const asked = new URLSearchParams(location.search).get('listener');
+    if (asked && valid.test(asked)) {
+      localStorage.setItem('songnexus.listener', asked);
+      return asked;
+    }
+    const stored = localStorage.getItem('songnexus.listener');
+    if (stored && valid.test(stored)) return stored;
+  } catch {
+    // No storage: the default listener.
+  }
+  return 'listener';
+}
+
 /** Maps a sign-in failure to what the user is told (closing the popup is not an error). */
 export function signInProblem(error: unknown): SignInProblem {
   const code = (error as {code?: string}).code ?? '';
@@ -134,22 +157,55 @@ export function AuthProvider({children}: {children: ReactNode}) {
     [becomeSignedIn],
   );
 
+  const createLocalSession = useCallback(
+    async (ageConfirmed: boolean) => {
+      try {
+        becomeSignedIn(
+          await unwrap(
+            api.POST('/v1/sessions:local', {
+              body: {listener: localListener(), ageConfirmed},
+            }),
+          ),
+        );
+      } catch (error) {
+        if (
+          error instanceof ApiError &&
+          error.reason === 'AGE_CONFIRMATION_REQUIRED'
+        ) {
+          setPendingToken(LOCAL);
+          setStatus('needsAgeConfirmation');
+          return;
+        }
+        setProblem('failed');
+        setStatus('signedOut');
+      }
+    },
+    [becomeSignedIn],
+  );
+
   const signIn = useCallback(async () => {
     setProblem(null);
     setStatus('signingIn');
     try {
+      // Development without an identity provider: the server offers local sign-in.
+      const config = await unwrap(api.GET('/v1/config')).catch(() => null);
+      if (config?.flags.localSignIn) {
+        await createLocalSession(false);
+        return;
+      }
       const {getGoogleIdToken} = await import('./firebase');
       await createSession(await getGoogleIdToken(), false);
     } catch (error) {
       setProblem(signInProblem(error));
       setStatus('signedOut');
     }
-  }, [createSession]);
+  }, [createSession, createLocalSession]);
 
   const confirmAge = useCallback(async () => {
-    if (pendingToken) await createSession(pendingToken, true);
+    if (pendingToken === LOCAL) await createLocalSession(true);
+    else if (pendingToken) await createSession(pendingToken, true);
     setPendingToken(null);
-  }, [createSession, pendingToken]);
+  }, [createSession, createLocalSession, pendingToken]);
 
   const cancelSignIn = useCallback(() => {
     setPendingToken(null);
