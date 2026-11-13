@@ -249,6 +249,37 @@ MIN_SEARCH_MRR = 0.95
 MIN_IMPORT_PRECISION = 0.98
 
 
+def _cmd_sync_accounts(settings: Settings, _args: argparse.Namespace) -> int:
+    import httpx
+
+    from songnexus.service.readmodel import load_read_model
+    from songnexus.service.sync_job import run_sync
+    from songnexus.storage.db import make_engine
+
+    engine = make_engine(settings.database_url)
+    model = load_read_model(engine, settings.genre_sources)
+    with httpx.Client(timeout=httpx.Timeout(20.0, connect=5.0)) as http:
+        _print(run_sync(engine, settings, model, http))
+    return EXIT_OK
+
+
+def _cmd_new_token_key(_settings: Settings, _args: argparse.Namespace) -> int:
+    from datetime import UTC, datetime
+
+    from songnexus.accounts.crypto import new_key
+
+    key_id = datetime.now(UTC).strftime("k%Y%m%d")
+    # The key is the output; it is shown once and never logged.
+    _print(
+        {
+            "SONGNEXUS_TOKEN_KEYS": json.dumps({key_id: new_key()}),
+            "SONGNEXUS_TOKEN_KEY_ID": key_id,
+            "note": "Store in Secret Manager. To rotate, add this key and switch the ID.",
+        }
+    )
+    return EXIT_OK
+
+
 def import_match_report(engine: Any, cases_path: Path) -> Any:
     """Resolves the labeled import names and scores them (shared with the golden test)."""
     from songnexus.core import ids
@@ -531,6 +562,16 @@ def build_parser() -> argparse.ArgumentParser:
             _cmd_eval_genres,
         ),
         ("purge", "remove expired sessions and deleted accounts", _cmd_purge),
+        (
+            "sync-accounts",
+            "sync linked listening accounts that are due (run every 15 minutes)",
+            _cmd_sync_accounts,
+        ),
+        (
+            "new-token-key",
+            "print a new key for encrypting linked-account tokens",
+            _cmd_new_token_key,
+        ),
     ):
         commands.add_parser(name, help=help_text).set_defaults(handler=handler)
 

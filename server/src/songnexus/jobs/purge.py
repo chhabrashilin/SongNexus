@@ -11,6 +11,7 @@ from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import Engine
 
+from songnexus.storage import accounts_repository
 from songnexus.storage import user_repository as users
 from songnexus.storage.db import session_scope
 
@@ -27,4 +28,5 @@ def run_purge(engine: Engine, now: datetime | None = None) -> dict[str, int]:
         accounts = users.purge_deleted_users(
             session, now - (DELETED_ACCOUNT_RETENTION - _SAFETY_MARGIN)
         )
-    return {"expiredSessions": sessions, "deletedAccounts": accounts}
+        flows = accounts_repository.purge_flows(session, now)
+    return {"expiredSessions": sessions, "deletedAccounts": accounts, "expiredLinkFlows": flows}
