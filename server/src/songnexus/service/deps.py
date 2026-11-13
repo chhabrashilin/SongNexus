@@ -7,9 +7,11 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
+import httpx
 from fastapi import Request
 from sqlalchemy import Engine
 
+from songnexus.accounts.crypto import TokenCipher
 from songnexus.config import Settings
 from songnexus.core.graph.filters import NodeFilter
 from songnexus.core.graph.model import ArtistGraph
@@ -35,6 +37,12 @@ class AppState:
     limiter: RateLimiter
     verifier: IdTokenVerifier
     flags: dict[str, bool] = field(default_factory=dict)
+    # Linked accounts (ADR 0006): the token cipher (None: nothing is offered) and the
+    # client for provider calls (tests inject a mock transport).
+    cipher: TokenCipher | None = None
+    outbound_http: Callable[[], httpx.Client] = field(
+        default=lambda: httpx.Client(timeout=httpx.Timeout(20.0, connect=5.0))
+    )
 
 
 def app_state(request: Request) -> AppState:

@@ -121,11 +121,20 @@ def audit(
 def erase_user(session: Session, user_id: str, now: datetime) -> None:
     """Deletes a user's personal data now and marks the account for purge.
 
-    Preferences, blocks, profile and sessions are removed immediately. The user
+    Preferences, blocks, profile, sessions, linked accounts (with their tokens),
+    listening tallies and linking flows are removed immediately. The user
     row stays (without its Firebase UID) until the purge job removes it, so the
     deletion itself remains auditable for 30 days.
     """
-    for model in (m.Preferences, m.BlockedArtist, m.Profile, m.UserSession):
+    for model in (
+        m.Preferences,
+        m.BlockedArtist,
+        m.Profile,
+        m.UserSession,
+        m.LinkedAccount,
+        m.ListeningTally,
+        m.OAuthFlow,
+    ):
         session.execute(delete(model).where(model.user_id == user_id))
     session.execute(
         update(m.User).where(m.User.id == user_id).values(deleted_at=now, firebase_uid=None)

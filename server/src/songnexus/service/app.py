@@ -23,6 +23,7 @@ from songnexus.logs import configure_logging
 from songnexus.service.deps import AppState
 from songnexus.service.errors import install_error_handlers
 from songnexus.service.flags import resolve_flags
+from songnexus.service.linking import cipher_from
 from songnexus.service.middleware import (
     BodySizeLimitMiddleware,
     RequestContextMiddleware,
@@ -30,8 +31,18 @@ from songnexus.service.middleware import (
 )
 from songnexus.service.ratelimit import MethodClass, RateLimiter
 from songnexus.service.readmodel import ReadModelHolder, load_read_model, probe_version
-from songnexus.service.routes import analysis, catalog, identity, ops, play, playlists, users
+from songnexus.service.routes import (
+    accounts,
+    analysis,
+    catalog,
+    identity,
+    ops,
+    play,
+    playlists,
+    users,
+)
 from songnexus.service.schemas import ErrorResponse
+from songnexus.service.sync_job import run_sync
 from songnexus.storage.db import make_engine
 
 log = logging.getLogger(__name__)
@@ -47,6 +58,33 @@ async def _refresh_forever(holder: ReadModelHolder, interval_s: float) -> None:
         await asyncio.sleep(interval_s)
         if await run_in_threadpool(holder.refresh):
             log.info("read model reloaded", extra={"version": holder.current().version})
+
+
+SYNC_POLL_S = 60.0
+
+
+def _sync_once(state: AppState) -> dict[str, int]:
+    with state.outbound_http() as http:
+        return run_sync(state.engine, state.settings, state.holder.current(), http)
+
+
+async def _sync_forever(state: AppState) -> None:
+    """Development convenience: the scheduled sync job, run inside the API process.
+
+    Deployed environments run ``songnexus sync-accounts`` from a scheduler instead
+    (several API instances would otherwise sync the same accounts at once).
+    """
+    while True:
+        await asyncio.sleep(SYNC_POLL_S)
+        if not state.holder.ready or not state.flags.get("linkedAccounts", True):
+            continue
+        try:
+            counts = await run_in_threadpool(_sync_once, state)
+        except Exception:  # the loop must outlive any one failure
+            log.exception("linked-account sync failed")
+            continue
+        if counts["accounts"]:
+            log.info("linked accounts synced", extra=counts)
 
 
 def _openapi_with_error_model(app: FastAPI) -> dict[str, Any]:
@@ -99,7 +137,15 @@ def build_state(settings: Settings) -> AppState:
         }
     )
     verifier = FirebaseIdTokenVerifier(settings.firebase_project_id)
-    return AppState(settings, engine, holder, limiter, verifier, resolve_flags(settings.flags))
+    return AppState(
+        settings,
+        engine,
+        holder,
+        limiter,
+        verifier,
+        resolve_flags(settings.flags),
+        cipher=cipher_from(settings),
+    )
 
 
 def create_app(settings: Settings | None = None, state: AppState | None = None) -> FastAPI:
@@ -123,12 +169,17 @@ def create_app(settings: Settings | None = None, state: AppState | None = None) 
         refresher = asyncio.create_task(
             _refresh_forever(app_state.holder, settings.read_model_refresh_s)
         )
+        tasks = [refresher]
+        if settings.sync_in_process and app_state.cipher is not None:
+            tasks.append(asyncio.create_task(_sync_forever(app_state)))
         try:
             yield
         finally:
-            refresher.cancel()
-            with contextlib.suppress(asyncio.CancelledError):
-                await refresher
+            for task in tasks:
+                task.cancel()
+            for task in tasks:
+                with contextlib.suppress(asyncio.CancelledError):
+                    await task
 
     development = settings.environment == "development"
     app = FastAPI(
@@ -152,6 +203,7 @@ def create_app(settings: Settings | None = None, state: AppState | None = None) 
     app.include_router(play.router)
     app.include_router(identity.router)
     app.include_router(users.router)
+    app.include_router(accounts.router)
     # The middleware added last runs outermost, so security headers cover every
     # response, including errors raised by the request-context layer.
     app.add_middleware(BodySizeLimitMiddleware)

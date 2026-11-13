@@ -64,6 +64,38 @@ class Settings(BaseSettings):
     listenbrainz_api_url: str = "https://api.listenbrainz.org"
     listenbrainz_labs_url: str = "https://labs.api.listenbrainz.org"
 
+    # Linked listening accounts (ADR 0006). Tokens are encrypted with these keys
+    # ({"key id": "base64 32-byte key"}); generate one with `songnexus new-token-key`.
+    # Without keys, no provider is offered. A provider is offered only when its own
+    # keys are set too (ListenBrainz needs none).
+    token_keys: dict[str, str] = Field(default_factory=dict)
+    token_key_id: str = ""
+    # Where the browser app is served; OAuth callbacks come back through its /v1 proxy.
+    app_origin: str = "http://127.0.0.1:5173"
+    spotify_client_id: str = ""
+    # Google OAuth client (web application) with the YouTube Data API enabled: links
+    # YouTube Music through liked songs. Without it, YouTube Music is file import only.
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    deezer_app_id: str = ""
+    deezer_secret: str = ""
+    lastfm_api_key: str = ""
+    lastfm_secret: str = ""
+    librefm_api_key: str = ""
+    librefm_secret: str = ""
+    apple_music_developer_token: str = ""
+    lastfm_api_url: str = "https://ws.audioscrobbler.com/2.0/"
+    librefm_api_url: str = "https://libre.fm/2.0/"
+    sync_interval_minutes: int = 15
+    # Run the sync job inside the API process (one instance only: local development).
+    # Deployed environments schedule `songnexus sync-accounts` instead.
+    sync_in_process: bool = False
+
+    @property
+    def local_token_key_path(self) -> Path:
+        """Development only: where a generated token key is kept (git-ignored)."""
+        return self.raw_dir("local") / "token-key.json"
+
     # Which genre sources the read model uses (ADR 0003, ADR 0005). A commercial
     # build sets ["discogs"] to drop the non-commercial MusicBrainz genres.
     genre_sources: list[str] = Field(

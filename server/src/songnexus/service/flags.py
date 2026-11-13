@@ -21,6 +21,7 @@ DEFAULT_FLAGS: Mapping[str, bool] = MappingProxyType(
         "play": True,
         "playlistImport": True,
         "signIn": True,
+        "linkedAccounts": True,
     }
 )
 

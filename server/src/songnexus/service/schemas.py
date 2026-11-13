@@ -550,6 +550,114 @@ class Label(ApiModel):
     graph_version: str
 
 
+class ListeningProvider(enum.StrEnum):
+    """A listening service (ADR 0006)."""
+
+    LISTENBRAINZ = "LISTENBRAINZ"
+    LASTFM = "LASTFM"
+    LIBREFM = "LIBREFM"
+    SPOTIFY = "SPOTIFY"
+    DEEZER = "DEEZER"
+    APPLE_MUSIC = "APPLE_MUSIC"
+    YOUTUBE_MUSIC = "YOUTUBE_MUSIC"
+
+
+class LinkMethod(enum.StrEnum):
+    """How a provider is linked."""
+
+    REDIRECT = "REDIRECT"
+    TOKEN = "TOKEN"  # noqa: S105 - a method name, not a secret
+    MUSICKIT = "MUSICKIT"
+    FILE = "FILE"
+
+
+class LinkedAccountStatus(enum.StrEnum):
+    """Whether sync works."""
+
+    ACTIVE = "ACTIVE"
+    NEEDS_RELINK = "NEEDS_RELINK"
+
+
+class LinkedAccount(ApiModel):
+    """A linked listening account. Tokens are never returned."""
+
+    name: str = Field(description="`users/{user}/linkedAccounts/{provider}`.")
+    provider: ListeningProvider
+    external_user: str = Field(description="The account name on the provider.")
+    status: LinkedAccountStatus
+    link_time: str
+    last_sync_time: str | None = None
+    next_sync_time: str | None = None
+    unmatched_plays: int = Field(
+        description="Plays whose artist could not be matched to the catalog (counted, not kept)."
+    )
+
+
+class ProviderOffer(ApiModel):
+    """A provider as offered to the listener."""
+
+    provider: ListeningProvider
+    method: LinkMethod
+    available: bool
+    unavailable_reason: str = ""
+    linked_account: LinkedAccount | None = None
+
+
+class ListLinkedAccountsResponse(ApiModel):
+    """ListLinkedAccounts: every provider, linked or not."""
+
+    providers: list[ProviderOffer]
+    sync_interval_minutes: int
+
+
+class StartLinkRequest(ApiModel):
+    """StartLink."""
+
+    provider: ListeningProvider
+
+
+class StartLinkResponse(ApiModel):
+    """Where to send the listener to approve the link."""
+
+    authorization_url: str
+
+
+class CreateLinkedAccountRequest(ApiModel):
+    """CreateLinkedAccount: a ListenBrainz user token, or an Apple Music user token."""
+
+    provider: ListeningProvider
+    token: str = Field(min_length=1, max_length=4096)
+
+
+class SyncLinkedAccountResponse(ApiModel):
+    """SyncLinkedAccount: what this sync read."""
+
+    linked_account: LinkedAccount
+    synced: bool = Field(
+        description="False when the provider could not be read; the account's status says why."
+    )
+    plays: int
+    artists: int
+    unmatched_plays: int
+
+
+class ListeningArtist(ApiModel):
+    """An artist the listener played, from linked accounts."""
+
+    artist: ArtistSummary
+    plays: int
+    last_play_time: str | None = None
+    providers: list[ListeningProvider]
+
+
+class ListListeningResponse(ApiModel):
+    """ListListening: the listener's artists from linked accounts, most played first."""
+
+    artists: list[ListeningArtist]
+    next_page_token: str = ""
+    total_size: int
+
+
 class LicenseTier(enum.StrEnum):
     """What a data source's license allows (ADR 0005)."""
 
@@ -671,6 +779,13 @@ class CreateSessionRequest(ApiModel):
     age_confirmed: bool = Field(
         default=False, description="Required (true) when creating an account: the user is 13+."
     )
+
+
+class CreateLocalSessionRequest(ApiModel):
+    """CreateLocalSession (development only): sign in as a named local listener."""
+
+    listener: str = Field(default="listener", pattern=r"^[a-z0-9-]{1,32}$")
+    age_confirmed: bool = False
 
 
 class SessionInfo(ApiModel):

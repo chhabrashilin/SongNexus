@@ -17,6 +17,7 @@ from songnexus.service.routes.common import (
     PageSize,
     PageToken,
 )
+from songnexus.service.routes.identity import local_sign_in_enabled
 
 # Page tokens are tied to the registry contents, so a deploy that edits it invalidates old tokens.
 _SOURCES_VERSION = hashlib.sha256(repr(SOURCES).encode()).hexdigest()[:12]
@@ -37,7 +38,7 @@ def get_config(request: Request, response: Response) -> api.Config:
     state = app_state(request)
     response.headers["Cache-Control"] = "public, max-age=60"
     return api.Config(
-        flags=state.flags,
+        flags={**state.flags, "localSignIn": local_sign_in_enabled(state.settings)},
         limits=api.Limits(
             max_query_length=MAX_QUERY_LENGTH,
             max_path_steps=MAX_PATH_STEPS,

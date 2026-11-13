@@ -34,6 +34,7 @@ from songnexus.service.pagination import paginate
 from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import db_session
+from songnexus.storage import accounts_repository as accounts
 from songnexus.storage import models as m
 from songnexus.storage import user_repository as users
 
@@ -159,6 +160,29 @@ def export_user_data(
             "topArtists": [f"artists/{a}" for a in profile.top_artist_ids],
             "visibility": profile.visibility,
         },
+        # Linked accounts (ADR 0006): never tokens; the per-artist counts are all we keep.
+        "linkedAccounts": [
+            {
+                "provider": a.provider,
+                "externalUser": a.external_user,
+                "status": a.status,
+                "linkTime": _timestamp(a.linked_at),
+                "lastSyncTime": _timestamp(a.last_sync_at),
+                "unmatchedPlays": a.unmatched_plays,
+            }
+            for a in accounts.list_accounts(session, user_id)
+        ],
+        "listening": [
+            {
+                "provider": t.provider,
+                "artist": f"artists/{t.artist_id}",
+                "plays": t.plays,
+                "lastPlayTime": _timestamp(t.last_played_at),
+            }
+            for t in sorted(
+                accounts.listening(session, user_id), key=lambda t: (t.provider, t.artist_id)
+            )
+        ],
         "auditLog": [
             {"action": e.action, "time": _timestamp(e.created_at)}
             for e in sorted(audit_entries, key=lambda e: e.id)

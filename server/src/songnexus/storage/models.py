@@ -513,6 +513,58 @@ class Profile(Base):
     update_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
+class LinkedAccount(Base):
+    """A listening service a user linked (ADR 0006). Tokens are ciphertext, never plain."""
+
+    __tablename__ = "linked_accounts"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    provider: Mapped[str] = mapped_column(String(32), primary_key=True)
+    external_user: Mapped[str] = mapped_column(String(256))
+    token_ciphertext: Mapped[str] = mapped_column(Text)
+    refresh_ciphertext: Mapped[str | None] = mapped_column(Text)
+    token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(16))  # ACTIVE | NEEDS_RELINK
+    cursor: Mapped[str | None] = mapped_column(Text)
+    linked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    last_sync_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    next_sync_after: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    failures: Mapped[int] = mapped_column(Integer, default=0)
+    last_error: Mapped[str | None] = mapped_column(String(256))
+    unmatched_plays: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class ListeningTally(Base):
+    """Plays of one catalog artist from one linked account: the only listening data kept."""
+
+    __tablename__ = "listening_tallies"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    provider: Mapped[str] = mapped_column(String(32), primary_key=True)
+    artist_id: Mapped[str] = mapped_column(
+        ForeignKey("artists.id", ondelete="CASCADE"), primary_key=True
+    )
+    plays: Mapped[int] = mapped_column(Integer)
+    last_played_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class OAuthFlow(Base):
+    """A linking flow in progress: single use, bound to the session that started it."""
+
+    __tablename__ = "oauth_flows"
+
+    state_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    session_hash: Mapped[str] = mapped_column(String(64))
+    provider: Mapped[str] = mapped_column(String(32))
+    verifier_ciphertext: Mapped[str] = mapped_column(Text)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+
+
 class AuditEntry(Base):
     """An account-changing action, for disputes (plan §19, repudiation).
 

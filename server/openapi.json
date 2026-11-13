@@ -1097,6 +1097,44 @@
         "title": "CreateBlockedArtistRequest",
         "type": "object"
       },
+      "CreateLinkedAccountRequest": {
+        "description": "CreateLinkedAccount: a ListenBrainz user token, or an Apple Music user token.",
+        "properties": {
+          "provider": {
+            "$ref": "#/components/schemas/ListeningProvider"
+          },
+          "token": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "token"
+        ],
+        "title": "CreateLinkedAccountRequest",
+        "type": "object"
+      },
+      "CreateLocalSessionRequest": {
+        "description": "CreateLocalSession (development only): sign in as a named local listener.",
+        "properties": {
+          "ageConfirmed": {
+            "default": false,
+            "title": "Ageconfirmed",
+            "type": "boolean"
+          },
+          "listener": {
+            "default": "listener",
+            "pattern": "^[a-z0-9-]{1,32}$",
+            "title": "Listener",
+            "type": "string"
+          }
+        },
+        "title": "CreateLocalSessionRequest",
+        "type": "object"
+      },
       "CreateSessionRequest": {
         "description": "CreateSession: exchange a Firebase ID token for a session cookie.",
         "properties": {
@@ -1733,6 +1771,90 @@
         "title": "Link",
         "type": "object"
       },
+      "LinkMethod": {
+        "description": "How a provider is linked.",
+        "enum": [
+          "REDIRECT",
+          "TOKEN",
+          "MUSICKIT",
+          "FILE"
+        ],
+        "title": "LinkMethod",
+        "type": "string"
+      },
+      "LinkedAccount": {
+        "description": "A linked listening account. Tokens are never returned.",
+        "properties": {
+          "externalUser": {
+            "description": "The account name on the provider.",
+            "title": "Externaluser",
+            "type": "string"
+          },
+          "lastSyncTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastsynctime"
+          },
+          "linkTime": {
+            "title": "Linktime",
+            "type": "string"
+          },
+          "name": {
+            "description": "`users/{user}/linkedAccounts/{provider}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "nextSyncTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextsynctime"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ListeningProvider"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LinkedAccountStatus"
+          },
+          "unmatchedPlays": {
+            "description": "Plays whose artist could not be matched to the catalog (counted, not kept).",
+            "title": "Unmatchedplays",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "provider",
+          "externalUser",
+          "status",
+          "linkTime",
+          "lastSyncTime",
+          "nextSyncTime",
+          "unmatchedPlays"
+        ],
+        "title": "LinkedAccount",
+        "type": "object"
+      },
+      "LinkedAccountStatus": {
+        "description": "Whether sync works.",
+        "enum": [
+          "ACTIVE",
+          "NEEDS_RELINK"
+        ],
+        "title": "LinkedAccountStatus",
+        "type": "string"
+      },
       "ListArtistCollaborationsResponse": {
         "description": "ListArtistCollaborations. Counts are based on releases in our data.",
         "properties": {
@@ -1915,6 +2037,56 @@
         "title": "ListGenresResponse",
         "type": "object"
       },
+      "ListLinkedAccountsResponse": {
+        "description": "ListLinkedAccounts: every provider, linked or not.",
+        "properties": {
+          "providers": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderOffer"
+            },
+            "title": "Providers",
+            "type": "array"
+          },
+          "syncIntervalMinutes": {
+            "title": "Syncintervalminutes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "providers",
+          "syncIntervalMinutes"
+        ],
+        "title": "ListLinkedAccountsResponse",
+        "type": "object"
+      },
+      "ListListeningResponse": {
+        "description": "ListListening: the listener's artists from linked accounts, most played first.",
+        "properties": {
+          "artists": {
+            "items": {
+              "$ref": "#/components/schemas/ListeningArtist"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artists",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "title": "ListListeningResponse",
+        "type": "object"
+      },
       "ListenerOverlap": {
         "description": "Shared audience, from aggregate ListenBrainz data; never about individual listeners.",
         "properties": {
@@ -1977,6 +2149,58 @@
         ],
         "title": "ListenerOverlap",
         "type": "object"
+      },
+      "ListeningArtist": {
+        "description": "An artist the listener played, from linked accounts.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "lastPlayTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastplaytime"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "providers": {
+            "items": {
+              "$ref": "#/components/schemas/ListeningProvider"
+            },
+            "title": "Providers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "artist",
+          "plays",
+          "lastPlayTime",
+          "providers"
+        ],
+        "title": "ListeningArtist",
+        "type": "object"
+      },
+      "ListeningProvider": {
+        "description": "A listening service (ADR 0006).",
+        "enum": [
+          "LISTENBRAINZ",
+          "LASTFM",
+          "LIBREFM",
+          "SPOTIFY",
+          "DEEZER",
+          "APPLE_MUSIC",
+          "YOUTUBE_MUSIC"
+        ],
+        "title": "ListeningProvider",
+        "type": "string"
       },
       "MatchStatus": {
         "description": "How an artist name from the playlist was matched.",
@@ -2394,6 +2618,45 @@
           "updateTime"
         ],
         "title": "Profile",
+        "type": "object"
+      },
+      "ProviderOffer": {
+        "description": "A provider as offered to the listener.",
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "linkedAccount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LinkedAccount"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "method": {
+            "$ref": "#/components/schemas/LinkMethod"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ListeningProvider"
+          },
+          "unavailableReason": {
+            "default": "",
+            "title": "Unavailablereason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "method",
+          "available",
+          "unavailableReason",
+          "linkedAccount"
+        ],
+        "title": "ProviderOffer",
         "type": "object"
       },
       "Puzzle": {
@@ -2833,6 +3096,33 @@
         "title": "SourceStatus",
         "type": "string"
       },
+      "StartLinkRequest": {
+        "description": "StartLink.",
+        "properties": {
+          "provider": {
+            "$ref": "#/components/schemas/ListeningProvider"
+          }
+        },
+        "required": [
+          "provider"
+        ],
+        "title": "StartLinkRequest",
+        "type": "object"
+      },
+      "StartLinkResponse": {
+        "description": "Where to send the listener to approve the link.",
+        "properties": {
+          "authorizationUrl": {
+            "title": "Authorizationurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authorizationUrl"
+        ],
+        "title": "StartLinkResponse",
+        "type": "object"
+      },
       "Status": {
         "description": "google.rpc.Status, as JSON.",
         "properties": {
@@ -2899,6 +3189,40 @@
           "displayName"
         ],
         "title": "Subject",
+        "type": "object"
+      },
+      "SyncLinkedAccountResponse": {
+        "description": "SyncLinkedAccount: what this sync read.",
+        "properties": {
+          "artists": {
+            "title": "Artists",
+            "type": "integer"
+          },
+          "linkedAccount": {
+            "$ref": "#/components/schemas/LinkedAccount"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "synced": {
+            "description": "False when the provider could not be read; the account's status says why.",
+            "title": "Synced",
+            "type": "boolean"
+          },
+          "unmatchedPlays": {
+            "title": "Unmatchedplays",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "linkedAccount",
+          "synced",
+          "plays",
+          "artists",
+          "unmatchedPlays"
+        ],
+        "title": "SyncLinkedAccountResponse",
         "type": "object"
       },
       "Theme": {
@@ -3933,6 +4257,88 @@
         ]
       }
     },
+    "/v1/oauth/{provider}/callback": {
+      "get": {
+        "description": "The provider sends the listener back here; then on to the You page with the outcome.",
+        "operationId": "FinishLink",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "title": "Provider",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 128,
+              "title": "State",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "code",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 2048,
+              "title": "Code",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Last.fm and Libre.fm.",
+            "in": "query",
+            "name": "token",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Last.fm and Libre.fm.",
+              "maxLength": 2048,
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "error",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 128,
+              "title": "Error",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "303": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "FinishLink",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/v1/playlists:analyze": {
       "post": {
         "description": "Matches a playlist's artists, then measures how they connect.\n\nReceives track titles and artist names only (files are parsed on the\ndevice) and stores nothing. A name may be ``artists/{artist}`` when the user\npicked one of several candidates. Blocked artists never serve as hidden\nlinks or as steps on the thread.",
@@ -4393,6 +4799,48 @@
         ]
       }
     },
+    "/v1/sessions:local": {
+      "post": {
+        "description": "Development only: signs in as a named local listener, with no identity provider.\n\nExists so linked accounts and friends can be tried on a laptop without a\nFirebase project. Everywhere else it answers NOT_FOUND.",
+        "operationId": "CreateLocalSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLocalSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CreateLocalSession",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
     "/v1/sessions:revokeAll": {
       "post": {
         "description": "Signs the user out on every device.",
@@ -4675,6 +5123,323 @@
         "summary": "DeleteBlockedArtist",
         "tags": [
           "users"
+        ]
+      }
+    },
+    "/v1/users/{user}/linkedAccounts": {
+      "get": {
+        "description": "Lists every provider: how it links, whether it is offered here, and the link if any.",
+        "operationId": "ListLinkedAccounts",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListLinkedAccountsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListLinkedAccounts",
+        "tags": [
+          "accounts"
+        ]
+      },
+      "post": {
+        "description": "Links ListenBrainz (user token) or Apple Music (MusicKit user token).",
+        "operationId": "CreateLinkedAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLinkedAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedAccount"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CreateLinkedAccount",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/v1/users/{user}/linkedAccounts/{provider}": {
+      "delete": {
+        "description": "Unlinks: deletes the token and every play count synced from the account.",
+        "operationId": "DeleteLinkedAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "title": "Provider",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "DeleteLinkedAccount",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/v1/users/{user}/linkedAccounts/{provider}:sync": {
+      "post": {
+        "description": "Syncs one linked account now (\"Sync now\").",
+        "operationId": "SyncLinkedAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "title": "Provider",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncLinkedAccountResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "SyncLinkedAccount",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/v1/users/{user}/linkedAccounts:start": {
+      "post": {
+        "description": "Starts linking a provider that approves on its own site; returns where to go.",
+        "operationId": "StartLink",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartLinkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartLinkResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "StartLink",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/v1/users/{user}/listening": {
+      "get": {
+        "description": "The listener's artists from linked accounts, most played first (blocked artists hidden).",
+        "operationId": "ListListening",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListListeningResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListListening",
+        "tags": [
+          "accounts"
         ]
       }
     },

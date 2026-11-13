@@ -396,7 +396,11 @@ def test_delete_account(client: TestClient, state: AppState) -> None:
     assert again["user"] != first["user"]
 
     later = datetime.now(UTC) + timedelta(days=30)
-    assert run_purge(state.engine, now=later) == {"expiredSessions": 1, "deletedAccounts": 1}
+    assert run_purge(state.engine, now=later) == {
+        "expiredSessions": 1,
+        "deletedAccounts": 1,
+        "expiredLinkFlows": 0,
+    }
     with session_scope(state.engine) as session:
         assert len(session.scalars(select(m.User)).all()) == 1
 
