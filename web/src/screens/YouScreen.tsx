@@ -12,6 +12,7 @@ import {
   useUpdateProfile,
 } from '../api/queries';
 import {ConnectedServices} from '../accounts/ConnectedServices';
+import {useConfigFlags} from '../app/flags';
 import {usePageTitle} from '../app/Shell';
 import {applyTheme, useTheme, type Theme} from '../app/theme';
 import {useAuth} from '../auth/AuthProvider';
@@ -246,6 +247,7 @@ function DataControls() {
 export default function YouScreen() {
   const {t} = useI18n();
   const auth = useAuth();
+  const flags = useConfigFlags();
   usePageTitle(t('you.title'));
 
   if (auth.status !== 'signedIn') {
@@ -270,7 +272,9 @@ export default function YouScreen() {
             >
               {auth.status === 'signingIn'
                 ? t('auth.signingIn')
-                : t('auth.signIn')}
+                : flags.localSignIn
+                  ? t('auth.signIn.local')
+                  : t('auth.signIn')}
             </button>
           }
         />

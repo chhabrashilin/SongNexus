@@ -56,6 +56,12 @@ textarea {
   outline: 2px solid var(--md-primary);
   outline-offset: 2px;
 }
+/* Headings and <main> take focus only to move screen readers to a new page;
+   they aren't controls, so they don't draw a ring. */
+h1[tabindex='-1']:focus,
+main[tabindex='-1']:focus {
+  outline: none;
+}
 
 ::selection {
   background: var(--md-primary-container);
