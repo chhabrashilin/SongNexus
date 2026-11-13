@@ -473,3 +473,97 @@ export function useReveal(date: string, enabled: boolean) {
     staleTime: 5 * MINUTE,
   });
 }
+
+// ---------------------------------------------------------------------------
+// Linked listening accounts (R2-6, ADR 0006)
+// ---------------------------------------------------------------------------
+
+export type ListeningProvider = Schemas['ListeningProvider'];
+export type ProviderOffer = Schemas['ProviderOffer'];
+
+export function useLinkedAccounts(enabled: boolean) {
+  return useQuery({
+    queryKey: ['me', 'linkedAccounts'],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/users/{user}/linkedAccounts', {
+          params: {path: {user: 'me'}},
+        }),
+      ),
+    enabled,
+    // The scheduled sync changes "last synced" while the page is open.
+    refetchInterval: MINUTE,
+  });
+}
+
+function refreshListening(queryClient: QueryClient) {
+  void queryClient.invalidateQueries({queryKey: ['me', 'linkedAccounts']});
+  void queryClient.invalidateQueries({queryKey: ['me', 'listening']});
+}
+
+/** Starts a redirect link and returns where to send the browser. */
+export function useStartLink() {
+  return useMutation({
+    mutationFn: (provider: ListeningProvider) =>
+      unwrap(
+        api.POST('/v1/users/{user}/linkedAccounts:start', {
+          params: {path: {user: 'me'}},
+          body: {provider},
+        }),
+      ),
+  });
+}
+
+export function useLinkWithToken() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: {provider: ListeningProvider; token: string}) =>
+      unwrap(
+        api.POST('/v1/users/{user}/linkedAccounts', {
+          params: {path: {user: 'me'}},
+          body,
+        }),
+      ),
+    onSuccess: () => refreshListening(queryClient),
+  });
+}
+
+export function useSyncLinkedAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (provider: ListeningProvider) =>
+      unwrap(
+        api.POST('/v1/users/{user}/linkedAccounts/{provider}:sync', {
+          params: {path: {user: 'me', provider: provider.toLowerCase()}},
+        }),
+      ),
+    onSettled: () => refreshListening(queryClient),
+  });
+}
+
+export function useUnlinkAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (provider: ListeningProvider) =>
+      unwrap(
+        api.DELETE('/v1/users/{user}/linkedAccounts/{provider}', {
+          params: {path: {user: 'me', provider: provider.toLowerCase()}},
+        }),
+      ),
+    onSettled: () => refreshListening(queryClient),
+  });
+}
+
+/** The listener's artists from linked accounts, most played first. */
+export function useListening(enabled: boolean, pageSize = 50) {
+  return useQuery({
+    queryKey: ['me', 'listening', pageSize],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/users/{user}/listening', {
+          params: {path: {user: 'me'}, query: {pageSize}},
+        }),
+      ),
+    enabled,
+  });
+}

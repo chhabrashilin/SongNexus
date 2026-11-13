@@ -22,35 +22,49 @@
 }
 
 :root {
-  /* Color roles. */
-  --md-primary: light-dark(#5446a5, #c4b8ff);
-  --md-on-primary: light-dark(#ffffff, #2a1b6e);
-  --md-primary-container: light-dark(#e6deff, #413386);
-  --md-on-primary-container: light-dark(#10005f, #e6deff);
-  --md-secondary-container: light-dark(#e6e0f9, #48455c);
-  --md-on-secondary-container: light-dark(#1c1a2c, #e6e0f9);
-  --md-surface: light-dark(#fcf8fd, #131316);
-  --md-surface-container-lowest: light-dark(#ffffff, #0e0e11);
-  --md-surface-container-low: light-dark(#f6f2f7, #1b1b1f);
-  --md-surface-container: light-dark(#f0edf1, #1f1f23);
-  --md-surface-container-high: light-dark(#eae7ec, #2a292e);
-  --md-surface-container-highest: light-dark(#e5e1e6, #353438);
-  --md-on-surface: light-dark(#1c1b1f, #e5e1e6);
-  --md-on-surface-variant: light-dark(#48454e, #c9c5d0);
-  --md-outline: light-dark(#79757f, #938f99);
-  --md-outline-variant: light-dark(#c9c5d0, #48454e);
+  /* Color roles (R2 redesign): a dark-first music look. Near-black surfaces in
+     dark, soft paper in light; one warm red accent for focus, links and "now"
+     states; selection is high-contrast ink (white on dark, black on light), the
+     way music apps mark the active chip. Every text pair meets WCAG AA:
+     on-surface 18.0:1 dark / 18.6:1 light, on-surface-variant 8.9:1 / 6.3:1,
+     primary text 7.0:1 / 6.4:1 on the page surface. */
+  --md-primary: light-dark(#c2001b, #ff6e6e);
+  --md-on-primary: light-dark(#ffffff, #1d0003);
+  --md-primary-container: light-dark(#ffe2e0, #43121a);
+  --md-on-primary-container: light-dark(#40000a, #ffdad7);
+  --md-secondary-container: light-dark(#0f0f0f, #f1f1f1);
+  --md-on-secondary-container: light-dark(#ffffff, #0f0f0f);
+  --md-surface: light-dark(#f7f7f8, #070707);
+  --md-surface-container-lowest: light-dark(#ffffff, #000000);
+  --md-surface-container-low: light-dark(#ffffff, #121212);
+  --md-surface-container: light-dark(#efeff1, #181818);
+  --md-surface-container-high: light-dark(#e7e7ea, #212121);
+  --md-surface-container-highest: light-dark(#dcdce0, #2c2c2c);
+  --md-on-surface: light-dark(#0f0f0f, #f1f1f1);
+  --md-on-surface-variant: light-dark(#55555c, #aaaaaa);
+  --md-outline: light-dark(#76767e, #8c8c8c);
+  --md-outline-variant: light-dark(#dadade, #2e2e2e);
+  /* Filled buttons are ink, like a music app's primary pill. */
+  --btn-filled-bg: light-dark(#0f0f0f, #f1f1f1);
+  --btn-filled-fg: light-dark(#ffffff, #0f0f0f);
+  /* Brand accent for decoration only (never text, never data). */
+  --accent-1: #ff2d55;
+  --accent-2: #ff7a3d;
+  --accent-3: #b14dff;
+  --glass: light-dark(rgb(247 247 248 / 78%), rgb(7 7 7 / 72%));
+  --glow: light-dark(rgb(255 45 85 / 10%), rgb(255 45 85 / 16%));
   /* Chart series 1: the primary hue, re-stepped for dark mode so data marks pass
      the dataviz checks (lightness band, chroma floor, 3:1 vs surface). */
   --chart-series-1: light-dark(#5446a5, #8f7de8);
-  --md-inverse-surface: light-dark(#313033, #e5e1e6);
-  --md-inverse-on-surface: light-dark(#f4eff4, #313033);
-  --md-inverse-primary: light-dark(#c4b8ff, #5446a5);
+  --md-inverse-surface: light-dark(#212121, #f1f1f1);
+  --md-inverse-on-surface: light-dark(#f1f1f1, #212121);
+  --md-inverse-primary: light-dark(#ff8a8a, #c2001b);
   --md-error: light-dark(#ba1a1a, #ffb4ab);
   --md-on-error: light-dark(#ffffff, #690005);
   --md-error-container: light-dark(#ffdad6, #93000a);
   --md-on-error-container: light-dark(#410002, #ffdad6);
   --md-success: light-dark(#1b6d3c, #7dd99d);
-  --md-scrim: rgb(0 0 0 / 55%);
+  --md-scrim: rgb(0 0 0 / 62%);
 
   /* Data (validated; see header). */
   --series-1: #3987e5;
@@ -62,10 +76,11 @@
   /* Typography: system UI fonts in every script (no third-party font requests). */
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans CJK JP',
     'Noto Sans Arabic', 'Noto Sans Ethiopic', 'Helvetica Neue', Arial, sans-serif;
-  --display-small: 400 2.25rem/2.75rem var(--font);
-  --headline-medium: 400 1.75rem/2.25rem var(--font);
-  --headline-small: 400 1.5rem/2rem var(--font);
-  --title-large: 400 1.375rem/1.75rem var(--font);
+  --display-large: 800 clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem)/1.05 var(--font);
+  --display-small: 750 2.25rem/2.6rem var(--font);
+  --headline-medium: 700 1.75rem/2.2rem var(--font);
+  --headline-small: 700 1.5rem/2rem var(--font);
+  --title-large: 700 1.25rem/1.6rem var(--font);
   --title-medium: 500 1rem/1.5rem var(--font);
   --title-small: 500 0.875rem/1.25rem var(--font);
   --body-large: 400 1rem/1.5rem var(--font);
@@ -78,6 +93,7 @@
   --shape-xs: 4px;
   --shape-s: 8px;
   --shape-m: 12px;
+  --shape-cover: 10px;
   --shape-l: 16px;
   --shape-xl: 28px;
   --shape-full: 999px;
@@ -95,8 +111,10 @@
   --motion-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
   --duration-short: 150ms;
   --duration-medium: 300ms;
-  --content-max: 1120px;
+  --content-max: 1280px;
   --nav-height: 64px;
+  --sidebar: 240px;
+  --elevation-glow: 0 12px 40px -12px rgb(0 0 0 / 55%);
 }
 
 @media (prefers-reduced-motion: reduce) {

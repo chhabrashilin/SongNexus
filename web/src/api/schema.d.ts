@@ -258,6 +258,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/oauth/{provider}/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * FinishLink
+         * @description The provider sends the listener back here; then on to the You page with the outcome.
+         */
+        get: operations["FinishLink"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/playlists:analyze": {
         parameters: {
             query?: never;
@@ -478,6 +498,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/sessions:local": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * CreateLocalSession
+         * @description Development only: signs in as a named local listener, with no identity provider.
+         *
+         *     Exists so linked accounts and friends can be tried on a laptop without a
+         *     Firebase project. Everywhere else it answers NOT_FOUND.
+         */
+        post: operations["CreateLocalSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/sessions:revokeAll": {
         parameters: {
             query?: never;
@@ -561,6 +604,110 @@ export interface paths {
          * @description Unblocks an artist.
          */
         delete: operations["DeleteBlockedArtist"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/linkedAccounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListLinkedAccounts
+         * @description Lists every provider: how it links, whether it is offered here, and the link if any.
+         */
+        get: operations["ListLinkedAccounts"];
+        put?: never;
+        /**
+         * CreateLinkedAccount
+         * @description Links ListenBrainz (user token) or Apple Music (MusicKit user token).
+         */
+        post: operations["CreateLinkedAccount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/linkedAccounts/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DeleteLinkedAccount
+         * @description Unlinks: deletes the token and every play count synced from the account.
+         */
+        delete: operations["DeleteLinkedAccount"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/linkedAccounts/{provider}:sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * SyncLinkedAccount
+         * @description Syncs one linked account now ("Sync now").
+         */
+        post: operations["SyncLinkedAccount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/linkedAccounts:start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * StartLink
+         * @description Starts linking a provider that approves on its own site; returns where to go.
+         */
+        post: operations["StartLink"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/listening": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListListening
+         * @description The listener's artists from linked accounts, most played first (blocked artists hidden).
+         */
+        get: operations["ListListening"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1077,6 +1224,31 @@ export interface components {
             artist: string;
         };
         /**
+         * CreateLinkedAccountRequest
+         * @description CreateLinkedAccount: a ListenBrainz user token, or an Apple Music user token.
+         */
+        CreateLinkedAccountRequest: {
+            provider: components["schemas"]["ListeningProvider"];
+            /** Token */
+            token: string;
+        };
+        /**
+         * CreateLocalSessionRequest
+         * @description CreateLocalSession (development only): sign in as a named local listener.
+         */
+        CreateLocalSessionRequest: {
+            /**
+             * Ageconfirmed
+             * @default false
+             */
+            ageConfirmed?: boolean;
+            /**
+             * Listener
+             * @default listener
+             */
+            listener?: string;
+        };
+        /**
          * CreateSessionRequest
          * @description CreateSession: exchange a Firebase ID token for a session cookie.
          */
@@ -1389,6 +1561,47 @@ export interface components {
             url: string;
         };
         /**
+         * LinkMethod
+         * @description How a provider is linked.
+         * @enum {string}
+         */
+        LinkMethod: "REDIRECT" | "TOKEN" | "MUSICKIT" | "FILE";
+        /**
+         * LinkedAccount
+         * @description A linked listening account. Tokens are never returned.
+         */
+        LinkedAccount: {
+            /**
+             * Externaluser
+             * @description The account name on the provider.
+             */
+            externalUser: string;
+            /** Lastsynctime */
+            lastSyncTime: string | null;
+            /** Linktime */
+            linkTime: string;
+            /**
+             * Name
+             * @description `users/{user}/linkedAccounts/{provider}`.
+             */
+            name: string;
+            /** Nextsynctime */
+            nextSyncTime: string | null;
+            provider: components["schemas"]["ListeningProvider"];
+            status: components["schemas"]["LinkedAccountStatus"];
+            /**
+             * Unmatchedplays
+             * @description Plays whose artist could not be matched to the catalog (counted, not kept).
+             */
+            unmatchedPlays: number;
+        };
+        /**
+         * LinkedAccountStatus
+         * @description Whether sync works.
+         * @enum {string}
+         */
+        LinkedAccountStatus: "ACTIVE" | "NEEDS_RELINK";
+        /**
          * ListArtistCollaborationsResponse
          * @description ListArtistCollaborations. Counts are based on releases in our data.
          */
@@ -1484,6 +1697,31 @@ export interface components {
             totalSize: number;
         };
         /**
+         * ListLinkedAccountsResponse
+         * @description ListLinkedAccounts: every provider, linked or not.
+         */
+        ListLinkedAccountsResponse: {
+            /** Providers */
+            providers: components["schemas"]["ProviderOffer"][];
+            /** Syncintervalminutes */
+            syncIntervalMinutes: number;
+        };
+        /**
+         * ListListeningResponse
+         * @description ListListening: the listener's artists from linked accounts, most played first.
+         */
+        ListListeningResponse: {
+            /** Artists */
+            artists: components["schemas"]["ListeningArtist"][];
+            /**
+             * Nextpagetoken
+             * @default
+             */
+            nextPageToken: string;
+            /** Totalsize */
+            totalSize: number;
+        };
+        /**
          * ListenerOverlap
          * @description Shared audience, from aggregate ListenBrainz data; never about individual listeners.
          */
@@ -1507,6 +1745,25 @@ export interface components {
             /** @description From the better rank: STRONG <= 10, MODERATE <= 50, WEAK <= 100, else NONE. */
             strength: components["schemas"]["OverlapStrength"];
         };
+        /**
+         * ListeningArtist
+         * @description An artist the listener played, from linked accounts.
+         */
+        ListeningArtist: {
+            artist: components["schemas"]["ArtistSummary"];
+            /** Lastplaytime */
+            lastPlayTime: string | null;
+            /** Plays */
+            plays: number;
+            /** Providers */
+            providers: components["schemas"]["ListeningProvider"][];
+        };
+        /**
+         * ListeningProvider
+         * @description A listening service (ADR 0006).
+         * @enum {string}
+         */
+        ListeningProvider: "LISTENBRAINZ" | "LASTFM" | "LIBREFM" | "SPOTIFY" | "DEEZER" | "APPLE_MUSIC" | "YOUTUBE_MUSIC";
         /**
          * MatchStatus
          * @description How an artist name from the playlist was matched.
@@ -1725,6 +1982,22 @@ export interface components {
             visibility: components["schemas"]["Visibility"];
         };
         /**
+         * ProviderOffer
+         * @description A provider as offered to the listener.
+         */
+        ProviderOffer: {
+            /** Available */
+            available: boolean;
+            linkedAccount: components["schemas"]["LinkedAccount"] | null;
+            method: components["schemas"]["LinkMethod"];
+            provider: components["schemas"]["ListeningProvider"];
+            /**
+             * Unavailablereason
+             * @default
+             */
+            unavailableReason: string;
+        };
+        /**
          * Puzzle
          * @description GetDailyPuzzle: the same puzzle for every player on a date.
          */
@@ -1938,6 +2211,21 @@ export interface components {
          */
         SourceStatus: "IN_USE" | "PLANNED";
         /**
+         * StartLinkRequest
+         * @description StartLink.
+         */
+        StartLinkRequest: {
+            provider: components["schemas"]["ListeningProvider"];
+        };
+        /**
+         * StartLinkResponse
+         * @description Where to send the listener to approve the link.
+         */
+        StartLinkResponse: {
+            /** Authorizationurl */
+            authorizationUrl: string;
+        };
+        /**
          * Status
          * @description google.rpc.Status, as JSON.
          */
@@ -1974,6 +2262,24 @@ export interface components {
              * @description Resource name: `recordings/{id}`, `releases/{id}`, `labels/{id}` or `relations/{id}`.
              */
             name: string;
+        };
+        /**
+         * SyncLinkedAccountResponse
+         * @description SyncLinkedAccount: what this sync read.
+         */
+        SyncLinkedAccountResponse: {
+            /** Artists */
+            artists: number;
+            linkedAccount: components["schemas"]["LinkedAccount"];
+            /** Plays */
+            plays: number;
+            /**
+             * Synced
+             * @description False when the provider could not be read; the account's status says why.
+             */
+            synced: boolean;
+            /** Unmatchedplays */
+            unmatchedPlays: number;
         };
         /**
          * Theme
@@ -2448,6 +2754,41 @@ export interface operations {
             };
         };
     };
+    FinishLink: {
+        parameters: {
+            query?: {
+                state?: string;
+                code?: string;
+                /** @description Last.fm and Libre.fm. */
+                token?: string;
+                error?: string;
+            };
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            303: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     AnalyzePlaylist: {
         parameters: {
             query?: never;
@@ -2796,6 +3137,39 @@ export interface operations {
             };
         };
     };
+    CreateLocalSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateLocalSessionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionInfo"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     RevokeAllSessions: {
         parameters: {
             query?: never;
@@ -2975,6 +3349,205 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ListLinkedAccounts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListLinkedAccountsResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    CreateLinkedAccount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateLinkedAccountRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LinkedAccount"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    DeleteLinkedAccount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    SyncLinkedAccount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncLinkedAccountResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    StartLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartLinkRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StartLinkResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ListListening: {
+        parameters: {
+            query?: {
+                pageSize?: number;
+                pageToken?: string;
+            };
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListListeningResponse"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */

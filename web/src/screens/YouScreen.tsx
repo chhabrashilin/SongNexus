@@ -11,6 +11,7 @@ import {
   useUpdatePreferences,
   useUpdateProfile,
 } from '../api/queries';
+import {ConnectedServices} from '../accounts/ConnectedServices';
 import {usePageTitle} from '../app/Shell';
 import {applyTheme, useTheme, type Theme} from '../app/theme';
 import {useAuth} from '../auth/AuthProvider';
@@ -286,6 +287,7 @@ export default function YouScreen() {
   return (
     <div className="stack" style={{gap: 'var(--space-6)'}}>
       <h1>{t('you.title')}</h1>
+      <ConnectedServices />
       <TopFive />
       <HiddenArtists />
       <Settings signedIn />

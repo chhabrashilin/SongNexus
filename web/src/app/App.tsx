@@ -22,7 +22,13 @@ import {ThemeSync} from './theme';
 import {legacyDestination} from './legacyLinks';
 
 const ArtistScreen = lazy(() => import('../screens/ArtistScreen'));
+const DiscoverScreen = lazy(() => import('../screens/DiscoverScreen'));
 const ExploreScreen = lazy(() => import('../screens/ExploreScreen'));
+const GuideScreen = lazy(() => import('../screens/GuideScreen'));
+const GamesScreen = lazy(() => import('../screens/GamesScreen'));
+const AroundYouScreen = lazy(() => import('../screens/AroundYouScreen'));
+const ReelsScreen = lazy(() => import('../screens/ReelsScreen'));
+const YourMusicScreen = lazy(() => import('../screens/YourMusicScreen'));
 const SixDegreesScreen = lazy(() => import('../screens/SixDegreesScreen'));
 const CompareScreen = lazy(() => import('../screens/CompareScreen'));
 const SongScreen = lazy(() => import('../screens/SongScreen'));
@@ -53,6 +59,54 @@ export const routes: RouteObject[] = [
           const destination = legacyDestination(new URL(request.url).search);
           return destination ? redirect(destination) : null;
         },
+      },
+      {
+        path: 'discover',
+        element: (
+          <Lazy>
+            <DiscoverScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'guide',
+        element: (
+          <Lazy>
+            <GuideScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'games',
+        element: (
+          <Lazy>
+            <GamesScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'around-you',
+        element: (
+          <Lazy>
+            <AroundYouScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'reels',
+        element: (
+          <Lazy>
+            <ReelsScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'your-music',
+        element: (
+          <Lazy>
+            <YourMusicScreen />
+          </Lazy>
+        ),
       },
       {
         path: 'artist/:id',
