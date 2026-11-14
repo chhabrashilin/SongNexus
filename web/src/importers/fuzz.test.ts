@@ -55,7 +55,9 @@ async function expectOutcomes(files: InputFile[]) {
   return outcomes;
 }
 
-describe('importer fuzzing', () => {
+// Hundreds of parses per test: allow for a busy machine (the 5 s default timed out
+// while the server suite ran alongside). A hang still fails.
+describe('importer fuzzing', {timeout: 30_000}, () => {
   it('survives mutated JSON, CSV and ZIP files', async () => {
     const next = rng(20261013);
     const zip = zipSync({

@@ -9,6 +9,7 @@ export function NotFoundScreen() {
   usePageTitle(t('state.notFound.title'));
   return (
     <EmptyState
+      pageHeading
       title={t('state.notFound.title')}
       body={t('state.notFound.body')}
       action={

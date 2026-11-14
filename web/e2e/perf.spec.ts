@@ -19,6 +19,8 @@ test.use({
 });
 
 test('explore holds its frame rate with a large web', async ({page}) => {
+  // Growing the web to 300 artists alone takes longer than the 30 s default.
+  test.setTimeout(180_000);
   const cdp = await page.context().newCDPSession(page);
   await page.goto('/');
   const search = page.getByRole('combobox', {name: 'Search artists and songs'});
