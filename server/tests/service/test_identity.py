@@ -400,6 +400,8 @@ def test_delete_account(client: TestClient, state: AppState) -> None:
         "expiredSessions": 1,
         "deletedAccounts": 1,
         "expiredLinkFlows": 0,
+        "expiredInvites": 0,
+        "expiredReports": 0,
     }
     with session_scope(state.engine) as session:
         assert len(session.scalars(select(m.User)).all()) == 1

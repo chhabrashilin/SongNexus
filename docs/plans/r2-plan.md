@@ -133,7 +133,7 @@ screen, unit + browser tests with axe scans, a flag (kill switch), docs, and a m
 - Scheduled incremental sync job with backoff and per-provider rate limits; "Sync now"; last-synced time shown.
 - Disconnect deletes the token and every synced listen; export and account deletion include them.
 - Synced listens feed the Library screen ("Your artists", playlist analysis) exactly like file imports.
-- **Server and web done 2026-11-13** (web uncommitted: see note). As built: connectors for ListenBrainz, Last.fm,
+- **Done 2026-11-13** (server 25fde0a, web 49d4bf8). As built: connectors for ListenBrainz, Last.fm,
   Libre.fm, Spotify, Deezer, Apple Music and YouTube Music (liked songs through Google OAuth; Takeout import
   without a Google client); AES-256-GCM tokens bound to user and provider; OAuth state single use, 10 minutes,
   bound to the session; `songnexus sync-accounts` (15 min, backoff to 24 h, per-account commits); "Sync now"
@@ -149,6 +149,13 @@ screen, unit + browser tests with axe scans, a flag (kill switch), docs, and a m
 - Safety: friendship required to send; block (silent, mutual invisibility) and report; per-user send rate limit;
   notes pass a moderation hook (stub locally, Perspective-style classifier in production); audit log entries.
 - Export and deletion cover friendships, shares and notes; deleting an account removes its shares from inboxes.
+- **Done 2026-11-13** ([ADR 0007](../adr/0007-friends-and-sharing.md)). As built: single-use invite codes
+  (50 bits, hashed, 7 days, 5 open, revocable) as links or typed codes; chosen display names (moderated); shares of
+  artists, songs, both comparisons and paths with a 140-character note; inbox with read state and unread badge;
+  "From your friends" shelf in Library; silent, mutual blocks; reports (90-day retention, note copy for
+  moderators); rule moderator behind a `Moderator` interface (no links or hidden characters); per-sender limits
+  counted in the database (20/hour, 100/day); every change audited, exported and erased. 22 API tests; browser
+  journey with axe. A production toxicity classifier is **not wired** (interface only).
 
 ### R2-8 Hardening and handoff
 - Security review and threat model update for OAuth, token storage and social surfaces; privacy assessment update.

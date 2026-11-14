@@ -2,6 +2,7 @@
 import {useEffect, useRef} from 'react';
 import {Link, NavLink, Outlet, useLocation, useNavigate} from 'react-router';
 
+import {useInbox} from '../api/social';
 import {useAuth} from '../auth/AuthProvider';
 import {Icon, type IconName} from '../components/Icon';
 import {SearchBox, resultPath} from '../components/SearchBox';
@@ -109,7 +110,7 @@ function Account() {
   return null;
 }
 
-function NavItem({entry}: {entry: NavEntry}) {
+function NavItem({entry, badge = 0}: {entry: NavEntry; badge?: number}) {
   const {t} = useI18n();
   return (
     <NavLink
@@ -122,6 +123,15 @@ function NavItem({entry}: {entry: NavEntry}) {
         <Icon name={entry.icon} />
       </span>
       <span className="nav__label">{t(entry.label)}</span>
+      {badge > 0 && (
+        <span className="badge badge--accent nav__badge">
+          {badge}
+          <span className="visually-hidden">
+            {' '}
+            {t('nav.friendsUnread', {count: badge})}
+          </span>
+        </span>
+      )}
     </NavLink>
   );
 }
@@ -132,6 +142,9 @@ export function Shell() {
   const location = useLocation();
   const flags = useConfigFlags();
   const shown = (entry: NavEntry) => !entry.flag || flags[entry.flag] !== false;
+  const auth = useAuth();
+  const inbox = useInbox(auth.status === 'signedIn' && flags.friends !== false);
+  const unread = inbox.data?.unreadCount ?? 0;
 
   // QA Q17: after client-side navigation, put focus at the new page so screen
   // readers announce it and keyboard users start from the top.
@@ -187,13 +200,21 @@ export function Shell() {
       <nav className="nav" aria-label={t('nav.primary')}>
         <div className="nav__links">
           {NAV.filter(shown).map(entry => (
-            <NavItem key={entry.to} entry={entry} />
+            <NavItem
+              key={entry.to}
+              entry={entry}
+              badge={entry.to === '/your-music' ? unread : 0}
+            />
           ))}
         </div>
         <div className="nav__extra">
           <p className="nav__heading">{t('nav.yours')}</p>
           {PERSONAL.filter(shown).map(entry => (
-            <NavItem key={entry.to} entry={entry} />
+            <NavItem
+              key={entry.to}
+              entry={entry}
+              badge={entry.to === '/friends' ? unread : 0}
+            />
           ))}
           <Link className="promo" to="/you#connected-title">
             <span className="promo__title">{t('shell.promo.title')}</span>

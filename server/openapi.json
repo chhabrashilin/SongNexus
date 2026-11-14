@@ -547,6 +547,30 @@
         "title": "BlockedArtist",
         "type": "object"
       },
+      "BlockedUser": {
+        "description": "A person the user blocked. Blocks are silent and hide both people from each other.",
+        "properties": {
+          "createTime": {
+            "title": "Createtime",
+            "type": "string"
+          },
+          "name": {
+            "description": "`users/{user}/blockedUsers/{blocked}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "person": {
+            "$ref": "#/components/schemas/Person"
+          }
+        },
+        "required": [
+          "name",
+          "person",
+          "createTime"
+        ],
+        "title": "BlockedUser",
+        "type": "object"
+      },
       "CheckMoveRequest": {
         "description": "CheckMove: is ``to`` directly connected to ``from``?",
         "properties": {
@@ -1097,6 +1121,21 @@
         "title": "CreateBlockedArtistRequest",
         "type": "object"
       },
+      "CreateBlockedUserRequest": {
+        "description": "CreateBlockedUser: a friend, or someone who shared with you.",
+        "properties": {
+          "user": {
+            "description": "Resource name `users/{user}`.",
+            "title": "User",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user"
+        ],
+        "title": "CreateBlockedUserRequest",
+        "type": "object"
+      },
       "CreateLinkedAccountRequest": {
         "description": "CreateLinkedAccount: a ListenBrainz user token, or an Apple Music user token.",
         "properties": {
@@ -1135,6 +1174,37 @@
         "title": "CreateLocalSessionRequest",
         "type": "object"
       },
+      "CreateReportRequest": {
+        "description": "CreateReport: report a share you received, or a person you know. Give one of the two.",
+        "properties": {
+          "details": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Details",
+            "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/ReportReason"
+          },
+          "share": {
+            "default": "",
+            "description": "`shares/{share}` you received.",
+            "title": "Share",
+            "type": "string"
+          },
+          "user": {
+            "default": "",
+            "description": "`users/{user}`: a friend or someone who shared.",
+            "title": "User",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "CreateReportRequest",
+        "type": "object"
+      },
       "CreateSessionRequest": {
         "description": "CreateSession: exchange a Firebase ID token for a session cookie.",
         "properties": {
@@ -1155,6 +1225,41 @@
           "idToken"
         ],
         "title": "CreateSessionRequest",
+        "type": "object"
+      },
+      "CreateShareRequest": {
+        "description": "CreateShare: send an artist, song, comparison or path to a friend.",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ShareKind"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 140,
+            "title": "Note",
+            "type": "string"
+          },
+          "recipient": {
+            "description": "A friend, `users/{user}`.",
+            "title": "Recipient",
+            "type": "string"
+          },
+          "subjects": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Subjects",
+            "type": "array"
+          }
+        },
+        "required": [
+          "recipient",
+          "kind",
+          "subjects"
+        ],
+        "title": "CreateShareRequest",
         "type": "object"
       },
       "Credit": {
@@ -1421,6 +1526,86 @@
           "graphVersion"
         ],
         "title": "FindPathResponse",
+        "type": "object"
+      },
+      "Friend": {
+        "description": "A friend.",
+        "properties": {
+          "createTime": {
+            "title": "Createtime",
+            "type": "string"
+          },
+          "name": {
+            "description": "`users/{user}/friends/{friend}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "person": {
+            "$ref": "#/components/schemas/Person"
+          }
+        },
+        "required": [
+          "name",
+          "person",
+          "createTime"
+        ],
+        "title": "Friend",
+        "type": "object"
+      },
+      "FriendInvite": {
+        "description": "An invite code. The code is returned once, at creation; only its hash is stored.",
+        "properties": {
+          "code": {
+            "default": "",
+            "description": "`XXXXX-XXXXX`; only in CreateFriendInvite.",
+            "title": "Code",
+            "type": "string"
+          },
+          "createTime": {
+            "title": "Createtime",
+            "type": "string"
+          },
+          "expireTime": {
+            "title": "Expiretime",
+            "type": "string"
+          },
+          "name": {
+            "description": "`users/{user}/friendInvites/{invite}`.",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "code",
+          "createTime",
+          "expireTime"
+        ],
+        "title": "FriendInvite",
+        "type": "object"
+      },
+      "FriendInvitePreview": {
+        "description": "GetFriendInvite: who an invite is from, before accepting it.",
+        "properties": {
+          "alreadyFriends": {
+            "default": false,
+            "title": "Alreadyfriends",
+            "type": "boolean"
+          },
+          "expireTime": {
+            "title": "Expiretime",
+            "type": "string"
+          },
+          "inviter": {
+            "$ref": "#/components/schemas/Person"
+          }
+        },
+        "required": [
+          "inviter",
+          "expireTime",
+          "alreadyFriends"
+        ],
+        "title": "FriendInvitePreview",
         "type": "object"
       },
       "Genre": {
@@ -1981,6 +2166,23 @@
         "title": "ListBlockedArtistsResponse",
         "type": "object"
       },
+      "ListBlockedUsersResponse": {
+        "description": "ListBlockedUsers: oldest first.",
+        "properties": {
+          "blockedUsers": {
+            "items": {
+              "$ref": "#/components/schemas/BlockedUser"
+            },
+            "title": "Blockedusers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "blockedUsers"
+        ],
+        "title": "ListBlockedUsersResponse",
+        "type": "object"
+      },
       "ListDataSourcesResponse": {
         "description": "ListDataSources.",
         "properties": {
@@ -2009,6 +2211,51 @@
         "title": "ListDataSourcesResponse",
         "type": "object"
       },
+      "ListFriendInvitesResponse": {
+        "description": "ListFriendInvites: the user's unexpired invites, newest first (codes not included).",
+        "properties": {
+          "friendInvites": {
+            "items": {
+              "$ref": "#/components/schemas/FriendInvite"
+            },
+            "title": "Friendinvites",
+            "type": "array"
+          }
+        },
+        "required": [
+          "friendInvites"
+        ],
+        "title": "ListFriendInvitesResponse",
+        "type": "object"
+      },
+      "ListFriendsResponse": {
+        "description": "ListFriends: oldest friendship first.",
+        "properties": {
+          "friends": {
+            "items": {
+              "$ref": "#/components/schemas/Friend"
+            },
+            "title": "Friends",
+            "type": "array"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "friends",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "title": "ListFriendsResponse",
+        "type": "object"
+      },
       "ListGenresResponse": {
         "description": "ListGenres.",
         "properties": {
@@ -2035,6 +2282,39 @@
           "totalSize"
         ],
         "title": "ListGenresResponse",
+        "type": "object"
+      },
+      "ListInboxResponse": {
+        "description": "ListInbox: shares received, newest first.",
+        "properties": {
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "shares": {
+            "items": {
+              "$ref": "#/components/schemas/Share"
+            },
+            "title": "Shares",
+            "type": "array"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          },
+          "unreadCount": {
+            "title": "Unreadcount",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "shares",
+          "nextPageToken",
+          "totalSize",
+          "unreadCount"
+        ],
+        "title": "ListInboxResponse",
         "type": "object"
       },
       "ListLinkedAccountsResponse": {
@@ -2202,6 +2482,20 @@
         "title": "ListeningProvider",
         "type": "string"
       },
+      "MarkAllReadResponse": {
+        "description": "MarkInboxRead: how many shares were marked read.",
+        "properties": {
+          "marked": {
+            "title": "Marked",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "marked"
+        ],
+        "title": "MarkAllReadResponse",
+        "type": "object"
+      },
       "MatchStatus": {
         "description": "How an artist name from the playlist was matched.",
         "enum": [
@@ -2270,6 +2564,26 @@
           "evidence"
         ],
         "title": "PathStep",
+        "type": "object"
+      },
+      "Person": {
+        "description": "Someone in the friends graph, as another user sees them.",
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "user": {
+            "description": "Resource name `users/{user}` (opaque).",
+            "title": "User",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user",
+          "displayName"
+        ],
+        "title": "Person",
         "type": "object"
       },
       "PlaylistArtist": {
@@ -2835,6 +3149,42 @@
         "title": "RecordingSummary",
         "type": "object"
       },
+      "Report": {
+        "description": "A filed report. Moderators review it; the reporter sees only that it was received.",
+        "properties": {
+          "createTime": {
+            "title": "Createtime",
+            "type": "string"
+          },
+          "name": {
+            "description": "`reports/{report}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/ReportReason"
+          }
+        },
+        "required": [
+          "name",
+          "reason",
+          "createTime"
+        ],
+        "title": "Report",
+        "type": "object"
+      },
+      "ReportReason": {
+        "description": "Why someone reported a share or a person.",
+        "enum": [
+          "SPAM",
+          "HARASSMENT",
+          "HATE",
+          "SEXUAL_CONTENT",
+          "OTHER"
+        ],
+        "title": "ReportReason",
+        "type": "string"
+      },
       "RevealResponse": {
         "description": "RevealPuzzle: a shortest solution, with evidence for every step.",
         "properties": {
@@ -2952,6 +3302,70 @@
         "title": "SessionInfo",
         "type": "object"
       },
+      "Share": {
+        "description": "Something one friend sent another.",
+        "properties": {
+          "createTime": {
+            "title": "Createtime",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ShareKind"
+          },
+          "name": {
+            "description": "`shares/{share}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "title": "Note",
+            "type": "string"
+          },
+          "read": {
+            "default": false,
+            "title": "Read",
+            "type": "boolean"
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/Person"
+          },
+          "sender": {
+            "$ref": "#/components/schemas/Person"
+          },
+          "subjects": {
+            "items": {
+              "$ref": "#/components/schemas/SharedSubject"
+            },
+            "title": "Subjects",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "sender",
+          "recipient",
+          "kind",
+          "subjects",
+          "note",
+          "createTime",
+          "read"
+        ],
+        "title": "Share",
+        "type": "object"
+      },
+      "ShareKind": {
+        "description": "What a share points at; decides how many subjects it has and of which type.",
+        "enum": [
+          "ARTIST",
+          "RECORDING",
+          "ARTIST_COMPARISON",
+          "RECORDING_COMPARISON",
+          "PATH"
+        ],
+        "title": "ShareKind",
+        "type": "string"
+      },
       "SharedCredit": {
         "description": "A credit role compared across the two songs.",
         "properties": {
@@ -3019,6 +3433,32 @@
         "title": "SharedGenre",
         "type": "object"
       },
+      "SharedSubject": {
+        "description": "An artist or recording in a share, resolved against the current catalog.",
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "displayName": {
+            "description": "Empty when the catalog no longer has it.",
+            "title": "Displayname",
+            "type": "string"
+          },
+          "name": {
+            "description": "`artists/{artist}` or `recordings/{recording}`.",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "available"
+        ],
+        "title": "SharedSubject",
+        "type": "object"
+      },
       "SimilarityPart": {
         "description": "One named part of the similarity score.",
         "properties": {
@@ -3049,6 +3489,28 @@
           "contribution"
         ],
         "title": "SimilarityPart",
+        "type": "object"
+      },
+      "SocialProfile": {
+        "description": "The name a user shows to friends. Friends see nothing else about each other.",
+        "properties": {
+          "displayName": {
+            "default": "",
+            "maxLength": 40,
+            "title": "Displayname",
+            "type": "string"
+          },
+          "name": {
+            "description": "`users/{user}/socialProfile`.",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName"
+        ],
+        "title": "SocialProfile",
         "type": "object"
       },
       "SourceKind": {
@@ -3258,6 +3720,22 @@
           "counts"
         ],
         "title": "TimelineYear",
+        "type": "object"
+      },
+      "UpdateSocialProfileRequest": {
+        "description": "UpdateSocialProfile: pick the name friends see.",
+        "properties": {
+          "displayName": {
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Displayname",
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "title": "UpdateSocialProfileRequest",
         "type": "object"
       },
       "User": {
@@ -4157,6 +4635,92 @@
         ]
       }
     },
+    "/v1/friendInvites/{code}": {
+      "get": {
+        "description": "Shows who an invite is from, so the listener can decide. Requires sign-in.",
+        "operationId": "GetFriendInvite",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FriendInvitePreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetFriendInvite",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/friendInvites/{code}:accept": {
+      "post": {
+        "description": "Accepts an invite: both become friends, and the code is used up.",
+        "operationId": "AcceptFriendInvite",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Friend"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "AcceptFriendInvite",
+        "tags": [
+          "social"
+        ]
+      }
+    },
     "/v1/genres": {
       "get": {
         "description": "Lists genres with artists (directly or through a subgenre), most artists first.\n\nCounts come from the served graph, so they reflect the configured genre sources.",
@@ -4695,6 +5259,48 @@
         ]
       }
     },
+    "/v1/reports": {
+      "post": {
+        "description": "Reports a share you received (it leaves your inbox) or a person you know.\n\nModerators see a copy of the reported note; reports are kept 90 days. Blocking\nis a separate step, so reporting alone never tips anyone off.",
+        "operationId": "CreateReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CreateReport",
+        "tags": [
+          "social"
+        ]
+      }
+    },
     "/v1/sessions": {
       "post": {
         "description": "Verifies a Firebase ID token and starts a session (sets an HttpOnly cookie).\n\nCreating an account requires ``ageConfirmed`` (13+). An existing session\nfor this browser is replaced.",
@@ -4870,6 +5476,134 @@
         "summary": "RevokeAllSessions",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/v1/shares": {
+      "post": {
+        "description": "Sends an artist, song, comparison or path to a friend, with an optional note.",
+        "operationId": "CreateShare",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Share"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CreateShare",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/shares/{share}": {
+      "delete": {
+        "description": "Removes a share. The recipient clears it from their inbox; the sender can unsend it.",
+        "operationId": "DeleteShare",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "share",
+            "required": true,
+            "schema": {
+              "title": "Share",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "DeleteShare",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/shares/{share}:markRead": {
+      "post": {
+        "description": "Marks a received share read.",
+        "operationId": "MarkShareRead",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "share",
+            "required": true,
+            "schema": {
+              "title": "Share",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Share"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "MarkShareRead",
+        "tags": [
+          "social"
         ]
       }
     },
@@ -5123,6 +5857,515 @@
         "summary": "DeleteBlockedArtist",
         "tags": [
           "users"
+        ]
+      }
+    },
+    "/v1/users/{user}/blockedUsers": {
+      "get": {
+        "description": "Lists people the user blocked.",
+        "operationId": "ListBlockedUsers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListBlockedUsersResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListBlockedUsers",
+        "tags": [
+          "social"
+        ]
+      },
+      "post": {
+        "description": "Blocks someone you know: the friendship ends and shares between you disappear.\n\nThe other person is not told. Neither of you can see, invite or share with the other.",
+        "operationId": "CreateBlockedUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlockedUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedUser"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CreateBlockedUser",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/blockedUsers/{blocked}": {
+      "delete": {
+        "description": "Unblocks someone. You aren't friends again until one of you sends a new invite.",
+        "operationId": "DeleteBlockedUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "blocked",
+            "required": true,
+            "schema": {
+              "title": "Blocked",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "DeleteBlockedUser",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/friendInvites": {
+      "get": {
+        "description": "Lists the user's open invites. Codes are not shown again (only hashes are kept).",
+        "operationId": "ListFriendInvites",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFriendInvitesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListFriendInvites",
+        "tags": [
+          "social"
+        ]
+      },
+      "post": {
+        "description": "Creates a single-use invite, valid for 7 days. The code is in this response only.",
+        "operationId": "CreateFriendInvite",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FriendInvite"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CreateFriendInvite",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/friendInvites/{invite}": {
+      "delete": {
+        "description": "Revokes an invite: its code stops working at once.",
+        "operationId": "DeleteFriendInvite",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "invite",
+            "required": true,
+            "schema": {
+              "title": "Invite",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "DeleteFriendInvite",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/friends": {
+      "get": {
+        "description": "Lists friends, oldest friendship first.",
+        "operationId": "ListFriends",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFriendsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListFriends",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/friends/{friend}": {
+      "delete": {
+        "description": "Ends a friendship for both people. Shares already sent stay in inboxes.",
+        "operationId": "DeleteFriend",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "friend",
+            "required": true,
+            "schema": {
+              "title": "Friend",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "DeleteFriend",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/inbox": {
+      "get": {
+        "description": "Lists shares received, newest first.\n\nShares about an artist the listener blocked are left out (US-17 applies here too).",
+        "operationId": "ListInbox",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListInboxResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListInbox",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/inbox:markRead": {
+      "post": {
+        "description": "Marks every share in the inbox read.",
+        "operationId": "MarkInboxRead",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkAllReadResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "MarkInboxRead",
+        "tags": [
+          "social"
         ]
       }
     },
@@ -5692,6 +6935,100 @@
         "summary": "UpdateProfile",
         "tags": [
           "users"
+        ]
+      }
+    },
+    "/v1/users/{user}/socialProfile": {
+      "get": {
+        "description": "Returns the name the user shows to friends (empty until picked).",
+        "operationId": "GetSocialProfile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetSocialProfile",
+        "tags": [
+          "social"
+        ]
+      },
+      "patch": {
+        "description": "Sets the name friends see. It passes the moderation hook like notes do.",
+        "operationId": "UpdateSocialProfile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSocialProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "UpdateSocialProfile",
+        "tags": [
+          "social"
         ]
       }
     },

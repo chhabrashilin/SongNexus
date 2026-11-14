@@ -20,6 +20,7 @@ from songnexus.identity.tokens import IdTokenVerifier
 from songnexus.service.errors import ApiError, Status, invalid_argument, not_found
 from songnexus.service.ratelimit import MethodClass, RateLimiter
 from songnexus.service.readmodel import ReadModel, ReadModelHolder
+from songnexus.social.moderation import Moderator, RuleModerator
 from songnexus.storage import user_repository as users
 from songnexus.storage.db import session_scope
 
@@ -43,6 +44,8 @@ class AppState:
     outbound_http: Callable[[], httpx.Client] = field(
         default=lambda: httpx.Client(timeout=httpx.Timeout(20.0, connect=5.0))
     )
+    # Friends and sharing (ADR 0007): checks notes and display names.
+    moderator: Moderator = field(default_factory=RuleModerator)
 
 
 def app_state(request: Request) -> AppState:

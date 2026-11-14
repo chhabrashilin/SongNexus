@@ -9,6 +9,7 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
 from songnexus.storage import models as m
+from songnexus.storage import social_repository
 
 
 def find_user_by_firebase_uid(session: Session, firebase_uid: str) -> m.User | None:
@@ -122,7 +123,8 @@ def erase_user(session: Session, user_id: str, now: datetime) -> None:
     """Deletes a user's personal data now and marks the account for purge.
 
     Preferences, blocks, profile, sessions, linked accounts (with their tokens),
-    listening tallies and linking flows are removed immediately. The user
+    listening tallies, linking flows and all friends-and-sharing data are removed
+    immediately. The user
     row stays (without its Firebase UID) until the purge job removes it, so the
     deletion itself remains auditable for 30 days.
     """
@@ -136,6 +138,8 @@ def erase_user(session: Session, user_id: str, now: datetime) -> None:
         m.OAuthFlow,
     ):
         session.execute(delete(model).where(model.user_id == user_id))
+    # Friends and sharing (R2-7): their shares leave friends' inboxes now too.
+    social_repository.erase(session, user_id)
     session.execute(
         update(m.User).where(m.User.id == user_id).values(deleted_at=now, firebase_uid=None)
     )

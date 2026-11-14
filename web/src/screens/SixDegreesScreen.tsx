@@ -23,6 +23,7 @@ import {SearchBox} from '../components/SearchBox';
 import {useSnackbar} from '../components/Snackbar';
 import {EmptyState, ErrorState, SkeletonRows} from '../components/States';
 import {useI18n} from '../i18n/i18n';
+import {ShareButton} from '../social/ShareSheet';
 
 const STEP_MS = 450;
 
@@ -246,6 +247,17 @@ export default function SixDegreesScreen() {
                 <Icon name="share" />
                 {t('action.share')}
               </button>
+              <ShareButton
+                kind="PATH"
+                subjects={[
+                  steps[0]!.fromArtist.name,
+                  steps[steps.length - 1]!.toArtist.name,
+                ]}
+                title={t('friends.share.path', {
+                  a: chainNames[0] ?? '',
+                  b: chainNames[chainNames.length - 1] ?? '',
+                })}
+              />
             </div>
           </div>
           <p className="visually-hidden" aria-live="polite">

@@ -24,6 +24,11 @@ import {useI18n} from '../i18n/i18n';
 import type {ArtistListening, Playlist} from '../importers/formats';
 import type {FileOutcome} from '../importers/importFiles';
 import {useImport} from '../importers/useImport';
+import {useInbox} from '../api/social';
+import {useConfigFlags} from '../app/flags';
+import {CoverCard, Shelf} from '../components/Shelf';
+import {sharePath} from '../social/ShareSheet';
+import {ago, shareTitle} from './FriendsScreen';
 
 /** History imports match the most-listened artists only: the rest rarely matter and cost time. */
 const MAX_HISTORY_ARTISTS = 500;
@@ -405,6 +410,45 @@ function ConnectedListening() {
   );
 }
 
+/** R2-7: what friends recommended, as a shelf; opens the Friends inbox for the rest. */
+function FromFriends() {
+  const {t} = useI18n();
+  const auth = useAuth();
+  const flags = useConfigFlags();
+  const inbox = useInbox(auth.status === 'signedIn' && flags.friends !== false);
+  const shares = (inbox.data?.shares ?? []).filter(s =>
+    s.subjects.every(x => x.available),
+  );
+  if (shares.length === 0) return null;
+  return (
+    <Shelf
+      eyebrow={t('library.friends.eyebrow')}
+      title={t('library.friends.title')}
+      action={
+        <Link className="btn btn--outlined btn--compact" to="/friends">
+          {t('action.showMore')}
+        </Link>
+      }
+    >
+      {shares.slice(0, 20).map(share => (
+        <CoverCard
+          key={share.name}
+          to={sharePath(
+            share.kind,
+            share.subjects.map(s => s.name),
+          )}
+          title={shareTitle(t, share)}
+          subtitle={t('friends.share.from', {
+            name: share.sender.displayName,
+            when: ago(t, share.createTime),
+          })}
+          round={share.kind === 'ARTIST'}
+        />
+      ))}
+    </Shelf>
+  );
+}
+
 export default function LibraryScreen() {
   const {t} = useI18n();
   const {state, start, cancel} = useImport();
@@ -441,6 +485,7 @@ export default function LibraryScreen() {
         <h1>{t('library.title')}</h1>
         <p className="muted">{t('library.lead')}</p>
       </header>
+      <FromFriends />
       <ConnectedListening />
       <PrivacyCard />
 

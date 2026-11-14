@@ -36,6 +36,7 @@ from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import db_session
 from songnexus.storage import accounts_repository as accounts
 from songnexus.storage import models as m
+from songnexus.storage import social_repository as social
 from songnexus.storage import user_repository as users
 
 router = APIRouter(prefix="/v1", tags=["users"])
@@ -183,9 +184,54 @@ def export_user_data(
                 accounts.listening(session, user_id), key=lambda t: (t.provider, t.artist_id)
             )
         ],
+        # Friends and sharing (R2-7): invite codes are never stored, so never exported.
+        "social": _social_export(session, user_id),
         "auditLog": [
             {"action": e.action, "time": _timestamp(e.created_at)}
             for e in sorted(audit_entries, key=lambda e: e.id)
+        ],
+    }
+
+
+def _social_export(session: Session, user_id: str) -> dict[str, Any]:
+    now = datetime.now(UTC)
+
+    def share(s: m.Share) -> dict[str, Any]:
+        return {
+            "name": f"shares/{s.id}",
+            "sender": f"users/{s.sender_id}",
+            "recipient": f"users/{s.recipient_id}",
+            "kind": s.kind,
+            "subjects": list(s.subjects),
+            "note": s.note,
+            "createTime": _timestamp(s.created_at),
+            "readTime": _timestamp(s.read_at),
+        }
+
+    return {
+        "displayName": social.display_name(session, user_id),
+        "friends": [
+            {"user": f"users/{f.friend_id}", "createTime": _timestamp(f.created_at)}
+            for f in social.friends(session, user_id)
+        ],
+        "friendInvites": [
+            {"createTime": _timestamp(i.created_at), "expireTime": _timestamp(i.expires_at)}
+            for i in social.active_invites(session, user_id, now)
+        ],
+        "blockedUsers": [
+            {"user": f"users/{b.blocked_user_id}", "createTime": _timestamp(b.created_at)}
+            for b in social.blocks(session, user_id)
+        ],
+        "sharesSent": [share(s) for s in social.sent(session, user_id)],
+        "sharesReceived": [share(s) for s in social.inbox(session, user_id)],
+        "reportsFiled": [
+            {
+                "reason": r.reason,
+                "details": r.details,
+                "user": None if r.reported_user_id is None else f"users/{r.reported_user_id}",
+                "createTime": _timestamp(r.created_at),
+            }
+            for r in social.reports_by(session, user_id)
         ],
     }
 

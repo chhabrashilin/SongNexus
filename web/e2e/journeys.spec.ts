@@ -35,7 +35,7 @@ async function openArtist(page: Page, query: string, name: string) {
 test('home is accessible and explains the product', async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('heading', {level: 1})).toHaveText(
-    'Discover who made the music you love',
+    'Your music universe',
   );
   await expectAccessible(page);
 });
@@ -307,8 +307,11 @@ test('explore has a list view equivalent to the web', async ({page}) => {
 
 test('signed-out users see how to sign in', async ({page}) => {
   await page.goto('/you');
+  // "Sign in (development)" when the API offers local sign-in (no Firebase project).
   await expect(
-    page.getByRole('button', {name: 'Sign in with Google'}),
+    page.getByRole('button', {
+      name: /^Sign in (with Google|\(development\))$/,
+    }),
   ).toBeVisible();
   await expectAccessible(page);
 });
@@ -596,4 +599,23 @@ test('only completed shares are reported, and telemetry failure does not block c
   await page.getByRole('button', {name: 'Previous day'}).click();
   await expect(page.getByLabel('Puzzle date')).toHaveValue('2026-10-07');
   expect(shares).toBe(1);
+});
+
+test('friends explain invites and ask signed-out visitors to sign in (R2-7)', async ({
+  page,
+}) => {
+  await page.goto('/friends');
+  await expect(
+    page.getByRole('heading', {level: 1, name: 'Friends'}),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/friends join only with your invite/),
+  ).toBeVisible();
+  await expectAccessible(page);
+  await page.goto('/friends/join/ABCDE-FGHJK');
+  await expect(
+    page.getByRole('heading', {level: 1, name: 'Join a friend'}),
+  ).toBeVisible();
+  await expect(page.getByText('Sign in to accept this invite.')).toBeVisible();
+  await expectAccessible(page);
 });

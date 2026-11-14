@@ -26,6 +26,15 @@ export function YourMusicScreen() {
           </span>
           <span className="tool-card__body">{t('yourMusic.library.body')}</span>
         </Link>
+        <Link className="tool-card" to="/friends">
+          <span className="tool-card__icon">
+            <Icon name="people" />
+          </span>
+          <span className="tool-card__title">
+            {t('yourMusic.friends.title')}
+          </span>
+          <span className="tool-card__body">{t('yourMusic.friends.body')}</span>
+        </Link>
         <Link className="tool-card" to="/you">
           <span className="tool-card__icon">
             <Icon name="person" />

@@ -1003,3 +1003,169 @@ class RevealResponse(ApiModel):
 
     steps: list[PathStep]
     graph_version: str
+
+
+# ---------------------------------------------------------------------------
+# Friends and sharing (R2-7, ADR 0007)
+# ---------------------------------------------------------------------------
+
+
+class ShareKind(enum.StrEnum):
+    """What a share points at; decides how many subjects it has and of which type."""
+
+    ARTIST = "ARTIST"  # one artist
+    RECORDING = "RECORDING"  # one recording
+    ARTIST_COMPARISON = "ARTIST_COMPARISON"  # two artists
+    RECORDING_COMPARISON = "RECORDING_COMPARISON"  # two recordings
+    PATH = "PATH"  # two artists: how they connect
+
+
+class ReportReason(enum.StrEnum):
+    """Why someone reported a share or a person."""
+
+    SPAM = "SPAM"
+    HARASSMENT = "HARASSMENT"
+    HATE = "HATE"
+    SEXUAL_CONTENT = "SEXUAL_CONTENT"
+    OTHER = "OTHER"
+
+
+class SocialProfile(ApiModel):
+    """The name a user shows to friends. Friends see nothing else about each other."""
+
+    name: str = Field(description="`users/{user}/socialProfile`.")
+    display_name: str = Field(default="", max_length=40)
+
+
+class UpdateSocialProfileRequest(ApiModel):
+    """UpdateSocialProfile: pick the name friends see."""
+
+    display_name: str = Field(min_length=1, max_length=40)
+
+
+class Person(ApiModel):
+    """Someone in the friends graph, as another user sees them."""
+
+    user: str = Field(description="Resource name `users/{user}` (opaque).")
+    display_name: str
+
+
+class FriendInvite(ApiModel):
+    """An invite code. The code is returned once, at creation; only its hash is stored."""
+
+    name: str = Field(description="`users/{user}/friendInvites/{invite}`.")
+    code: str = Field(default="", description="`XXXXX-XXXXX`; only in CreateFriendInvite.")
+    create_time: str
+    expire_time: str
+
+
+class ListFriendInvitesResponse(ApiModel):
+    """ListFriendInvites: the user's unexpired invites, newest first (codes not included)."""
+
+    friend_invites: list[FriendInvite]
+
+
+class FriendInvitePreview(ApiModel):
+    """GetFriendInvite: who an invite is from, before accepting it."""
+
+    inviter: Person
+    expire_time: str
+    already_friends: bool = False
+
+
+class Friend(ApiModel):
+    """A friend."""
+
+    name: str = Field(description="`users/{user}/friends/{friend}`.")
+    person: Person
+    create_time: str
+
+
+class ListFriendsResponse(ApiModel):
+    """ListFriends: oldest friendship first."""
+
+    friends: list[Friend]
+    next_page_token: str = ""
+    total_size: int
+
+
+class BlockedUser(ApiModel):
+    """A person the user blocked. Blocks are silent and hide both people from each other."""
+
+    name: str = Field(description="`users/{user}/blockedUsers/{blocked}`.")
+    person: Person
+    create_time: str
+
+
+class CreateBlockedUserRequest(ApiModel):
+    """CreateBlockedUser: a friend, or someone who shared with you."""
+
+    user: str = Field(description="Resource name `users/{user}`.")
+
+
+class ListBlockedUsersResponse(ApiModel):
+    """ListBlockedUsers: oldest first."""
+
+    blocked_users: list[BlockedUser]
+
+
+class SharedSubject(ApiModel):
+    """An artist or recording in a share, resolved against the current catalog."""
+
+    name: str = Field(description="`artists/{artist}` or `recordings/{recording}`.")
+    display_name: str = Field(description="Empty when the catalog no longer has it.")
+    available: bool
+
+
+class Share(ApiModel):
+    """Something one friend sent another."""
+
+    name: str = Field(description="`shares/{share}`.")
+    sender: Person
+    recipient: Person
+    kind: ShareKind
+    subjects: list[SharedSubject]
+    note: str = ""
+    create_time: str
+    read: bool = False
+
+
+class CreateShareRequest(ApiModel):
+    """CreateShare: send an artist, song, comparison or path to a friend."""
+
+    recipient: str = Field(description="A friend, `users/{user}`.")
+    kind: ShareKind
+    subjects: list[str] = Field(min_length=1, max_length=2)
+    note: str = Field(default="", max_length=140)
+
+
+class ListInboxResponse(ApiModel):
+    """ListInbox: shares received, newest first."""
+
+    shares: list[Share]
+    next_page_token: str = ""
+    total_size: int
+    unread_count: int
+
+
+class MarkAllReadResponse(ApiModel):
+    """MarkInboxRead: how many shares were marked read."""
+
+    marked: int
+
+
+class CreateReportRequest(ApiModel):
+    """CreateReport: report a share you received, or a person you know. Give one of the two."""
+
+    share: str = Field(default="", description="`shares/{share}` you received.")
+    user: str = Field(default="", description="`users/{user}`: a friend or someone who shared.")
+    reason: ReportReason
+    details: str = Field(default="", max_length=500)
+
+
+class Report(ApiModel):
+    """A filed report. Moderators review it; the reporter sees only that it was received."""
+
+    name: str = Field(description="`reports/{report}`.")
+    reason: ReportReason
+    create_time: str

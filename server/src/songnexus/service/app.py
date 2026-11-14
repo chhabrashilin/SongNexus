@@ -39,6 +39,7 @@ from songnexus.service.routes import (
     ops,
     play,
     playlists,
+    social,
     users,
 )
 from songnexus.service.schemas import ErrorResponse
@@ -204,6 +205,7 @@ def create_app(settings: Settings | None = None, state: AppState | None = None) 
     app.include_router(identity.router)
     app.include_router(users.router)
     app.include_router(accounts.router)
+    app.include_router(social.router)
     # The middleware added last runs outermost, so security headers cover every
     # response, including errors raised by the request-context layer.
     app.add_middleware(BodySizeLimitMiddleware)
