@@ -40,3 +40,41 @@ any tester access (see the [launch review](../launch-review.md)).
 Open before launch: publish the privacy notice and terms (the in-app Privacy page is the engineering draft), set the
 log retention in Cloud Logging, and confirm the data-processing terms for Firebase and GCP with the sponsor's legal
 contact.
+
+## Release 2 additions (2026-11-13)
+
+R2 adds two kinds of personal data, under the same rules: aggregates over raw records, export and deletion from
+day one, and nothing visible to other people unless the user sends it.
+
+| Data | Where | Why | Retention |
+|---|---|---|---|
+| Linked-account tokens (ADR 0006) | `linked_accounts`, AES-256-GCM ciphertext, key outside the database | sync listening history | until unlinked or the account is deleted |
+| Listening tallies | `listening_tallies`: plays and last play time **per catalog artist**; no track titles, no individual play times; unmatched names only counted | "Your top artists", Library | until unlinked (deletes every tally from that service) or deletion |
+| Provider account name | `linked_accounts.external_user` | show which account is linked | as above |
+| Display name for friends (ADR 0007) | `social_profiles`, chosen by the user | what friends see | until changed or deletion |
+| Friendships, blocks | `friendships`, `user_blocks` | friends list; mutual invisibility | until removed or deletion |
+| Invites | `friend_invites`: the **hash** of the code and its expiry | single-use invites | 7 days, then purged daily |
+| Shares and notes | `shares`: kind, catalog subjects, note (≤ 140 characters), read time | the inbox | until the recipient or sender removes it, or either account is deleted |
+| Abuse reports | `abuse_reports`: reason, details, a copy of the reported note and subjects | moderation | 90 days, then purged daily |
+
+Principles check:
+- **Minimization:** linked accounts keep per-artist counts only; YouTube Music reads liked songs with the read-only
+  scope; friends see a chosen name and what is shared with them, never listening, profile or linked accounts.
+- **Consent and control:** linking is an explicit OAuth or token step, and "Disconnect" deletes the token and every
+  tally from that service; friendship needs an invite the other person chose to send; blocking is one tap.
+- **Export and deletion:** `users/{user}:export` includes linked accounts (never tokens), tallies, the display name,
+  friends, open invites (never codes), blocks, shares sent and received, and reports filed. Deleting an account
+  removes all of it at once, including the user's shares from friends' inboxes (tested).
+- **Children:** the 13+ confirmation still gates every account. Invite-only friendship limits contact from
+  strangers; a launch to teenagers needs the sponsor's child-safety review.
+
+| Risk | Mitigation | Residual |
+|---|---|---|
+| A database leak exposes provider tokens | encryption under an external key, bound to user and provider | Low while the key stays out of the database |
+| Tallies reveal taste to the operator | per-artist counts only, no play timestamps; never shown to friends | Low |
+| Unwanted contact or harassment | invites only, silent blocks, reports, rule moderator, send limits | Medium until a classifier is wired ([security review](../security/review-2026-11-13.md), R2) |
+| A reported note outlives the sender's account | kept 90 days for moderation, linked to no account after the sender is deleted | Low; say so in the privacy notice |
+| Revealing a block | blocked actions fail exactly like invalid ones (tested) | Negligible |
+
+Open before launch, in addition to the list above: the privacy notice must describe linked accounts, the 90-day
+report retention and what friends can see; confirm the Spotify and Google API terms allow the stored aggregates.

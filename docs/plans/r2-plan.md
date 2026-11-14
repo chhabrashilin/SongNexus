@@ -161,6 +161,12 @@ screen, unit + browser tests with axe scans, a flag (kill switch), docs, and a m
 - Security review and threat model update for OAuth, token storage and social surfaces; privacy assessment update.
 - Load test of the new endpoints; accessibility pass; pseudo-locale pass; runbooks for sync failures and abuse reports.
 - Handoff docs updated: integration guide (which adapters YouTube Music replaces), limitations, demo script.
+- **Done 2026-11-13.** [Security review](../security/review-2026-11-13.md) (no critical or high findings; a
+  sign-in bug found and fixed; classifier and live OAuth gate a wider launch); [privacy assessment](../privacy/pia.md)
+  R2 section; runbooks for [sync failures](../runbooks/sync-failures.md) and [abuse reports](../runbooks/abuse-reports.md);
+  load check of the signed-in endpoints ([measurements](../perf/measurements.md), 0 errors, cost equal to the
+  pre-R2 signed-in endpoints); axe on every new screen in both themes (0 serious or critical); pseudo-locale and
+  browser journeys re-run; integration guide, limitations and demo script updated.
 
 ## Decisions (2026-11-01)
 

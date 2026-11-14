@@ -11,3 +11,5 @@ during demo weeks gets a blameless postmortem.
 | [Auth misconfiguration](auth-misconfiguration.md) | sign-in fails for everyone, or the service refuses to start |
 | [Catalog build failure](catalog-build-failure.md) | the ingest job exits non-zero |
 | [Quota or abuse](quota-exhausted.md) | surge of 429s, or a Google API quota error |
+| [Linked-account sync failures](sync-failures.md) | links stop syncing, "Reconnect" everywhere, or linking fails |
+| [Abuse reports](abuse-reports.md) | reports arrive, harassment, or repeated share-limit hits |
