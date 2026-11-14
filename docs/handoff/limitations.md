@@ -24,7 +24,18 @@
   mid-tier emulation; 60 fps settled). See [perf/measurements.md](../perf/measurements.md).
 - **The genre hierarchy** comes from Wikidata "subclass of" links and inherits their gaps and occasional cycles
   (cycles are handled; a selected genre includes everything below it).
-- **No playback, no recommendations, no social features, no assistant.** Out of scope for R1 by decision.
+- **No playback, no algorithmic recommendations, no assistant.** Out of scope by decision. The "Ask" screen
+  (Codex's product hub) routes keyword matches to existing tools; it is not a language model.
+- **Linked accounts** (R2-6): live linking against real Spotify, Google and Last.fm apps is **unverified** (no
+  developer apps configured); flows are covered by contract tests with every provider mocked. YouTube Music has no
+  public history API, so it reads **liked songs** (each counts once), not plays. Spotify returns only the last 50
+  plays per request, so history before linking is not imported. Deezer and Apple Music stay off until a key is
+  configured and tested. Tidal and Amazon Music have no history API.
+- **Friends** (R2-7): the moderator is rule-based (no links or hidden characters); a toxicity classifier is not
+  wired, and there is no moderator console (reports are reviewed with the queries in the abuse runbook).
+- **Product hubs** (Around you, Reels, Games trivia) are front doors and placeholders: Around you collects nothing
+  and shows no data yet; trivia is marked "coming soon".
+- **Cover art is generated** from the name (we hold no artwork rights).
 - **History import** supports the formats in `web/src/importers/formats.ts`; unrecognized files are rejected with a reason.
   Name matching is conservative: ambiguous names are offered for review, never auto-matched.
 - **Deferred stretch items:** shareable profile, anonymous-to-account merge, the labels toggle in the UI, server-side

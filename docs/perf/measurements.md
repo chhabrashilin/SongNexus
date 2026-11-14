@@ -135,3 +135,29 @@ Status: **met for a settled web and for a moving web on a fast CPU; unverified f
 mid-range phone** (22 fps median in emulation). The remaining step is measuring on a real mid-range Android phone;
 if it confirms the emulation, the next lever is warming the layout up off-screen (running the first ticks without
 drawing), which shortens the moving phase rather than speeding it up.
+
+## 2026-11-13: Signed-in R2 endpoints (R2-8), local
+
+`server/scripts/load_test_social.py`: closed loop against a scratch copy of the development database (SQLite), one
+uvicorn process on 8791, rate limits raised, the load generator on the same laptop while two development servers
+were also running. Seeded 10 listeners in 5 friend pairs, 20 shares per inbox. 0 errors in every scenario.
+
+| Scenario | 1 client p50 / p95 | 8 clients p50 / p95 | 8 clients rps |
+|---|---|---|---|
+| ListInbox (20 shares) | 36 / 62 ms | 186 / 410 ms | 34 |
+| ListFriends | 30 / 54 ms | 140 / 420 ms | 46 |
+| ListLinkedAccounts | 33 / 68 ms | 140 / 491 ms | 40 |
+| ListListening | 30 / 51 ms | 171 / 614 ms | 32 |
+| GetSocialProfile | 29 / 54 ms | 138 / 456 ms | 45 |
+| MarkInboxRead (write) | 39 / 152 ms | 260 / 827 ms (p99 3.7 s) | 20 |
+
+Reading the results:
+- The new endpoints cost the same as the signed-in endpoints that predate R2: in the same run, sequential requests
+  took 36 ms for GetPreferences and 39 ms for GetProfile against 35 ms for GetSocialProfile and 34 ms for
+  ListFriends, while the anonymous `/v1/config` took 17 ms. The difference is resolving the session (a second
+  database transaction per request) on SQLite on a busy laptop, not R2 code.
+- At 8 clients everything queues behind one Python worker, and writes queue behind SQLite's single writer (the p99
+  outlier). Production uses PostgreSQL and several instances; re-measure there with the generator on another host
+  (still open, as for the R1 budgets).
+- Follow-up worth doing before scale: resolve the viewer inside the request's own database session instead of a
+  separate one.

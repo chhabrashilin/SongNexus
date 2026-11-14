@@ -47,16 +47,31 @@ Keep the session, CSRF and Origin checks, and the per-user rate limits. The age 
 export methods are part of the privacy design.
 
 ### 3. Listening history (replace)
-Today the user supplies a file and it is parsed on the device in a Web Worker (`web/src/importers`); only distinct artist
-names reach `POST /v1/playlists:analyze`. A YouTube Music implementation would use the user's own history inside the
-product and send artist IDs instead of names, which removes the entity-resolution step. Keep the privacy rule: aggregates
-only, never logged.
+Two ways in today. Files are parsed on the device in a Web Worker (`web/src/importers`); only distinct artist names
+reach `POST /v1/playlists:analyze`. Linked accounts (R2-6, [ADR 0006](../adr/0006-linked-accounts.md)) sync from
+ListenBrainz, Last.fm, Libre.fm, Spotify, Deezer, Apple Music and YouTube Music through one connector interface
+(`accounts/connectors.py`: `fetch(http, credentials, cursor) -> Page`) and keep only per-artist tallies.
 
-### 4. Client (replace)
+For YouTube Music, implement `YouTubeMusicFirstPartyAdapter` against the internal history service and register it
+in `service/linking.py` in place of `YouTubeConnector` (liked songs through the public Data API). It replaces:
+the OAuth flow (the user is already signed in), token storage (no third-party token), name resolution (history
+carries catalog IDs, so `resolve_names` becomes an identity map), and Takeout import. Keep: aggregates only, the
+sync cadence and backoff, "Sync now" limits, unlink deletes everything, and the export and deletion coverage. The
+contract tests in `tests/accounts/test_connectors.py` and `tests/service/test_accounts_api.py` show the expected
+behavior.
+
+### 4. Friends and sharing (reuse or replace)
+Invite-only friendship, shares with notes, inbox, blocks and reports ([ADR 0007](../adr/0007-friends-and-sharing.md),
+`service/routes/social.py`). A YouTube Music build would map display names to the product's own handles and route
+reports into the existing trust and safety tooling. Put the production classifier behind
+`social/moderation.Moderator` and keep the invariants the tests encode: no discovery without an invite, silent
+mutual blocks, limits counted per sender, and erase-on-delete.
+
+### 5. Client (replace)
 The web app is a reference client styled with Material 3 tokens. It uses only the public contract: regenerate types with
 `npm run api:types`. Feature flags (`GET /v1/config`) switch surfaces off without a deploy.
 
-### 5. Deployment (replace)
+### 6. Deployment (replace)
 `deploy/` and `docs/deploy.md` describe Cloud Run, Cloud SQL and Firebase Hosting. They are untested against a real
 project (see the launch review).
 

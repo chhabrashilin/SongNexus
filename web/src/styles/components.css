@@ -584,8 +584,10 @@
   box-shadow: var(--elevation-glow);
 }
 
+/* Not available yet: a dashed outline instead of fading (faded text fails contrast). */
 .tool-card--muted {
-  opacity: 0.72;
+  border-style: dashed;
+  background: transparent;
 }
 
 .guide-form {
