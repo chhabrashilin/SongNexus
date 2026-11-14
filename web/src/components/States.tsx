@@ -50,14 +50,18 @@ export function EmptyState({
   title,
   body,
   action,
+  pageHeading = false,
 }: {
   title: string;
   body?: string;
   action?: ReactNode;
+  /** The state is the whole page (e.g. not found): its title is the page's h1. */
+  pageHeading?: boolean;
 }) {
+  const Title = pageHeading ? 'h1' : 'p';
   return (
     <div className="state">
-      <p className="state__title">{title}</p>
+      <Title className="state__title">{title}</Title>
       {body && <p className="state__body">{body}</p>}
       {action}
     </div>
