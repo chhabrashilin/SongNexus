@@ -10,6 +10,7 @@ import {EmptyState, ErrorState, SkeletonRows} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 import type {MessageId} from '../i18n/messages';
 import {MOODS, Meter, percent, useDescribe} from '../songs/Descriptors';
+import {ShareButton} from '../social/ShareSheet';
 
 const KNOWN_ROLES = new Set([
   'primary',
@@ -152,6 +153,16 @@ export default function SongCompareScreen() {
       )}
       {data && (
         <>
+          <div className="row">
+            <ShareButton
+              kind="RECORDING_COMPARISON"
+              subjects={[data.recordingA.name, data.recordingB.name]}
+              title={t('friends.share.versus', {
+                a: data.recordingA.displayName,
+                b: data.recordingB.displayName,
+              })}
+            />
+          </div>
           <section className="section" aria-labelledby="similarity">
             <h2 id="similarity">{t('songCompare.similarity')}</h2>
             {data.similarity === null ? (

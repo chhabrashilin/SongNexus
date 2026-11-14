@@ -115,7 +115,13 @@ forbidden_modules = [
 [[tool.importlinter.contracts]]
 name = "nothing outside the service layer imports it"
 type = "forbidden"
-source_modules = ["songnexus.catalog", "songnexus.identity", "songnexus.jobs", "songnexus.storage"]
+source_modules = [
+    "songnexus.catalog",
+    "songnexus.identity",
+    "songnexus.jobs",
+    "songnexus.social",
+    "songnexus.storage",
+]
 forbidden_modules = ["songnexus.service"]
 
 [[tool.importlinter.contracts]]

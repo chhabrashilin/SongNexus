@@ -42,6 +42,8 @@ const AboutScreen = lazy(() => import('../screens/AboutScreen'));
 const PrivacyScreen = lazy(() => import('../screens/PrivacyScreen'));
 const LibraryScreen = lazy(() => import('../screens/LibraryScreen'));
 const PlayScreen = lazy(() => import('../screens/PlayScreen'));
+const FriendsScreen = lazy(() => import('../screens/FriendsScreen'));
+const JoinFriendScreen = lazy(() => import('../screens/JoinFriendScreen'));
 
 function Lazy({children}: {children: ReactNode}) {
   return <Suspense fallback={<Spinner />}>{children}</Suspense>;
@@ -193,6 +195,22 @@ export const routes: RouteObject[] = [
         element: (
           <Lazy>
             <LibraryScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'friends',
+        element: (
+          <Lazy>
+            <FriendsScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'friends/join/:code',
+        element: (
+          <Lazy>
+            <JoinFriendScreen />
           </Lazy>
         ),
       },

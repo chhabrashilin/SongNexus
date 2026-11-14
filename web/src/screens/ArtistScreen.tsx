@@ -1,5 +1,5 @@
 /** Artist page (S4): header, genres, actions, collaborations (US-16), labels, aliases, links, sources. */
-import {useEffect} from 'react';
+import {useEffect, type CSSProperties} from 'react';
 import {Link, useParams} from 'react-router';
 
 import {idOf, type Schemas} from '../api/client';
@@ -8,12 +8,14 @@ import {rememberArtist} from '../app/recent';
 import {usePageTitle} from '../app/Shell';
 import {useBlock} from '../app/useBlock';
 import {CollaborationsPanel} from '../collaborations/CollaborationsPanel';
-import {ArtistRow, Avatar} from '../components/ArtistRow';
+import {ArtistRow} from '../components/ArtistRow';
 import {hostOf} from '../components/evidence';
 import {Icon} from '../components/Icon';
+import {Cover, hueOf} from '../components/Shelf';
 import {ErrorState, Spinner} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 import type {MessageId} from '../i18n/messages';
+import {ShareButton} from '../social/ShareSheet';
 
 function typeLabel(type: string | null | undefined): MessageId {
   const known = ['Person', 'Group', 'Orchestra', 'Choir', 'Character'];
@@ -66,19 +68,21 @@ export default function ArtistScreen() {
 
   return (
     <article className="stack" style={{gap: 'var(--space-6)'}}>
-      <header className="stack">
-        <div
-          className="row"
-          style={{gap: 'var(--space-4)', flexWrap: 'nowrap'}}
-        >
-          <Avatar name={a.displayName} large />
+      <header
+        className="stack artist-hero"
+        style={{'--hue': hueOf(a.displayName)} as CSSProperties}
+      >
+        <div className="artist-hero__top">
+          <div className="artist-hero__cover">
+            <Cover name={a.displayName} round />
+          </div>
           <div className="stack" style={{gap: 'var(--space-1)'}}>
-            <h1>
+            <p className="artist-hero__eyebrow">{t(typeLabel(a.artistType))}</p>
+            <h1 className="artist-hero__name">
               <bdi>{a.displayName}</bdi>
             </h1>
             <p className="muted">
               {[
-                t(typeLabel(a.artistType)),
                 a.country,
                 a.disambiguation,
                 t('artist.connections', {count: a.connectionCount}),
@@ -105,6 +109,11 @@ export default function ArtistScreen() {
             <Icon name="compare" />
             {t('artist.compare')}
           </Link>
+          <ShareButton
+            kind="ARTIST"
+            subjects={[a.name]}
+            title={a.displayName}
+          />
           <button
             type="button"
             className="btn btn--text"

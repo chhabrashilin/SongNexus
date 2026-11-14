@@ -565,6 +565,94 @@ class OAuthFlow(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
 
 
+class SocialProfile(Base):
+    """The name a user shows to friends (R2-7). Chosen by the user, never from Firebase."""
+
+    __tablename__ = "social_profiles"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    display_name: Mapped[str] = mapped_column(String(40))
+    update_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class FriendInvite(Base):
+    """A single-use invite code. Only the SHA-256 of the code is stored."""
+
+    __tablename__ = "friend_invites"
+
+    id: Mapped[str] = mapped_column(ID, primary_key=True)
+    code_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+
+
+class Friendship(Base):
+    """One direction of a friendship; every friendship is stored as two rows."""
+
+    __tablename__ = "friendships"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    friend_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class UserBlock(Base):
+    """A person a user blocked: silent, and both stop seeing each other."""
+
+    __tablename__ = "user_blocks"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    blocked_user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class Share(Base):
+    """An artist, song, comparison or path one friend sent another, with an optional note."""
+
+    __tablename__ = "shares"
+
+    id: Mapped[str] = mapped_column(ID, primary_key=True)
+    sender_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    recipient_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    kind: Mapped[str] = mapped_column(String(32))
+    subjects: Mapped[list[str]] = mapped_column(JsonType)  # resource names
+    note: Mapped[str] = mapped_column(String(140), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AbuseReport(Base):
+    """A report for moderators. Keeps a copy of the reported note; purged after 90 days."""
+
+    __tablename__ = "abuse_reports"
+
+    id: Mapped[str] = mapped_column(ID, primary_key=True)
+    reporter_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    reported_user_id: Mapped[str | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    reason: Mapped[str] = mapped_column(String(32))
+    details: Mapped[str] = mapped_column(String(500), default="")
+    share_kind: Mapped[str | None] = mapped_column(String(32))
+    share_subjects: Mapped[list[str] | None] = mapped_column(JsonType)
+    share_note: Mapped[str | None] = mapped_column(String(140))
+    status: Mapped[str] = mapped_column(String(16), default="OPEN")  # OPEN | REVIEWED
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+
+
 class AuditEntry(Base):
     """An account-changing action, for disputes (plan §19, repudiation).
 

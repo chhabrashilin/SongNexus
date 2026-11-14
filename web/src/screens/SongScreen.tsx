@@ -11,6 +11,7 @@ import {EmptyState, ErrorState, Spinner} from '../components/States';
 import {SoundProfile} from '../songs/Descriptors';
 import {useI18n} from '../i18n/i18n';
 import type {MessageId} from '../i18n/messages';
+import {ShareButton} from '../social/ShareSheet';
 
 const ROLE_ORDER = [
   'primary',
@@ -76,6 +77,13 @@ export default function SongScreen() {
             .filter(Boolean)
             .join(' · ')}
         </p>
+        <div className="row" style={{marginBlockStart: 'var(--space-3)'}}>
+          <ShareButton
+            kind="RECORDING"
+            subjects={[song.name]}
+            title={song.displayName}
+          />
+        </div>
       </header>
 
       <section className="section">

@@ -213,6 +213,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/friendInvites/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetFriendInvite
+         * @description Shows who an invite is from, so the listener can decide. Requires sign-in.
+         */
+        get: operations["GetFriendInvite"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/friendInvites/{code}:accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * AcceptFriendInvite
+         * @description Accepts an invite: both become friends, and the code is used up.
+         */
+        post: operations["AcceptFriendInvite"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/genres": {
         parameters: {
             query?: never;
@@ -451,6 +491,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * CreateReport
+         * @description Reports a share you received (it leaves your inbox) or a person you know.
+         *
+         *     Moderators see a copy of the reported note; reports are kept 90 days. Blocking
+         *     is a separate step, so reporting alone never tips anyone off.
+         */
+        post: operations["CreateReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/sessions": {
         parameters: {
             query?: never;
@@ -541,6 +604,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/shares": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * CreateShare
+         * @description Sends an artist, song, comparison or path to a friend, with an optional note.
+         */
+        post: operations["CreateShare"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/shares/{share}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DeleteShare
+         * @description Removes a share. The recipient clears it from their inbox; the sender can unsend it.
+         */
+        delete: operations["DeleteShare"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/shares/{share}:markRead": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * MarkShareRead
+         * @description Marks a received share read.
+         */
+        post: operations["MarkShareRead"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/users/{user}": {
         parameters: {
             query?: never;
@@ -604,6 +727,178 @@ export interface paths {
          * @description Unblocks an artist.
          */
         delete: operations["DeleteBlockedArtist"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/blockedUsers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListBlockedUsers
+         * @description Lists people the user blocked.
+         */
+        get: operations["ListBlockedUsers"];
+        put?: never;
+        /**
+         * CreateBlockedUser
+         * @description Blocks someone you know: the friendship ends and shares between you disappear.
+         *
+         *     The other person is not told. Neither of you can see, invite or share with the other.
+         */
+        post: operations["CreateBlockedUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/blockedUsers/{blocked}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DeleteBlockedUser
+         * @description Unblocks someone. You aren't friends again until one of you sends a new invite.
+         */
+        delete: operations["DeleteBlockedUser"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/friendInvites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListFriendInvites
+         * @description Lists the user's open invites. Codes are not shown again (only hashes are kept).
+         */
+        get: operations["ListFriendInvites"];
+        put?: never;
+        /**
+         * CreateFriendInvite
+         * @description Creates a single-use invite, valid for 7 days. The code is in this response only.
+         */
+        post: operations["CreateFriendInvite"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/friendInvites/{invite}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DeleteFriendInvite
+         * @description Revokes an invite: its code stops working at once.
+         */
+        delete: operations["DeleteFriendInvite"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/friends": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListFriends
+         * @description Lists friends, oldest friendship first.
+         */
+        get: operations["ListFriends"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/friends/{friend}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * DeleteFriend
+         * @description Ends a friendship for both people. Shares already sent stay in inboxes.
+         */
+        delete: operations["DeleteFriend"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/inbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListInbox
+         * @description Lists shares received, newest first.
+         *
+         *     Shares about an artist the listener blocked are left out (US-17 applies here too).
+         */
+        get: operations["ListInbox"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/inbox:markRead": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * MarkInboxRead
+         * @description Marks every share in the inbox read.
+         */
+        post: operations["MarkInboxRead"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -759,6 +1054,30 @@ export interface paths {
          * @description Updates the Top 5. A sixth artist is rejected (AC-9.1).
          */
         patch: operations["UpdateProfile"];
+        trace?: never;
+    };
+    "/v1/users/{user}/socialProfile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetSocialProfile
+         * @description Returns the name the user shows to friends (empty until picked).
+         */
+        get: operations["GetSocialProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * UpdateSocialProfile
+         * @description Sets the name friends see. It passes the moderation hook like notes do.
+         */
+        patch: operations["UpdateSocialProfile"];
         trace?: never;
     };
     "/v1/users/{user}:export": {
@@ -998,6 +1317,20 @@ export interface components {
             name: string;
         };
         /**
+         * BlockedUser
+         * @description A person the user blocked. Blocks are silent and hide both people from each other.
+         */
+        BlockedUser: {
+            /** Createtime */
+            createTime: string;
+            /**
+             * Name
+             * @description `users/{user}/blockedUsers/{blocked}`.
+             */
+            name: string;
+            person: components["schemas"]["Person"];
+        };
+        /**
          * CheckMoveRequest
          * @description CheckMove: is ``to`` directly connected to ``from``?
          */
@@ -1224,6 +1557,17 @@ export interface components {
             artist: string;
         };
         /**
+         * CreateBlockedUserRequest
+         * @description CreateBlockedUser: a friend, or someone who shared with you.
+         */
+        CreateBlockedUserRequest: {
+            /**
+             * User
+             * @description Resource name `users/{user}`.
+             */
+            user: string;
+        };
+        /**
          * CreateLinkedAccountRequest
          * @description CreateLinkedAccount: a ListenBrainz user token, or an Apple Music user token.
          */
@@ -1249,6 +1593,30 @@ export interface components {
             listener?: string;
         };
         /**
+         * CreateReportRequest
+         * @description CreateReport: report a share you received, or a person you know. Give one of the two.
+         */
+        CreateReportRequest: {
+            /**
+             * Details
+             * @default
+             */
+            details?: string;
+            reason: components["schemas"]["ReportReason"];
+            /**
+             * Share
+             * @description `shares/{share}` you received.
+             * @default
+             */
+            share?: string;
+            /**
+             * User
+             * @description `users/{user}`: a friend or someone who shared.
+             * @default
+             */
+            user?: string;
+        };
+        /**
          * CreateSessionRequest
          * @description CreateSession: exchange a Firebase ID token for a session cookie.
          */
@@ -1261,6 +1629,25 @@ export interface components {
             ageConfirmed?: boolean;
             /** Idtoken */
             idToken: string;
+        };
+        /**
+         * CreateShareRequest
+         * @description CreateShare: send an artist, song, comparison or path to a friend.
+         */
+        CreateShareRequest: {
+            kind: components["schemas"]["ShareKind"];
+            /**
+             * Note
+             * @default
+             */
+            note?: string;
+            /**
+             * Recipient
+             * @description A friend, `users/{user}`.
+             */
+            recipient: string;
+            /** Subjects */
+            subjects: string[];
         };
         /**
          * Credit
@@ -1392,6 +1779,55 @@ export interface components {
             outcome: components["schemas"]["PathOutcome"];
             /** Steps */
             steps: components["schemas"]["PathStep"][];
+        };
+        /**
+         * Friend
+         * @description A friend.
+         */
+        Friend: {
+            /** Createtime */
+            createTime: string;
+            /**
+             * Name
+             * @description `users/{user}/friends/{friend}`.
+             */
+            name: string;
+            person: components["schemas"]["Person"];
+        };
+        /**
+         * FriendInvite
+         * @description An invite code. The code is returned once, at creation; only its hash is stored.
+         */
+        FriendInvite: {
+            /**
+             * Code
+             * @description `XXXXX-XXXXX`; only in CreateFriendInvite.
+             * @default
+             */
+            code: string;
+            /** Createtime */
+            createTime: string;
+            /** Expiretime */
+            expireTime: string;
+            /**
+             * Name
+             * @description `users/{user}/friendInvites/{invite}`.
+             */
+            name: string;
+        };
+        /**
+         * FriendInvitePreview
+         * @description GetFriendInvite: who an invite is from, before accepting it.
+         */
+        FriendInvitePreview: {
+            /**
+             * Alreadyfriends
+             * @default false
+             */
+            alreadyFriends: boolean;
+            /** Expiretime */
+            expireTime: string;
+            inviter: components["schemas"]["Person"];
         };
         /**
          * Genre
@@ -1667,12 +2103,43 @@ export interface components {
             totalSize: number;
         };
         /**
+         * ListBlockedUsersResponse
+         * @description ListBlockedUsers: oldest first.
+         */
+        ListBlockedUsersResponse: {
+            /** Blockedusers */
+            blockedUsers: components["schemas"]["BlockedUser"][];
+        };
+        /**
          * ListDataSourcesResponse
          * @description ListDataSources.
          */
         ListDataSourcesResponse: {
             /** Datasources */
             dataSources: components["schemas"]["DataSource"][];
+            /**
+             * Nextpagetoken
+             * @default
+             */
+            nextPageToken: string;
+            /** Totalsize */
+            totalSize: number;
+        };
+        /**
+         * ListFriendInvitesResponse
+         * @description ListFriendInvites: the user's unexpired invites, newest first (codes not included).
+         */
+        ListFriendInvitesResponse: {
+            /** Friendinvites */
+            friendInvites: components["schemas"]["FriendInvite"][];
+        };
+        /**
+         * ListFriendsResponse
+         * @description ListFriends: oldest friendship first.
+         */
+        ListFriendsResponse: {
+            /** Friends */
+            friends: components["schemas"]["Friend"][];
             /**
              * Nextpagetoken
              * @default
@@ -1695,6 +2162,23 @@ export interface components {
             nextPageToken: string;
             /** Totalsize */
             totalSize: number;
+        };
+        /**
+         * ListInboxResponse
+         * @description ListInbox: shares received, newest first.
+         */
+        ListInboxResponse: {
+            /**
+             * Nextpagetoken
+             * @default
+             */
+            nextPageToken: string;
+            /** Shares */
+            shares: components["schemas"]["Share"][];
+            /** Totalsize */
+            totalSize: number;
+            /** Unreadcount */
+            unreadCount: number;
         };
         /**
          * ListLinkedAccountsResponse
@@ -1765,6 +2249,14 @@ export interface components {
          */
         ListeningProvider: "LISTENBRAINZ" | "LASTFM" | "LIBREFM" | "SPOTIFY" | "DEEZER" | "APPLE_MUSIC" | "YOUTUBE_MUSIC";
         /**
+         * MarkAllReadResponse
+         * @description MarkInboxRead: how many shares were marked read.
+         */
+        MarkAllReadResponse: {
+            /** Marked */
+            marked: number;
+        };
+        /**
          * MatchStatus
          * @description How an artist name from the playlist was matched.
          * @enum {string}
@@ -1799,6 +2291,19 @@ export interface components {
             /** Strength */
             strength: number;
             toArtist: components["schemas"]["ArtistSummary"];
+        };
+        /**
+         * Person
+         * @description Someone in the friends graph, as another user sees them.
+         */
+        Person: {
+            /** Displayname */
+            displayName: string;
+            /**
+             * User
+             * @description Resource name `users/{user}` (opaque).
+             */
+            user: string;
         };
         /**
          * PlaylistArtist
@@ -2066,6 +2571,26 @@ export interface components {
             name: string;
         };
         /**
+         * Report
+         * @description A filed report. Moderators review it; the reporter sees only that it was received.
+         */
+        Report: {
+            /** Createtime */
+            createTime: string;
+            /**
+             * Name
+             * @description `reports/{report}`.
+             */
+            name: string;
+            reason: components["schemas"]["ReportReason"];
+        };
+        /**
+         * ReportReason
+         * @description Why someone reported a share or a person.
+         * @enum {string}
+         */
+        ReportReason: "SPAM" | "HARASSMENT" | "HATE" | "SEXUAL_CONTENT" | "OTHER";
+        /**
          * RevealResponse
          * @description RevealPuzzle: a shortest solution, with evidence for every step.
          */
@@ -2133,6 +2658,40 @@ export interface components {
             user: string;
         };
         /**
+         * Share
+         * @description Something one friend sent another.
+         */
+        Share: {
+            /** Createtime */
+            createTime: string;
+            kind: components["schemas"]["ShareKind"];
+            /**
+             * Name
+             * @description `shares/{share}`.
+             */
+            name: string;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+            /**
+             * Read
+             * @default false
+             */
+            read: boolean;
+            recipient: components["schemas"]["Person"];
+            sender: components["schemas"]["Person"];
+            /** Subjects */
+            subjects: components["schemas"]["SharedSubject"][];
+        };
+        /**
+         * ShareKind
+         * @description What a share points at; decides how many subjects it has and of which type.
+         * @enum {string}
+         */
+        ShareKind: "ARTIST" | "RECORDING" | "ARTIST_COMPARISON" | "RECORDING_COMPARISON" | "PATH";
+        /**
          * SharedCredit
          * @description A credit role compared across the two songs.
          */
@@ -2161,6 +2720,24 @@ export interface components {
             shareB: number;
         };
         /**
+         * SharedSubject
+         * @description An artist or recording in a share, resolved against the current catalog.
+         */
+        SharedSubject: {
+            /** Available */
+            available: boolean;
+            /**
+             * Displayname
+             * @description Empty when the catalog no longer has it.
+             */
+            displayName: string;
+            /**
+             * Name
+             * @description `artists/{artist}` or `recordings/{recording}`.
+             */
+            name: string;
+        };
+        /**
          * SimilarityPart
          * @description One named part of the similarity score.
          */
@@ -2182,6 +2759,22 @@ export interface components {
              * @description Its weight among the parts present; they sum to 1.
              */
             weight: number;
+        };
+        /**
+         * SocialProfile
+         * @description The name a user shows to friends. Friends see nothing else about each other.
+         */
+        SocialProfile: {
+            /**
+             * Displayname
+             * @default
+             */
+            displayName: string;
+            /**
+             * Name
+             * @description `users/{user}/socialProfile`.
+             */
+            name: string;
         };
         /**
          * SourceKind
@@ -2298,6 +2891,14 @@ export interface components {
             };
             /** Year */
             year: number;
+        };
+        /**
+         * UpdateSocialProfileRequest
+         * @description UpdateSocialProfile: pick the name friends see.
+         */
+        UpdateSocialProfileRequest: {
+            /** Displayname */
+            displayName: string;
         };
         /**
          * User
@@ -2691,6 +3292,68 @@ export interface operations {
             };
         };
     };
+    GetFriendInvite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FriendInvitePreview"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    AcceptFriendInvite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Friend"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     ListGenres: {
         parameters: {
             query?: {
@@ -3046,6 +3709,39 @@ export interface operations {
             };
         };
     };
+    CreateReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateReportRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Report"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     CreateSession: {
         parameters: {
             query?: never;
@@ -3186,6 +3882,101 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    CreateShare: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateShareRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Share"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    DeleteShare: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                share: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    MarkShareRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                share: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Share"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
@@ -3349,6 +4140,329 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ListBlockedUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListBlockedUsersResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    CreateBlockedUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateBlockedUserRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockedUser"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    DeleteBlockedUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+                blocked: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ListFriendInvites: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListFriendInvitesResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    CreateFriendInvite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FriendInvite"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    DeleteFriendInvite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+                invite: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ListFriends: {
+        parameters: {
+            query?: {
+                pageSize?: number;
+                pageToken?: string;
+            };
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListFriendsResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    DeleteFriend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+                friend: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ListInbox: {
+        parameters: {
+            query?: {
+                pageSize?: number;
+                pageToken?: string;
+            };
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListInboxResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    MarkInboxRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarkAllReadResponse"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
@@ -3688,6 +4802,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Profile-Output"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetSocialProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SocialProfile"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    UpdateSocialProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSocialProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SocialProfile"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */

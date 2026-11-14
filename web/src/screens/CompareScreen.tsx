@@ -12,6 +12,7 @@ import {Icon} from '../components/Icon';
 import {SearchBox} from '../components/SearchBox';
 import {EmptyState, ErrorState, SkeletonRows} from '../components/States';
 import {useI18n} from '../i18n/i18n';
+import {ShareButton} from '../social/ShareSheet';
 
 function Picker({
   label,
@@ -96,6 +97,16 @@ export default function CompareScreen() {
       )}
       {data && (
         <>
+          <div className="row">
+            <ShareButton
+              kind="ARTIST_COMPARISON"
+              subjects={[data.artistA.name, data.artistB.name]}
+              title={t('friends.share.versus', {
+                a: data.artistA.displayName,
+                b: data.artistB.displayName,
+              })}
+            />
+          </div>
           <section className="section">
             <h2>{t('compare.sharedGenres')}</h2>
             {data.genreOverlap === null ? (

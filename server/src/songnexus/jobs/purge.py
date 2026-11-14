@@ -1,4 +1,4 @@
-"""Purge job: removes expired sessions and accounts deleted more than 30 days ago.
+"""Purge job: expired sessions, invites and link flows; old reports; deleted accounts.
 
 Scheduled daily (Cloud Scheduler → Cloud Run job ``songnexus-purge``). Deleted
 accounts are already empty at deletion time; this removes the remaining row and
@@ -11,11 +11,13 @@ from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import Engine
 
-from songnexus.storage import accounts_repository
+from songnexus.storage import accounts_repository, social_repository
 from songnexus.storage import user_repository as users
 from songnexus.storage.db import session_scope
 
 DELETED_ACCOUNT_RETENTION = timedelta(days=30)
+# Abuse reports keep a copy of the reported note for moderators, then go (ADR 0007).
+REPORT_RETENTION = timedelta(days=90)
 # Margin so the 30-day promise holds even if a daily run is missed.
 _SAFETY_MARGIN = timedelta(days=2)
 
@@ -29,4 +31,12 @@ def run_purge(engine: Engine, now: datetime | None = None) -> dict[str, int]:
             session, now - (DELETED_ACCOUNT_RETENTION - _SAFETY_MARGIN)
         )
         flows = accounts_repository.purge_flows(session, now)
-    return {"expiredSessions": sessions, "deletedAccounts": accounts, "expiredLinkFlows": flows}
+        invites = social_repository.purge_invites(session, now)
+        reports = social_repository.purge_reports(session, now - REPORT_RETENTION)
+    return {
+        "expiredSessions": sessions,
+        "deletedAccounts": accounts,
+        "expiredLinkFlows": flows,
+        "expiredInvites": invites,
+        "expiredReports": reports,
+    }
