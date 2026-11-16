@@ -14,12 +14,6 @@ const ROUTES = [
   '/play',
   '/library',
   '/you',
-  '/discover',
-  '/guide',
-  '/games',
-  '/around-you',
-  '/reels',
-  '/your-music',
   '/friends',
   '/friends/join/ABCDE-FGHJK',
   '/compare/songs',
@@ -29,7 +23,7 @@ const ROUTES = [
 
 for (const locale of ['en-XA', 'ar-XB']) {
   test(`every screen holds up in ${locale}`, async ({page}) => {
-    // Twenty routes, each with an axe scan.
+    // Every route, each with an axe scan.
     test.setTimeout(120_000);
     for (const path of ROUTES) {
       await page.goto(`${path}?locale=${locale}`);

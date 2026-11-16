@@ -1,5 +1,6 @@
 /**
- * Theme: SYSTEM follows the OS; LIGHT and DARK pin it via data-theme on <html>.
+ * Theme: dark is the product's look and the default (SYSTEM, the stored
+ * default, means dark); LIGHT and DARK pin it via data-theme on <html>.
  * Signed-in users' choice follows their account; otherwise it's remembered locally.
  */
 import {useEffect, useSyncExternalStore} from 'react';

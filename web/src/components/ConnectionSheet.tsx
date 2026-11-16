@@ -1,12 +1,14 @@
 /** Every credit connecting two artists, each with its source. Evidence is one tap away (plan §8). */
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import {Link} from 'react-router';
 
 import type {Evidence} from '../api/client';
 import {useConnection, type ConnectionCategory} from '../api/queries';
 import {useI18n} from '../i18n/i18n';
 
+import {CATEGORIES, KIND_CATEGORY} from './encoding';
 import {hostOf, evidenceText} from './evidence';
+import {Swatch} from './Filters';
 import {Icon} from './Icon';
 import {Sheet} from './Sheet';
 import {ErrorState, SkeletonRows} from './States';
@@ -58,6 +60,69 @@ export function subjectPath(name: string): string | null {
   if (collection === 'recordings') return `/song/${id}`;
   if (collection === 'labels') return `/label/${id}`;
   return null;
+}
+
+/** How many credits are listed before "show all". */
+const EVIDENCE_PREVIEW = 5;
+
+/**
+ * The credits behind one connection, for use inside a panel: the count and the
+ * kinds of connection first, then the credits (a few, with the rest one tap away).
+ */
+export function ConnectionEvidence({
+  a,
+  b,
+  categories,
+}: {
+  a: string;
+  b: string;
+  categories: ConnectionCategory[];
+}) {
+  const {t} = useI18n();
+  const detail = useConnection(a, b, categories);
+  const [all, setAll] = useState(false);
+  const names = useMemo(() => {
+    const map = new Map<string, string>();
+    if (detail.data) {
+      map.set(detail.data.artist.name, detail.data.artist.displayName);
+      map.set(detail.data.other.name, detail.data.other.displayName);
+    }
+    return map;
+  }, [detail.data]);
+
+  if (detail.isPending) return <SkeletonRows count={3} />;
+  if (detail.isError)
+    return (
+      <ErrorState error={detail.error} onRetry={() => void detail.refetch()} />
+    );
+  const {evidence, kinds} = detail.data;
+  const present = new Set(kinds.map(kind => KIND_CATEGORY[kind]));
+  const shown = all ? evidence : evidence.slice(0, EVIDENCE_PREVIEW);
+  return (
+    <div className="connection-evidence">
+      <p className="connection-evidence__count">
+        {t('connection.evidenceCount', {count: evidence.length})}
+      </p>
+      <ul className="connection-evidence__kinds">
+        {CATEGORIES.filter(category => present.has(category)).map(category => (
+          <li key={category}>
+            <Swatch category={category} />
+            {t(`category.${category}`)}
+          </li>
+        ))}
+      </ul>
+      <EvidenceList evidence={shown} nameOf={n => names.get(n) ?? ''} />
+      {!all && evidence.length > EVIDENCE_PREVIEW && (
+        <button
+          type="button"
+          className="btn btn--tonal"
+          onClick={() => setAll(true)}
+        >
+          {t('connection.showAll', {count: evidence.length})}
+        </button>
+      )}
+    </div>
+  );
 }
 
 interface Props {

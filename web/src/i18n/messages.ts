@@ -12,24 +12,12 @@ export const messages = {
   'app.skipToContent': 'Skip to main content',
   'nav.home': 'Home',
   'nav.explore': 'Explore',
-  'nav.sixDegrees': 'Six degrees',
   'nav.play': 'Play',
   'nav.library': 'Library',
-  'nav.you': 'You',
-  'nav.discover': 'Discover',
-  'nav.guide': 'Ask',
-  'nav.games': 'Games',
-  'nav.aroundYou': 'Around you',
-  'nav.reels': 'Reels',
-  'nav.yourMusic': 'Your music',
   'nav.primary': 'Main',
   'nav.friends': 'Friends',
-  'nav.yours': 'Yours',
   'shell.account': 'Your account',
   'shell.signIn': 'Sign in',
-  'shell.promo.title': 'Bring your listening',
-  'shell.promo.body':
-    'Connect YouTube Music, Spotify, Last.fm and more to see your artists here.',
   'shelf.previous': 'Previous',
   'shelf.next': 'Next',
   'home.greeting.night': 'Up late',
@@ -84,117 +72,8 @@ export const messages = {
   'home.import.title': 'Map your playlist',
   'home.import.body': 'See the hidden links between the artists you listen to.',
   'home.recent': 'Recently viewed',
-  'home.hub.title': 'Your music universe',
-  'home.hub.lead': 'Find the people, stories, and sounds behind every song.',
-  'home.hub.discover.title': 'Discover',
-  'home.hub.discover.body':
-    'Trace credits, connections, collaborations, and sound.',
-  'home.hub.guide.title': 'Ask SongNexus',
-  'home.hub.guide.body':
-    'Get a guided path through the music you are curious about.',
-  'home.hub.games.title': 'Games',
-  'home.hub.games.body': 'Play daily puzzles and test your music knowledge.',
-  'home.hub.around.title': 'Around you',
-  'home.hub.around.body':
-    'See what your city, school, or campus is discovering.',
-  'home.hub.reels.title': 'Reels',
-  'home.hub.reels.body':
-    'Scroll through quick connections, credits, and discoveries.',
-  'home.hub.music.title': 'Your music',
-  'home.hub.music.body':
-    'Map your library, save trails, and tune your experience.',
 
   // Product surfaces
-  'discover.title': 'Discover',
-  'discover.lead':
-    'Move from a song to the people, places, and sounds around it.',
-  'discover.explore.title': 'Explore connections',
-  'discover.explore.body':
-    'Open a living map of artists and the credits between them.',
-  'discover.compare.title': 'Compare artists',
-  'discover.compare.body':
-    'See shared genres, audiences, collaborators, and paths.',
-  'discover.songs.title': 'Compare two songs',
-  'discover.songs.body': 'Put sound profiles and shared credits side by side.',
-  'discover.games.title': 'Find a path',
-  'discover.games.body':
-    'Connect any two artists through the shortest or strongest route.',
-  'discover.search.title': 'Search the catalog',
-  'discover.search.body': 'Start with an artist, album, label, or song.',
-  'guide.title': 'Ask SongNexus',
-  'guide.lead':
-    'A guided music companion for questions, connections, and next listens.',
-  'guide.inputLabel': 'Ask about music',
-  'guide.inputPlaceholder': 'Try “How are these artists connected?”',
-  'guide.ask': 'Ask',
-  'guide.suggestions': 'Try one of these',
-  'guide.suggestion.path': 'Show me a path between two artists',
-  'guide.suggestion.songs': 'Compare two songs I choose',
-  'guide.suggestion.discover': 'Help me discover a new connection',
-  'guide.reply.path':
-    'Let’s open the path builder so you can choose both artists.',
-  'guide.reply.songs':
-    'Let’s put two songs side by side and look at sound and credits.',
-  'guide.reply.discover':
-    'Let’s start with the connection web and follow the strongest link.',
-  'guide.reply.default':
-    'I can guide you through the catalog. Start with a song, artist, or connection.',
-  'games.title': 'Games',
-  'games.lead': 'Turn music knowledge into a daily habit.',
-  'games.daily.title': 'Daily puzzle',
-  'games.daily.body': 'Link two artists one collaboration at a time.',
-  'games.path.title': 'Six degrees',
-  'games.path.body': 'Pick any two artists and find how they connect.',
-  'games.trivia.title': 'Credit trivia',
-  'games.trivia.body': 'A future game about the people behind the recording.',
-  'games.comingSoon': 'Coming soon',
-  'around.title': 'Around you',
-  'around.lead': 'Discover listening patterns at a broad, privacy-safe level.',
-  'around.location.label': 'Choose a place',
-  'around.location.state': 'State',
-  'around.location.city': 'City',
-  'around.location.country': 'Country',
-  'around.location.placeholder': 'Enter a state, city, or country',
-  'around.community.label': 'Choose a community',
-  'around.community.university': 'University',
-  'around.community.school': 'School',
-  'around.community.workplace': 'Workplace',
-  'around.community.placeholder': 'Enter a university, school, or workplace',
-  'around.apply': 'Show listening',
-  'around.selection': 'Your selected view',
-  'around.city.title': 'What this place is discovering',
-  'around.school.title': 'What this community is discovering',
-  'around.empty':
-    'Location-based listening will appear here once an aggregate source is connected.',
-  'around.privacy.title': 'Built for groups, not individuals',
-  'around.privacy.body':
-    'We will only show anonymous, aggregated patterns with minimum group sizes. No one’s listening history will be exposed.',
-  'reels.title': 'Reels',
-  'reels.lead': 'Short ways into the people and ideas behind the music.',
-  'reels.save': 'Save',
-  'reels.saved': 'Saved',
-  'reels.open': 'Open discovery',
-  'reels.card.credits.title': 'A song is a small network',
-  'reels.card.credits.body':
-    'Follow the credits and you may find the next artist before the algorithm does.',
-  'reels.card.path.title': 'Take the long way around',
-  'reels.card.path.body':
-    'Two artists can be only a few credited collaborations apart.',
-  'reels.card.sound.title': 'Listen with your eyes',
-  'reels.card.sound.body':
-    'Compare tempo, key, mood, and the people who shaped each recording.',
-  'yourMusic.title': 'Your music',
-  'yourMusic.lead':
-    'Bring your listening world into SongNexus and make it yours.',
-  'yourMusic.library.title': 'Map your library',
-  'yourMusic.library.body':
-    'Import playlists or history locally and uncover hidden links.',
-  'yourMusic.friends.title': 'Friends',
-  'yourMusic.friends.body':
-    'Invite friends, and see the artists, songs and paths they share with you.',
-  'yourMusic.profile.title': 'Your profile',
-  'yourMusic.profile.body':
-    'Manage your Top 5, hidden artists, theme, and account data.',
 
   // Artist page
   'artist.connections':
@@ -301,7 +180,7 @@ export const messages = {
   'explore.legend': 'Legend',
 
   // Six degrees
-  'path.title': 'Six degrees',
+  'path.title': 'Find a path',
   'path.lead': 'How are two artists connected?',
   'path.from': 'From',
   'path.to': 'To',
@@ -373,7 +252,6 @@ export const messages = {
   'you.blocked.empty': 'You haven’t hidden any artists.',
   'you.settings': 'Settings',
   'you.theme': 'Theme',
-  'you.theme.SYSTEM': 'System',
   'you.theme.LIGHT': 'Light',
   'you.theme.DARK': 'Dark',
   'you.data': 'Your data',
@@ -670,7 +548,8 @@ export const messages = {
   'accounts.import': 'Import',
   'accounts.syncNow': 'Sync {name} now',
   'accounts.synced':
-    'Synced {plays, plural, one {# play} other {# plays}} from {artists, plural, one {# artist} other {# artists}}',
+    'Synced {plays, plural, one {# play} other {# plays}} · {artists, plural, =0 {none by artists in our data yet} one {# artist in our data} other {# artists in our data}}',
+  'accounts.upToDate': 'Up to date. Nothing new since the last sync.',
   'accounts.syncFailed': '{name} didn’t answer. We’ll try again soon.',
   'accounts.syncTooSoon': 'Synced a moment ago. Try again in a minute.',
   'accounts.startFailed': 'Couldn’t start connecting {name}. Try again.',
@@ -815,6 +694,97 @@ export const messages = {
   'library.friends.title': 'From your friends',
   'nav.friendsUnread':
     '{count, plural, one {# new share} other {# new shares}}',
+  // Shell and home (YouTube Music redesign)
+  'shell.guide': 'Menu',
+  'shell.prompt':
+    'Sign in to keep your artists, bring your listening and share with friends.',
+  'home.shortcuts': 'Shortcuts',
+  'home.feature.strapline': 'Credits, connected',
+  'home.feature.title': 'See how your music connects',
+  'home.feature.body':
+    'Every line is a real credit, a feature, a producer, a band, with the source that proves it.',
+  'home.feature.cta': 'Open the connection web',
+  'home.feature.puzzle': 'Play today’s puzzle',
+  'home.starters.eyebrow': 'Start a web from',
+  'home.starters.title': 'Popular starting points',
+  'home.starters.subtitle': 'Open their web',
+  'home.more.title': 'More to explore',
+  'tool.web.title': 'Connection web',
+  'tool.web.body': 'Open an artist and follow the credits outward.',
+  'tool.path.title': 'Find a path',
+  'tool.path.body': 'See how any two artists are linked, step by step.',
+  'tool.compare.title': 'Compare artists',
+  'tool.compare.body': 'Shared collaborators, genres and listeners.',
+  'tool.songs.title': 'Compare songs',
+  'tool.songs.body': 'Two songs side by side: sound and credits.',
+  'tool.puzzle.title': 'Daily puzzle',
+  'tool.puzzle.body': 'Link two artists, one collaboration at a time.',
+  'tool.library.title': 'Bring your music',
+  'tool.library.body':
+    'Import a playlist or connect a service to map your own artists.',
+  'tool.friends.title': 'Friends',
+  'tool.friends.body': 'Share artists, songs and paths with people you invite.',
+
+  // Explore hub and the connection web
+  'explore.hub.lead':
+    'Follow the credits from any artist: who they made music with, and the proof.',
+  'explore.hub.web.title': 'Start a connection web',
+  'explore.hub.web.body':
+    'Choose an artist. We draw the people they have made music with, and you keep opening from there.',
+  'explore.hub.web.search': 'Search for an artist',
+  'explore.hub.try': 'Or start with',
+  'explore.hub.tools': 'More ways to explore',
+  'explore.hub.about.summary': 'Where the connections come from',
+  'explore.hub.about.body':
+    'Connections are built from published credits in open music databases such as MusicBrainz and Discogs. Nothing is guessed: if a credit isn’t in our data yet, the line isn’t drawn.',
+  'explore.strapline': 'Connection web',
+  'explore.stats':
+    '{artists, plural, one {# artist} other {# artists}} · {connections, plural, one {# connection} other {# connections}}',
+  'explore.view': 'View',
+  'explore.filters': 'Filters',
+  'explore.clearFilters': 'Clear filters',
+  'explore.minCredits': 'Show connections with',
+  'explore.minCredits.any': 'Any number of credits',
+  'explore.minCredits.atLeast': '{count}+ credits',
+  'explore.howTo': 'How to read this',
+  'explore.howTo.artists':
+    'Each circle is an artist. The one ringed in red is where you started.',
+  'explore.howTo.lines':
+    'A line means two artists share credits. Thicker lines mean more credits, and the color shows the kind. Select a line to see every credit and its source.',
+  'explore.howTo.actions':
+    'Select an artist for details, or double-click to bring in their connections. Drag to rearrange. Scroll or pinch to zoom.',
+  'explore.camera': 'Zoom',
+  'explore.zoomIn': 'Zoom in',
+  'explore.zoomOut': 'Zoom out',
+  'explore.details': 'Details',
+  'explore.tip.opened': '{name}',
+  'explore.tip.closed': '{name} · double-click to show connections',
+  'explore.tip.edge':
+    '{a} and {b} · {count, plural, one {# credit} other {# credits}} · {category}',
+  'explore.panel.center': 'Starting artist',
+  'explore.panel.connection': 'Connection',
+  'explore.panel.linkedTo':
+    '{count, plural, one {# credit} other {# credits}} with {name}',
+  'explore.panel.open': 'Show connections',
+  'explore.panel.more': 'Show more connections',
+  'explore.panel.artistPage': 'Artist page',
+  'explore.panel.recenter': 'Start a new web here',
+  'explore.panel.path': 'Find a path from {name}',
+  'explore.panel.inData':
+    'Showing {shown} of {total, plural, one {# connection} other {# connections}} in our data, strongest first.',
+  'explore.panel.strongest': 'Strongest connections',
+  'explore.panel.inWeb': 'Linked in this web',
+  'explore.panel.showAll': 'Show all {count}',
+  'explore.panel.hint':
+    'Select an artist or a line in the web to see the details here.',
+  'connection.showAll':
+    'Show all {count, plural, one {# credit} other {# credits}}',
+  // <ask> AI search (Ask in the search bar). Add keys below this line.
+  // </ask>
+  // <community> Around you: campus and city listening. Add keys below this line.
+  // </community>
+  // <games> Games hub, trivia and stories. Add keys below this line.
+  // </games>
   'footer.about': 'About our data',
   'footer.privacy': 'Privacy',
 } as const;

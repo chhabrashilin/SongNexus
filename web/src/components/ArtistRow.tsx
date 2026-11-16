@@ -1,5 +1,5 @@
 /** A list row for an artist: initial avatar, name, disambiguation, optional meta and action. */
-import type {ReactNode} from 'react';
+import type {CSSProperties, ReactNode} from 'react';
 import {Link} from 'react-router';
 
 import {idOf, type ArtistSummary} from '../api/client';
@@ -9,9 +9,24 @@ export function initialOf(name: string): string {
   return first ? first.toLocaleUpperCase() : '?';
 }
 
+/** A stable hue (0–359) for a name: the same artist always gets the same cover. */
+export function hueOf(name: string): number {
+  let hash = 0;
+  for (const ch of name) hash = (hash * 31 + (ch.codePointAt(0) ?? 0)) >>> 0;
+  return hash % 360;
+}
+
 export function Avatar({name, large = false}: {name: string; large?: boolean}) {
   return (
-    <span className={large ? 'avatar avatar--lg' : 'avatar'} aria-hidden="true">
+    <span
+      className={
+        large
+          ? 'avatar avatar--lg cover cover--round'
+          : 'avatar cover cover--round'
+      }
+      style={{'--hue': hueOf(name)} as CSSProperties}
+      aria-hidden="true"
+    >
       {initialOf(name)}
     </span>
   );

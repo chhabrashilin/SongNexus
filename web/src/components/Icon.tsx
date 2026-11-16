@@ -51,6 +51,13 @@ const PATHS = {
     'M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z',
   movie:
     'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm1 2v3h3V6H5zm5 0v3h4V6h-4zm6 0v3h3V6h-3zM5 11v7h14v-7H5z',
+  menu: 'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z',
+  puzzle:
+    'M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-1.99 2v3.8H3.5a2.7 2.7 0 0 1 0 5.4H2V20a2 2 0 0 0 2 2h3.8v-1.5a2.7 2.7 0 0 1 5.4 0V22H17a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z',
+  remove: 'M19 13H5v-2h14v2z',
+  info: 'M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z',
+  undo: 'M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62A7.95 7.95 0 0 1 12.5 10.5a8 8 0 0 1 7.6 5.5l2.37-.78A10.5 10.5 0 0 0 12.5 8z',
+  bolt: 'M7 2v11h3v9l7-12h-4l4-8z',
 } as const;
 
 export type IconName = keyof typeof PATHS;
@@ -77,6 +84,7 @@ export function Icon({
       viewBox="0 0 24 24"
       width={size}
       height={size}
+      style={size === 24 ? undefined : {inlineSize: size, blockSize: size}}
       role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}

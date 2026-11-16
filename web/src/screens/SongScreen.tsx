@@ -1,12 +1,14 @@
 /** Song (S5): credits grouped by role, and the albums the song appears on. */
+import type {CSSProperties} from 'react';
 import {Link, useParams} from 'react-router';
 
 import type {Schemas} from '../api/client';
 import {useRecording} from '../api/queries';
 import {usePageTitle} from '../app/Shell';
-import {ArtistRow} from '../components/ArtistRow';
+import {ArtistRow, hueOf} from '../components/ArtistRow';
 import {hostOf} from '../components/evidence';
 import {Icon} from '../components/Icon';
+import {Cover} from '../components/Shelf';
 import {EmptyState, ErrorState, Spinner} from '../components/States';
 import {SoundProfile} from '../songs/Descriptors';
 import {useI18n} from '../i18n/i18n';
@@ -60,24 +62,35 @@ export default function SongScreen() {
 
   return (
     <article className="stack" style={{gap: 'var(--space-6)'}}>
-      <header className="stack" style={{gap: 'var(--space-1)'}}>
-        <h1>
-          <bdi>{song.displayName}</bdi>
-        </h1>
-        <p className="muted">
-          {[
-            song.firstReleaseDate?.slice(0, 4),
-            seconds !== null
-              ? t('song.length', {
-                  minutes: Math.floor(seconds / 60),
-                  seconds: String(seconds % 60).padStart(2, '0'),
-                })
-              : null,
-          ]
-            .filter(Boolean)
-            .join(' · ')}
-        </p>
-        <div className="row" style={{marginBlockStart: 'var(--space-3)'}}>
+      <header
+        className="stack artist-hero"
+        style={{'--hue': hueOf(song.displayName)} as CSSProperties}
+      >
+        <div className="artist-hero__top">
+          <div className="artist-hero__cover">
+            <Cover name={song.displayName} />
+          </div>
+          <div className="stack" style={{gap: 'var(--space-1)'}}>
+            <p className="artist-hero__eyebrow">{t('search.type.RECORDING')}</p>
+            <h1 className="artist-hero__name">
+              <bdi>{song.displayName}</bdi>
+            </h1>
+            <p className="muted">
+              {[
+                song.firstReleaseDate?.slice(0, 4),
+                seconds !== null
+                  ? t('song.length', {
+                      minutes: Math.floor(seconds / 60),
+                      seconds: String(seconds % 60).padStart(2, '0'),
+                    })
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </p>
+          </div>
+        </div>
+        <div className="row">
           <ShareButton
             kind="RECORDING"
             subjects={[song.name]}

@@ -25,7 +25,8 @@ import {EmptyState, SkeletonRows} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 
 const MAX_TOP = 5;
-const THEMES: Theme[] = ['SYSTEM', 'LIGHT', 'DARK'];
+/** Dark is the product's look; SYSTEM (the stored default) means dark too. */
+const THEMES: Exclude<Theme, 'SYSTEM'>[] = ['DARK', 'LIGHT'];
 
 function TopFive() {
   const {t} = useI18n();
@@ -152,7 +153,7 @@ function Settings({signedIn}: {signedIn: boolean}) {
             type="button"
             role="radio"
             className="chip"
-            aria-checked={theme === option}
+            aria-checked={(theme === 'LIGHT') === (option === 'LIGHT')}
             onClick={() => {
               applyTheme(option);
               if (signedIn && preferences.data) {

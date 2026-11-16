@@ -1,18 +1,20 @@
 /*
- * Design tokens on Material 3 roles (ADR 0001, D8).
+ * Design tokens. Role names follow Material 3 (ADR 0001, D8); the values follow
+ * YouTube Music: a near-black page, white ink, grey secondary text, square-ish
+ * artwork, pill buttons, and red kept for the brand mark and "new" signals.
  *
- * Theme: every color role is light-dark(light, dark). The page follows the
- * system; a user choice sets data-theme on <html>, which pins color-scheme.
- * No inline script is needed (the CSP forbids one) and nothing flashes.
+ * Theme: dark is the product's look and the default. A listener can pin light
+ * in settings (data-theme on <html>); every role is light-dark(light, dark), so
+ * no inline script is needed (the CSP forbids one) and nothing flashes.
  *
  * Data colors (--series-*) are the three categorical hues validated for
  * color-vision deficiency in both themes (worst CVD ΔE 9.2 light / 9.4 dark).
  * Other connection kinds use neutral lines with dash patterns, so color is
- * never the only encoding. The brand primary is never used for data.
+ * never the only encoding. Brand red is never used for data.
  */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 }
 :root[data-theme='light'] {
   color-scheme: light;
@@ -22,49 +24,54 @@
 }
 
 :root {
-  /* Color roles (R2 redesign): a dark-first music look. Near-black surfaces in
-     dark, soft paper in light; one warm red accent for focus, links and "now"
-     states; selection is high-contrast ink (white on dark, black on light), the
-     way music apps mark the active chip. Every text pair meets WCAG AA:
-     on-surface 18.0:1 dark / 18.6:1 light, on-surface-variant 8.9:1 / 6.3:1,
-     primary text 7.0:1 / 6.4:1 on the page surface. */
-  --md-primary: light-dark(#c2001b, #ff6e6e);
-  --md-on-primary: light-dark(#ffffff, #1d0003);
-  --md-primary-container: light-dark(#ffe2e0, #43121a);
-  --md-on-primary-container: light-dark(#40000a, #ffdad7);
-  --md-secondary-container: light-dark(#0f0f0f, #f1f1f1);
+  /* Ink is the accent: links, focus rings, selected tabs and text buttons are
+     white on dark (black on light), as in YouTube Music. Text pairs meet WCAG
+     AA: on-surface 20.4:1 dark / 18.9:1 light; on-surface-variant 8.6:1 / 7.0:1. */
+  --md-primary: light-dark(#0f0f0f, #ffffff);
+  --md-on-primary: light-dark(#ffffff, #0f0f0f);
+  --md-primary-container: light-dark(#e5e5e5, #2e2e2e);
+  --md-on-primary-container: light-dark(#0f0f0f, #ffffff);
+  --md-secondary-container: light-dark(#0f0f0f, #ffffff);
   --md-on-secondary-container: light-dark(#ffffff, #0f0f0f);
-  --md-surface: light-dark(#f7f7f8, #070707);
+  --md-surface: light-dark(#ffffff, #030303);
   --md-surface-container-lowest: light-dark(#ffffff, #000000);
-  --md-surface-container-low: light-dark(#ffffff, #121212);
-  --md-surface-container: light-dark(#efeff1, #181818);
-  --md-surface-container-high: light-dark(#e7e7ea, #212121);
-  --md-surface-container-highest: light-dark(#dcdce0, #2c2c2c);
-  --md-on-surface: light-dark(#0f0f0f, #f1f1f1);
-  --md-on-surface-variant: light-dark(#55555c, #aaaaaa);
-  --md-outline: light-dark(#76767e, #8c8c8c);
-  --md-outline-variant: light-dark(#dadade, #2e2e2e);
-  /* Filled buttons are ink, like a music app's primary pill. */
-  --btn-filled-bg: light-dark(#0f0f0f, #f1f1f1);
+  --md-surface-container-low: light-dark(#f6f6f6, #121212);
+  --md-surface-container: light-dark(#f0f0f0, #1a1a1a);
+  --md-surface-container-high: light-dark(#e8e8e8, #212121);
+  --md-surface-container-highest: light-dark(#dcdcdc, #2e2e2e);
+  --md-on-surface: light-dark(#0f0f0f, #ffffff);
+  --md-on-surface-variant: light-dark(#5a5a5a, #aaaaaa);
+  --md-outline: light-dark(#767676, #8a8a8a);
+  --md-outline-variant: light-dark(rgb(0 0 0 / 12%), rgb(255 255 255 / 12%));
+  /* Translucent fills: chips, search, hover and pressed states. */
+  --fill-1: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 8%));
+  --fill-2: light-dark(rgb(0 0 0 / 9%), rgb(255 255 255 / 12%));
+  --fill-3: light-dark(rgb(0 0 0 / 14%), rgb(255 255 255 / 20%));
+  --btn-filled-bg: light-dark(#0f0f0f, #ffffff);
   --btn-filled-fg: light-dark(#ffffff, #0f0f0f);
-  /* Brand accent for decoration only (never text, never data). */
-  --accent-1: #ff2d55;
-  --accent-2: #ff7a3d;
-  --accent-3: #b14dff;
-  --glass: light-dark(rgb(247 247 248 / 78%), rgb(7 7 7 / 72%));
-  --glow: light-dark(rgb(255 45 85 / 10%), rgb(255 45 85 / 16%));
-  /* Chart series 1: the primary hue, re-stepped for dark mode so data marks pass
-     the dataviz checks (lightness band, chroma floor, 3:1 vs surface). */
+  /* Brand red: the mark, unread dots, the center of a connection web. Never
+     small text on it at #ff0000 (4.0:1); badges use the darker step (5.9:1). */
+  --brand: #ff0000;
+  --brand-strong: #cc0000;
+  --on-brand: #ffffff;
+  /* Kept for older decorative gradients (invites, join card). */
+  --accent-1: #ff0033;
+  --accent-2: #ff5c38;
+  --accent-3: #a13dff;
+  --glass: light-dark(rgb(255 255 255 / 86%), rgb(3 3 3 / 82%));
+  --glow: light-dark(rgb(255 0 0 / 5%), rgb(255 0 0 / 10%));
+  /* Chart series 1, re-stepped for dark mode so data marks pass the dataviz
+     checks (lightness band, chroma floor, 3:1 vs surface). */
   --chart-series-1: light-dark(#5446a5, #8f7de8);
   --md-inverse-surface: light-dark(#212121, #f1f1f1);
   --md-inverse-on-surface: light-dark(#f1f1f1, #212121);
-  --md-inverse-primary: light-dark(#ff8a8a, #c2001b);
-  --md-error: light-dark(#ba1a1a, #ffb4ab);
+  --md-inverse-primary: light-dark(#ffffff, #0f0f0f);
+  --md-error: light-dark(#ba1a1a, #ff8a80);
   --md-on-error: light-dark(#ffffff, #690005);
   --md-error-container: light-dark(#ffdad6, #93000a);
   --md-on-error-container: light-dark(#410002, #ffdad6);
   --md-success: light-dark(#1b6d3c, #7dd99d);
-  --md-scrim: rgb(0 0 0 / 62%);
+  --md-scrim: rgb(0 0 0 / 68%);
 
   /* Data (validated; see header). */
   --series-1: #3987e5;
@@ -73,11 +80,13 @@
   --neutral-strong: light-dark(#52514e, #c3c2b7);
   --neutral-soft: light-dark(#9a9993, #6b6d76);
 
-  /* Typography: system UI fonts in every script (no third-party font requests). */
-  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans CJK JP',
-    'Noto Sans Arabic', 'Noto Sans Ethiopic', 'Helvetica Neue', Arial, sans-serif;
-  --display-large: 800 clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem)/1.05 var(--font);
-  --display-small: 750 2.25rem/2.6rem var(--font);
+  /* Typography: Roboto (self-hosted, variable) for Latin, Greek and Cyrillic;
+     system fonts for every other script. No third-party font requests. */
+  --font: 'Roboto Variable', Roboto, system-ui, -apple-system, 'Segoe UI', 'Noto Sans',
+    'Noto Sans CJK JP', 'Noto Sans Arabic', 'Noto Sans Ethiopic', 'Helvetica Neue', Arial,
+    sans-serif;
+  --display-large: 700 clamp(2rem, 1.5rem + 2vw, 3rem)/1.1 var(--font);
+  --display-small: 700 2rem/2.4rem var(--font);
   --headline-medium: 700 1.75rem/2.2rem var(--font);
   --headline-small: 700 1.5rem/2rem var(--font);
   --title-large: 700 1.25rem/1.6rem var(--font);
@@ -93,9 +102,9 @@
   --shape-xs: 4px;
   --shape-s: 8px;
   --shape-m: 12px;
-  --shape-cover: 10px;
-  --shape-l: 16px;
-  --shape-xl: 28px;
+  --shape-cover: 6px;
+  --shape-l: 12px;
+  --shape-xl: 16px;
   --shape-full: 999px;
   --space-1: 4px;
   --space-2: 8px;
@@ -106,15 +115,16 @@
   --space-7: 48px;
   --touch-target: 44px;
   --elevation-1: 0 1px 2px rgb(0 0 0 / 30%), 0 1px 3px 1px rgb(0 0 0 / 15%);
-  --elevation-3: 0 4px 8px 3px rgb(0 0 0 / 15%), 0 1px 3px rgb(0 0 0 / 30%);
+  --elevation-3: 0 8px 24px rgb(0 0 0 / 50%), 0 1px 3px rgb(0 0 0 / 30%);
+  --elevation-glow: 0 12px 32px -12px rgb(0 0 0 / 60%);
   --motion-standard: cubic-bezier(0.2, 0, 0, 1);
   --motion-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
   --duration-short: 150ms;
   --duration-medium: 300ms;
-  --content-max: 1280px;
+  --content-max: 1440px;
   --nav-height: 64px;
   --sidebar: 240px;
-  --elevation-glow: 0 12px 40px -12px rgb(0 0 0 / 55%);
+  --rail: 72px;
 }
 
 @media (prefers-reduced-motion: reduce) {

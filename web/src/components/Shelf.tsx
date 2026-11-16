@@ -10,24 +10,28 @@ import {Link} from 'react-router';
 
 import {useI18n} from '../i18n/i18n';
 
-import {initialOf} from './ArtistRow';
-import {Icon} from './Icon';
+import {hueOf, initialOf} from './ArtistRow';
+import {Icon, type IconName} from './Icon';
 
-/** A stable hue (0–359) for a name. */
-export function hueOf(name: string): number {
-  let hash = 0;
-  for (const ch of name) hash = (hash * 31 + (ch.codePointAt(0) ?? 0)) >>> 0;
-  return hash % 360;
-}
+export {hueOf};
 
-export function Cover({name, round = false}: {name: string; round?: boolean}) {
+export function Cover({
+  name,
+  round = false,
+  icon,
+}: {
+  name: string;
+  round?: boolean;
+  /** Shown instead of the initial (for things that aren't named, like "you"). */
+  icon?: IconName;
+}) {
   return (
     <span
       className={round ? 'cover cover--round' : 'cover'}
       style={{'--hue': hueOf(name)} as CSSProperties}
       aria-hidden="true"
     >
-      {initialOf(name)}
+      {icon ? <Icon name={icon} /> : initialOf(name)}
     </span>
   );
 }
