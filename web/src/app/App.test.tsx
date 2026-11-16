@@ -42,12 +42,15 @@ describe('App', () => {
     expect(
       await screen.findByRole('heading', {
         level: 1,
-        name: 'Your music universe',
+        name: 'See how your music connects',
       }),
     ).toBeDefined();
     expect(screen.getByRole('navigation', {name: 'Main'})).toBeDefined();
-    expect(screen.getByRole('link', {name: /Ask SongNexus/})).toBeDefined();
-    expect(screen.getAllByRole('link', {name: /Around you/})).toHaveLength(2);
+    // The guide and the shortcut chips both lead to the connection web.
+    expect(screen.getByRole('link', {name: 'Explore'})).toBeDefined();
+    expect(
+      screen.getByRole('link', {name: 'Open the connection web'}),
+    ).toBeDefined();
     expect(
       screen.getByRole('combobox', {name: 'Search artists and songs'}),
     ).toBeDefined();

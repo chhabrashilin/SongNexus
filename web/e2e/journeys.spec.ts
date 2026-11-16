@@ -35,7 +35,7 @@ async function openArtist(page: Page, query: string, name: string) {
 test('home is accessible and explains the product', async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('heading', {level: 1})).toHaveText(
-    'Your music universe',
+    'See how your music connects',
   );
   await expectAccessible(page);
 });

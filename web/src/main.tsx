@@ -1,6 +1,11 @@
+import '@fontsource-variable/roboto/wght.css';
 import './styles/tokens.css';
 import './styles/base.css';
+import './styles/primitives.css';
+import './styles/shell.css';
 import './styles/components.css';
+import './styles/home.css';
+import './styles/web.css';
 
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';

@@ -169,12 +169,14 @@ function ServiceRow({
     sync.mutate(offer.provider, {
       onSuccess: result =>
         snackbar(
-          result.synced
-            ? t('accounts.synced', {
-                plays: result.plays,
-                artists: result.artists,
-              })
-            : t('accounts.syncFailed', {name}),
+          !result.synced
+            ? t('accounts.syncFailed', {name})
+            : result.plays === 0
+              ? t('accounts.upToDate')
+              : t('accounts.synced', {
+                  plays: result.plays,
+                  artists: result.artists,
+                }),
         ),
       onError: error =>
         snackbar(

@@ -22,13 +22,8 @@ import {ThemeSync} from './theme';
 import {legacyDestination} from './legacyLinks';
 
 const ArtistScreen = lazy(() => import('../screens/ArtistScreen'));
-const DiscoverScreen = lazy(() => import('../screens/DiscoverScreen'));
+const ExploreHubScreen = lazy(() => import('../screens/ExploreHubScreen'));
 const ExploreScreen = lazy(() => import('../screens/ExploreScreen'));
-const GuideScreen = lazy(() => import('../screens/GuideScreen'));
-const GamesScreen = lazy(() => import('../screens/GamesScreen'));
-const AroundYouScreen = lazy(() => import('../screens/AroundYouScreen'));
-const ReelsScreen = lazy(() => import('../screens/ReelsScreen'));
-const YourMusicScreen = lazy(() => import('../screens/YourMusicScreen'));
 const SixDegreesScreen = lazy(() => import('../screens/SixDegreesScreen'));
 const CompareScreen = lazy(() => import('../screens/CompareScreen'));
 const SongScreen = lazy(() => import('../screens/SongScreen'));
@@ -44,6 +39,16 @@ const LibraryScreen = lazy(() => import('../screens/LibraryScreen'));
 const PlayScreen = lazy(() => import('../screens/PlayScreen'));
 const FriendsScreen = lazy(() => import('../screens/FriendsScreen'));
 const JoinFriendScreen = lazy(() => import('../screens/JoinFriendScreen'));
+
+/** Pages removed in the YouTube Music redesign, and where their links go now. */
+const RETIRED: Record<string, string> = {
+  discover: '/explore',
+  guide: '/explore',
+  games: '/play',
+  'your-music': '/library',
+  reels: '/',
+  'around-you': '/',
+};
 
 function Lazy({children}: {children: ReactNode}) {
   return <Suspense fallback={<Spinner />}>{children}</Suspense>;
@@ -63,54 +68,6 @@ export const routes: RouteObject[] = [
         },
       },
       {
-        path: 'discover',
-        element: (
-          <Lazy>
-            <DiscoverScreen />
-          </Lazy>
-        ),
-      },
-      {
-        path: 'guide',
-        element: (
-          <Lazy>
-            <GuideScreen />
-          </Lazy>
-        ),
-      },
-      {
-        path: 'games',
-        element: (
-          <Lazy>
-            <GamesScreen />
-          </Lazy>
-        ),
-      },
-      {
-        path: 'around-you',
-        element: (
-          <Lazy>
-            <AroundYouScreen />
-          </Lazy>
-        ),
-      },
-      {
-        path: 'reels',
-        element: (
-          <Lazy>
-            <ReelsScreen />
-          </Lazy>
-        ),
-      },
-      {
-        path: 'your-music',
-        element: (
-          <Lazy>
-            <YourMusicScreen />
-          </Lazy>
-        ),
-      },
-      {
         path: 'artist/:id',
         element: (
           <Lazy>
@@ -122,7 +79,7 @@ export const routes: RouteObject[] = [
         path: 'explore',
         element: (
           <Lazy>
-            <ExploreScreen />
+            <ExploreHubScreen />
           </Lazy>
         ),
       },
@@ -238,6 +195,11 @@ export const routes: RouteObject[] = [
           </Lazy>
         ),
       },
+      // Retired hub pages: old links land on the page that replaced them.
+      ...Object.entries(RETIRED).map(([path, to]) => ({
+        path,
+        loader: () => redirect(to),
+      })),
       {path: '*', element: <NotFoundScreen />},
     ],
   },

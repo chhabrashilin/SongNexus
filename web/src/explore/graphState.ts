@@ -23,6 +23,8 @@ export interface WebEdge {
   a: string;
   b: string;
   strength: number;
+  /** How many credits link the two artists. */
+  evidenceCount: number;
   kinds: Schemas['ConnectionKind'][];
 }
 
@@ -121,6 +123,7 @@ function merge(
       a: sourceId,
       b: otherId,
       strength: connection.strength,
+      evidenceCount: connection.evidenceCount ?? 0,
       kinds: connection.kinds,
     };
     shownNow++;
