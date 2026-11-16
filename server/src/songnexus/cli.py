@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import os
 import sys
 from collections.abc import Sequence
 from dataclasses import asdict
@@ -214,6 +215,12 @@ def _cmd_ingest(settings: Settings, args: argparse.Namespace) -> int:
 def _cmd_serve(settings: Settings, args: argparse.Namespace) -> int:
     import uvicorn
 
+    # In development, linked accounts sync on schedule with no setup: run the job
+    # inside the API unless SONGNEXUS_SYNC_IN_PROCESS is set (environment or .env).
+    # The server reads the environment itself (also in its --reload child process).
+    # Overlapping syncs are safe: an account's plays are only ever counted once.
+    if settings.environment == "development" and "sync_in_process" not in settings.model_fields_set:
+        os.environ["SONGNEXUS_SYNC_IN_PROCESS"] = "true"
     # Local development only; deployments run uvicorn from the container's CMD.
     uvicorn.run(
         "songnexus.service.app:create_app",

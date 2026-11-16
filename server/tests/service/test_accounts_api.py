@@ -15,19 +15,20 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
+from songnexus.accounts.connectors import Provider
 from songnexus.accounts.crypto import new_key
-from songnexus.catalog.ingest import ingest_snapshot
-from songnexus.catalog.snapshot import write_snapshot
 from songnexus.config import Settings
 from songnexus.core import ids
+from songnexus.service import linking
 from songnexus.service.app import build_state, create_app
 from songnexus.service.deps import AppState
+from songnexus.service.routes.accounts import resolver
 from songnexus.service.sync_job import run_sync
-from songnexus.storage import migrate
 from songnexus.storage import models as m
-from songnexus.storage.db import make_engine, session_scope
-from tests.catalog import fixtures as fx
+from songnexus.storage.db import session_scope
+from tests.service.databases import fresh_database_url, migrated_with_catalog
 from tests.service.test_identity import ORIGIN, FakeVerifier, reason, sign_in
 
 ALICE = ids.artist_id("mb-alice")
@@ -62,7 +63,7 @@ class Providers:
 
 def _settings(tmp_path: Path, **overrides: Any) -> Settings:
     values: dict[str, Any] = {
-        "database_url": f"sqlite:///{tmp_path / 'app.db'}",
+        "database_url": fresh_database_url(tmp_path),
         "log_json": False,
         "read_model_refresh_s": 3600,
         "token_keys": {"k1": new_key()},
@@ -81,12 +82,8 @@ def _settings(tmp_path: Path, **overrides: Any) -> Settings:
 
 
 def _state(tmp_path: Path, providers: Providers, **overrides: Any) -> AppState:
-    snapshot = tmp_path / "snapshot.jsonl.gz"
-    write_snapshot(fx.small_catalog(), snapshot)
     settings = _settings(tmp_path, **overrides)
-    engine = make_engine(settings.database_url)
-    migrate.upgrade(engine)
-    ingest_snapshot(engine, snapshot)
+    migrated_with_catalog(settings.database_url, tmp_path)
     built = build_state(settings)
     built.verifier = FakeVerifier()
     built.outbound_http = lambda: httpx.Client(transport=httpx.MockTransport(providers))
@@ -120,8 +117,10 @@ def providers() -> Providers:
 
 
 @pytest.fixture
-def state(tmp_path: Path, providers: Providers) -> AppState:
-    return _state(tmp_path, providers)
+def state(tmp_path: Path, providers: Providers) -> Iterator[AppState]:
+    built = _state(tmp_path, providers)
+    yield built
+    built.engine.dispose()
 
 
 @pytest.fixture
@@ -233,7 +232,8 @@ def test_listenbrainz_links_with_a_validated_token_and_syncs_tallies(
         assert "lb-user-token" not in account.token_ciphertext  # encrypted at rest
         assert account.cursor == "1700000300"
         assert account.unmatched_plays == 1
-    assert providers.requests[-1].url.params["min_ts"] == "0"  # the first sync reads everything
+    # The first sync reads newest first (min_ts=0 would start from the oldest listens).
+    assert "min_ts" not in providers.requests[-1].url.params
 
 
 def test_sync_now_is_limited_to_once_a_minute(client: TestClient) -> None:
@@ -568,6 +568,52 @@ def test_the_scheduled_job_syncs_due_accounts_and_skips_the_rest(
         assert again["accounts"] == 0  # not due for another 15 minutes
         later = datetime.now(UTC) + timedelta(minutes=16)
         assert run_sync(state.engine, state.settings, model, http, now=later)["accounts"] == 1
+
+
+def test_overlapping_syncs_of_one_account_count_its_plays_once(
+    client: TestClient, state: AppState, providers: Providers
+) -> None:
+    # Two job runners (or "Sync now" during the scheduled run) read the same account,
+    # then both sync it. The second must notice the cursor moved and add nothing.
+    sign_in(client, "listener")
+    _link_listenbrainz(client)
+    model = state.holder.current()
+    cipher = state.cipher
+    assert cipher is not None
+    info = linking.registry(state.settings, cipher)[Provider.LISTENBRAINZ]
+    now = datetime.now(UTC)
+    with (
+        httpx.Client(transport=httpx.MockTransport(providers)) as http,
+        Session(state.engine, expire_on_commit=False) as first,
+        Session(state.engine, expire_on_commit=False) as second,
+    ):
+        account_one = first.scalars(select(m.LinkedAccount)).one()
+        account_two = second.scalars(select(m.LinkedAccount)).one()
+        outcomes = []
+        for session, account in ((first, account_one), (second, account_two)):
+            outcomes.append(
+                linking.sync_account(
+                    session,
+                    http,
+                    state.settings,
+                    cipher,
+                    info=info,
+                    account=account,
+                    known_artists=lambda artist: artist in model.graph.nodes,
+                    resolve_names=resolver(model),
+                    now=now,
+                )
+            )
+            session.commit()
+    assert [o.plays for o in outcomes] == [4, 0]
+    assert all(o.error is None for o in outcomes)
+    listening = client.get("/v1/users/me/listening").json()
+    assert [(a["artist"]["name"], a["plays"]) for a in listening["artists"]] == [
+        (f"artists/{ALICE}", 2),
+        (f"artists/{BOB}", 1),
+    ]
+    with session_scope(state.engine) as session:
+        assert session.scalars(select(m.LinkedAccount)).one().unmatched_plays == 1
 
 
 def test_blocked_artists_are_hidden_from_listening(client: TestClient) -> None:

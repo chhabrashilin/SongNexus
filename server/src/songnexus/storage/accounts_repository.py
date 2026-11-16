@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from datetime import datetime
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
 from songnexus.storage import models as m
@@ -68,6 +68,43 @@ def tallies(session: Session, user_id: str, provider: str) -> dict[str, m.Listen
             )
         )
     }
+
+
+def finish_sync(
+    session: Session,
+    user_id: str,
+    provider: str,
+    *,
+    expected_cursor: str | None,
+    cursor: str | None,
+    unmatched: int,
+    now: datetime,
+    next_sync: datetime,
+) -> bool:
+    """Records a finished sync unless another sync moved the cursor meanwhile.
+
+    A compare-and-set on the cursor: when two syncs of one account overlap (two
+    job runners, or "Sync now" during the scheduled run), the first to commit
+    wins and the other must discard its plays, so nothing is counted twice.
+    """
+    result = session.execute(
+        update(m.LinkedAccount)
+        .where(
+            m.LinkedAccount.user_id == user_id,
+            m.LinkedAccount.provider == provider,
+            m.LinkedAccount.cursor.is_not_distinct_from(expected_cursor),
+        )
+        .values(
+            cursor=cursor,
+            unmatched_plays=m.LinkedAccount.unmatched_plays + unmatched,
+            last_sync_at=now,
+            failures=0,
+            last_error=None,
+            next_sync_after=next_sync,
+        )
+        .execution_options(synchronize_session=False)
+    )
+    return bool(result.rowcount)  # type: ignore[attr-defined]
 
 
 def save_tallies(

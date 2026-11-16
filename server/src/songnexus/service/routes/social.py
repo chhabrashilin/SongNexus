@@ -337,7 +337,14 @@ def accept_friend_invite(
             f"Friends lists are limited to {MAX_FRIENDS} people.",
             reason="TOO_MANY_FRIENDS",
         )
-    social.delete_invite(session, inviter, row.id)
+    # Single use even under concurrency: if another accept used the code first,
+    # this delete finds nothing (it waits for that transaction), so stop here.
+    if not social.delete_invite(session, inviter, row.id):
+        raise ApiError(
+            Status.NOT_FOUND,
+            "This invite isn't valid. It may have expired or been used.",
+            reason="INVITE_NOT_VALID",
+        )
     social.befriend(session, user_id, inviter, now)
     _audit(session, user_id, "friend.add")
     _audit(session, inviter, "friend.add")

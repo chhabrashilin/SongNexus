@@ -54,8 +54,57 @@ def test_listenbrainz_reads_listens_since_the_cursor_with_the_token() -> None:
     assert page.cursor == "1700000100"
 
 
-def test_lastfm_skips_now_playing_and_pages() -> None:
+def test_listenbrainz_first_sync_reads_newest_first_then_forward() -> None:
+    # Live ListenBrainz returns the oldest listens for min_ts=0, so the first sync
+    # walks back from now with max_ts and keeps the most recent pages only.
+    seen: list[httpx.Request] = []
+    connector = c.ListenBrainzConnector("https://lb.test")
+    connector.page_size = 2
+    connector.backfill_pages = 3
+
     def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        before = int(request.url.params.get("max_ts", 1000))
+        listens = [
+            {"listened_at": before - step, "track_metadata": {"artist_name": f"A{before - step}"}}
+            for step in (1, 2)
+        ]
+        return httpx.Response(200, json={"payload": {"listens": listens}})
+
+    http = _http(handler)
+    first = connector.fetch(http, CREDS, None)
+    assert "min_ts" not in seen[0].url.params
+    assert "max_ts" not in seen[0].url.params
+    assert [p.played_at for p in first.plays] == [999, 998]
+    assert (first.cursor, first.more) == ("back:998:999:1", True)
+
+    second = connector.fetch(http, CREDS, first.cursor)
+    assert seen[1].url.params["max_ts"] == "998"
+    assert (second.cursor, second.more) == ("back:996:999:2", True)
+
+    third = connector.fetch(http, CREDS, second.cursor)
+    # Backfill limit reached: from now on, read forward from the newest listen.
+    assert [p.played_at for p in third.plays] == [995, 994]
+    assert (third.cursor, third.more) == ("999", False)
+
+    connector.fetch(http, CREDS, third.cursor)
+    assert seen[3].url.params["min_ts"] == "999"
+
+
+def test_listenbrainz_short_history_ends_the_backfill_at_once() -> None:
+    body = {"payload": {"listens": [{"listened_at": 42, "track_metadata": {"artist_name": "A"}}]}}
+    page = c.ListenBrainzConnector("https://lb.test").fetch(_http(_json(body)), CREDS, None)
+    assert (page.cursor, page.more) == ("42", False)
+    empty: dict[str, Any] = {"payload": {"listens": []}}
+    page = c.ListenBrainzConnector("https://lb.test").fetch(_http(_json(empty)), CREDS, None)
+    assert (page.cursor, page.more) == ("0", False)
+
+
+def test_lastfm_skips_now_playing_and_pages() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
         page = int(request.url.params["page"])
         tracks = [
             {"artist": {"#text": f"Artist {page}", "mbid": ""}, "date": {"uts": str(100 + page)}}
@@ -66,18 +115,91 @@ def test_lastfm_skips_now_playing_and_pages() -> None:
             200, json={"recenttracks": {"track": tracks, "@attr": {"totalPages": "2"}}}
         )
 
-    page = c.LastFmConnector(c.Provider.LASTFM, "https://lastfm.test/2.0/").fetch(
-        _http(handler), CREDS, "50"
-    )
+    connector = c.LastFmConnector(c.Provider.LASTFM, "https://lastfm.test/2.0/")
+    connector.page_size = 1
+    page = connector.fetch(_http(handler), CREDS, "50")
     assert [p.artist_name for p in page.plays] == ["Artist 1", "Artist 2"]
+    assert seen[0].url.params["from"] == "51"
     assert page.cursor == "102"
     assert not page.more
+
+
+def test_librefm_stops_at_a_short_page_although_total_pages_ignores_from() -> None:
+    # Live Libre.fm (2026-11-14): with `from`, the tracks are filtered but
+    # totalPages still counts the whole history (16,285 pages for one account).
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        tracks = [
+            {"artist": {"#text": "A", "mbid": ""}, "date": {"uts": "1794406628"}},
+            {"artist": {"#text": "B", "mbid": ""}, "date": {"uts": "1794406538"}},
+        ]
+        return httpx.Response(
+            200,
+            json={"recenttracks": {"track": tracks, "@attr": {"page": "1", "totalPages": "16285"}}},
+        )
+
+    page = c.LastFmConnector(c.Provider.LIBREFM, "https://libre.test/2.0/").fetch(
+        _http(handler), CREDS, "1794406320"
+    )
+    assert len(seen) == 1
+    assert [p.played_at for p in page.plays] == [1794406628, 1794406538]
+    assert (page.cursor, page.more) == ("1794406628", False)
+
+
+def test_librefm_one_track_is_an_object_not_a_list() -> None:
+    body = {
+        "recenttracks": {
+            "track": {
+                "artist": {"#text": "John Hartford", "mbid": ""},
+                "date": {"uts": "1794406628"},
+            },
+            "@attr": {"page": "1", "totalPages": "16285"},
+        }
+    }
+    page = c.LastFmConnector(c.Provider.LIBREFM, "https://libre.test/2.0/").fetch(
+        _http(_json(body)), CREDS, "1794406000"
+    )
+    assert page.plays == (c.Play("John Hartford", None, 1794406628),)
+
+
+def test_librefm_nothing_new_is_not_a_failure() -> None:
+    # Live Libre.fm answers "nothing newer than `from`" with error 7, as an object.
+    body = {"error": {"#text": "Invalid resource specified", "code": "7"}}
+    page = c.LastFmConnector(c.Provider.LIBREFM, "https://libre.test/2.0/").fetch(
+        _http(_json(body)), CREDS, "1794406628"
+    )
+    assert (page.plays, page.cursor, page.more) == ((), "1794406628", False)
+
+
+def test_lastfm_never_counts_a_scrobble_at_or_before_the_cursor() -> None:
+    body = {
+        "recenttracks": {
+            "track": [
+                {"artist": {"#text": "New"}, "date": {"uts": "201"}},
+                {"artist": {"#text": "Seen"}, "date": {"uts": "200"}},
+            ]
+        }
+    }
+    page = c.LastFmConnector(c.Provider.LASTFM, "https://lastfm.test/2.0/").fetch(
+        _http(_json(body)), CREDS, "200"
+    )
+    assert [p.artist_name for p in page.plays] == ["New"]
 
 
 def test_lastfm_auth_errors_mean_relink() -> None:
     with pytest.raises(c.RevokedError):
         c.LastFmConnector(c.Provider.LIBREFM, "https://libre.test/2.0/").fetch(
             _http(_json({"error": 9, "message": "Invalid session key"})), CREDS, None
+        )
+    with pytest.raises(c.RevokedError):
+        c.LastFmConnector(c.Provider.LIBREFM, "https://libre.test/2.0/").fetch(
+            _http(_json({"error": {"#text": "Invalid session key", "code": "9"}})), CREDS, None
+        )
+    with pytest.raises(c.ConnectorError):
+        c.LastFmConnector(c.Provider.LASTFM, "https://lastfm.test/2.0/").fetch(
+            _http(_json({"error": 29, "message": "Rate limit exceeded"})), CREDS, None
         )
 
 
