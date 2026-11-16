@@ -94,7 +94,10 @@ def _get(http: httpx.Client, url: str, **kwargs: Any) -> Any:
         raise RevokedError(f"{httpx.URL(url).host} rejected the credentials")
     if response.status_code != HTTP_OK:
         raise ConnectorError(f"{httpx.URL(url).host} -> {response.status_code}")
-    return response.json()
+    try:
+        return response.json()
+    except ValueError as exc:  # an HTML error page or a cut-off body: retry later
+        raise ConnectorError(f"{httpx.URL(url).host} sent a malformed response") from exc
 
 
 def _int_cursor(cursor: str | None) -> int:
@@ -102,44 +105,108 @@ def _int_cursor(cursor: str | None) -> int:
 
 
 class ListenBrainzConnector:
-    """``GET /1/user/{user}/listens`` with the user's token; cursor = last ``listened_at``."""
+    """``GET /1/user/{user}/listens`` with the user's token.
+
+    The first sync reads newest first and keeps the most recent ``backfill_pages``
+    pages: ListenBrainz returns the *oldest* listens for ``min_ts=0``, so reading
+    forward from zero would show years-old taste first (measured 2026-11-14 on a
+    public account with 220,000 listens: the first page was from 2006). After the
+    backfill, syncs read forward from the newest listen seen.
+
+    Cursor: ``"<listened_at>"`` reads forward with ``min_ts``; ``"back:<max_ts>:<newest>:<pages>"``
+    is a backfill in progress; None starts one.
+    """
 
     provider = Provider.LISTENBRAINZ
     page_size = 1000
+    backfill_pages = 5  # the most recent 5,000 listens, then everything new
 
     def __init__(self, api_url: str = "https://api.listenbrainz.org") -> None:
         self.api_url = api_url.rstrip("/")
 
     def fetch(self, http: httpx.Client, credentials: Credentials, cursor: str | None) -> Page:
-        """Returns the plays after ``cursor``."""
+        """Returns the plays after ``cursor`` (or the next backfill page)."""
+        if cursor is None or cursor.startswith("back:"):
+            return self._backfill(http, credentials, cursor)
         since = _int_cursor(cursor)
+        listens, plays = self._listens(http, credentials, {"min_ts": since})
+        newest = max((p.played_at or 0 for p in plays), default=since)
+        return Page(tuple(plays), str(newest), more=len(listens) >= self.page_size)
+
+    def _backfill(self, http: httpx.Client, credentials: Credentials, cursor: str | None) -> Page:
+        before, newest, pages = None, 0, 0
+        parts = (cursor or "").split(":")
+        if len(parts) == 4 and all(part.isdigit() for part in parts[1:]):  # noqa: PLR2004
+            before, newest, pages = int(parts[1]), int(parts[2]), int(parts[3])
+        params = {} if before is None else {"max_ts": before}
+        listens, plays = self._listens(http, credentials, params)
+        stamps = [p.played_at for p in plays if p.played_at]
+        newest = max([newest, *stamps])
+        pages += 1
+        if len(listens) >= self.page_size and stamps and pages < self.backfill_pages:
+            return Page(tuple(plays), f"back:{min(stamps)}:{newest}:{pages}", more=True)
+        # Done going back: from now on read forward from the newest listen seen.
+        return Page(tuple(plays), str(newest), more=False)
+
+    def _listens(
+        self, http: httpx.Client, credentials: Credentials, bounds: dict[str, int]
+    ) -> tuple[list[Any], list[Play]]:
         body = _get(
             http,
             f"{self.api_url}/1/user/{credentials.external_user}/listens",
-            params={"min_ts": since, "count": self.page_size},
+            params={**bounds, "count": self.page_size},
             headers={"Authorization": f"Token {credentials.access_token}"},
         )
         listens = body.get("payload", {}).get("listens", [])
         plays = []
         for listen in listens:
-            meta = listen.get("track_metadata", {})
+            if not isinstance(listen, dict):
+                continue
+            meta = listen.get("track_metadata") or {}
             mbids = (
                 (meta.get("mbid_mapping") or {}).get("artist_mbids")
                 or (meta.get("additional_info") or {}).get("artist_mbids")
                 or []
             )
             name = meta.get("artist_name")
+            listened_at = listen.get("listened_at")
             if name:
-                plays.append(Play(name, mbids[0] if mbids else None, listen.get("listened_at")))
-        newest = max((p.played_at or 0 for p in plays), default=since)
-        return Page(tuple(plays), str(newest), more=len(listens) >= self.page_size)
+                played_at = listened_at if isinstance(listened_at, int) else None
+                plays.append(Play(name, mbids[0] if mbids else None, played_at))
+        return listens, plays
+
+
+def _items(value: Any) -> list[Any]:
+    """Last.fm-style JSON gives one object, not a list, when there is exactly one item."""
+    if isinstance(value, dict):
+        return [value]
+    return value if isinstance(value, list) else []
+
+
+def _error_code(body: Any) -> int | None:
+    """The API error code: an int on Last.fm, ``{"code": "7", ...}`` on Libre.fm."""
+    error = body.get("error") if isinstance(body, dict) else None
+    if error is None:
+        return None
+    if isinstance(error, dict):
+        error = error.get("code")
+    text = str(error).strip()
+    return int(text) if text.isdigit() else -1
 
 
 class LastFmConnector:
-    """``user.getRecentTracks`` on Last.fm or Libre.fm (same API); cursor = last ``uts``."""
+    """``user.getRecentTracks`` on Last.fm or Libre.fm (same API); cursor = last ``uts``.
+
+    Pages are newest first: the first sync keeps the most recent ``max_pages`` pages,
+    later syncs read what is newer than the cursor. Checked against live Libre.fm
+    (2026-11-14): ``totalPages`` ignores ``from``, so paging stops at the first short
+    page; one track comes back as an object, not a list; and "nothing new" is error 7.
+    """
 
     page_size = 200
-    max_pages = 10  # per sync; the rest waits for the next run
+    max_pages = 10  # 2,000 scrobbles per sync
+    NO_RESULTS = 7  # "Invalid resource specified": nothing matches `from` (Libre.fm)
+    REVOKED = frozenset({4, 9, 26})  # auth failed, invalid session, suspended key
 
     def __init__(self, provider: Provider, api_url: str) -> None:
         self.provider = provider
@@ -149,9 +216,7 @@ class LastFmConnector:
         """Returns the plays after ``cursor``."""
         since = _int_cursor(cursor)
         plays: list[Play] = []
-        total_pages = 1
-        page = 1
-        while page <= min(total_pages, self.max_pages):
+        for page in range(1, self.max_pages + 1):
             body = _get(
                 http,
                 self.api_url,
@@ -165,22 +230,29 @@ class LastFmConnector:
                     "format": "json",
                 },
             )
-            if "error" in body:
-                # 4 (auth), 9 (session), 26 (suspended key): the link no longer works.
-                if body.get("error") in {4, 9, 26}:
-                    raise RevokedError(f"{self.provider} rejected the credentials")
-                raise ConnectorError(f"{self.provider} error {body.get('error')}")
-            tracks = body.get("recenttracks", {})
-            total_pages = int(tracks.get("@attr", {}).get("totalPages", 1) or 1)
-            for track in tracks.get("track", []):
+            code = _error_code(body)
+            if code == self.NO_RESULTS:
+                break
+            if code in self.REVOKED:
+                raise RevokedError(f"{self.provider} rejected the credentials")
+            if code is not None:
+                raise ConnectorError(f"{self.provider} error {code}")
+            tracks = body.get("recenttracks") or {}
+            rows = _items(tracks.get("track"))
+            for track in rows:
+                if not isinstance(track, dict):
+                    continue
                 uts = (track.get("date") or {}).get("uts")
                 artist = track.get("artist") or {}
-                name = artist.get("#text") or artist.get("name")
-                if uts and name:  # "now playing" has no date: counted once it ends
+                name = artist.get("#text") or artist.get("name") if isinstance(artist, dict) else ""
+                # "Now playing" has no date: it is counted once it ends.
+                if uts and str(uts).isdigit() and int(uts) > since and name:
                     plays.append(Play(name, artist.get("mbid") or None, int(uts)))
-            page += 1
+            total_pages = int((tracks.get("@attr") or {}).get("totalPages", 1) or 1)
+            if len(rows) < self.page_size or page >= total_pages:
+                break
         newest = max((p.played_at or 0 for p in plays), default=since)
-        return Page(tuple(plays), str(newest), more=total_pages > self.max_pages)
+        return Page(tuple(plays), str(newest), more=False)
 
 
 class SpotifyConnector:
@@ -206,7 +278,10 @@ class SpotifyConnector:
         plays = []
         newest = since
         for item in body.get("items", []):
-            played = datetime.fromisoformat(item["played_at"].replace("Z", "+00:00"))
+            try:
+                played = datetime.fromisoformat(str(item["played_at"]).replace("Z", "+00:00"))
+            except (KeyError, TypeError, ValueError):
+                continue  # one odd row must not block every later sync
             millis = int(played.timestamp() * 1000)
             newest = max(newest, millis)
             for artist in item.get("track", {}).get("artists", []):
@@ -219,6 +294,7 @@ class DeezerConnector:
     """``user/me/history``; the API has no "since", so older plays are skipped by cursor."""
 
     provider = Provider.DEEZER
+    REVOKED = frozenset({200, 300})  # permission denied, invalid OAuth token
 
     def __init__(self, api_url: str = "https://api.deezer.com") -> None:
         self.api_url = api_url.rstrip("/")
@@ -231,12 +307,22 @@ class DeezerConnector:
             f"{self.api_url}/user/me/history",
             params={"access_token": credentials.access_token, "limit": 100},
         )
-        if "error" in body:
-            raise RevokedError("deezer rejected the credentials")
+        error = body.get("error")
+        if error:
+            # Only an invalid token (300) or missing permission (200), both OAuthException,
+            # mean the link is gone; quota (4), busy (700) and the rest are retried later.
+            details = error if isinstance(error, dict) else {}
+            if details.get("type") == "OAuthException" or details.get("code") in self.REVOKED:
+                raise RevokedError("deezer rejected the credentials")
+            raise ConnectorError(f"deezer error {details.get('code', '?')}")
         plays = [
-            Play(row["artist"]["name"], None, int(row["timestamp"]))
+            Play(str(row["artist"]["name"]), None, int(row["timestamp"]))
             for row in body.get("data", [])
-            if row.get("timestamp") and int(row["timestamp"]) > since and row.get("artist")
+            if isinstance(row, dict)
+            and str(row.get("timestamp", "")).isdigit()
+            and int(row["timestamp"]) > since
+            and isinstance(row.get("artist"), dict)
+            and row["artist"].get("name")
         ]
         newest = max((p.played_at or 0 for p in plays), default=since)
         return Page(tuple(plays), str(newest))

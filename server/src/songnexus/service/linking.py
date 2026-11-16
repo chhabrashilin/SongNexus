@@ -273,7 +273,9 @@ def finish(
             redirect_uri=redirect_uri(settings, info.provider),
             verifier=verifier,
         )
-    except (c.ConnectorError, TokenCipherError) as exc:
+    # KeyError, TypeError, ValueError: a response without the expected fields (some
+    # providers answer a bad code with 200 and an error body).
+    except (c.ConnectorError, TokenCipherError, KeyError, TypeError, ValueError) as exc:
         raise LinkError("LINK_REFUSED", f"{info.provider} did not complete the link.") from exc
     return _store(
         session, cipher, user_id=flow.user_id, provider=info.provider, linked=linked, now=now
@@ -379,7 +381,7 @@ def sync_account(
     tallies: dict[str, Tally] = {}
     try:
         credentials = _credentials(account, info, cipher, http=http, now=now)
-        cursor = account.cursor
+        start_cursor = cursor = account.cursor
         for _ in range(MAX_PAGES_PER_SYNC):
             page = info.connector.fetch(http, credentials, cursor)
             result = aggregate(page.plays, known_artists, resolve_names)
@@ -395,16 +397,48 @@ def sync_account(
         account.last_error = "REVOKED"
         log.info("linked account revoked", extra={"provider": account.provider})
         return SyncOutcome(0, 0, 0, NEEDS_RELINK, "REVOKED")
-    except (c.ConnectorError, TokenCipherError) as exc:
+    # KeyError, TypeError, ValueError, AttributeError: a response in a shape the
+    # connector did not expect. Handled like an outage (back off, keep the link), so
+    # one account's odd data never escapes and stops the scheduled job for everyone.
+    except (
+        c.ConnectorError,
+        TokenCipherError,
+        KeyError,
+        TypeError,
+        ValueError,
+        AttributeError,
+    ) as exc:
         account.failures += 1
         account.last_error = type(exc).__name__
         account.next_sync_after = now + min(interval * 2 ** min(account.failures, 7), MAX_BACKOFF)
         log.warning(
             "linked account sync failed",
-            extra={"provider": account.provider, "failures": account.failures},
+            # The type only: messages and tracebacks could carry listening data.
+            extra={
+                "provider": account.provider,
+                "failures": account.failures,
+                "error": account.last_error,
+            },
         )
         return SyncOutcome(0, 0, 0, account.status, account.last_error)
 
+    # Record the sync first (compare-and-set on the cursor), then read the stored
+    # tallies: an overlapping sync of this account can then neither double-count
+    # these plays nor be overwritten by totals computed from stale counts.
+    session.flush()  # a refreshed token, if any, is saved whatever happens next
+    if not repo.finish_sync(
+        session,
+        account.user_id,
+        account.provider,
+        expected_cursor=start_cursor,
+        cursor=cursor,
+        unmatched=unmatched,
+        now=now,
+        next_sync=now + interval,
+    ):
+        session.refresh(account)
+        log.info("linked account synced elsewhere meanwhile", extra={"provider": account.provider})
+        return SyncOutcome(0, 0, 0, account.status)
     stored = repo.tallies(session, account.user_id, account.provider)
     rows = {}
     for artist_id, tally in tallies.items():
@@ -427,12 +461,8 @@ def sync_account(
             else datetime.fromtimestamp(combined.last_played_at, UTC),
         )
     repo.save_tallies(session, account.user_id, account.provider, rows)
-    account.cursor = cursor
-    account.unmatched_plays += unmatched
-    account.last_sync_at = now
-    account.failures = 0
-    account.last_error = None
-    account.next_sync_after = now + interval
+    session.flush()
+    session.refresh(account)
     return SyncOutcome(total_plays, len(tallies), unmatched, account.status)
 
 
@@ -470,6 +500,7 @@ def sync_due(
             resolve_names=resolve_names,
             now=now,
         )
+        session.commit()  # each account on its own: a later failure never undoes it
         counts["accounts"] += 1
         counts["plays"] += outcome.plays
         if outcome.status == NEEDS_RELINK:

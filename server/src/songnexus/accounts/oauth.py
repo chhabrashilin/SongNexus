@@ -137,7 +137,7 @@ def _post(http: httpx.Client, url: str, **kwargs: Any) -> Any:
         raise ConnectorError(f"POST {httpx.URL(url).host}: {type(exc).__name__}") from exc
     if response.status_code != HTTP_OK:
         raise RevokedError(f"{httpx.URL(url).host} refused the link ({response.status_code})")
-    return response.json()
+    return _json(response, url)
 
 
 def _get(http: httpx.Client, url: str, **kwargs: Any) -> Any:
@@ -147,7 +147,18 @@ def _get(http: httpx.Client, url: str, **kwargs: Any) -> Any:
         raise ConnectorError(f"GET {httpx.URL(url).host}: {type(exc).__name__}") from exc
     if response.status_code != HTTP_OK:
         raise RevokedError(f"{httpx.URL(url).host} refused the link ({response.status_code})")
-    return response.json()
+    return _json(response, url)
+
+
+def _json(response: httpx.Response, url: str) -> Any:
+    """The JSON body as a dict; anything else is a provider failure, not a crash."""
+    try:
+        body = response.json()
+    except ValueError as exc:
+        raise ConnectorError(f"{httpx.URL(url).host} sent a malformed response") from exc
+    if not isinstance(body, dict):
+        raise ConnectorError(f"{httpx.URL(url).host} sent an unexpected response")
+    return body
 
 
 def lastfm_signature(params: dict[str, str], secret: str) -> str:

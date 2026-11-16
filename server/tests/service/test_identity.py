@@ -13,8 +13,6 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
-from songnexus.catalog.ingest import ingest_snapshot
-from songnexus.catalog.snapshot import write_snapshot
 from songnexus.config import Settings
 from songnexus.core import ids
 from songnexus.identity.sessions import SESSION_COOKIE, hash_token
@@ -22,10 +20,9 @@ from songnexus.identity.tokens import InvalidIdTokenError, VerifiedIdentity
 from songnexus.jobs.purge import run_purge
 from songnexus.service.app import build_state, create_app
 from songnexus.service.deps import AppState
-from songnexus.storage import migrate
 from songnexus.storage import models as m
-from songnexus.storage.db import make_engine, session_scope
-from tests.catalog import fixtures as fx
+from songnexus.storage.db import session_scope
+from tests.service.databases import fresh_database_url, migrated_with_catalog
 
 ORIGIN = "http://localhost:5173"
 ALICE = ids.artist_id("mb-alice")
@@ -42,17 +39,14 @@ class FakeVerifier:
 
 
 @pytest.fixture
-def state(tmp_path: Path) -> AppState:
-    snapshot = tmp_path / "snapshot.jsonl.gz"
-    write_snapshot(fx.small_catalog(), snapshot)
-    url = f"sqlite:///{tmp_path / 'app.db'}"
-    engine = make_engine(url)
-    migrate.upgrade(engine)
-    ingest_snapshot(engine, snapshot)
+def state(tmp_path: Path) -> Iterator[AppState]:
+    url = fresh_database_url(tmp_path)
+    migrated_with_catalog(url, tmp_path)
     settings = Settings(database_url=url, log_json=False, read_model_refresh_s=3600)
     built = build_state(settings)
     built.verifier = FakeVerifier()
-    return built
+    yield built
+    built.engine.dispose()
 
 
 def new_client(state: AppState) -> TestClient:

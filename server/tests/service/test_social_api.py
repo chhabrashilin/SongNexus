@@ -13,10 +13,8 @@ from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
-from songnexus.catalog.ingest import ingest_snapshot
-from songnexus.catalog.snapshot import write_snapshot
 from songnexus.config import Settings
 from songnexus.core import ids
 from songnexus.jobs.purge import run_purge
@@ -24,10 +22,9 @@ from songnexus.service.app import build_state
 from songnexus.service.deps import AppState
 from songnexus.service.routes import social as social_routes
 from songnexus.social import invites
-from songnexus.storage import migrate
 from songnexus.storage import models as m
-from songnexus.storage.db import make_engine, session_scope
-from tests.catalog import fixtures as fx
+from songnexus.storage.db import session_scope
+from tests.service.databases import fresh_database_url, migrated_with_catalog
 from tests.service.test_identity import FakeVerifier, new_client, reason, sign_in
 
 ALICE = ids.artist_id("mb-alice")
@@ -36,16 +33,13 @@ SONG = ids.recording_id(f"song|{ALICE}")
 
 
 @pytest.fixture
-def state(tmp_path: Path) -> AppState:
-    snapshot = tmp_path / "snapshot.jsonl.gz"
-    write_snapshot(fx.small_catalog(), snapshot)
-    url = f"sqlite:///{tmp_path / 'app.db'}"
-    engine = make_engine(url)
-    migrate.upgrade(engine)
-    ingest_snapshot(engine, snapshot)
+def state(tmp_path: Path) -> Iterator[AppState]:
+    url = fresh_database_url(tmp_path)
+    migrated_with_catalog(url, tmp_path)
     built = build_state(Settings(database_url=url, log_json=False, read_model_refresh_s=3600))
     built.verifier = FakeVerifier()
-    return built
+    yield built
+    built.engine.dispose()
 
 
 def _person(state: AppState, uid: str, name: str | None) -> TestClient:
@@ -154,6 +148,30 @@ def test_invites_cannot_be_used_by_their_creator_or_after_revocation(
     assert ana.delete(f"/v1/users/me/friendInvites/{invite_id}").status_code == 200
     assert reason(ben.post(f"/v1/friendInvites/{code}:accept")) == "INVITE_NOT_VALID"
     assert reason(ben.get("/v1/friendInvites/not-a-code")) == "INVITE_NOT_VALID"
+
+
+def test_an_invite_used_by_a_concurrent_accept_is_not_used_again(
+    people: dict[str, TestClient], state: AppState, monkeypatch: Any
+) -> None:
+    # Two people accept one code at the same moment: both find the invite, then the
+    # other accept commits first (simulated: the invite goes right after the lookup).
+    # This one must not become a second friendship from a single-use code.
+    ana, cy = people["ana"], people["cy"]
+    code = _invite(ana)
+    find = social_routes._usable_invite
+
+    def found_then_used_elsewhere(*args: Any) -> m.FriendInvite:
+        row = find(*args)
+        with session_scope(state.engine) as other:
+            other.execute(delete(m.FriendInvite).where(m.FriendInvite.id == row.id))
+        return row
+
+    monkeypatch.setattr(social_routes, "_usable_invite", found_then_used_elsewhere)
+    response = cy.post(f"/v1/friendInvites/{code}:accept")
+    assert response.status_code == 404
+    assert reason(response) == "INVITE_NOT_VALID"
+    assert ana.get("/v1/users/me/friends").json()["friends"] == []
+    assert cy.get("/v1/users/me/friends").json()["friends"] == []
 
 
 def test_invites_expire_after_seven_days(people: dict[str, TestClient], state: AppState) -> None:

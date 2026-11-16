@@ -12,6 +12,7 @@ from fastapi import Request
 from sqlalchemy import Engine
 
 from songnexus.accounts.crypto import TokenCipher
+from songnexus.catalog.http import user_agent
 from songnexus.config import Settings
 from songnexus.core.graph.filters import NodeFilter
 from songnexus.core.graph.model import ArtistGraph
@@ -41,8 +42,11 @@ class AppState:
     # Linked accounts (ADR 0006): the token cipher (None: nothing is offered) and the
     # client for provider calls (tests inject a mock transport).
     cipher: TokenCipher | None = None
+    # Identifies the project (no contact details) as ListenBrainz and others ask.
     outbound_http: Callable[[], httpx.Client] = field(
-        default=lambda: httpx.Client(timeout=httpx.Timeout(20.0, connect=5.0))
+        default=lambda: httpx.Client(
+            timeout=httpx.Timeout(20.0, connect=5.0), headers={"User-Agent": user_agent()}
+        )
     )
     # Friends and sharing (ADR 0007): checks notes and display names.
     moderator: Moderator = field(default_factory=RuleModerator)
