@@ -138,12 +138,18 @@ SOURCES: tuple[DataSource, ...] = (
         tier=Tier.PRODUCTION,
         status=Status.IN_USE,
         kind=Kind.API,
-        feeds=("genre hierarchy (subgenres)", "links from MusicBrainz artists to Discogs"),
+        feeds=(
+            "genre hierarchy (subgenres)",
+            "links from MusicBrainz artists to Discogs",
+            "Around you: the campuses and cities listeners can join",
+        ),
         attribution="Data from Wikidata",
-        checked_on="2026-11-01",
+        checked_on="2026-11-16",
         notes="Structured data is CC0. Used for 'subclass of' (P279) links between items carrying "
         "MusicBrainz genre IDs (P8052), and for items carrying both a MusicBrainz artist ID "
-        "(P434) and a Discogs artist ID (P1953).",
+        "(P434) and a Discogs artist ID (P1953). The Around you list is the largest US "
+        "universities by student count (P2196) plus a few abroad, their cities, US cities over "
+        "100,000 people and national capitals, rebuilt with `songnexus fetch-communities`.",
     ),
     # --- Audio descriptors and listening -------------------------------------------------
     DataSource(
@@ -224,11 +230,16 @@ SOURCES: tuple[DataSource, ...] = (
         tier=Tier.PRODUCTION,
         status=Status.IN_USE,
         kind=Kind.USER_ACCOUNT,
-        feeds=("Library: your artists and playlist analysis",),
+        feeds=(
+            "Library: your artists and playlist analysis",
+            "Around you: campus and city charts, from listeners who opt in",
+        ),
         attribution="",
         checked_on="2026-10-07",
         notes="Imported files are parsed on the device; only artist names reach the server. Linked "
-        "accounts (R2-6) add each provider under its own API terms.",
+        "accounts (R2-6) add each provider under its own API terms. Around you charts use only "
+        "members who opted in, and only once 10 have listening data; an artist needs 3 listeners "
+        "and counts are shown as ranges.",
     ),
 )
 

@@ -93,7 +93,7 @@ def test_get_artist(client: TestClient) -> None:
     assert artist["links"] == [{"linkType": "official homepage", "url": "https://alice.example"}]
     assert artist["sources"][0]["url"] == "https://musicbrainz.org/artist/mb-alice"
     assert artist["connectionCount"] == 3  # Bob, Carol, The Band
-    assert response.headers["cache-control"] == "public, max-age=300"
+    assert response.headers["cache-control"] == "public, max-age=60, stale-while-revalidate=600"
 
 
 def test_errors_use_the_canonical_envelope(client: TestClient) -> None:

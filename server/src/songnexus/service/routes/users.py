@@ -35,6 +35,7 @@ from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import db_session
 from songnexus.storage import accounts_repository as accounts
+from songnexus.storage import community_repository
 from songnexus.storage import models as m
 from songnexus.storage import social_repository as social
 from songnexus.storage import user_repository as users
@@ -186,6 +187,17 @@ def export_user_data(
         ],
         # Friends and sharing (R2-7): invite codes are never stored, so never exported.
         "social": _social_export(session, user_id),
+        # Around you: the campus and city the listener opted in to.
+        "communities": [
+            {
+                "kind": row.kind,
+                "community": f"communities/{row.community_id}",
+                "joinTime": _timestamp(row.joined_at),
+            }
+            for row in sorted(
+                community_repository.memberships(session, user_id).values(), key=lambda r: r.kind
+            )
+        ],
         "auditLog": [
             {"action": e.action, "time": _timestamp(e.created_at)}
             for e in sorted(audit_entries, key=lambda e: e.id)

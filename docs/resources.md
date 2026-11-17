@@ -13,12 +13,12 @@ Status **Planned** means the source is approved but no code reads from it yet; t
 | [MusicBrainz](https://musicbrainz.org) | CC0-1.0 | Production-safe | In Use | artists, recordings, releases and labels; credits and artist relationships (every connection); collaborations, six degrees, compare, the daily puzzle |
 | [MusicBrainz genres](https://musicbrainz.org/doc/Genre) | CC-BY-NC-SA-3.0 | Non-commercial | In Use | artist genres; genre filters and shared genres in compare |
 | [Discogs data dumps](https://data.discogs.com) | CC0-1.0 | Production-safe | In Use | artist genres (commercial-safe); genre filters and shared genres in compare |
-| [Wikidata](https://www.wikidata.org) | CC0-1.0 | Production-safe | In Use | genre hierarchy (subgenres); links from MusicBrainz artists to Discogs |
+| [Wikidata](https://www.wikidata.org) | CC0-1.0 | Production-safe | In Use | genre hierarchy (subgenres); links from MusicBrainz artists to Discogs; Around you: the campuses and cities listeners can join |
 | [AcousticBrainz](https://acousticbrainz.org) | CC0-1.0 | Production-safe | In Use | song comparison: tempo, key, loudness, mood and other audio descriptors |
 | [ListenBrainz](https://listenbrainz.org) | CC0-1.0 | Production-safe | In Use | listener overlap in artist comparison; 'often played with' on artist pages |
 | [Spotify Tracks Dataset (Kaggle, maharshipandya)](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset) | CC0-1.0 (as stated by the uploader) | Evaluation only | Planned | evaluating song similarity against genre labels |
 | [Last.fm 360K and 1K users (Celma, 2010)](https://zenodo.org/records/6090214) | Non-commercial research use, with permission of Last.fm | Evaluation only | In Use | evaluating listener overlap against an independent population |
-| Your listening history | The listener's own data | Production-safe | In Use | Library: your artists and playlist analysis |
+| Your listening history | The listener's own data | Production-safe | In Use | Library: your artists and playlist analysis; Around you: campus and city charts, from listeners who opt in |
 
 ## Production-safe
 
@@ -46,10 +46,10 @@ CC0 or equivalent. Usable in a commercial YouTube Music feature.
 
 - **ID:** `wikidata`
 - **Obtained via:** its API
-- **License:** [CC0-1.0](https://www.wikidata.org/wiki/Wikidata:Licensing) (checked 2026-11-01)
-- **Feeds:** genre hierarchy (subgenres); links from MusicBrainz artists to Discogs
+- **License:** [CC0-1.0](https://www.wikidata.org/wiki/Wikidata:Licensing) (checked 2026-11-16)
+- **Feeds:** genre hierarchy (subgenres); links from MusicBrainz artists to Discogs; Around you: the campuses and cities listeners can join
 - **Attribution:** “Data from Wikidata”
-- **Notes:** Structured data is CC0. Used for 'subclass of' (P279) links between items carrying MusicBrainz genre IDs (P8052), and for items carrying both a MusicBrainz artist ID (P434) and a Discogs artist ID (P1953).
+- **Notes:** Structured data is CC0. Used for 'subclass of' (P279) links between items carrying MusicBrainz genre IDs (P8052), and for items carrying both a MusicBrainz artist ID (P434) and a Discogs artist ID (P1953). The Around you list is the largest US universities by student count (P2196) plus a few abroad, their cities, US cities over 100,000 people and national capitals, rebuilt with `songnexus fetch-communities`.
 
 ### AcousticBrainz
 
@@ -74,8 +74,8 @@ CC0 or equivalent. Usable in a commercial YouTube Music feature.
 - **ID:** `user-listening`
 - **Obtained via:** the listener's own files or linked accounts
 - **License:** The listener's own data (checked 2026-10-07)
-- **Feeds:** Library: your artists and playlist analysis
-- **Notes:** Imported files are parsed on the device; only artist names reach the server. Linked accounts (R2-6) add each provider under its own API terms.
+- **Feeds:** Library: your artists and playlist analysis; Around you: campus and city charts, from listeners who opt in
+- **Notes:** Imported files are parsed on the device; only artist names reach the server. Linked accounts (R2-6) add each provider under its own API terms. Around you charts use only members who opted in, and only once 10 have listening data; an artist needs 3 listeners and counts are shown as ranges.
 
 ## Non-commercial
 

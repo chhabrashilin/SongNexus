@@ -161,3 +161,72 @@ Reading the results:
   (still open, as for the R1 budgets).
 - Follow-up worth doing before scale: resolve the viewer inside the request's own database session instead of a
   separate one.
+
+## 2026-11-16: response cache and HTTP caching
+
+Machine: Windows 11, Intel Core i7-1355U (12 threads), 16 GB, single uvicorn worker, SQLite copy of the dev
+catalog, other development tools running concurrently (so absolute numbers are noisy; the before/after pair ran
+back to back on the same copy). Client: `httpx` over loopback, one connection, sequential requests, so every
+number includes about 3-4 ms of loopback and client overhead. Rate limits raised for the run. 12-20 distinct
+URLs per endpoint (20 well-known artists, pairs among them); "cold" is the first request for each URL, "warm" is
+three repeat passes over the same URLs. Before: no cache, no compression. After: in-process response cache, gzip.
+
+| Endpoint | cold p50 / p95 before (ms) | cold p50 / p95 after (ms) | warm p50 / p95 before (ms) | warm p50 / p95 after (ms) | Body to wire bytes after |
+|---|---|---|---|---|---|
+| artist | 16.3 / 89.8 | 8.0 / 8.8 | 16.7 / 57.1 | 8.4 / 13.2 | 5,411 to 1,865 |
+| connections page | 10.1 / 18.7 | 11.8 / 14.4 | 10.4 / 30.2 | 7.9 / 9.3 | 14,102 to 2,273 |
+| connections page 2 | 8.2 / 11.1 | 9.6 / 10.8 | 8.5 / 18.3 | 4.8 / 5.7 | 5,944 to 1,303 |
+| connection detail | 16.8 / 49.7 | 14.4 / 26.5 | 12.2 / 38.1 | 6.4 / 7.7 | 18,933 to 3,074 |
+| collaborations | 12.7 / 36.4 | 13.1 / 22.4 | 12.6 / 42.4 | 7.9 / 12.8 | under 1 KB, not compressed |
+| findPath, fewest steps | 20.3 / 85.2 | 30.7 / 107.4 | 18.6 / 81.2 | 12.0 / 25.7 | under 1 KB |
+| findPath, strongest links | 55.5 / 380.2 | 52.1 / 218.5 | 42.3 / 290.8 | 5.8 / 7.1 | under 1 KB |
+| artists:compare | 20.9 / 40.7 | 15.2 / 22.0 | 17.9 / 26.0 | 5.8 / 11.0 | under 1 KB |
+| recordings:compare | 37.9 / 60.7 | 47.9 / 59.4 | 23.5 / 43.1 | 6.1 / 7.8 | 9,422 to 2,362 |
+| catalog:search | 18.8 / 37.9 | 12.0 / 13.9 | 16.6 / 30.9 | 4.4 / 6.9 | under 1 KB |
+| genres | 15.3 / 15.3 | 21.4 / 21.4 | 8.1 / 8.9 | 3.7 / 4.2 | 18,071 to 4,169 |
+| dataSources | 5.8 / 5.8 | 3.5 / 3.5 | 4.8 / 5.5 | 3.6 / 4.2 | 5,701 to 2,070 |
+| label | 20.3 / 26.3 | 13.8 / 35.6 | 16.1 / 51.4 | 5.5 / 6.4 | 1,570 to 558 |
+
+What the numbers say, honestly:
+
+- The first request for a URL is unchanged by design (a cache cannot speed up a first computation; cold figures
+  differ only by machine noise). Warm repeats, which is what a popular artist, a shared link or a Home load sees,
+  drop to the 4-8 ms loopback floor, and the expensive analyses fall furthest: strongest-links paths 42 to 6 ms
+  p50 (290 to 7 ms p95), recording comparison 24 to 6 ms.
+- A conditional request (`If-None-Match`) is answered 304 with no body: 4 ms on `/v1/genres`.
+- Responses over 1 KB are gzip-compressed (3-6x smaller on the wire for the large lists).
+- `GET /v1/artists:featured` replaces 12 `catalog:search` calls on every Home load: cold 128 ms once, then 7.5 ms,
+  and the browser keeps it for 30 minutes.
+- Browser side: catalog queries stay fresh 30 minutes (they change only with `graphVersion`; sign-in, sign-out and
+  blocking invalidate them), and hovering or focusing an artist link for 120 ms prefetches that artist page.
+
+Not measured here: multi-instance behavior with Redis and Cloud Run numbers (still open, as above).
+
+### How caching is layered
+
+| Layer | What | Lifetime |
+|---|---|---|
+| Browser (TanStack Query) | catalog queries | 30 min fresh, 60 min in memory |
+| HTTP (`Cache-Control`, `ETag`) | anonymous catalog GETs: `public, max-age=60, stale-while-revalidate=600`; the ETag hashes `graphVersion`, method and URL | 1 min, then revalidated with 304s |
+| Server response cache | serialized JSON of anonymous catalog reads, keyed by `graphVersion` and the full URL; concurrent misses are computed once | 1 h TTL, LRU, 4,096 entries / 64 MB |
+| Redis (optional) | the same entries, shared by instances | 1 h TTL |
+
+Anything for a signed-in viewer (a blocked-artist filter changes results), plus `/v1/users`, sessions, shares,
+accounts and any response that sets a cookie, is `private, no-store` and never enters a shared cache.
+
+### Turning on Redis in production (for example Memorystore on Cloud Run)
+
+Redis is optional; one instance already gets most of the benefit from the in-process cache. It helps when several
+instances would otherwise each warm their own copy (Cloud Run scale-out, cold starts).
+
+1. Create a Memorystore for Redis instance (Basic tier is enough: a cache may be lost) in the same region and
+   VPC as the service. Use `maxmemory-policy allkeys-lru`.
+2. Give Cloud Run VPC access (Direct VPC egress or a Serverless VPC Access connector) to that network.
+3. Install the extra in the image (`uv sync --extra redis`) and set
+   `SONGNEXUS_REDIS_URL=redis://<memorystore-ip>:6379/0` (use `rediss://` plus a secret-managed password if AUTH or
+   in-transit encryption is on).
+4. If Redis is unreachable, the API logs one warning, serves from memory, and retries every 30 seconds; it never
+   fails a request because of the cache. Keys contain the catalog version, so a data refresh needs no flush.
+5. Locally: `docker compose --profile cache up -d`, then `SONGNEXUS_REDIS_URL=redis://127.0.0.1:16379/0`.
+
+Hit and miss counters are on `ResponseCache.stats()`, and every cached response carries `X-Cache: hit|miss`.

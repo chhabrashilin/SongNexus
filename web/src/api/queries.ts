@@ -17,6 +17,37 @@ export type PathMode = Schemas['PathMode'];
 
 const MINUTE = 60_000;
 
+/**
+ * Catalog answers change only when the server's `graphVersion` changes (a data
+ * refresh, hours apart), so they stay fresh for a long time and are kept in memory
+ * for a while after their last use. Sign-in, sign-out and blocking invalidate
+ * them explicitly (personalized results), so a long staleTime is safe.
+ */
+const CATALOG_CACHE = {staleTime: 30 * MINUTE, gcTime: 60 * MINUTE} as const;
+
+/** Warms the cache for an artist page (called on hover or focus). */
+export function prefetchArtist(queryClient: QueryClient, id: string) {
+  return queryClient.prefetchQuery({
+    queryKey: ['artist', id],
+    queryFn: () =>
+      unwrap(api.GET('/v1/artists/{artist}', {params: {path: {artist: id}}})),
+    ...CATALOG_CACHE,
+  });
+}
+
+/** Warms the cache for an artist's connections (same key as `useConnections`). */
+export function prefetchConnections(
+  queryClient: QueryClient,
+  id: string,
+  params: ConnectionParams,
+) {
+  return queryClient.prefetchQuery({
+    queryKey: ['connections', id, params],
+    queryFn: () => fetchConnections(id, params),
+    ...CATALOG_CACHE,
+  });
+}
+
 /** Retries transient failures only; never client errors. */
 export function shouldRetry(failureCount: number, error: unknown): boolean {
   if (error instanceof ApiError) {
@@ -40,7 +71,7 @@ export function useArtist(id: string | undefined) {
     queryFn: () =>
       unwrap(api.GET('/v1/artists/{artist}', {params: {path: {artist: id!}}})),
     enabled: Boolean(id),
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
   });
 }
 
@@ -66,7 +97,7 @@ export function useConnections(
     queryKey: ['connections', id, params],
     queryFn: () => fetchConnections(id!, params),
     enabled: Boolean(id),
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
     placeholderData: keepPreviousData,
   });
 }
@@ -85,7 +116,7 @@ export function useConnection(
         }),
       ),
     enabled: Boolean(a && b),
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
   });
 }
 
@@ -137,7 +168,7 @@ export function useCollaborations(
         }),
       ),
     enabled: Boolean(id),
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
     placeholderData: keepPreviousData,
   });
 }
@@ -171,7 +202,7 @@ export function usePath(params: PathParams | null) {
         }),
       ),
     enabled: params !== null,
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
   });
 }
 
@@ -192,7 +223,7 @@ export function useCompare(
         }),
       ),
     enabled: Boolean(a && b && a !== b),
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
   });
 }
 
@@ -209,7 +240,7 @@ export function useRecordingComparison(
         }),
       ),
     enabled: Boolean(a && b),
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
   });
 }
 
@@ -219,7 +250,7 @@ export function useLabel(id: string | undefined) {
     queryFn: () =>
       unwrap(api.GET('/v1/labels/{label}', {params: {path: {label: id!}}})),
     enabled: Boolean(id),
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
   });
 }
 
@@ -233,7 +264,7 @@ export function useRecording(id: string | undefined) {
         }),
       ),
     enabled: Boolean(id),
-    staleTime: 5 * MINUTE,
+    ...CATALOG_CACHE,
   });
 }
 
@@ -249,7 +280,7 @@ export function useSearch(query: string, types: Schemas['EntityType'][] = []) {
         }),
       ),
     enabled: trimmed.length > 0,
-    staleTime: MINUTE,
+    ...CATALOG_CACHE,
     placeholderData: keepPreviousData,
   });
 }
@@ -273,6 +304,7 @@ export function useGenres() {
     queryKey: ['genres'],
     queryFn: fetchAllGenres,
     staleTime: 30 * MINUTE,
+    gcTime: 60 * MINUTE,
   });
 }
 

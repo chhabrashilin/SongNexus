@@ -11,13 +11,15 @@ from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import Engine
 
-from songnexus.storage import accounts_repository, social_repository
+from songnexus.storage import accounts_repository, community_repository, social_repository
 from songnexus.storage import user_repository as users
 from songnexus.storage.db import session_scope
 
 DELETED_ACCOUNT_RETENTION = timedelta(days=30)
 # Abuse reports keep a copy of the reported note for moderators, then go (ADR 0007).
 REPORT_RETENTION = timedelta(days=90)
+# Community charts (aggregates only) are kept for movement and rising: a week plus 28 days.
+COMMUNITY_CHART_RETENTION = timedelta(days=36)
 # Margin so the 30-day promise holds even if a daily run is missed.
 _SAFETY_MARGIN = timedelta(days=2)
 
@@ -33,7 +35,9 @@ def run_purge(engine: Engine, now: datetime | None = None) -> dict[str, int]:
         flows = accounts_repository.purge_flows(session, now)
         invites = social_repository.purge_invites(session, now)
         reports = social_repository.purge_reports(session, now - REPORT_RETENTION)
+        charts = community_repository.purge_charts(session, now - COMMUNITY_CHART_RETENTION)
     return {
+        "expiredCommunityCharts": charts,
         "expiredSessions": sessions,
         "deletedAccounts": accounts,
         "expiredLinkFlows": flows,

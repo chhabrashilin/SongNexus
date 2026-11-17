@@ -27,10 +27,12 @@ const SHORTCUTS = [
   TOOLS.library!,
 ];
 const MORE = [
+  TOOLS.stories!,
+  TOOLS.around!,
+  TOOLS.games!,
   TOOLS.path!,
   TOOLS.compare!,
   TOOLS.songs!,
-  TOOLS.puzzle!,
   TOOLS.library!,
   TOOLS.friends!,
 ];

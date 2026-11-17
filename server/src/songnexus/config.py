@@ -44,6 +44,10 @@ class Settings(BaseSettings):
     rate_limit_analyze_per_minute: int = 120
     rate_limit_write_per_minute: int = 60
 
+    # Response cache (performance). Empty: in-process only. A URL such as
+    # redis://10.0.0.3:6379/0 shares cached catalog responses between instances.
+    redis_url: str = ""
+
     # Identity (ADR 0002).
     firebase_project_id: str = ""
     session_ttl_days: int = 14
@@ -90,6 +94,21 @@ class Settings(BaseSettings):
     # Run the sync job inside the API process (one instance only: local development).
     # Deployed environments schedule `songnexus sync-accounts` instead.
     sync_in_process: bool = False
+
+    # Around you (community charts). A chart is recomputed when older than this,
+    # on read or by `songnexus community-charts`; leaving or joining shows up at the
+    # next recompute, which also keeps one person's change from being singled out.
+    community_chart_ttl_minutes: int = 60
+
+    # Ask (AI in the search bar, ADR 0008). The model only interprets questions; answers
+    # come from the catalog. Providers: gemini (default), openrouter, ollama; "none" or a
+    # hosted provider without a key means the built-in parser alone. Only the question
+    # text is sent. The model defaults per provider (core/ask/llm.py DEFAULT_MODELS).
+    llm_provider: str = "gemini"
+    llm_api_key: str = Field(default="", repr=False)
+    llm_model: str = ""
+    llm_base_url: str = ""
+    llm_timeout_s: float = 4.0
 
     @property
     def local_token_key_path(self) -> Path:

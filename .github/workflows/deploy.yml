@@ -74,7 +74,13 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Build and deploy the web app
+        env:
+          VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
         run: |
+          test -n "$VITE_FIREBASE_API_KEY" || { echo 'Configure VITE_FIREBASE_API_KEY'; exit 1; }
+          test -n "$VITE_FIREBASE_AUTH_DOMAIN" || { echo 'Configure VITE_FIREBASE_AUTH_DOMAIN'; exit 1; }
           npm ci --prefix web
           npm run build --prefix web
           npx --yes firebase-tools@15.32.1 deploy --only hosting --project "$PROJECT_ID" --non-interactive

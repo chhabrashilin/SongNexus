@@ -14,6 +14,9 @@ export const messages = {
   'nav.explore': 'Explore',
   'nav.play': 'Play',
   'nav.library': 'Library',
+  'nav.games': 'Games',
+  'nav.stories': 'Stories',
+  'nav.aroundYou': 'Around you',
   'nav.primary': 'Main',
   'nav.friends': 'Friends',
   'shell.account': 'Your account',
@@ -719,6 +722,13 @@ export const messages = {
   'tool.songs.body': 'Two songs side by side: sound and credits.',
   'tool.puzzle.title': 'Daily puzzle',
   'tool.puzzle.body': 'Link two artists, one collaboration at a time.',
+  'tool.games.title': 'Games',
+  'tool.games.body': 'The daily puzzle, path challenges and credit trivia.',
+  'tool.stories.title': 'Stories',
+  'tool.stories.body':
+    'Surprising connections, each with the credits to prove it.',
+  'tool.around.title': 'Around you',
+  'tool.around.body': 'What your campus and your city are listening to.',
   'tool.library.title': 'Bring your music',
   'tool.library.body':
     'Import a playlist or connect a service to map your own artists.',
@@ -780,12 +790,320 @@ export const messages = {
   'connection.showAll':
     'Show all {count, plural, one {# credit} other {# credits}}',
   // <ask> AI search (Ask in the search bar). Add keys below this line.
+  'ask.option': 'Ask SongNexus: {query}',
+  'ask.button': 'Ask SongNexus',
+  'ask.panel': 'Answer',
+  'ask.close': 'Close answer',
+  'ask.loading': 'Looking through the credits…',
+  'ask.error': 'Couldn’t get an answer just now.',
+  'ask.retry': 'Try again',
+  'ask.rateLimited': 'Too many questions at once. Try again in a moment.',
+  'ask.didYouMean': 'Did you mean',
+  'ask.understood': 'What the question named',
+  'ask.examples': 'Try asking',
+  'ask.example.path': 'How is Kendrick Lamar connected to Daft Punk?',
+  'ask.example.produced': 'Who produced HUMBLE.?',
+  'ask.example.compare': 'Kendrick Lamar vs SZA',
+  'ask.example.collaborators': 'Who did Thundercat work with in the 2010s?',
+  'ask.example.like': 'Artists like Björk',
+  'ask.others': '{count, plural, one {# other} other {# others}}',
+  'ask.filter.years': '{from}–{to}',
+  'ask.filter.since': 'Since {from}',
+  'ask.filter.until': 'Up to {to}',
+  'ask.filter.strongest': 'Strongest links',
+  'ask.row.count': '{count, plural, one {# credit} other {# credits}}',
+  'ask.row.role.producer': 'Producer',
+  'ask.row.role.featured': 'Featured',
+  'ask.row.role.primary': 'Artist',
+  'ask.row.role.other': 'Credited',
+  'ask.row.song': 'Song',
+  'ask.go.FIND_PATH': 'See the full path',
+  'ask.go.COMPARE_ARTISTS': 'Open the comparison',
+  'ask.go.COMPARE_SONGS': 'Compare the songs',
+  'ask.go.SONG_CREDITS': 'Open the song',
+  'ask.go.COLLABORATORS': 'See all collaborations',
+  'ask.go.CONNECTIONS': 'Open the connection web',
+  'ask.go.LOOKUP': 'Open',
+  'ask.go.UNKNOWN': 'Open',
+  'ask.how': 'How this answer works',
+  'ask.how.parser':
+    'SongNexus read your question with its built-in question reader. No AI model was used.',
+  'ask.how.model':
+    'An AI model ({model}) only turned your question into a search. It didn’t supply any facts.',
+  'ask.how.facts':
+    'Every fact here comes from published credits in our data, each with a source you can check. If something isn’t in our data yet, the answer says so.',
+  'ask.how.privacy':
+    'Only the text of your question is sent to the model, never who you are.',
+  'ask.answer.path':
+    '{a} and {b} are {steps, plural, one {# step} other {# steps}} apart in our data.',
+  'ask.answer.pathDirect': '{a} and {b} have worked together directly.',
+  'ask.answer.pathNone':
+    '{a} and {b} aren’t connected within {max} steps in our data yet.',
+  'ask.answer.pathLimit':
+    'The search between {a} and {b} stopped before it finished. Try the full path finder.',
+  'ask.answer.sameArtist': 'That’s {a} twice. Try two different artists.',
+  'ask.answer.compare':
+    '{a} and {b} share {mutual, plural, =0 {no collaborators} one {# collaborator} other {# collaborators}} in our data.',
+  'ask.answer.compareSongs':
+    '“{a}” and “{b}” share {shared, plural, =0 {no credited artists} one {# credited artist} other {# credited artists}}.',
+  'ask.answer.song.PRODUCER': '{names} produced “{song}”',
+  'ask.answer.song.PRODUCER.none':
+    'Producer credits for “{song}” aren’t in our data yet.',
+  'ask.answer.song.FEATURED':
+    '{count, plural, one {{names} is} other {{names} are}} featured on “{song}”',
+  'ask.answer.song.FEATURED.none':
+    'No featured artists on “{song}” in our data yet.',
+  'ask.answer.song.PERFORMER': '“{song}” is by {names}.',
+  'ask.answer.song.PERFORMER.none':
+    'The artists on “{song}” aren’t in our data yet.',
+  'ask.answer.song.ALL':
+    '“{song}” credits {count, plural, one {# artist} other {# artists}} in our data: {names}.',
+  'ask.answer.song.ALL.none': 'Credits for “{song}” aren’t in our data yet.',
+  'ask.answer.collab.ANY':
+    '{artist} has worked with {count, plural, one {# artist} other {# artists}} in our data, most often {names}.',
+  'ask.answer.collab.ANY.none':
+    'No collaborations for {artist} like that in our data yet.',
+  'ask.answer.collab.FEATURE':
+    '{artist} has performed with {count, plural, one {# artist} other {# artists}} in our data, most often {names}.',
+  'ask.answer.collab.FEATURE.none':
+    'No performances with others for {artist} like that in our data yet.',
+  'ask.answer.collab.PRODUCED_BY':
+    '{count, plural, one {# producer has} other {# producers have}} worked on {artist}’s music in our data, most often {names}.',
+  'ask.answer.collab.PRODUCED_BY.none':
+    'Producers of {artist}’s music like that aren’t in our data yet.',
+  'ask.answer.collab.PRODUCED_FOR':
+    '{artist} has produced for {count, plural, one {# artist} other {# artists}} in our data, most often {names}.',
+  'ask.answer.collab.PRODUCED_FOR.none':
+    'No production by {artist} for others like that in our data yet.',
+  'ask.answer.collab.CO_PRODUCED':
+    '{artist} has co-produced with {count, plural, one {# producer} other {# producers}} in our data, most often {names}.',
+  'ask.answer.collab.CO_PRODUCED.none':
+    'No co-productions for {artist} like that in our data yet.',
+  'ask.answer.collab.PRODUCTION':
+    '{artist} has production credits with {count, plural, one {# artist} other {# artists}} in our data, most often {names}.',
+  'ask.answer.collab.PRODUCTION.none':
+    'No production credits for {artist} like that in our data yet.',
+  'ask.answer.collab.BAND':
+    '{artist} is linked to {count, plural, one {# band or project} other {# bands and projects}} in our data: {names}.',
+  'ask.answer.collab.BAND.none':
+    'No bands or projects for {artist} in our data yet.',
+  'ask.answer.collab.CREDIT':
+    '{artist} shares other credits with {count, plural, one {# artist} other {# artists}} in our data, most often {names}.',
+  'ask.answer.collab.CREDIT.none':
+    'No other credits for {artist} like that in our data yet.',
+  'ask.answer.connections':
+    '{artist} connects to {count, plural, one {# artist} other {# artists}} in our data. Strongest: {names}.',
+  'ask.answer.connections.none': '{artist} has no connections in our data yet.',
+  'ask.answer.lookup.artist': 'Here’s {name}.',
+  'ask.answer.lookup.song': 'Here’s “{name}”',
+  'ask.answer.nothing': 'Nothing in our data matches “{query}” yet.',
+  'ask.answer.notFound': '“{name}” isn’t in our data yet.',
+  'ask.answer.ambiguous':
+    'Our data has more than one “{name}”. Did you mean one of these?',
+  'ask.answer.genreNotFound': '“{genre}” isn’t a genre in our data yet.',
+  'ask.answer.unknown':
+    'SongNexus answers questions about credits and connections. That one is outside what our data covers.',
   // </ask>
   // <community> Around you: campus and city listening. Add keys below this line.
+  'around.title': 'What your campus and city are listening to',
+  'around.lead':
+    'Charts from listeners who choose to join. You see what a place plays together, never who plays what.',
+  'around.tabs': 'Kind of community',
+  'around.tab.CAMPUS': 'Campus',
+  'around.tab.CITY': 'City',
+  'around.pick.CAMPUS': 'Find your campus',
+  'around.pick.CITY': 'Find your city',
+  'around.search.CAMPUS': 'Search universities',
+  'around.search.CITY': 'Search cities',
+  'around.pick.empty': 'No matches in our list yet for “{query}”',
+  'around.pick.results':
+    '{count, plural, one {# match} other {# matches}} available',
+  'around.pick.source':
+    'The campus and city list comes from Wikidata: the largest US universities, a few abroad, US cities over 100,000 people and national capitals.',
+  'around.yours.CAMPUS': 'Your campus',
+  'around.yours.CITY': 'Your city',
+  'around.preview': 'Looking around',
+  'around.join': 'Join',
+  'around.joined': 'Joined',
+  'around.leave': 'Leave',
+  'around.leaveNamed': 'Leave {name}',
+  'around.change.CAMPUS': 'Pick another campus',
+  'around.change.CITY': 'Pick another city',
+  'around.join.signIn': 'Sign in to join',
+  'around.join.done': 'You joined {name}',
+  'around.join.switched':
+    'You joined {name}. You can belong to one campus and one city.',
+  'around.leave.done':
+    'You left {name}. Your plays drop out of its chart at the next hourly update.',
+  'around.join.noData':
+    'Your plays count once you connect a listening service.',
+  'around.connect': 'Connect a service',
+  'around.source': 'Source: Wikidata',
+  'around.privacy.summary': 'What joining shares, and how to leave',
+  'around.privacy.shared':
+    'Joining adds the play counts from your connected services to this community’s totals. Nobody can see that you joined, who else did, or what any one person plays.',
+  'around.privacy.thresholds':
+    'A chart appears only once {min} members have listening data. An artist or genre shows only when at least {artistMin} members play it, and counts are shown as ranges.',
+  'around.privacy.leave':
+    'Leave any time with one tap. Your membership is deleted at once and your plays drop out at the next hourly update. Memberships are in your data export and are deleted with your account.',
+  'around.locked.title':
+    '{name} needs {count, plural, one {# more listener} other {# more listeners}} to unlock its chart',
+  'around.locked.body':
+    'A chart opens once {min} members have connected a listening service. Share this page with people from {name} to get there.',
+  'around.locked.progress': '{have} of {min} listeners',
+  'around.share': 'Share this page',
+  'around.share.text':
+    'What is {name} listening to? Help unlock the chart on SongNexus.',
+  'around.invite': 'Invite a friend',
+  'around.top.title': 'Top artists',
+  'around.top.eyebrow': 'Most listeners at {name}',
+  'around.rank': '#{rank}',
+  'around.listeners.between': '{min}–{max} listeners',
+  'around.listeners.atLeast': '{min}+ listeners',
+  'around.listeners.community.between': '{min}–{max} listeners with data',
+  'around.listeners.community.atLeast': '{min}+ listeners with data',
+  'around.cardSubtitle': '#{rank} · {listeners}',
+  'around.rising.title': 'Rising',
+  'around.rising.body':
+    'Gaining listeners compared with the four weeks before this one.',
+  'around.rising.none':
+    'Rising artists and chart movement appear once the chart is a week old.',
+  'around.rising.empty': 'Nothing is rising this week.',
+  'around.chart.title': 'The chart',
+  'around.move.UP': 'Up {places}',
+  'around.move.DOWN': 'Down {places}',
+  'around.move.SAME': 'No change',
+  'around.move.NEW': 'New',
+  'around.openWeb': 'Open {name}’s web',
+  'around.genres.title': 'Genres',
+  'around.updated': 'Updated {time}. Charts refresh every hour.',
+  'around.demo': 'Demo data: synthetic listeners, for development only',
+  'around.compare.CAMPUS': 'Compare with another campus',
+  'around.compare.CITY': 'Compare with another city',
+  'around.compare.shared':
+    '{count, plural, =0 {No top artists in common with {name}} one {# top artist in common with {name}} other {# top artists in common with {name}}}',
+  'around.compare.locked': '{name} doesn’t have a chart yet.',
+  'around.compare.ranks': '#{a} at {here} · #{b} at {there}',
+  'around.compare.clear': 'Clear comparison',
+  'around.you.title': 'Your communities',
+  'around.you.body':
+    'The campus and city whose charts your plays count toward in Around you.',
+  'around.you.none': 'You haven’t joined a campus or a city.',
+  'around.you.open': 'Open Around you',
   // </community>
   // <games> Games hub, trivia and stories. Add keys below this line.
+  'games.title': 'Your music. Your next challenge.',
+  'games.filter.all': 'For you',
+  'games.filter.daily': 'Connection challenges',
+  'games.filter.credit': 'Credit check',
+  'games.lead':
+    'Short daily games, built from published credits. The same for everyone, every day.',
+  'games.strapline': 'Play',
+  'games.daily.eyebrow': 'Daily puzzle',
+  'games.daily.title': 'Puzzle #{number}',
+  'games.daily.body': '{start} to {target} in {par} steps.',
+  'games.daily.par': 'Par {par}',
+  'games.daily.state.new': 'Not started',
+  'games.daily.state.playing': 'In progress',
+  'games.daily.state.won':
+    '{steps, plural, one {Solved in # step} other {Solved in # steps}}',
+  'games.daily.state.gaveUp': 'Revealed',
+  'games.daily.action.new': 'Play today’s puzzle',
+  'games.daily.action.playing': 'Continue',
+  'games.daily.action.done': 'See your result',
+  'games.path.eyebrow': 'Path challenge',
+  'games.path.title': 'Connect these two',
+  'games.path.body':
+    '{from} and {to} are {steps} connections apart. Can you find a route?',
+  'games.path.action': 'Find the path',
+  'games.path.hint':
+    'You are not tested here: the path finder shows the credits for every step.',
+  'games.credit.eyebrow': 'Credit check',
+  'games.credit.title': 'Credit check #{number}',
+  'games.credit.lead':
+    '{count, plural, one {# question} other {# questions}} about who made what.',
+  'games.credit.progress': 'Question {n} of {total}',
+  'games.credit.start': 'Start',
+  'games.credit.resume': 'Continue',
+  'games.credit.options': 'Answers',
+  'games.credit.correct': 'Correct',
+  'games.credit.incorrect': 'Not quite. It was {answer}.',
+  'games.credit.next': 'Next question',
+  'games.credit.finish': 'See your score',
+  'games.credit.checkFailed': 'Could not check that answer. Try again.',
+  'games.credit.proof': 'The credits behind it',
+  'games.credit.labelFact': '“{subject}” came out on {label}.',
+  'games.credit.noEvidence': 'Not in our data yet.',
+  'games.credit.score': '{score} of {total}',
+  'games.credit.done': 'Today’s score',
+  'games.credit.review': 'Review answers',
+  'games.credit.share': 'Share score',
+  'games.credit.shareCopied': 'Score copied',
+  'games.credit.shareFailed':
+    'Could not share. You can copy the score instead.',
+  'games.credit.share.text': 'Credit check #{number} · {score}/{total}',
+  'games.credit.archive': 'Credit check archive',
+  'games.credit.date': 'Quiz date',
+  'games.credit.previous': 'Previous day',
+  'games.credit.nextDay': 'Next day',
+  'games.credit.today': 'Back to today',
+  'games.credit.question.who_produced': 'Who produced',
+  'games.credit.result.right': 'Right',
+  'games.credit.result.wrong': 'Wrong',
+  'games.credit.pending': 'Unanswered',
+  'games.credit.empty': 'No Credit check is available yet.',
+  'games.stats': 'Your stats',
+  'games.stats.note': 'Kept on this device only.',
+  'games.stats.streak': 'Daily streak',
+  'games.stats.puzzleSolved': 'Puzzles solved',
+  'games.stats.creditPlayed': 'Quizzes finished',
+  'games.stats.creditAverage': 'Average score',
+  'games.stats.creditPerfect': 'Perfect scores',
+  'games.stats.days': '{count, plural, one {# day} other {# days}}',
+  'games.stats.none': 'Not yet',
+  'trivia.whoProduced': 'Who produced “{subject}” by {artist}?',
+  'trivia.whoFeatured': 'Which artist is featured on “{subject}” by {artist}?',
+  'trivia.workedWith': 'Which of these artists has worked with {artist}?',
+  'trivia.whichLabel': 'Which label released “{subject}” by {artist}?',
+  'stories.title': 'Stories',
+  'stories.lead': 'Connections found in the credits.',
+  'stories.honest': 'Generated from published credits',
+  'stories.feed': 'Connection stories',
+  'stories.card': 'Story {n} of {total}',
+  'stories.credits': '{count, plural, one {# credit} other {# credits}}',
+  'stories.credits.all': 'All credits and sources',
+  'stories.openWeb': 'Open the web',
+  'stories.findPath': 'Find the path',
+  'stories.next': 'Next story',
+  'stories.previous': 'Previous story',
+  'stories.more': 'Load more stories',
+  'stories.end':
+    'That is all for now. New stories appear when our data is refreshed.',
+  'stories.empty': 'No stories yet.',
+  'stories.keys': 'Use the arrow keys or Page Down to move between stories.',
+  'stories.kind.SHARED_PRODUCER': 'Shared producer',
+  'stories.kind.TWO_STEPS': 'Two steps apart',
+  'stories.kind.SESSION_PLAYER': 'Behind the scenes',
+  'stories.kind.LABEL_MATES': 'Label mates',
+  'stories.kind.SAME_SAMPLE': 'Same sample, two eras',
+  'stories.kind.SAMPLED': 'Sampled',
+  'story.sharedProducer':
+    '{a} and {b} have no credit together in our data, but both worked with producer {via}.',
+  'story.twoSteps': '{a} is 2 steps from {b}, through {via}.',
+  'story.sessionPlayer':
+    '{via} is credited on {n, plural, one {# song} other {# songs}} by {a} in our data.',
+  'story.labelMates':
+    '{a} and {b} released on {label} within a few years of each other.',
+  'story.sameSample':
+    '{a} ({yearA}) and {b} ({yearB}) both sampled {via}: the same source, years apart.',
+  'story.sampled': '{a}’s “{song}” samples {via}.',
   // </games>
   'footer.about': 'About our data',
+  'around.country': 'Country code (optional)',
+  'around.demo.only': 'Show demo universities only',
+  'around.demo.label': 'Fictional university',
+  'around.demo.notice':
+    'Demo directory: these universities are fictional. Choosing one does not verify enrollment.',
   'footer.privacy': 'Privacy',
 } as const;
 

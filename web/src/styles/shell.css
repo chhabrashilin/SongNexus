@@ -168,7 +168,8 @@
   grid-auto-columns: 1fr;
   block-size: var(--nav-height);
 }
-.nav__extra {
+.nav__extra,
+.nav__links .nav__item:not([data-phone]) {
   display: none;
 }
 
@@ -250,6 +251,9 @@
     border-block-start: 0;
     border-inline-end: 1px solid var(--md-outline-variant);
     scrollbar-width: thin;
+  }
+  .nav__links .nav__item:not([data-phone]) {
+    display: flex;
   }
   .nav__links {
     display: flex;
