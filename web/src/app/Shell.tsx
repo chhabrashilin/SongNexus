@@ -23,20 +23,43 @@ interface NavEntry {
   flag?: string;
   /** Paths (besides `to`) that belong to this destination. */
   also?: string[];
+  /** In the phone tab bar (five fit); every entry is in the full guide. */
+  phone?: boolean;
 }
 
 const NAV: NavEntry[] = [
-  {to: '/', label: 'nav.home', icon: 'home'},
+  {to: '/', label: 'nav.home', icon: 'home', phone: true},
   {
     to: '/explore',
     label: 'nav.explore',
     icon: 'explore',
     flag: 'explore',
     also: ['/six-degrees', '/compare'],
+    phone: true,
   },
-  {to: '/play', label: 'nav.play', icon: 'puzzle', flag: 'play'},
-  {to: '/friends', label: 'nav.friends', icon: 'people', flag: 'friends'},
-  {to: '/library', label: 'nav.library', icon: 'library'},
+  {to: '/stories', label: 'nav.stories', icon: 'movie', flag: 'stories'},
+  {
+    to: '/games',
+    label: 'nav.games',
+    icon: 'puzzle',
+    flag: 'play',
+    also: ['/play'],
+    phone: true,
+  },
+  {
+    to: '/around-you',
+    label: 'nav.aroundYou',
+    icon: 'place',
+    flag: 'community',
+  },
+  {
+    to: '/friends',
+    label: 'nav.friends',
+    icon: 'people',
+    flag: 'friends',
+    phone: true,
+  },
+  {to: '/library', label: 'nav.library', icon: 'library', phone: true},
 ];
 
 /** How many recently viewed artists the guide lists. */
@@ -130,6 +153,7 @@ function NavItem({
     <Link
       to={entry.to}
       className="nav__item"
+      data-phone={entry.phone || undefined}
       aria-current={current ? 'page' : undefined}
     >
       <span className="nav__icon">

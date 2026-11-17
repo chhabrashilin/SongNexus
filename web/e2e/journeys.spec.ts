@@ -619,3 +619,38 @@ test('friends explain invites and ask signed-out visitors to sign in (R2-7)', as
   await expect(page.getByText('Sign in to accept this invite.')).toBeVisible();
   await expectAccessible(page);
 });
+
+test('asking a question in the search bar answers from our data (ADR 0008)', async ({
+  page,
+  request,
+}) => {
+  const config = await (await request.get('/v1/config')).json();
+  test.skip(config.flags?.ask !== true, 'the API predates Ask');
+  await page.goto('/');
+  const search = page.getByRole('combobox', {name: 'Search artists and songs'});
+  await search.fill('How is Kendrick Lamar connected to Daft Punk?');
+  await expect(
+    page.getByRole('option', {name: /^Ask SongNexus: How is Kendrick Lamar/}),
+  ).toBeVisible();
+  await search.press('Enter');
+  const answer = page.getByRole('region', {name: 'Answer'});
+  await expect(answer).toContainText(
+    /Kendrick Lamar and Daft Punk are \d+ steps? apart/,
+  );
+  await expect(search).toBeFocused();
+  await expectAccessible(page);
+  await answer.getByText('How this answer works').click();
+  await expect(answer).toContainText('No AI model was used');
+  await answer.getByRole('link', {name: 'See the full path'}).click();
+  await expect(page).toHaveURL(/\/six-degrees\?from=.+&to=.+/);
+
+  // A name we don't have is said plainly, with questions to try instead.
+  await search.fill('who produced Zzqx Unknown Song');
+  await search.press('Enter');
+  await expect(answer).toContainText('isn’t in our data yet');
+  await expect(
+    answer.getByRole('button', {name: 'Artists like Björk'}),
+  ).toBeVisible();
+  await search.press('Escape');
+  await expect(answer).toBeHidden();
+});

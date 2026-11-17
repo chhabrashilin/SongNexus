@@ -1,4 +1,4 @@
-"""ASGI middleware: request context and access logs, and security headers.
+"""ASGI middleware: request context and access logs, security headers, HTTP caching.
 
 Written as plain ASGI (not ``BaseHTTPMiddleware``) to avoid per-request task
 overhead and to keep streaming responses intact.
@@ -6,12 +6,14 @@ overhead and to keep streaming responses intact.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import re
 import secrets
 import time
 from collections.abc import Awaitable, Callable, MutableMapping
+from http import HTTPStatus
 from typing import Any
 
 from songnexus.logs import request_id_var, trace_var
@@ -203,3 +205,135 @@ class BodySizeLimitMiddleware:
             }
         )
         await send({"type": "http.response.body", "body": body})
+
+
+# Anonymous, catalog-only reads that any cache may share. Everything else under /v1 is
+# private unless a route says otherwise.
+_SHARED_CATALOG = re.compile(
+    r"^/v1/(artists[/:]|labels/|recordings/|catalog:search$|genres$|dataSources$)"
+)
+# Never cacheable, whatever a route sets: personal data, sign-in state, writes' echoes.
+_PRIVATE_PREFIXES = (
+    "/v1/users",
+    "/v1/sessions",
+    "/v1/shares",
+    "/v1/inbox",
+    "/v1/accounts",
+    "/v1/oauth",
+    "/v1/reports",
+    "/v1/blocks",
+    "/v1/friends",
+    "/v1/invites",
+)
+SHARED_CACHE_CONTROL = b"public, max-age=60, stale-while-revalidate=600"
+PRIVATE_CACHE_CONTROL = b"private, no-store"
+
+
+def _etag(version: str, method: str, scope: Scope) -> str:
+    """A strong validator: catalog version, method and the full request URL."""
+    query = scope.get("query_string", b"").decode("latin-1")
+    url = f"{scope.get('path', '')}?{query}" if query else str(scope.get("path", ""))
+    digest = hashlib.sha256(f"{version}|{method}|{url}".encode()).hexdigest()[:32]
+    return f'"{digest}"'
+
+
+def _matches(if_none_match: str, etag: str) -> bool:
+    """True when an ``If-None-Match`` header lists the ETag (weak comparison) or ``*``."""
+    if not if_none_match:
+        return False
+    if if_none_match.strip() == "*":
+        return True
+    return any(
+        candidate.strip().removeprefix("W/") == etag for candidate in if_none_match.split(",")
+    )
+
+
+class CacheHeadersMiddleware:
+    """HTTP caching for the API: ETags and 304s for shared catalog reads, no-store otherwise.
+
+    Routes decide whether a response is shareable (``public``: an anonymous
+    catalog read; a signed-in viewer's response is ``private, no-store``). This
+    layer then:
+
+    * gives shared catalog GETs a strong ETag derived from the catalog version
+      and the URL (so a refresh changes every ETag), answers a matching
+      ``If-None-Match`` with 304, and sets one cache policy for the whole catalog;
+    * forces ``private, no-store`` on personal routes and on any response that
+      sets a cookie, whatever a route said;
+    * makes every other ``/v1`` response without a policy (errors included)
+      ``private, no-store``.
+    """
+
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        """Handles one ASGI connection."""
+        path = scope.get("path", "")
+        if scope["type"] != "http" or not path.startswith("/v1/"):
+            await self.app(scope, receive, send)
+            return
+        method = scope.get("method", "GET")
+        if_none_match = _header(scope, b"if-none-match")
+        swallow_body = False
+
+        async def send_with_cache_headers(message: Message) -> None:
+            nonlocal swallow_body
+            if swallow_body:
+                # A 304 has no body: drop the payload, but still end the response.
+                if message["type"] == "http.response.body" and not message.get("more_body"):
+                    await send({"type": "http.response.body", "body": b""})
+                return
+            if message["type"] != "http.response.start":
+                await send(message)
+                return
+            headers = [(k, v) for k, v in message.get("headers", ())]
+            names = {k.lower() for k, _ in headers}
+            policy = next((v for k, v in headers if k.lower() == b"cache-control"), b"")
+            status = message["status"]
+            private = (
+                path.startswith(_PRIVATE_PREFIXES)
+                or b"set-cookie" in names
+                or policy.startswith(b"private")
+            )
+            shared = (
+                method == "GET"
+                and status == HTTPStatus.OK
+                and not private
+                and _SHARED_CATALOG.match(path) is not None
+                and policy.startswith(b"public")
+            )
+            if shared:
+                version = self._version(scope)
+                headers = [
+                    (k, v) for k, v in headers if k.lower() not in (b"cache-control", b"etag")
+                ]
+                headers.append((b"cache-control", SHARED_CACHE_CONTROL))
+                if version:
+                    etag = _etag(version, method, scope)
+                    headers.append((b"etag", etag.encode()))
+                    if _matches(if_none_match, etag):
+                        swallow_body = True
+                        headers = [
+                            (k, v)
+                            for k, v in headers
+                            if k.lower() not in (b"content-length", b"content-type")
+                        ]
+                        await send(
+                            {**message, "status": HTTPStatus.NOT_MODIFIED.value, "headers": headers}
+                        )
+                        return
+            elif private or not policy:
+                headers = [(k, v) for k, v in headers if k.lower() != b"cache-control"]
+                headers.append((b"cache-control", PRIVATE_CACHE_CONTROL))
+            message["headers"] = headers
+            await send(message)
+
+        await self.app(scope, receive, send_with_cache_headers)
+
+    @staticmethod
+    def _version(scope: Scope) -> str:
+        """The served catalog version ("" before a catalog loads)."""
+        app_state = getattr(scope.get("app"), "state", None)
+        holder = getattr(getattr(app_state, "songnexus", None), "holder", None)
+        return str(holder.current().version) if holder is not None and holder.ready else ""

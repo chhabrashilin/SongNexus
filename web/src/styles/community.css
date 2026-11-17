@@ -1,0 +1,156 @@
+/* community: Around you (campus and city charts). Logical properties only. */
+
+/* The community being shown: cover, name and place, then actions. */
+.community-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+.community-head > .cover {
+  inline-size: 96px;
+  block-size: 96px;
+  font-size: 2.5rem;
+}
+.community-head__text {
+  min-inline-size: 0;
+}
+.community-head__text h2 {
+  margin: 0;
+  font: var(--headline-small);
+  overflow-wrap: anywhere;
+}
+.community-head__text p {
+  margin: 0;
+}
+.community-head__actions,
+.community-head__nodata {
+  grid-column: 1 / -1;
+}
+.community-head__nodata {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.joined-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 40px;
+  padding-inline: var(--space-3);
+  border-radius: var(--shape-full);
+  background: var(--fill-2);
+  font: var(--label-large);
+}
+
+@media (min-width: 720px) {
+  .community-head {
+    grid-template-columns: auto 1fr auto;
+  }
+  .community-head > .cover {
+    inline-size: 128px;
+    block-size: 128px;
+  }
+  .community-head__actions {
+    grid-column: auto;
+    justify-content: flex-end;
+  }
+}
+
+/* The picker's search field and results. */
+.community-picker {
+  display: grid;
+  gap: var(--space-3);
+  max-inline-size: 640px;
+}
+.community-picker .list-row .cover {
+  inline-size: 48px;
+  block-size: 48px;
+  flex: none;
+  font-size: 1.25rem;
+}
+
+/* Locked chart: progress toward the listener floor. */
+.unlock {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+.unlock h2 {
+  margin: 0;
+  font: var(--title-large);
+}
+.unlock p {
+  margin: 0;
+}
+.unlock__meter {
+  block-size: 10px;
+  border-radius: var(--shape-full);
+  background: var(--md-surface-container-highest);
+  overflow: hidden;
+}
+.unlock__fill {
+  display: block;
+  block-size: 100%;
+  min-inline-size: 4px;
+  border-radius: inherit;
+  background: var(--brand);
+}
+.unlock__count {
+  font: var(--label-large);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Chart rows: rank, movement (glyph and words, never color alone). */
+.chart-rank {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--md-on-surface);
+}
+.movement {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: var(--label-medium);
+  color: var(--md-on-surface-variant);
+  white-space: nowrap;
+}
+.movement[data-move='UP'] > span:first-child,
+.movement[data-move='NEW'] > span:first-child {
+  color: var(--brand);
+}
+@media (max-width: 599px) {
+  .movement__text {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+.chart__genres {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chip--static {
+  cursor: default;
+}
+.chip--static:hover {
+  background: var(--fill-2);
+}
+.chip__meta {
+  color: var(--md-on-surface-variant);
+  font: var(--label-medium);
+}
+.chart__demo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.chart__updated {
+  font: var(--body-small);
+}

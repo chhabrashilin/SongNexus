@@ -5,7 +5,7 @@ from __future__ import annotations
 import itertools
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Response
+from fastapi import APIRouter, Depends, Query, Request, Response
 from sqlalchemy.orm import Session
 
 from songnexus.core.graph import algorithms as alg
@@ -16,6 +16,7 @@ from songnexus.core.graph.model import ArtistGraph
 from songnexus.core.listening import Audience, overlap
 from songnexus.service import convert
 from songnexus.service import schemas as api
+from songnexus.service.cache import cached_anonymous
 from songnexus.service.deps import (
     Viewer,
     parse_name,
@@ -64,7 +65,9 @@ def _endpoints(graph: ArtistGraph, *names: tuple[str, str]) -> list[str]:
 @router.get(
     "/artists/{artist:rid}:findPath", response_model=api.FindPathResponse, summary="FindPath"
 )
+@cached_anonymous
 def find_path(
+    request: Request,
     artist: str,
     model: ReadModelDep,
     who: ViewerDep,
@@ -135,7 +138,9 @@ def find_path(
     response_model=api.CompareArtistsResponse,
     summary="CompareArtists",
 )
+@cached_anonymous
 def compare_artists(
+    request: Request,
     artist: str,
     model: ReadModelDep,
     who: ViewerDep,

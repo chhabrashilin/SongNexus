@@ -479,10 +479,15 @@ def _handle_genre_list(batch: CanonicalBatch, record: RawRecord) -> None:
             _add_mapping(batch, "genre", genre_id, genre.id)
 
 
+def _handle_recording(batch: CanonicalBatch, record: RawRecord) -> None:
+    _add_recording(batch, mb.Recording.model_validate(record.body), record.request_key)
+
+
 _HANDLERS: dict[str, Callable[[CanonicalBatch, RawRecord], None]] = {
     "artist": _handle_artist,
     "artist_profile": _handle_artist,
     "release": _handle_release,
+    "recording": _handle_recording,
     "genre_list": _handle_genre_list,
 }
 # Fuller artist lookups first, so stub references never shadow them.

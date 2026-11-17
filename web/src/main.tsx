@@ -6,6 +6,9 @@ import './styles/shell.css';
 import './styles/components.css';
 import './styles/home.css';
 import './styles/web.css';
+import './styles/ask.css';
+import './styles/community.css';
+import './styles/games.css';
 
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';

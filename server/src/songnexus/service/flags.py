@@ -19,6 +19,9 @@ DEFAULT_FLAGS: Mapping[str, bool] = MappingProxyType(
         "compare": True,
         "labelMates": True,  # the LABELS category; off by default in filters
         "play": True,
+        "stories": True,
+        "community": True,  # Around you: campus and city charts
+        "ask": True,  # questions in the search bar (ADR 0008); works without a model
         "playlistImport": True,
         "signIn": True,
         "linkedAccounts": True,

@@ -20,5 +20,19 @@ services:
       timeout: 3s
       retries: 20
 
+  # Optional shared response cache. Off by default; start with `docker compose --profile cache up -d`
+  # and set SONGNEXUS_REDIS_URL=redis://127.0.0.1:16379/0. The API works without it (in-process cache).
+  redis:
+    image: redis:7-alpine
+    profiles: ["cache"]
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru", "--save", ""]
+    ports:
+      - "127.0.0.1:16379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
 volumes:
   songnexus-postgres:

@@ -19,6 +19,10 @@ dependencies = [
     "uvicorn[standard]>=0.32",
 ]
 
+[project.optional-dependencies]
+# Shared response cache across instances (set SONGNEXUS_REDIS_URL); the API runs without it.
+redis = ["redis>=5.0"]
+
 [project.scripts]
 songnexus = "songnexus.cli:main"
 

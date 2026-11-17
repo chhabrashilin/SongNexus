@@ -172,7 +172,9 @@ def _enrichment_inputs(settings: Settings, args: argparse.Namespace) -> Any:
     from songnexus.catalog.ingest import EnrichmentInputs
 
     # A custom snapshot (tests, experiments) is ingested on its own.
-    if args.no_enrichment or args.snapshot is not None:
+    if args.no_enrichment or (
+        args.snapshot is not None and not getattr(args, "with_enrichment", False)
+    ):
         return None
     paths = (
         settings.wikidata_snapshot_path,
@@ -491,10 +493,160 @@ def _cmd_resources(_settings: Settings, args: argparse.Namespace) -> int:
     )
 
 
+# --- Around you (communities) ----------------------------------------------------------
+
+
+def _cmd_fetch_communities(settings: Settings, _args: argparse.Namespace) -> int:
+    from songnexus.catalog.communities import build_directory, write_directory
+    from songnexus.catalog.wikidata.fetch import WikidataClient
+
+    client = WikidataClient(
+        sparql_url=settings.wikidata_sparql_url,
+        cache_dir=settings.raw_dir("wikidata-communities"),
+        contact=settings.wikidata_contact,
+    )
+    _print(write_directory(build_directory(client)))
+    return EXIT_OK
+
+
+def _cmd_community_charts(settings: Settings, _args: argparse.Namespace) -> int:
+    from songnexus.service.community_job import run_community_charts
+    from songnexus.service.readmodel import load_read_model
+    from songnexus.storage.db import make_engine
+
+    engine = make_engine(settings.database_url)
+    model = load_read_model(engine, settings.genre_sources)
+    _print(run_community_charts(engine, settings, model))
+    return EXIT_OK
+
+
+def _cmd_seed_community(settings: Settings, args: argparse.Namespace) -> int:
+    from datetime import UTC, datetime
+
+    from songnexus.catalog.communities import load_directory
+    from songnexus.core.community import Kind
+    from songnexus.jobs.community_seed import SeedRefusedError, remove_synthetic, seed_community
+    from songnexus.storage.db import make_engine, session_scope
+
+    slug = args.campus or args.city
+    kind = Kind.CAMPUS if args.campus else Kind.CITY
+    try:
+        engine = make_engine(settings.database_url)
+        if args.remove:
+            _print(remove_synthetic(engine, settings.environment, slug))
+            return EXIT_OK
+        community = load_directory().by_id.get(slug or "")
+        if community is None or community.kind is not kind:
+            raise SeedRefusedError(f"no {kind.value.lower()} with ID {slug!r} in the directory")
+        if args.listeners is None:
+            raise SeedRefusedError("--listeners is required")
+        now = datetime.now(UTC)
+        result = seed_community(engine, settings.environment, community, args.listeners, now)
+    except SeedRefusedError as exc:
+        print(f"seed-community refused: {exc}", file=sys.stderr)
+        return EXIT_FAILED
+
+    from songnexus.service.community_job import compute
+    from songnexus.service.readmodel import load_read_model
+
+    model = load_read_model(engine, settings.genre_sources)
+    with session_scope(engine) as session:
+        chart = compute(session, settings, model, community.id, now)
+    _print({**result, "chartUnlocked": chart.unlocked, "chartArtists": len(chart.artists)})
+    return EXIT_OK
+
+
+def _add_community_commands(commands: Any) -> None:
+    commands.add_parser(
+        "fetch-communities",
+        help="rebuild the Around you campus and city list from Wikidata (catalog/communities.json)",
+    ).set_defaults(handler=_cmd_fetch_communities)
+    commands.add_parser(
+        "community-charts", help="recompute stale Around you charts (run hourly)"
+    ).set_defaults(handler=_cmd_community_charts)
+    seed = commands.add_parser(
+        "seed-community",
+        help="DEVELOPMENT ONLY: add (or --remove) synthetic members so a chart can be demoed",
+    )
+    target = seed.add_mutually_exclusive_group()
+    target.add_argument("--campus", help="campus ID (slug) from the directory")
+    target.add_argument("--city", help="city ID (slug) from the directory")
+    seed.add_argument("--listeners", type=int, help="how many synthetic listeners to create")
+    seed.add_argument(
+        "--remove", action="store_true", help="delete synthetic members (of one community, or all)"
+    )
+    seed.set_defaults(handler=_cmd_seed_community)
+
+
+def _cmd_transfer(settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.storage.db import make_engine
+    from songnexus.storage.transfer import transfer
+
+    url = os.environ.get(args.target_url_env)
+    if not url:
+        print(f"Set {args.target_url_env} securely to the destination URL", file=sys.stderr)
+        return EXIT_FAILED
+    source = make_engine(settings.database_url)
+    target = make_engine(url)
+    try:
+        _print(transfer(source, target, apply=args.apply))
+    finally:
+        source.dispose()
+        target.dispose()
+    return EXIT_OK
+
+
+def _cmd_merge(_settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.catalog.merge import merge_snapshots
+
+    _print(merge_snapshots(args.inputs, args.output))
+    return EXIT_OK
+
+
+def _cmd_fetch_recordings(settings: Settings, args: argparse.Namespace) -> int:
+    from songnexus.catalog.musicbrainz.client import MusicBrainzClient
+    from songnexus.catalog.musicbrainz.recordings import fetch_recordings
+
+    client = MusicBrainzClient(
+        base_url=settings.musicbrainz_base_url,
+        cache_dir=settings.raw_cache_dir,
+        contact=settings.musicbrainz_contact,
+        min_interval_s=settings.musicbrainz_min_interval_s,
+    )
+    _print(fetch_recordings(client, args.artist, args.output, limit=args.limit))
+    return EXIT_OK
+
+
+def _add_expansion_commands(commands: Any) -> None:
+    recordings = commands.add_parser(
+        "fetch-recordings", help="fetch singles and album recordings for an artist MBID"
+    )
+    recordings.add_argument("--artist", required=True)
+    recordings.add_argument("--output", required=True, type=Path)
+    recordings.add_argument("--limit", default=500, type=int)
+    recordings.set_defaults(handler=_cmd_fetch_recordings)
+    transfer = commands.add_parser(
+        "transfer-database", help="copy to an EMPTY database; dry run by default"
+    )
+    transfer.add_argument("--target-url-env", default="SONGNEXUS_TARGET_DATABASE_URL")
+    transfer.add_argument(
+        "--apply", action="store_true", help="migrate target and copy; stop source writers first"
+    )
+    transfer.set_defaults(handler=_cmd_transfer)
+    merge = commands.add_parser(
+        "merge-snapshots", help="union MusicBrainz snapshots; later input wins"
+    )
+    merge.add_argument("inputs", nargs="+", type=Path)
+    merge.add_argument("--output", required=True, type=Path)
+    merge.set_defaults(handler=_cmd_merge)
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Returns the argument parser (exposed for tests and documentation)."""
     parser = argparse.ArgumentParser(prog="songnexus", description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
+
+    _add_expansion_commands(commands)
 
     migrate = commands.add_parser("migrate", help="apply database migrations")
     migrate.add_argument("revision", nargs="?", default="head")
@@ -531,6 +683,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="ingest MusicBrainz only, without the enrichment snapshots",
     )
     ingest.set_defaults(handler=_cmd_ingest)
+    ingest.add_argument(
+        "--with-enrichment",
+        action="store_true",
+        help="retain bundled enrichment with a custom merged snapshot",
+    )
 
     eval_search = commands.add_parser(
         "eval-search", help=f"evaluate search on the labeled set (gate: MRR >= {MIN_SEARCH_MRR})"
@@ -581,6 +738,7 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     ):
         commands.add_parser(name, help=help_text).set_defaults(handler=handler)
+    _add_community_commands(commands)
 
     acousticbrainz = commands.add_parser(
         "fetch-acousticbrainz", help="fetch audio descriptors for catalog recordings"

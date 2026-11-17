@@ -405,6 +405,475 @@
         "title": "ArtistSummary",
         "type": "object"
       },
+      "AskAnswer": {
+        "description": "The short answer as a client message: an ID and its values (lists are names).",
+        "properties": {
+          "messageId": {
+            "description": "Client message key, e.g. `ask.answer.path`.",
+            "title": "Messageid",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ]
+            },
+            "title": "Params",
+            "type": "object"
+          }
+        },
+        "required": [
+          "messageId",
+          "params"
+        ],
+        "title": "AskAnswer",
+        "type": "object"
+      },
+      "AskCandidate": {
+        "description": "A catalog entity a name refers to (or might).",
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "name": {
+            "description": "Resource name `artists/{id}` or `recordings/{id}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "subtitle": {
+            "default": "",
+            "title": "Subtitle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "subtitle"
+        ],
+        "title": "AskCandidate",
+        "type": "object"
+      },
+      "AskCreditRole": {
+        "description": "Which credits of a song were asked about.",
+        "enum": [
+          "PRODUCER",
+          "FEATURED",
+          "PERFORMER",
+          "ALL"
+        ],
+        "title": "AskCreditRole",
+        "type": "string"
+      },
+      "AskEntity": {
+        "description": "A name from the question and what it resolved to.",
+        "properties": {
+          "alternatives": {
+            "description": "Other entities with this name (ambiguous: pick one).",
+            "items": {
+              "$ref": "#/components/schemas/AskCandidate"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "entityType": {
+            "description": "`ARTIST` or `RECORDING`.",
+            "title": "Entitytype",
+            "type": "string"
+          },
+          "match": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AskCandidate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mention": {
+            "title": "Mention",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EntityStatus"
+          }
+        },
+        "required": [
+          "mention",
+          "entityType",
+          "status",
+          "match",
+          "alternatives"
+        ],
+        "title": "AskEntity",
+        "type": "object"
+      },
+      "AskIntent": {
+        "description": "What the question was understood to ask.",
+        "enum": [
+          "FIND_PATH",
+          "COMPARE_ARTISTS",
+          "COMPARE_SONGS",
+          "SONG_CREDITS",
+          "COLLABORATORS",
+          "CONNECTIONS",
+          "LOOKUP",
+          "UNKNOWN"
+        ],
+        "title": "AskIntent",
+        "type": "string"
+      },
+      "AskInterpretation": {
+        "description": "The question as understood: an intent and its narrowing, never a fact.",
+        "properties": {
+          "collaborationType": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CollaborationType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "creditRole": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AskCreditRole"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "direction": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProductionDirection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endyear"
+          },
+          "genre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Resource name `genres/{genre}`.",
+            "title": "Genre"
+          },
+          "genreDisplayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Genredisplayname"
+          },
+          "intent": {
+            "$ref": "#/components/schemas/AskIntent"
+          },
+          "interpretedBy": {
+            "$ref": "#/components/schemas/InterpretedBy"
+          },
+          "startYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startyear"
+          },
+          "strongest": {
+            "default": false,
+            "title": "Strongest",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "intent",
+          "interpretedBy",
+          "creditRole",
+          "collaborationType",
+          "direction",
+          "startYear",
+          "endYear",
+          "genre",
+          "genreDisplayName",
+          "strongest"
+        ],
+        "title": "AskInterpretation",
+        "type": "object"
+      },
+      "AskModelInfo": {
+        "description": "The language model behind interpretation, for \"How this answer works\".",
+        "properties": {
+          "configured": {
+            "title": "Configured",
+            "type": "boolean"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
+          "used": {
+            "description": "Whether the model read this question.",
+            "title": "Used",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "configured",
+          "used",
+          "provider",
+          "model"
+        ],
+        "title": "AskModelInfo",
+        "type": "object"
+      },
+      "AskRequest": {
+        "description": "AskCatalog: only the question text (and any \"Did you mean\" picks) is sent.",
+        "properties": {
+          "choices": {
+            "description": "Resource names picked for ambiguous names (`artists/{id}`, `recordings/{id}`) from a previous answer's alternatives.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 4,
+            "title": "Choices",
+            "type": "array"
+          },
+          "query": {
+            "description": "The question as typed.",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "AskRequest",
+        "type": "object"
+      },
+      "AskResponse": {
+        "description": "AskCatalog.",
+        "properties": {
+          "answer": {
+            "$ref": "#/components/schemas/AskAnswer"
+          },
+          "artists": {
+            "description": "Every artist the answer and its evidence mention, to name them.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "destination": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The app page with the full answer, e.g. `/compare?a=…&b=…`.",
+            "title": "Destination"
+          },
+          "entities": {
+            "items": {
+              "$ref": "#/components/schemas/AskEntity"
+            },
+            "title": "Entities",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "interpretation": {
+            "$ref": "#/components/schemas/AskInterpretation"
+          },
+          "model": {
+            "$ref": "#/components/schemas/AskModelInfo"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/AskRow"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "interpretation",
+          "answer",
+          "entities",
+          "results",
+          "artists",
+          "destination",
+          "model",
+          "graphVersion"
+        ],
+        "title": "AskResponse",
+        "type": "object"
+      },
+      "AskRow": {
+        "description": "A supporting result: an artist or a song, and why it is here.",
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ArtistSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Collaborations behind it, if counted.",
+            "title": "Count"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "firstYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firstyear"
+          },
+          "lastYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastyear"
+          },
+          "recording": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AskCandidate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Credit role on the song, e.g. `producer`.",
+            "title": "Role"
+          },
+          "sources": {
+            "description": "For a credit row: where the credit can be checked.",
+            "items": {
+              "$ref": "#/components/schemas/SourceLink"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "artist",
+          "recording",
+          "role",
+          "count",
+          "firstYear",
+          "lastYear",
+          "evidence",
+          "sources"
+        ],
+        "title": "AskRow",
+        "type": "object"
+      },
       "AudioDescriptors": {
         "description": "What AcousticBrainz measured for a recording (CC0). Any field may be missing.",
         "properties": {
@@ -571,6 +1040,26 @@
         "title": "BlockedUser",
         "type": "object"
       },
+      "ChartMovement": {
+        "description": "An artist's movement since the chart a week earlier.",
+        "enum": [
+          "UP",
+          "DOWN",
+          "SAME",
+          "NEW"
+        ],
+        "title": "ChartMovement",
+        "type": "string"
+      },
+      "ChartState": {
+        "description": "Whether a community has enough listeners to show its chart.",
+        "enum": [
+          "LOCKED",
+          "UNLOCKED"
+        ],
+        "title": "ChartState",
+        "type": "string"
+      },
       "CheckMoveRequest": {
         "description": "CheckMove: is ``to`` directly connected to ``from``?",
         "properties": {
@@ -642,6 +1131,76 @@
           "reachedTarget"
         ],
         "title": "CheckMoveResponse",
+        "type": "object"
+      },
+      "CheckTriviaRequest": {
+        "description": "CheckTrivia: is this option the right one for the question?",
+        "properties": {
+          "option": {
+            "description": "The chosen option's resource name.",
+            "maxLength": 64,
+            "title": "Option",
+            "type": "string"
+          },
+          "question": {
+            "description": "The question ID, e.g. `q1`.",
+            "maxLength": 8,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question",
+          "option"
+        ],
+        "title": "CheckTriviaRequest",
+        "type": "object"
+      },
+      "CheckTriviaResponse": {
+        "description": "The verdict, the right option and the credits behind it.",
+        "properties": {
+          "correct": {
+            "title": "Correct",
+            "type": "boolean"
+          },
+          "correctOption": {
+            "$ref": "#/components/schemas/TriviaOption"
+          },
+          "evidence": {
+            "description": "Credits that make the right option right, with sources. Empty for WHICH_LABEL, which cites `sources` instead.",
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "sources": {
+            "description": "Pages where the fact can be checked (the release and the label).",
+            "items": {
+              "$ref": "#/components/schemas/SourceLink"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "subject": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Subject"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "correct",
+          "correctOption",
+          "evidence",
+          "sources",
+          "subject"
+        ],
+        "title": "CheckTriviaResponse",
         "type": "object"
       },
       "CoListener": {
@@ -776,6 +1335,269 @@
         ],
         "title": "CollaborationType",
         "type": "string"
+      },
+      "Community": {
+        "description": "A campus or city listeners can join (from the curated Wikidata directory).",
+        "properties": {
+          "city": {
+            "title": "City",
+            "type": "string"
+          },
+          "cityCommunity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Citycommunity"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/CommunityKind"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "region": {
+            "title": "Region",
+            "type": "string"
+          },
+          "shortName": {
+            "title": "Shortname",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "synthetic": {
+            "default": false,
+            "title": "Synthetic",
+            "type": "boolean"
+          },
+          "website": {
+            "title": "Website",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "displayName",
+          "shortName",
+          "city",
+          "region",
+          "country",
+          "website",
+          "cityCommunity",
+          "sourceUrl",
+          "synthetic"
+        ],
+        "title": "Community",
+        "type": "object"
+      },
+      "CommunityChart": {
+        "description": "GetCommunityChart: what a community listens to, aggregated and anonymous.",
+        "properties": {
+          "artists": {
+            "items": {
+              "$ref": "#/components/schemas/CommunityChartArtist"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "community": {
+            "$ref": "#/components/schemas/Community"
+          },
+          "demoData": {
+            "title": "Demodata",
+            "type": "boolean"
+          },
+          "genres": {
+            "items": {
+              "$ref": "#/components/schemas/CommunityChartGenre"
+            },
+            "title": "Genres",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "historyAvailable": {
+            "title": "Historyavailable",
+            "type": "boolean"
+          },
+          "listeners": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ListenerRange"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "listenersNeeded": {
+            "title": "Listenersneeded",
+            "type": "integer"
+          },
+          "minArtistListeners": {
+            "title": "Minartistlisteners",
+            "type": "integer"
+          },
+          "minListeners": {
+            "title": "Minlisteners",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "nextUpdateTime": {
+            "title": "Nextupdatetime",
+            "type": "string"
+          },
+          "rising": {
+            "items": {
+              "$ref": "#/components/schemas/CommunityChartArtist"
+            },
+            "title": "Rising",
+            "type": "array"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ChartState"
+          },
+          "updateTime": {
+            "title": "Updatetime",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "community",
+          "state",
+          "listenersNeeded",
+          "minListeners",
+          "minArtistListeners",
+          "listeners",
+          "artists",
+          "rising",
+          "genres",
+          "historyAvailable",
+          "demoData",
+          "updateTime",
+          "nextUpdateTime",
+          "graphVersion"
+        ],
+        "title": "CommunityChart",
+        "type": "object"
+      },
+      "CommunityChartArtist": {
+        "description": "A chart row: rank, artist, listeners as a range, movement.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "listeners": {
+            "$ref": "#/components/schemas/ListenerRange"
+          },
+          "movement": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChartMovement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "places": {
+            "default": 0,
+            "title": "Places",
+            "type": "integer"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "rising": {
+            "default": false,
+            "title": "Rising",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "rank",
+          "artist",
+          "listeners",
+          "movement",
+          "places",
+          "rising"
+        ],
+        "title": "CommunityChartArtist",
+        "type": "object"
+      },
+      "CommunityChartGenre": {
+        "description": "A genre the community listens to, with listeners as a range.",
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "genre": {
+            "title": "Genre",
+            "type": "string"
+          },
+          "listeners": {
+            "$ref": "#/components/schemas/ListenerRange"
+          }
+        },
+        "required": [
+          "genre",
+          "displayName",
+          "listeners"
+        ],
+        "title": "CommunityChartGenre",
+        "type": "object"
+      },
+      "CommunityKind": {
+        "description": "A campus (university) or a city.",
+        "enum": [
+          "CAMPUS",
+          "CITY"
+        ],
+        "title": "CommunityKind",
+        "type": "string"
+      },
+      "CommunityMembership": {
+        "description": "A community the listener joined.",
+        "properties": {
+          "community": {
+            "$ref": "#/components/schemas/Community"
+          },
+          "joinTime": {
+            "title": "Jointime",
+            "type": "string"
+          }
+        },
+        "required": [
+          "community",
+          "joinTime"
+        ],
+        "title": "CommunityMembership",
+        "type": "object"
       },
       "CompareArtistsResponse": {
         "description": "CompareArtists.",
@@ -1375,6 +2197,16 @@
         "title": "Empty",
         "type": "object"
       },
+      "EntityStatus": {
+        "description": "How a name in the question resolved.",
+        "enum": [
+          "MATCHED",
+          "AMBIGUOUS",
+          "NOT_FOUND"
+        ],
+        "title": "EntityStatus",
+        "type": "string"
+      },
       "EntityType": {
         "description": "A searchable entity type.",
         "enum": [
@@ -1488,6 +2320,28 @@
           "sources"
         ],
         "title": "Evidence",
+        "type": "object"
+      },
+      "FeaturedArtistsResponse": {
+        "description": "The featured artists, in editorial order.",
+        "properties": {
+          "artists": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artists",
+          "graphVersion"
+        ],
+        "title": "FeaturedArtistsResponse",
         "type": "object"
       },
       "FindPathResponse": {
@@ -1732,6 +2586,16 @@
         ],
         "title": "HintResponse",
         "type": "object"
+      },
+      "InterpretedBy": {
+        "description": "Who read the question: the built-in parser, the model, or no one (not understood).",
+        "enum": [
+          "PARSER",
+          "MODEL",
+          "NONE"
+        ],
+        "title": "InterpretedBy",
+        "type": "string"
       },
       "Label": {
         "description": "GetLabel: a record label, its roster by era, and its releases in our data.",
@@ -2183,6 +3047,34 @@
         "title": "ListBlockedUsersResponse",
         "type": "object"
       },
+      "ListCommunitiesResponse": {
+        "description": "ListCommunities: communities matching a search, best first.",
+        "properties": {
+          "communities": {
+            "items": {
+              "$ref": "#/components/schemas/Community"
+            },
+            "title": "Communities",
+            "type": "array"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "communities",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "title": "ListCommunitiesResponse",
+        "type": "object"
+      },
       "ListDataSourcesResponse": {
         "description": "ListDataSources.",
         "properties": {
@@ -2367,6 +3259,39 @@
         "title": "ListListeningResponse",
         "type": "object"
       },
+      "ListStoriesResponse": {
+        "description": "ListStories: a page of the feed.",
+        "properties": {
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "stories": {
+            "items": {
+              "$ref": "#/components/schemas/Story"
+            },
+            "title": "Stories",
+            "type": "array"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "stories",
+          "nextPageToken",
+          "totalSize",
+          "graphVersion"
+        ],
+        "title": "ListStoriesResponse",
+        "type": "object"
+      },
       "ListenerOverlap": {
         "description": "Shared audience, from aggregate ListenBrainz data; never about individual listeners.",
         "properties": {
@@ -2428,6 +3353,32 @@
           "source"
         ],
         "title": "ListenerOverlap",
+        "type": "object"
+      },
+      "ListenerRange": {
+        "description": "A count shown as a range: ``min`` to ``max`` listeners (``max`` null: or more).",
+        "properties": {
+          "max": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "min": {
+            "title": "Min",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "min",
+          "max"
+        ],
+        "title": "ListenerRange",
         "type": "object"
       },
       "ListeningArtist": {
@@ -2516,6 +3467,45 @@
         ],
         "title": "OverlapStrength",
         "type": "string"
+      },
+      "PathChallenge": {
+        "description": "GetPathChallenge: two well-known artists to connect, the same for everyone on a date.",
+        "properties": {
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "fromArtist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "name": {
+            "description": "`pathChallenges/{date}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "steps": {
+            "description": "Connections on a shortest path (3 to 5).",
+            "title": "Steps",
+            "type": "integer"
+          },
+          "toArtist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          }
+        },
+        "required": [
+          "name",
+          "date",
+          "fromArtist",
+          "toArtist",
+          "steps",
+          "graphVersion"
+        ],
+        "title": "PathChallenge",
+        "type": "object"
       },
       "PathMode": {
         "description": "How FindPath ranks routes.",
@@ -3626,6 +4616,95 @@
         "title": "Status",
         "type": "object"
       },
+      "Story": {
+        "description": "A generated connection story: a template, its artists and the credits that prove it.",
+        "properties": {
+          "credits": {
+            "description": "The strongest credit first; every one is sourced.",
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Credits",
+            "type": "array"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/StoryKind"
+          },
+          "messageId": {
+            "description": "Client message key, e.g. `story.sharedProducer`.",
+            "title": "Messageid",
+            "type": "string"
+          },
+          "name": {
+            "description": "`stories/{story}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "description": "Other template values: counts, years, a title.",
+            "title": "Params",
+            "type": "object"
+          },
+          "parts": {
+            "items": {
+              "$ref": "#/components/schemas/StoryPart"
+            },
+            "title": "Parts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "messageId",
+          "parts",
+          "params",
+          "credits"
+        ],
+        "title": "Story",
+        "type": "object"
+      },
+      "StoryKind": {
+        "description": "Which template a story uses.",
+        "enum": [
+          "SHARED_PRODUCER",
+          "TWO_STEPS",
+          "SESSION_PLAYER",
+          "LABEL_MATES",
+          "SAME_SAMPLE",
+          "SAMPLED"
+        ],
+        "title": "StoryKind",
+        "type": "string"
+      },
+      "StoryPart": {
+        "description": "An artist in a story, by the role the template gives it (`a`, `b`, `via`).",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "artist"
+        ],
+        "title": "StoryPart",
+        "type": "object"
+      },
       "Subject": {
         "description": "What a piece of evidence is about.",
         "properties": {
@@ -3722,6 +4801,140 @@
         "title": "TimelineYear",
         "type": "object"
       },
+      "TriviaOption": {
+        "description": "One answer option: an artist (`artists/{id}`) or a label (`labels/{id}`).",
+        "properties": {
+          "disambiguation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disambiguation"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "disambiguation"
+        ],
+        "title": "TriviaOption",
+        "type": "object"
+      },
+      "TriviaQuestion": {
+        "description": "A question and its options, never its answer.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary",
+            "description": "The artist the question is about: the song's main artist, or the artist in a WORKED_WITH question."
+          },
+          "id": {
+            "description": "`q1` to `q5`, stable within the day.",
+            "examples": [
+              "q1"
+            ],
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/TriviaQuestionKind"
+          },
+          "messageId": {
+            "description": "Client message key, e.g. `trivia.whoProduced`.",
+            "title": "Messageid",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/TriviaOption"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "subject": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Subject"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The song or release asked about; null for WORKED_WITH."
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "messageId",
+          "subject",
+          "artist",
+          "options"
+        ],
+        "title": "TriviaQuestion",
+        "type": "object"
+      },
+      "TriviaQuestionKind": {
+        "description": "What a Credit check question asks.",
+        "enum": [
+          "WHO_PRODUCED",
+          "WHO_FEATURED",
+          "WORKED_WITH",
+          "WHICH_LABEL"
+        ],
+        "title": "TriviaQuestionKind",
+        "type": "string"
+      },
+      "TriviaQuiz": {
+        "description": "GetTrivia: the same Credit check for every player on a date.",
+        "properties": {
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "name": {
+            "description": "`trivia/{date}`, the player's local date (YYYY-MM-DD).",
+            "title": "Name",
+            "type": "string"
+          },
+          "number": {
+            "description": "1 on the launch day.",
+            "title": "Number",
+            "type": "integer"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/TriviaQuestion"
+            },
+            "title": "Questions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "number",
+          "date",
+          "questions",
+          "graphVersion"
+        ],
+        "title": "TriviaQuiz",
+        "type": "object"
+      },
       "UpdateSocialProfileRequest": {
         "description": "UpdateSocialProfile: pick the name friends see.",
         "properties": {
@@ -3736,6 +4949,23 @@
           "displayName"
         ],
         "title": "UpdateSocialProfileRequest",
+        "type": "object"
+      },
+      "UpdateUserCommunitiesRequest": {
+        "description": "UpdateUserCommunities body: a community name to join, or \"\" to leave.\n\nOnly the fields in ``updateMask`` (or, without one, the fields present) change.",
+        "properties": {
+          "campus": {
+            "default": "",
+            "title": "Campus",
+            "type": "string"
+          },
+          "city": {
+            "default": "",
+            "title": "City",
+            "type": "string"
+          }
+        },
+        "title": "UpdateUserCommunitiesRequest",
         "type": "object"
       },
       "User": {
@@ -3755,6 +4985,47 @@
           "createTime"
         ],
         "title": "User",
+        "type": "object"
+      },
+      "UserCommunities": {
+        "description": "GetUserCommunities: the listener's campus and city (each optional).",
+        "properties": {
+          "campus": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CommunityMembership"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "city": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CommunityMembership"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hasListeningData": {
+            "title": "Haslisteningdata",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "campus",
+          "city",
+          "hasListeningData"
+        ],
+        "title": "UserCommunities",
         "type": "object"
       },
       "Visibility": {
@@ -4476,6 +5747,80 @@
         ]
       }
     },
+    "/v1/artists:featured": {
+      "get": {
+        "description": "Lists well-known artists to start from, in order, skipping any not in the catalog.",
+        "operationId": "ListFeaturedArtists",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeaturedArtistsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListFeaturedArtists",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
+    "/v1/catalog:ask": {
+      "post": {
+        "description": "Answers a question about credits and connections from the catalog.\n\nThe question is read by the built-in parser or, when the parser can't\nplace it and a model is configured, by the model, which only picks one of\nthe fixed intents and copies names from the question. Every fact in the\nanswer comes from the catalog, with evidence and sources. Ambiguous names\nare returned with alternatives; send a pick back in ``choices``.",
+        "operationId": "AskCatalog",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "AskCatalog",
+        "tags": [
+          "catalog"
+        ]
+      }
+    },
     "/v1/catalog:search": {
       "get": {
         "description": "Searches artists, releases and recordings by name, in any script.",
@@ -4543,6 +5888,203 @@
         "summary": "SearchCatalog",
         "tags": [
           "catalog"
+        ]
+      }
+    },
+    "/v1/communities": {
+      "get": {
+        "description": "Searches the campuses and cities listeners can join (largest first when no query).",
+        "operationId": "ListCommunities",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 120,
+              "title": "Query",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/CommunityKind"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "country",
+            "required": false,
+            "schema": {
+              "default": "",
+              "pattern": "^$|^[A-Z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "synthetic",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Synthetic"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListCommunitiesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListCommunities",
+        "tags": [
+          "community"
+        ]
+      }
+    },
+    "/v1/communities/{community}": {
+      "get": {
+        "description": "Returns one campus or city.",
+        "operationId": "GetCommunity",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "community",
+            "required": true,
+            "schema": {
+              "title": "Community",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Community"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetCommunity",
+        "tags": [
+          "community"
+        ]
+      }
+    },
+    "/v1/communities/{community}/chart": {
+      "get": {
+        "description": "What a community listens to: top artists, rising, genres. Anonymous aggregates only.\n\nLocked (fewer than 10 members with listening data): only how many more are\nneeded. Artists and genres need 3 listeners each; counts are ranges.",
+        "operationId": "GetCommunityChart",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "community",
+            "required": true,
+            "schema": {
+              "title": "Community",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommunityChart"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetCommunityChart",
+        "tags": [
+          "community"
         ]
       }
     },
@@ -4900,6 +6442,49 @@
         "summary": "FinishLink",
         "tags": [
           "accounts"
+        ]
+      }
+    },
+    "/v1/pathChallenges/{date}": {
+      "get": {
+        "description": "Returns the day's \"connect these two\" pair, 3 to 5 connections apart.",
+        "operationId": "GetPathChallenge",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PathChallenge"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetPathChallenge",
+        "tags": [
+          "discover"
         ]
       }
     },
@@ -5607,6 +7192,159 @@
         ]
       }
     },
+    "/v1/stories": {
+      "get": {
+        "description": "Lists generated connection stories, each with the credits that prove it.\n\nThe feed is the same for everyone for a catalog version; artists a signed-in\nviewer blocked are left out.",
+        "operationId": "ListStories",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 5,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListStoriesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListStories",
+        "tags": [
+          "discover"
+        ]
+      }
+    },
+    "/v1/trivia/{date}": {
+      "get": {
+        "description": "Returns the Credit check for a local date: the same for every player, without answers.",
+        "operationId": "GetTrivia",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TriviaQuiz"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetTrivia",
+        "tags": [
+          "discover"
+        ]
+      }
+    },
+    "/v1/trivia/{date}:check": {
+      "post": {
+        "description": "Checks one answer. The verdict comes with the right option and its credits.",
+        "operationId": "CheckTrivia",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckTriviaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckTriviaResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "CheckTrivia",
+        "tags": [
+          "discover"
+        ]
+      }
+    },
     "/v1/users/{user}": {
       "delete": {
         "description": "Deletes the account (AC-18.4): signed out everywhere, data gone now, purged in 30 days.",
@@ -6003,6 +7741,116 @@
         "summary": "DeleteBlockedUser",
         "tags": [
           "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/communities": {
+      "get": {
+        "description": "Returns the campus and city the listener joined (none until they opt in).",
+        "operationId": "GetUserCommunities",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserCommunities"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetUserCommunities",
+        "tags": [
+          "community"
+        ]
+      },
+      "patch": {
+        "description": "Joins, switches or leaves (empty value) a campus or city. Leaving deletes it now.",
+        "operationId": "UpdateUserCommunities",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "updateMask",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Updatemask"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserCommunitiesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserCommunities"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "UpdateUserCommunities",
+        "tags": [
+          "community"
         ]
       }
     },

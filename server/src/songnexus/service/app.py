@@ -15,17 +15,20 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from starlette.concurrency import run_in_threadpool
+from starlette.middleware.gzip import GZipMiddleware
 
 from songnexus import __version__
 from songnexus.config import Settings, get_settings, validate_for_serving
 from songnexus.identity.tokens import FirebaseIdTokenVerifier
 from songnexus.logs import configure_logging
+from songnexus.service.cache import build_cache
 from songnexus.service.deps import AppState
 from songnexus.service.errors import install_error_handlers
 from songnexus.service.flags import resolve_flags
 from songnexus.service.linking import cipher_from
 from songnexus.service.middleware import (
     BodySizeLimitMiddleware,
+    CacheHeadersMiddleware,
     RequestContextMiddleware,
     SecurityHeadersMiddleware,
 )
@@ -35,6 +38,7 @@ from songnexus.service.routes import (
     accounts,
     analysis,
     catalog,
+    discover,
     identity,
     ops,
     play,
@@ -42,6 +46,8 @@ from songnexus.service.routes import (
     social,
     users,
 )
+from songnexus.service.routes import ask as ask_routes
+from songnexus.service.routes import community as community_routes
 from songnexus.service.schemas import ErrorResponse
 from songnexus.service.sync_job import run_sync
 from songnexus.storage.db import make_engine
@@ -62,6 +68,7 @@ async def _refresh_forever(holder: ReadModelHolder, interval_s: float) -> None:
 
 
 SYNC_POLL_S = 60.0
+GZIP_MIN_BYTES = 1024
 
 
 def _sync_once(state: AppState) -> dict[str, int]:
@@ -195,6 +202,7 @@ def create_app(settings: Settings | None = None, state: AppState | None = None) 
         redoc_url=None,
     )
     app.state.songnexus = app_state
+    app.state.response_cache = build_cache(settings.redis_url)
     app.openapi = lambda: _openapi_with_error_model(app)  # type: ignore[method-assign]
     install_error_handlers(app)
     app.include_router(ops.router)
@@ -202,13 +210,18 @@ def create_app(settings: Settings | None = None, state: AppState | None = None) 
     app.include_router(analysis.router)
     app.include_router(playlists.router)
     app.include_router(play.router)
+    app.include_router(discover.router)
     app.include_router(identity.router)
     app.include_router(users.router)
     app.include_router(accounts.router)
     app.include_router(social.router)
+    app.include_router(community_routes.router)
+    app.include_router(ask_routes.router)
     # The middleware added last runs outermost, so security headers cover every
     # response, including errors raised by the request-context layer.
     app.add_middleware(BodySizeLimitMiddleware)
     app.add_middleware(RequestContextMiddleware, gcp_project=settings.gcp_project)
+    app.add_middleware(CacheHeadersMiddleware)
+    app.add_middleware(GZipMiddleware, minimum_size=GZIP_MIN_BYTES, compresslevel=5)
     app.add_middleware(SecurityHeadersMiddleware)
     return app

@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
+from songnexus.storage import community_repository, social_repository
 from songnexus.storage import models as m
-from songnexus.storage import social_repository
 
 
 def find_user_by_firebase_uid(session: Session, firebase_uid: str) -> m.User | None:
@@ -140,6 +140,8 @@ def erase_user(session: Session, user_id: str, now: datetime) -> None:
         session.execute(delete(model).where(model.user_id == user_id))
     # Friends and sharing (R2-7): their shares leave friends' inboxes now too.
     social_repository.erase(session, user_id)
+    # Around you: campus and city memberships.
+    community_repository.erase(session, user_id)
     session.execute(
         update(m.User).where(m.User.id == user_id).values(deleted_at=now, firebase_uid=None)
     )

@@ -153,6 +153,52 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/artists:featured": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListFeaturedArtists
+         * @description Lists well-known artists to start from, in order, skipping any not in the catalog.
+         */
+        get: operations["ListFeaturedArtists"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/catalog:ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * AskCatalog
+         * @description Answers a question about credits and connections from the catalog.
+         *
+         *     The question is read by the built-in parser or, when the parser can't
+         *     place it and a model is configured, by the model, which only picks one of
+         *     the fixed intents and copies names from the question. Every fact in the
+         *     answer comes from the catalog, with evidence and sources. Ambiguous names
+         *     are returned with alternatives; send a pick back in ``choices``.
+         */
+        post: operations["AskCatalog"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/catalog:search": {
         parameters: {
             query?: never;
@@ -165,6 +211,69 @@ export interface paths {
          * @description Searches artists, releases and recordings by name, in any script.
          */
         get: operations["SearchCatalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/communities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListCommunities
+         * @description Searches the campuses and cities listeners can join (largest first when no query).
+         */
+        get: operations["ListCommunities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/communities/{community}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetCommunity
+         * @description Returns one campus or city.
+         */
+        get: operations["GetCommunity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/communities/{community}/chart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetCommunityChart
+         * @description What a community listens to: top artists, rising, genres. Anonymous aggregates only.
+         *
+         *     Locked (fewer than 10 members with listening data): only how many more are
+         *     needed. Artists and genres need 3 listeners each; counts are ranges.
+         */
+        get: operations["GetCommunityChart"];
         put?: never;
         post?: never;
         delete?: never;
@@ -310,6 +419,26 @@ export interface paths {
          * @description The provider sends the listener back here; then on to the You page with the outcome.
          */
         get: operations["FinishLink"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/pathChallenges/{date}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetPathChallenge
+         * @description Returns the day's "connect these two" pair, 3 to 5 connections apart.
+         */
+        get: operations["GetPathChallenge"];
         put?: never;
         post?: never;
         delete?: never;
@@ -664,6 +793,69 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/stories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ListStories
+         * @description Lists generated connection stories, each with the credits that prove it.
+         *
+         *     The feed is the same for everyone for a catalog version; artists a signed-in
+         *     viewer blocked are left out.
+         */
+        get: operations["ListStories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/trivia/{date}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetTrivia
+         * @description Returns the Credit check for a local date: the same for every player, without answers.
+         */
+        get: operations["GetTrivia"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/trivia/{date}:check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * CheckTrivia
+         * @description Checks one answer. The verdict comes with the right option and its credits.
+         */
+        post: operations["CheckTrivia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/users/{user}": {
         parameters: {
             query?: never;
@@ -776,6 +968,30 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user}/communities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * GetUserCommunities
+         * @description Returns the campus and city the listener joined (none until they opt in).
+         */
+        get: operations["GetUserCommunities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * UpdateUserCommunities
+         * @description Joins, switches or leaves (empty value) a campus or city. Leaving deletes it now.
+         */
+        patch: operations["UpdateUserCommunities"];
         trace?: never;
     };
     "/v1/users/{user}/friendInvites": {
@@ -1262,6 +1478,185 @@ export interface components {
             name: string;
         };
         /**
+         * AskAnswer
+         * @description The short answer as a client message: an ID and its values (lists are names).
+         */
+        AskAnswer: {
+            /**
+             * Messageid
+             * @description Client message key, e.g. `ask.answer.path`.
+             */
+            messageId: string;
+            /** Params */
+            params: {
+                [key: string]: string | number | string[];
+            };
+        };
+        /**
+         * AskCandidate
+         * @description A catalog entity a name refers to (or might).
+         */
+        AskCandidate: {
+            /** Displayname */
+            displayName: string;
+            /**
+             * Name
+             * @description Resource name `artists/{id}` or `recordings/{id}`.
+             */
+            name: string;
+            /**
+             * Subtitle
+             * @default
+             */
+            subtitle: string;
+        };
+        /**
+         * AskCreditRole
+         * @description Which credits of a song were asked about.
+         * @enum {string}
+         */
+        AskCreditRole: "PRODUCER" | "FEATURED" | "PERFORMER" | "ALL";
+        /**
+         * AskEntity
+         * @description A name from the question and what it resolved to.
+         */
+        AskEntity: {
+            /**
+             * Alternatives
+             * @description Other entities with this name (ambiguous: pick one).
+             */
+            alternatives: components["schemas"]["AskCandidate"][];
+            /**
+             * Entitytype
+             * @description `ARTIST` or `RECORDING`.
+             */
+            entityType: string;
+            match: components["schemas"]["AskCandidate"] | null;
+            /** Mention */
+            mention: string;
+            status: components["schemas"]["EntityStatus"];
+        };
+        /**
+         * AskIntent
+         * @description What the question was understood to ask.
+         * @enum {string}
+         */
+        AskIntent: "FIND_PATH" | "COMPARE_ARTISTS" | "COMPARE_SONGS" | "SONG_CREDITS" | "COLLABORATORS" | "CONNECTIONS" | "LOOKUP" | "UNKNOWN";
+        /**
+         * AskInterpretation
+         * @description The question as understood: an intent and its narrowing, never a fact.
+         */
+        AskInterpretation: {
+            collaborationType: components["schemas"]["CollaborationType"] | null;
+            creditRole: components["schemas"]["AskCreditRole"] | null;
+            direction: components["schemas"]["ProductionDirection"] | null;
+            /** Endyear */
+            endYear: number | null;
+            /**
+             * Genre
+             * @description Resource name `genres/{genre}`.
+             */
+            genre: string | null;
+            /** Genredisplayname */
+            genreDisplayName: string | null;
+            intent: components["schemas"]["AskIntent"];
+            interpretedBy: components["schemas"]["InterpretedBy"];
+            /** Startyear */
+            startYear: number | null;
+            /**
+             * Strongest
+             * @default false
+             */
+            strongest: boolean;
+        };
+        /**
+         * AskModelInfo
+         * @description The language model behind interpretation, for "How this answer works".
+         */
+        AskModelInfo: {
+            /** Configured */
+            configured: boolean;
+            /** Model */
+            model: string | null;
+            /** Provider */
+            provider: string | null;
+            /**
+             * Used
+             * @description Whether the model read this question.
+             */
+            used: boolean;
+        };
+        /**
+         * AskRequest
+         * @description AskCatalog: only the question text (and any "Did you mean" picks) is sent.
+         */
+        AskRequest: {
+            /**
+             * Choices
+             * @description Resource names picked for ambiguous names (`artists/{id}`, `recordings/{id}`) from a previous answer's alternatives.
+             */
+            choices?: string[];
+            /**
+             * Query
+             * @description The question as typed.
+             */
+            query: string;
+        };
+        /**
+         * AskResponse
+         * @description AskCatalog.
+         */
+        AskResponse: {
+            answer: components["schemas"]["AskAnswer"];
+            /**
+             * Artists
+             * @description Every artist the answer and its evidence mention, to name them.
+             */
+            artists: components["schemas"]["ArtistSummary"][];
+            /**
+             * Destination
+             * @description The app page with the full answer, e.g. `/compare?a=…&b=…`.
+             */
+            destination: string | null;
+            /** Entities */
+            entities: components["schemas"]["AskEntity"][];
+            /** Graphversion */
+            graphVersion: string;
+            interpretation: components["schemas"]["AskInterpretation"];
+            model: components["schemas"]["AskModelInfo"];
+            /** Results */
+            results: components["schemas"]["AskRow"][];
+        };
+        /**
+         * AskRow
+         * @description A supporting result: an artist or a song, and why it is here.
+         */
+        AskRow: {
+            artist: components["schemas"]["ArtistSummary"] | null;
+            /**
+             * Count
+             * @description Collaborations behind it, if counted.
+             */
+            count: number | null;
+            /** Evidence */
+            evidence: components["schemas"]["Evidence"][];
+            /** Firstyear */
+            firstYear: number | null;
+            /** Lastyear */
+            lastYear: number | null;
+            recording: components["schemas"]["AskCandidate"] | null;
+            /**
+             * Role
+             * @description Credit role on the song, e.g. `producer`.
+             */
+            role: string | null;
+            /**
+             * Sources
+             * @description For a credit row: where the credit can be checked.
+             */
+            sources: components["schemas"]["SourceLink"][];
+        };
+        /**
          * AudioDescriptors
          * @description What AcousticBrainz measured for a recording (CC0). Any field may be missing.
          */
@@ -1331,6 +1726,18 @@ export interface components {
             person: components["schemas"]["Person"];
         };
         /**
+         * ChartMovement
+         * @description An artist's movement since the chart a week earlier.
+         * @enum {string}
+         */
+        ChartMovement: "UP" | "DOWN" | "SAME" | "NEW";
+        /**
+         * ChartState
+         * @description Whether a community has enough listeners to show its chart.
+         * @enum {string}
+         */
+        ChartState: "LOCKED" | "UNLOCKED";
+        /**
          * CheckMoveRequest
          * @description CheckMove: is ``to`` directly connected to ``from``?
          */
@@ -1366,6 +1773,42 @@ export interface components {
              * @description Steps left after this move; null if far or unreachable.
              */
             stepsToTarget: number | null;
+        };
+        /**
+         * CheckTriviaRequest
+         * @description CheckTrivia: is this option the right one for the question?
+         */
+        CheckTriviaRequest: {
+            /**
+             * Option
+             * @description The chosen option's resource name.
+             */
+            option: string;
+            /**
+             * Question
+             * @description The question ID, e.g. `q1`.
+             */
+            question: string;
+        };
+        /**
+         * CheckTriviaResponse
+         * @description The verdict, the right option and the credits behind it.
+         */
+        CheckTriviaResponse: {
+            /** Correct */
+            correct: boolean;
+            correctOption: components["schemas"]["TriviaOption"];
+            /**
+             * Evidence
+             * @description Credits that make the right option right, with sources. Empty for WHICH_LABEL, which cites `sources` instead.
+             */
+            evidence: components["schemas"]["Evidence"][];
+            /**
+             * Sources
+             * @description Pages where the fact can be checked (the release and the label).
+             */
+            sources: components["schemas"]["SourceLink"][];
+            subject: components["schemas"]["Subject"] | null;
         };
         /**
          * CoListener
@@ -1424,6 +1867,116 @@ export interface components {
          * @enum {string}
          */
         CollaborationType: "FEATURE" | "PRODUCTION" | "BAND" | "CREDIT";
+        /**
+         * Community
+         * @description A campus or city listeners can join (from the curated Wikidata directory).
+         */
+        Community: {
+            /** City */
+            city: string;
+            /** Citycommunity */
+            cityCommunity: string | null;
+            /** Country */
+            country: string;
+            /** Displayname */
+            displayName: string;
+            kind: components["schemas"]["CommunityKind"];
+            /** Name */
+            name: string;
+            /** Region */
+            region: string;
+            /** Shortname */
+            shortName: string;
+            /** Sourceurl */
+            sourceUrl: string;
+            /**
+             * Synthetic
+             * @default false
+             */
+            synthetic: boolean;
+            /** Website */
+            website: string;
+        };
+        /**
+         * CommunityChart
+         * @description GetCommunityChart: what a community listens to, aggregated and anonymous.
+         */
+        CommunityChart: {
+            /** Artists */
+            artists: components["schemas"]["CommunityChartArtist"][];
+            community: components["schemas"]["Community"];
+            /** Demodata */
+            demoData: boolean;
+            /** Genres */
+            genres: components["schemas"]["CommunityChartGenre"][];
+            /** Graphversion */
+            graphVersion: string;
+            /** Historyavailable */
+            historyAvailable: boolean;
+            listeners: components["schemas"]["ListenerRange"] | null;
+            /** Listenersneeded */
+            listenersNeeded: number;
+            /** Minartistlisteners */
+            minArtistListeners: number;
+            /** Minlisteners */
+            minListeners: number;
+            /** Name */
+            name: string;
+            /** Nextupdatetime */
+            nextUpdateTime: string;
+            /** Rising */
+            rising: components["schemas"]["CommunityChartArtist"][];
+            state: components["schemas"]["ChartState"];
+            /** Updatetime */
+            updateTime: string;
+        };
+        /**
+         * CommunityChartArtist
+         * @description A chart row: rank, artist, listeners as a range, movement.
+         */
+        CommunityChartArtist: {
+            artist: components["schemas"]["ArtistSummary"];
+            listeners: components["schemas"]["ListenerRange"];
+            movement: components["schemas"]["ChartMovement"] | null;
+            /**
+             * Places
+             * @default 0
+             */
+            places: number;
+            /** Rank */
+            rank: number;
+            /**
+             * Rising
+             * @default false
+             */
+            rising: boolean;
+        };
+        /**
+         * CommunityChartGenre
+         * @description A genre the community listens to, with listeners as a range.
+         */
+        CommunityChartGenre: {
+            /** Displayname */
+            displayName: string;
+            /** Genre */
+            genre: string;
+            listeners: components["schemas"]["ListenerRange"];
+        };
+        /**
+         * CommunityKind
+         * @description A campus (university) or a city.
+         * @enum {string}
+         */
+        CommunityKind: "CAMPUS" | "CITY";
+        /**
+         * CommunityMembership
+         * @description A community the listener joined.
+         */
+        CommunityMembership: {
+            community: components["schemas"]["Community"];
+            /** Jointime */
+            joinTime: string;
+        };
         /**
          * CompareArtistsResponse
          * @description CompareArtists.
@@ -1704,6 +2257,12 @@ export interface components {
          */
         Empty: Record<string, never>;
         /**
+         * EntityStatus
+         * @description How a name in the question resolved.
+         * @enum {string}
+         */
+        EntityStatus: "MATCHED" | "AMBIGUOUS" | "NOT_FOUND";
+        /**
          * EntityType
          * @description A searchable entity type.
          * @enum {string}
@@ -1763,6 +2322,16 @@ export interface components {
             toArtist: string;
             /** Torole */
             toRole: string;
+        };
+        /**
+         * FeaturedArtistsResponse
+         * @description The featured artists, in editorial order.
+         */
+        FeaturedArtistsResponse: {
+            /** Artists */
+            artists: components["schemas"]["ArtistSummary"][];
+            /** Graphversion */
+            graphVersion: string;
         };
         /**
          * FindPathResponse
@@ -1903,6 +2472,12 @@ export interface components {
             /** Candidates */
             candidates: components["schemas"]["ArtistSummary"][];
         };
+        /**
+         * InterpretedBy
+         * @description Who read the question: the built-in parser, the model, or no one (not understood).
+         * @enum {string}
+         */
+        InterpretedBy: "PARSER" | "MODEL" | "NONE";
         /**
          * Label
          * @description GetLabel: a record label, its roster by era, and its releases in our data.
@@ -2111,6 +2686,21 @@ export interface components {
             blockedUsers: components["schemas"]["BlockedUser"][];
         };
         /**
+         * ListCommunitiesResponse
+         * @description ListCommunities: communities matching a search, best first.
+         */
+        ListCommunitiesResponse: {
+            /** Communities */
+            communities: components["schemas"]["Community"][];
+            /**
+             * Nextpagetoken
+             * @default
+             */
+            nextPageToken: string;
+            /** Totalsize */
+            totalSize: number;
+        };
+        /**
          * ListDataSourcesResponse
          * @description ListDataSources.
          */
@@ -2206,6 +2796,23 @@ export interface components {
             totalSize: number;
         };
         /**
+         * ListStoriesResponse
+         * @description ListStories: a page of the feed.
+         */
+        ListStoriesResponse: {
+            /** Graphversion */
+            graphVersion: string;
+            /**
+             * Nextpagetoken
+             * @default
+             */
+            nextPageToken: string;
+            /** Stories */
+            stories: components["schemas"]["Story"][];
+            /** Totalsize */
+            totalSize: number;
+        };
+        /**
          * ListenerOverlap
          * @description Shared audience, from aggregate ListenBrainz data; never about individual listeners.
          */
@@ -2228,6 +2835,16 @@ export interface components {
             source: components["schemas"]["SourceLink"];
             /** @description From the better rank: STRONG <= 10, MODERATE <= 50, WEAK <= 100, else NONE. */
             strength: components["schemas"]["OverlapStrength"];
+        };
+        /**
+         * ListenerRange
+         * @description A count shown as a range: ``min`` to ``max`` listeners (``max`` null: or more).
+         */
+        ListenerRange: {
+            /** Max */
+            max: number | null;
+            /** Min */
+            min: number;
         };
         /**
          * ListeningArtist
@@ -2268,6 +2885,28 @@ export interface components {
          * @enum {string}
          */
         OverlapStrength: "STRONG" | "MODERATE" | "WEAK" | "NONE";
+        /**
+         * PathChallenge
+         * @description GetPathChallenge: two well-known artists to connect, the same for everyone on a date.
+         */
+        PathChallenge: {
+            /** Date */
+            date: string;
+            fromArtist: components["schemas"]["ArtistSummary"];
+            /** Graphversion */
+            graphVersion: string;
+            /**
+             * Name
+             * @description `pathChallenges/{date}`.
+             */
+            name: string;
+            /**
+             * Steps
+             * @description Connections on a shortest path (3 to 5).
+             */
+            steps: number;
+            toArtist: components["schemas"]["ArtistSummary"];
+        };
         /**
          * PathMode
          * @description How FindPath ranks routes.
@@ -2844,6 +3483,52 @@ export interface components {
             status: string;
         };
         /**
+         * Story
+         * @description A generated connection story: a template, its artists and the credits that prove it.
+         */
+        Story: {
+            /**
+             * Credits
+             * @description The strongest credit first; every one is sourced.
+             */
+            credits: components["schemas"]["Evidence"][];
+            kind: components["schemas"]["StoryKind"];
+            /**
+             * Messageid
+             * @description Client message key, e.g. `story.sharedProducer`.
+             */
+            messageId: string;
+            /**
+             * Name
+             * @description `stories/{story}`.
+             */
+            name: string;
+            /**
+             * Params
+             * @description Other template values: counts, years, a title.
+             */
+            params: {
+                [key: string]: string | number;
+            };
+            /** Parts */
+            parts: components["schemas"]["StoryPart"][];
+        };
+        /**
+         * StoryKind
+         * @description Which template a story uses.
+         * @enum {string}
+         */
+        StoryKind: "SHARED_PRODUCER" | "TWO_STEPS" | "SESSION_PLAYER" | "LABEL_MATES" | "SAME_SAMPLE" | "SAMPLED";
+        /**
+         * StoryPart
+         * @description An artist in a story, by the role the template gives it (`a`, `b`, `via`).
+         */
+        StoryPart: {
+            artist: components["schemas"]["ArtistSummary"];
+            /** Role */
+            role: string;
+        };
+        /**
          * Subject
          * @description What a piece of evidence is about.
          */
@@ -2893,6 +3578,70 @@ export interface components {
             year: number;
         };
         /**
+         * TriviaOption
+         * @description One answer option: an artist (`artists/{id}`) or a label (`labels/{id}`).
+         */
+        TriviaOption: {
+            /** Disambiguation */
+            disambiguation: string | null;
+            /** Displayname */
+            displayName: string;
+            /** Name */
+            name: string;
+        };
+        /**
+         * TriviaQuestion
+         * @description A question and its options, never its answer.
+         */
+        TriviaQuestion: {
+            /** @description The artist the question is about: the song's main artist, or the artist in a WORKED_WITH question. */
+            artist: components["schemas"]["ArtistSummary"];
+            /**
+             * Id
+             * @description `q1` to `q5`, stable within the day.
+             * @example q1
+             */
+            id: string;
+            kind: components["schemas"]["TriviaQuestionKind"];
+            /**
+             * Messageid
+             * @description Client message key, e.g. `trivia.whoProduced`.
+             */
+            messageId: string;
+            /** Options */
+            options: components["schemas"]["TriviaOption"][];
+            /** @description The song or release asked about; null for WORKED_WITH. */
+            subject: components["schemas"]["Subject"] | null;
+        };
+        /**
+         * TriviaQuestionKind
+         * @description What a Credit check question asks.
+         * @enum {string}
+         */
+        TriviaQuestionKind: "WHO_PRODUCED" | "WHO_FEATURED" | "WORKED_WITH" | "WHICH_LABEL";
+        /**
+         * TriviaQuiz
+         * @description GetTrivia: the same Credit check for every player on a date.
+         */
+        TriviaQuiz: {
+            /** Date */
+            date: string;
+            /** Graphversion */
+            graphVersion: string;
+            /**
+             * Name
+             * @description `trivia/{date}`, the player's local date (YYYY-MM-DD).
+             */
+            name: string;
+            /**
+             * Number
+             * @description 1 on the launch day.
+             */
+            number: number;
+            /** Questions */
+            questions: components["schemas"]["TriviaQuestion"][];
+        };
+        /**
          * UpdateSocialProfileRequest
          * @description UpdateSocialProfile: pick the name friends see.
          */
@@ -2901,12 +3650,42 @@ export interface components {
             displayName: string;
         };
         /**
+         * UpdateUserCommunitiesRequest
+         * @description UpdateUserCommunities body: a community name to join, or "" to leave.
+         *
+         *     Only the fields in ``updateMask`` (or, without one, the fields present) change.
+         */
+        UpdateUserCommunitiesRequest: {
+            /**
+             * Campus
+             * @default
+             */
+            campus?: string;
+            /**
+             * City
+             * @default
+             */
+            city?: string;
+        };
+        /**
          * User
          * @description GetUser. Email and name stay with the identity provider.
          */
         User: {
             /** Createtime */
             createTime: string;
+            /** Name */
+            name: string;
+        };
+        /**
+         * UserCommunities
+         * @description GetUserCommunities: the listener's campus and city (each optional).
+         */
+        UserCommunities: {
+            campus: components["schemas"]["CommunityMembership"] | null;
+            city: components["schemas"]["CommunityMembership"] | null;
+            /** Haslisteningdata */
+            hasListeningData: boolean;
             /** Name */
             name: string;
         };
@@ -3198,6 +3977,68 @@ export interface operations {
             };
         };
     };
+    ListFeaturedArtists: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeaturedArtistsResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    AskCatalog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AskRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AskResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     SearchCatalog: {
         parameters: {
             query: {
@@ -3218,6 +4059,104 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SearchCatalogResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ListCommunities: {
+        parameters: {
+            query?: {
+                query?: string;
+                kind?: components["schemas"]["CommunityKind"] | null;
+                country?: string;
+                synthetic?: boolean | null;
+                pageSize?: number;
+                pageToken?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListCommunitiesResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetCommunity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                community: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Community"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetCommunityChart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                community: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommunityChart"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
@@ -3440,6 +4379,37 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetPathChallenge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PathChallenge"];
+                };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
             default: {
@@ -3990,6 +4960,104 @@ export interface operations {
             };
         };
     };
+    ListStories: {
+        parameters: {
+            query?: {
+                pageSize?: number;
+                pageToken?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListStoriesResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetTrivia: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TriviaQuiz"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    CheckTrivia: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckTriviaRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckTriviaResponse"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     GetUser: {
         parameters: {
             query?: never;
@@ -4238,6 +5306,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Empty"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    GetUserCommunities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserCommunities"];
+                };
+            };
+            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    UpdateUserCommunities: {
+        parameters: {
+            query?: {
+                updateMask?: string | null;
+            };
+            header?: never;
+            path: {
+                user: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateUserCommunitiesRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserCommunities"];
                 };
             };
             /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */

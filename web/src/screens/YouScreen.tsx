@@ -12,6 +12,7 @@ import {
   useUpdateProfile,
 } from '../api/queries';
 import {ConnectedServices} from '../accounts/ConnectedServices';
+import {YourCommunities} from '../community/YourCommunities';
 import {useConfigFlags} from '../app/flags';
 import {usePageTitle} from '../app/Shell';
 import {applyTheme, useTheme, type Theme} from '../app/theme';
@@ -293,6 +294,7 @@ export default function YouScreen() {
     <div className="stack" style={{gap: 'var(--space-6)'}}>
       <h1>{t('you.title')}</h1>
       <ConnectedServices />
+      <YourCommunities />
       <TopFive />
       <HiddenArtists />
       <Settings signedIn />

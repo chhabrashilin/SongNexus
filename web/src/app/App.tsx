@@ -23,6 +23,9 @@ import {legacyDestination} from './legacyLinks';
 
 const ArtistScreen = lazy(() => import('../screens/ArtistScreen'));
 const ExploreHubScreen = lazy(() => import('../screens/ExploreHubScreen'));
+const AroundYouScreen = lazy(() => import('../screens/AroundYouScreen'));
+const GamesScreen = lazy(() => import('../screens/GamesScreen'));
+const StoriesScreen = lazy(() => import('../screens/StoriesScreen'));
 const ExploreScreen = lazy(() => import('../screens/ExploreScreen'));
 const SixDegreesScreen = lazy(() => import('../screens/SixDegreesScreen'));
 const CompareScreen = lazy(() => import('../screens/CompareScreen'));
@@ -44,10 +47,8 @@ const JoinFriendScreen = lazy(() => import('../screens/JoinFriendScreen'));
 const RETIRED: Record<string, string> = {
   discover: '/explore',
   guide: '/explore',
-  games: '/play',
   'your-music': '/library',
-  reels: '/',
-  'around-you': '/',
+  reels: '/stories',
 };
 
 function Lazy({children}: {children: ReactNode}) {
@@ -136,6 +137,30 @@ export const routes: RouteObject[] = [
         element: (
           <Lazy>
             <LabelScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'games',
+        element: (
+          <Lazy>
+            <GamesScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'stories',
+        element: (
+          <Lazy>
+            <StoriesScreen />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'around-you',
+        element: (
+          <Lazy>
+            <AroundYouScreen />
           </Lazy>
         ),
       },

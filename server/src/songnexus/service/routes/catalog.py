@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import unicodedata
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Query, Response
+from fastapi import APIRouter, Depends, Query, Request, Response
 from sqlalchemy.orm import Session
 
 from songnexus.core.graph import collaborations as collab
@@ -17,6 +18,7 @@ from songnexus.core.search import MatchType
 from songnexus.core.songs import Descriptors, shared_credits, similarity
 from songnexus.service import convert
 from songnexus.service import schemas as api
+from songnexus.service.cache import cached_anonymous
 from songnexus.service.deps import (
     Viewer,
     parse_name,
@@ -68,9 +70,61 @@ def kinds_from(categories: list[api.ConnectionCategory]) -> frozenset[EdgeKind]:
     return kinds_for(convert.category(c) for c in categories)
 
 
+# Editorial "popular starting points" for someone who has not looked anyone up yet: well-known
+# artists across genres, in display order. Names are resolved against the catalog, and any the
+# catalog lacks are skipped, so the list never points at an artist we do not have.
+FEATURED_ARTIST_NAMES = (
+    "Kendrick Lamar",
+    "Beyoncé",
+    "Daft Punk",
+    "Radiohead",
+    "Taylor Swift",
+    "Miles Davis",
+    "Björk",
+    "BTS",
+    "Thundercat",
+    "SZA",
+    "David Bowie",
+    "Rihanna",
+)
+
+
+class FeaturedArtistsResponse(api.ApiModel):
+    """The featured artists, in editorial order."""
+
+    artists: list[api.ArtistSummary]
+    graph_version: str
+
+
+def _fold(name: str) -> str:
+    """Case- and accent-insensitive form of a name, for matching an editorial list."""
+    decomposed = unicodedata.normalize("NFKD", name)
+    return "".join(c for c in decomposed if not unicodedata.combining(c)).casefold()
+
+
+@router.get(
+    "/artists:featured", response_model=FeaturedArtistsResponse, summary="ListFeaturedArtists"
+)
+@cached_anonymous
+def list_featured_artists(
+    request: Request, model: ReadModelDep, response: Response
+) -> FeaturedArtistsResponse:
+    """Lists well-known artists to start from, in order, skipping any not in the catalog."""
+    graph = model.graph
+    artists = []
+    for wanted in FEATURED_ARTIST_NAMES:
+        hits = model.search.search(wanted, limit=5, entity_types=frozenset({CoreEntityType.ARTIST}))
+        match = next((h for h in hits if _fold(h.name) == _fold(wanted)), None)
+        if match is not None and match.entity_id in graph.nodes:
+            artists.append(convert.artist_summary(graph, match.entity_id))
+    set_cache_control(response, None)
+    return FeaturedArtistsResponse(artists=artists, graph_version=model.version)
+
+
 @router.get("/artists/{artist:rid}", response_model=api.Artist, summary="GetArtist")
+@cached_anonymous
 def get_artist(
-    artist: str, model: ReadModelDep, session: SessionDep, response: Response
+    request: Request, artist: str, model: ReadModelDep, session: SessionDep, response: Response
 ) -> api.Artist:
     """Returns an artist with genres, aliases, links, labels and sources."""
     artist_id = parse_name(artist, "artists", field="name")
@@ -123,7 +177,9 @@ def get_artist(
     response_model=api.ListArtistConnectionsResponse,
     summary="ListArtistConnections",
 )
+@cached_anonymous
 def list_artist_connections(
+    request: Request,
     artist: str,
     model: ReadModelDep,
     who: ViewerDep,
@@ -189,7 +245,9 @@ def list_artist_connections(
     response_model=api.ConnectionDetail,
     summary="GetArtistConnection",
 )
+@cached_anonymous
 def get_artist_connection(
+    request: Request,
     artist: str,
     other: str,
     model: ReadModelDep,
@@ -228,7 +286,9 @@ def get_artist_connection(
     response_model=api.ListArtistCollaborationsResponse,
     summary="ListArtistCollaborations",
 )
+@cached_anonymous
 def list_artist_collaborations(
+    request: Request,
     artist: str,
     model: ReadModelDep,
     who: ViewerDep,
@@ -341,8 +401,14 @@ def _item_subjects(item: collab.Collaboration) -> frozenset[str]:
 
 
 @router.get("/labels/{label:rid}", response_model=api.Label, summary="GetLabel")
+@cached_anonymous
 def get_label(
-    label: str, model: ReadModelDep, who: ViewerDep, session: SessionDep, response: Response
+    request: Request,
+    label: str,
+    model: ReadModelDep,
+    who: ViewerDep,
+    session: SessionDep,
+    response: Response,
 ) -> api.Label:
     """Returns a label: its roster by era and its releases in our data.
 
@@ -421,8 +487,14 @@ def _descriptors(fields: dict[str, Any] | None) -> api.AudioDescriptors | None:
 
 
 @router.get("/recordings/{recording:rid}", response_model=api.Recording, summary="GetRecording")
+@cached_anonymous
 def get_recording(
-    recording: str, model: ReadModelDep, who: ViewerDep, session: SessionDep, response: Response
+    request: Request,
+    recording: str,
+    model: ReadModelDep,
+    who: ViewerDep,
+    session: SessionDep,
+    response: Response,
 ) -> api.Recording:
     """Returns a recording with its credits and the releases it appears on."""
     recording_id = parse_name(recording, "recordings", field="name")
@@ -466,7 +538,9 @@ def get_recording(
     response_model=api.CompareRecordingsResponse,
     summary="CompareRecordings",
 )
+@cached_anonymous
 def compare_recordings(
+    request: Request,
     recording: str,
     model: ReadModelDep,
     who: ViewerDep,
@@ -564,7 +638,9 @@ def compare_recordings(
 
 
 @router.get("/catalog:search", response_model=api.SearchCatalogResponse, summary="SearchCatalog")
+@cached_anonymous
 def search_catalog(
+    request: Request,
     model: ReadModelDep,
     who: ViewerDep,
     response: Response,
@@ -598,7 +674,9 @@ def search_catalog(
 
 
 @router.get("/genres", response_model=api.ListGenresResponse, summary="ListGenres")
+@cached_anonymous
 def list_genres(
+    request: Request,
     model: ReadModelDep,
     response: Response,
     page_size: PageSize = 100,

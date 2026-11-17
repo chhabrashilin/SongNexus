@@ -4,6 +4,8 @@ import {Link} from 'react-router';
 
 import {idOf, type ArtistSummary} from '../api/client';
 
+import {useIntentPrefetch} from './useIntentPrefetch';
+
 export function initialOf(name: string): string {
   const first = Array.from(name.trim())[0];
   return first ? first.toLocaleUpperCase() : '?';
@@ -45,6 +47,7 @@ interface Props {
 }
 
 export function ArtistRow({artist, subtitle, meta, action, onClick}: Props) {
+  const intent = useIntentPrefetch(idOf(artist.name));
   const body = (
     <>
       <Avatar name={artist.displayName} />
@@ -77,6 +80,7 @@ export function ArtistRow({artist, subtitle, meta, action, onClick}: Props) {
           className="list-row"
           style={{flex: 1, minInlineSize: 0}}
           to={artistPath(artist)}
+          {...intent}
         >
           {body}
         </Link>

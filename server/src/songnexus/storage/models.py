@@ -26,6 +26,7 @@ from typing import Any
 
 from sqlalchemy import (
     JSON,
+    Boolean,
     DateTime,
     Float,
     ForeignKey,
@@ -666,3 +667,43 @@ class AuditEntry(Base):
     action: Mapped[str] = mapped_column(String(64))
     request_id: Mapped[str | None] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+# ---------------------------------------------------------------------------
+# Around you (communities): opt-in campus and city membership, cached charts.
+# ---------------------------------------------------------------------------
+
+
+class CommunityMembership(Base):
+    """A listener's opt-in to one campus or one city (at most one of each).
+
+    The community ID is a slug from the curated directory, not a foreign key:
+    the directory is a checked-in data file. ``synthetic`` marks development
+    demo members created by ``songnexus seed-community``, so they can be removed.
+    """
+
+    __tablename__ = "community_memberships"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    kind: Mapped[str] = mapped_column(String(8), primary_key=True)  # CAMPUS | CITY
+    community_id: Mapped[str] = mapped_column(String(128), index=True)
+    joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    synthetic: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class CommunityChart(Base):
+    """A computed community chart: aggregates only, already past the privacy floors.
+
+    The newest row is the cached chart; one row per day is kept for 35 days so
+    movement and rising can compare against earlier weeks.
+    """
+
+    __tablename__ = "community_charts"
+
+    community_id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    computed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), primary_key=True, index=True
+    )
+    payload: Mapped[dict[str, Any]] = mapped_column(JsonType)

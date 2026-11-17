@@ -12,6 +12,7 @@ import {useI18n} from '../i18n/i18n';
 
 import {hueOf, initialOf} from './ArtistRow';
 import {Icon, type IconName} from './Icon';
+import {artistIdFromPath, useIntentPrefetch} from './useIntentPrefetch';
 
 export {hueOf};
 
@@ -47,9 +48,10 @@ export function CoverCard({
   subtitle?: ReactNode;
   round?: boolean;
 }) {
+  const intent = useIntentPrefetch(artistIdFromPath(to));
   return (
     <li className="cover-card" data-round={round || undefined}>
-      <Link className="cover-card__link" to={to}>
+      <Link className="cover-card__link" to={to} {...intent}>
         <Cover name={title} round={round} />
         <span className="cover-card__title">
           <bdi>{title}</bdi>
