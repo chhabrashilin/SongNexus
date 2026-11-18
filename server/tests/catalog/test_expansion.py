@@ -53,6 +53,51 @@ def test_recording_browse_preserves_primary_credit_and_provenance(tmp_path: Path
         assert next(iter(batch.recording_credits.values()))["role"] == "primary"
 
 
+def test_recording_browse_covers_several_artists_and_requests_relationship_credits(
+    tmp_path: Path,
+) -> None:
+    artists = ["83d91898-7763-47d7-b03b-b92132375c47", "381086ea-f511-4aba-bdf9-71c753dc5077"]
+    seen: list[tuple[str, str]] = []
+
+    def respond(request: httpx.Request) -> httpx.Response:
+        who = request.url.params["artist"]
+        seen.append((who, request.url.params["inc"]))
+        return httpx.Response(
+            200,
+            json={
+                "recording-count": 1,
+                "recordings": [
+                    {
+                        "id": f"rec-{who[:4]}",
+                        "title": "Song",
+                        "artist-credit": [{"name": "A", "artist": {"id": who, "name": "A"}}],
+                        "relations": [
+                            {
+                                "type": "producer",
+                                "target-type": "artist",
+                                "attributes": [],
+                                "artist": {"id": "p-1", "name": "Producer"},
+                            }
+                        ],
+                    }
+                ],
+            },
+        )
+
+    with httpx.Client(transport=httpx.MockTransport(respond)) as http:
+        client = MusicBrainzClient(
+            base_url="https://musicbrainz.org/ws/2",
+            cache_dir=tmp_path / "cache",
+            min_interval_s=0,
+            http=http,
+        )
+        stats = fetch_recordings(client, [*artists, artists[0]], tmp_path / "multi.gz", limit=5)
+    assert stats["artists"] == 2
+    assert stats["recordings"] == 2
+    assert [who for who, _ in seen] == artists
+    assert all("artist-rels" in inc for _, inc in seen)
+
+
 def test_demo_directory_is_searchable_and_never_claims_official_provenance() -> None:
     directory = load_directory()
     demo = [c for c in directory.communities if c.synthetic]

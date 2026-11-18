@@ -386,3 +386,62 @@ def rising(current: Chart, history: Sequence[Chart], now: datetime) -> list[str]
             candidates.append((-growth, row.rank, row.artist_id))
     candidates.sort()
     return [artist_id for _, _, artist_id in candidates[:MAX_RISING]]
+
+
+MAX_MOVERS = 10
+
+
+@dataclass(frozen=True)
+class Mover:
+    """An artist that moved between two charts. A rank is None where it was not charted."""
+
+    artist_id: str
+    rank: int | None
+    previous_rank: int | None
+
+    @property
+    def places(self) -> int:
+        """Places moved (0 when it entered or left)."""
+        if self.rank is None or self.previous_rank is None:
+            return 0
+        return abs(self.previous_rank - self.rank)
+
+
+@dataclass(frozen=True)
+class WeeklyMovers:
+    """The weekly recap of a chart: what rose, fell, entered and left since ``previous``."""
+
+    rose: tuple[Mover, ...]
+    fell: tuple[Mover, ...]
+    entered: tuple[Mover, ...]
+    left: tuple[Mover, ...]
+
+
+def weekly_movers(current: Chart, previous: Chart) -> WeeklyMovers:
+    """Compares two stored charts (both already past the privacy floors).
+
+    Biggest moves first; entries by their new rank, exits by their old rank.
+    Each list holds at most ``MAX_MOVERS``.
+    """
+    before = {a.artist_id: a.rank for a in previous.artists}
+    now_ranks = {a.artist_id: a.rank for a in current.artists}
+    moved = [Mover(a, r, before.get(a)) for a, r in now_ranks.items()]
+    rose = sorted(
+        (m for m in moved if m.previous_rank is not None and m.previous_rank > (m.rank or 0)),
+        key=lambda m: (-m.places, m.rank),
+    )
+    fell = sorted(
+        (m for m in moved if m.previous_rank is not None and m.previous_rank < (m.rank or 0)),
+        key=lambda m: (-m.places, m.rank),
+    )
+    entered = sorted((m for m in moved if m.previous_rank is None), key=lambda m: m.rank or 0)
+    left = sorted(
+        (Mover(a, None, r) for a, r in before.items() if a not in now_ranks),
+        key=lambda m: m.previous_rank or 0,
+    )
+    return WeeklyMovers(
+        tuple(rose[:MAX_MOVERS]),
+        tuple(fell[:MAX_MOVERS]),
+        tuple(entered[:MAX_MOVERS]),
+        tuple(left[:MAX_MOVERS]),
+    )

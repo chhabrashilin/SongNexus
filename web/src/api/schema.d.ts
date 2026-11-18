@@ -4,6050 +4,7684 @@
  */
 
 export interface paths {
-    "/healthz": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Health
-         * @description Liveness: the process is up. Reports whether the catalog is loaded (readiness).
-         */
-        get: operations["Health"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/healthz': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/artists/{artist}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetArtist
-         * @description Returns an artist with genres, aliases, links, labels and sources.
-         */
-        get: operations["GetArtist"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Health
+     * @description Liveness: the process is up. Reports whether the catalog is loaded (readiness).
+     */
+    get: operations['Health'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/artists/{artist}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/artists/{artist}/collaborations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListArtistCollaborations
-         * @description Lists an artist's collaborators of one type (features, production, bands, credits).
-         *
-         *     A genre filter keeps collaborators in the selected genres (and, by default, their subgenres).
-         */
-        get: operations["ListArtistCollaborations"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetArtist
+     * @description Returns an artist with genres, aliases, links, labels and sources.
+     */
+    get: operations['GetArtist'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/artists/{artist}/collaborations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/artists/{artist}/connections": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListArtistConnections
-         * @description Lists an artist's direct connections, strongest first.
-         */
-        get: operations["ListArtistConnections"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListArtistCollaborations
+     * @description Lists an artist's collaborators of one type (features, production, bands, credits).
+     *
+     *     A genre filter keeps collaborators in the selected genres (and, by default, their subgenres).
+     */
+    get: operations['ListArtistCollaborations'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/artists/{artist}/connections': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/artists/{artist}/connections/{other}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetArtistConnection
-         * @description Returns every piece of evidence connecting two artists, with sources.
-         */
-        get: operations["GetArtistConnection"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListArtistConnections
+     * @description Lists an artist's direct connections, strongest first.
+     *
+     *     ``orderBy=relevance desc`` blends strength with how widely known the other
+     *     artist is (public listener counts), for views that show only the first few
+     *     (the connection web). Highlights put original songs before remixes and edits.
+     */
+    get: operations['ListArtistConnections'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/artists/{artist}/connections/{other}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/artists/{artist}:compare": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * CompareArtists
-         * @description Compares two artists: shared genres, mutual collaborators and the path between.
-         *
-         *     A genre filter applies to mutual collaborators and to the path's intermediate
-         *     artists; the two artists themselves and their shared genres are unaffected.
-         */
-        get: operations["CompareArtists"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetArtistConnection
+     * @description Returns every piece of evidence connecting two artists, with sources.
+     */
+    get: operations['GetArtistConnection'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/artists/{artist}:compare': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/artists/{artist}:findPath": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * FindPath
-         * @description Finds how two artists connect, with evidence for every step.
-         *
-         *     Filters (genres, blocks) apply to every intermediate artist. The endpoints
-         *     are the viewer's choice and are not genre-filtered. "Not connected within
-         *     the limit" means not connected in our data (yet), never "not connected".
-         */
-        get: operations["FindPath"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * CompareArtists
+     * @description Compares two artists: shared genres, mutual collaborators and the path between.
+     *
+     *     A genre filter applies to mutual collaborators and to the path's intermediate
+     *     artists; the two artists themselves and their shared genres are unaffected.
+     */
+    get: operations['CompareArtists'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/artists/{artist}:findPath': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/artists:featured": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListFeaturedArtists
-         * @description Lists well-known artists to start from, in order, skipping any not in the catalog.
-         */
-        get: operations["ListFeaturedArtists"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * FindPath
+     * @description Finds how two artists connect, with evidence for every step.
+     *
+     *     Filters (genres, blocks) apply to every intermediate artist. The endpoints
+     *     are the viewer's choice and are not genre-filtered. "Not connected within
+     *     the limit" means not connected in our data (yet), never "not connected".
+     */
+    get: operations['FindPath'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/artists/{artist}:recommend': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/catalog:ask": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * AskCatalog
-         * @description Answers a question about credits and connections from the catalog.
-         *
-         *     The question is read by the built-in parser or, when the parser can't
-         *     place it and a model is configured, by the model, which only picks one of
-         *     the fixed intents and copies names from the question. Every fact in the
-         *     answer comes from the catalog, with evidence and sources. Ambiguous names
-         *     are returned with alternatives; send a pick back in ``choices``.
-         */
-        post: operations["AskCatalog"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * RecommendArtists
+     * @description Recommends artists not directly connected to this one, each with checkable reasons.
+     *
+     *     Reasons are shared collaborators (up to three named, and the count),
+     *     listeners in common (aggregate co-listening, above the privacy floor) or a
+     *     shared label. An artist with no reason is never recommended. The artist
+     *     asked about is the viewer's choice and is allowed even when blocked.
+     */
+    get: operations['RecommendArtists'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/artists:featured': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/catalog:search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * SearchCatalog
-         * @description Searches artists, releases and recordings by name, in any script.
-         */
-        get: operations["SearchCatalog"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListFeaturedArtists
+     * @description Lists well-known artists to start from, in order, skipping any not in the catalog.
+     */
+    get: operations['ListFeaturedArtists'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/catalog:ask': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/communities": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListCommunities
-         * @description Searches the campuses and cities listeners can join (largest first when no query).
-         */
-        get: operations["ListCommunities"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * AskCatalog
+     * @description Answers a question about credits and connections from the catalog.
+     *
+     *     The question is read by the built-in parser or, when the parser can't
+     *     place it and a model is configured, by the model, which only picks one of
+     *     the fixed intents and copies names from the question. Every fact in the
+     *     answer comes from the catalog, with evidence and sources. Ambiguous names
+     *     are returned with alternatives; send a pick back in ``choices``.
+     */
+    post: operations['AskCatalog'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/catalog:search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/communities/{community}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetCommunity
-         * @description Returns one campus or city.
-         */
-        get: operations["GetCommunity"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * SearchCatalog
+     * @description Searches artists, releases and recordings by name, in any script.
+     */
+    get: operations['SearchCatalog'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/communities': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/communities/{community}/chart": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetCommunityChart
-         * @description What a community listens to: top artists, rising, genres. Anonymous aggregates only.
-         *
-         *     Locked (fewer than 10 members with listening data): only how many more are
-         *     needed. Artists and genres need 3 listeners each; counts are ranges.
-         */
-        get: operations["GetCommunityChart"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListCommunities
+     * @description Searches the campuses and cities listeners can join (largest first when no query).
+     */
+    get: operations['ListCommunities'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/communities/{community}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/config": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetConfig
-         * @description Returns feature flags and request limits for the client.
-         */
-        get: operations["GetConfig"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetCommunity
+     * @description Returns one campus or city.
+     */
+    get: operations['GetCommunity'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/communities/{community}/chart': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/dataSources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListDataSources
-         * @description Lists every data source SongNexus uses or evaluates, with its license (the registry).
-         */
-        get: operations["ListDataSources"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetCommunityChart
+     * @description What a community listens to: top artists, rising, genres. Anonymous aggregates only.
+     *
+     *     Locked (fewer than 10 members with listening data): only how many more are
+     *     needed. Artists and genres need 3 listeners each; counts are ranges.
+     */
+    get: operations['GetCommunityChart'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/communities/{community}/weeklyMovers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/friendInvites/{code}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetFriendInvite
-         * @description Shows who an invite is from, so the listener can decide. Requires sign-in.
-         */
-        get: operations["GetFriendInvite"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetWeeklyMovers
+     * @description The chart's biggest rises and falls, new entries and exits since a week ago.
+     *
+     *     LOCKED while the chart is locked; NO_HISTORY until an unlocked chart from at
+     *     least seven days ago is stored. The viewer's blocked artists are left out.
+     */
+    get: operations['GetWeeklyMovers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/config': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/friendInvites/{code}:accept": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * AcceptFriendInvite
-         * @description Accepts an invite: both become friends, and the code is used up.
-         */
-        post: operations["AcceptFriendInvite"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetConfig
+     * @description Returns feature flags and request limits for the client.
+     */
+    get: operations['GetConfig'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/dataSources': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/genres": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListGenres
-         * @description Lists genres with artists (directly or through a subgenre), most artists first.
-         *
-         *     Counts come from the served graph, so they reflect the configured genre sources.
-         */
-        get: operations["ListGenres"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListDataSources
+     * @description Lists every data source SongNexus uses or evaluates, with its license (the registry).
+     */
+    get: operations['ListDataSources'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/friendInvites/{code}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/labels/{label}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetLabel
-         * @description Returns a label: its roster by era and its releases in our data.
-         *
-         *     The roster lists the primary artists of the label's releases we hold, so it
-         *     is "artists on this label in our data", never a complete roster.
-         */
-        get: operations["GetLabel"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetFriendInvite
+     * @description Shows who an invite is from, so the listener can decide. Requires sign-in.
+     */
+    get: operations['GetFriendInvite'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/friendInvites/{code}:accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/oauth/{provider}/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * FinishLink
-         * @description The provider sends the listener back here; then on to the You page with the outcome.
-         */
-        get: operations["FinishLink"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * AcceptFriendInvite
+     * @description Accepts an invite: both become friends, and the code is used up.
+     */
+    post: operations['AcceptFriendInvite'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/genres': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/pathChallenges/{date}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetPathChallenge
-         * @description Returns the day's "connect these two" pair, 3 to 5 connections apart.
-         */
-        get: operations["GetPathChallenge"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListGenres
+     * @description Lists genres with artists (directly or through a subgenre), most artists first.
+     *
+     *     Counts come from the served graph, so they reflect the configured genre sources.
+     */
+    get: operations['ListGenres'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/genres/{genre}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/playlists:analyze": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * AnalyzePlaylist
-         * @description Matches a playlist's artists, then measures how they connect.
-         *
-         *     Receives track titles and artist names only (files are parsed on the
-         *     device) and stores nothing. A name may be ``artists/{artist}`` when the user
-         *     picked one of several candidates. Blocked artists never serve as hidden
-         *     links or as steps on the thread.
-         */
-        post: operations["AnalyzePlaylist"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetGenre
+     * @description Returns a genre: its parents, its subgenres with artists, and its artist counts.
+     */
+    get: operations['GetGenre'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/genres/{genre}/artists': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/puzzles/{date}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetDailyPuzzle
-         * @description Returns the puzzle for a local date: the same for every player.
-         */
-        get: operations["GetDailyPuzzle"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListGenreArtists
+     * @description Lists a genre's artists, most connected first.
+     *
+     *     An artist is in the genre when at least 20% of its genre shares fall in the
+     *     genre (or, by default, its subgenres): the genre filter's rule.
+     */
+    get: operations['ListGenreArtists'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/labels/{label}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/puzzles/{date}:checkMove": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * CheckMove
-         * @description Checks one step. A wrong step reveals nothing about the puzzle (AC-4.2).
-         */
-        post: operations["CheckMove"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetLabel
+     * @description Returns a label: its roster by era and its releases in our data.
+     *
+     *     The roster lists the primary artists of the label's releases we hold, so it
+     *     is "artists on this label in our data", never a complete roster.
+     */
+    get: operations['GetLabel'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/leaderboards/campuses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/puzzles/{date}:hint": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * GetHint
-         * @description Suggests three next steps, one of them closer. Never suggests blocked artists.
-         */
-        post: operations["GetHint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetCampusLeaderboard
+     * @description The top 10 campuses by members' average points, and the viewer's campus rank.
+     *
+     *     A campus appears only when at least 10 members scored in the period; players
+     *     are shown as a range. No person is ever named here.
+     */
+    get: operations['GetCampusLeaderboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/oauth/{provider}/callback': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/puzzles/{date}:reveal": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * RevealPuzzle
-         * @description Returns a shortest solution with its evidence and sources.
-         */
-        get: operations["RevealPuzzle"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * FinishLink
+     * @description The provider sends the listener back here; then on to the You page with the outcome.
+     */
+    get: operations['FinishLink'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/pathChallenges/{date}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/puzzles:share": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * ReportPuzzleShare
-         * @description Emits one aggregate counter event, without player or puzzle identifiers.
-         *
-         *     Count these structured events across instances in Cloud Logging. This is a
-         *     best-effort count of successful share actions, not unique players.
-         */
-        post: operations["ReportPuzzleShare"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetPathChallenge
+     * @description Returns the day's "connect these two" pair, 3 to 5 connections apart.
+     */
+    get: operations['GetPathChallenge'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/playlists:analyze': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/recordings/{recording}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetRecording
-         * @description Returns a recording with its credits and the releases it appears on.
-         */
-        get: operations["GetRecording"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * AnalyzePlaylist
+     * @description Matches a playlist's artists, then measures how they connect.
+     *
+     *     Receives track titles and artist names only (files are parsed on the
+     *     device) and stores nothing. A name may be ``artists/{artist}`` when the user
+     *     picked one of several candidates. Blocked artists never serve as hidden
+     *     links or as steps on the thread.
+     */
+    post: operations['AnalyzePlaylist'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/puzzles/{date}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/recordings/{recording}:compare": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * CompareRecordings
-         * @description Compares two songs: descriptors, an explained similarity, credits, artist path.
-         *
-         *     Audio descriptors sit side by side, credits are compared by role, and the
-         *     path shows how the songs' primary artists connect. The similarity is a
-         *     documented weighted mean of named parts (``core.songs``), never an opaque
-         *     model, and is null when AcousticBrainz has no data for either.
-         */
-        get: operations["CompareRecordings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetDailyPuzzle
+     * @description Returns the puzzle for a local date: the same for every player.
+     */
+    get: operations['GetDailyPuzzle'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/puzzles/{date}:checkMove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/reports": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * CreateReport
-         * @description Reports a share you received (it leaves your inbox) or a person you know.
-         *
-         *     Moderators see a copy of the reported note; reports are kept 90 days. Blocking
-         *     is a separate step, so reporting alone never tips anyone off.
-         */
-        post: operations["CreateReport"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * CheckMove
+     * @description Checks one step. A wrong step reveals nothing about the puzzle (AC-4.2).
+     */
+    post: operations['CheckMove'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/puzzles/{date}:hint': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/sessions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * CreateSession
-         * @description Verifies a Firebase ID token and starts a session (sets an HttpOnly cookie).
-         *
-         *     Creating an account requires ``ageConfirmed`` (13+). An existing session
-         *     for this browser is replaced.
-         */
-        post: operations["CreateSession"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * GetHint
+     * @description Suggests three next steps, one of them closer. Never suggests blocked artists.
+     */
+    post: operations['GetHint'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/puzzles/{date}:reveal': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/sessions/current": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetCurrentSession
-         * @description Returns the signed-in user and the CSRF token, e.g. after a page reload.
-         */
-        get: operations["GetCurrentSession"];
-        put?: never;
-        post?: never;
-        /**
-         * DeleteCurrentSession
-         * @description Signs this browser out.
-         */
-        delete: operations["DeleteCurrentSession"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * RevealPuzzle
+     * @description Returns a shortest solution with its evidence and sources.
+     */
+    get: operations['RevealPuzzle'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/puzzles/{date}:submitScore': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/sessions:local": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * CreateLocalSession
-         * @description Development only: signs in as a named local listener, with no identity provider.
-         *
-         *     Exists so linked accounts and friends can be tried on a laptop without a
-         *     Firebase project. Everywhere else it answers NOT_FOUND.
-         */
-        post: operations["CreateLocalSession"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * SubmitPuzzleScore
+     * @description Submits today's solved puzzle (opt-in). The server checks every move and scores it.
+     *
+     *     100 points at par, 15 fewer per extra step (at least 10). One score per day;
+     *     it counts for your campus and your friends can see it.
+     */
+    post: operations['SubmitPuzzleScore'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/puzzles:share': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/sessions:revokeAll": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * RevokeAllSessions
-         * @description Signs the user out on every device.
-         */
-        post: operations["RevokeAllSessions"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * ReportPuzzleShare
+     * @description Emits one aggregate counter event, without player or puzzle identifiers.
+     *
+     *     Count these structured events across instances in Cloud Logging. This is a
+     *     best-effort count of successful share actions, not unique players.
+     */
+    post: operations['ReportPuzzleShare'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/recordings/{recording}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/shares": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * CreateShare
-         * @description Sends an artist, song, comparison or path to a friend, with an optional note.
-         */
-        post: operations["CreateShare"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetRecording
+     * @description Returns a recording with its credits and the releases it appears on.
+     */
+    get: operations['GetRecording'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/recordings/{recording}:compare': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/shares/{share}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * DeleteShare
-         * @description Removes a share. The recipient clears it from their inbox; the sender can unsend it.
-         */
-        delete: operations["DeleteShare"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * CompareRecordings
+     * @description Compares two songs: descriptors, an explained similarity, credits, artist path.
+     *
+     *     Audio descriptors sit side by side, credits are compared by role, and the
+     *     path shows how the songs' primary artists connect. The similarity is a
+     *     documented weighted mean of named parts (``core.songs``), never an opaque
+     *     model, and is null when AcousticBrainz has no data for either.
+     */
+    get: operations['CompareRecordings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/reports': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/shares/{share}:markRead": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * MarkShareRead
-         * @description Marks a received share read.
-         */
-        post: operations["MarkShareRead"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * CreateReport
+     * @description Reports a share you received (it leaves your inbox) or a person you know.
+     *
+     *     Moderators see a copy of the reported note; reports are kept 90 days. Blocking
+     *     is a separate step, so reporting alone never tips anyone off.
+     */
+    post: operations['CreateReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/sessions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/stories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListStories
-         * @description Lists generated connection stories, each with the credits that prove it.
-         *
-         *     The feed is the same for everyone for a catalog version; artists a signed-in
-         *     viewer blocked are left out.
-         */
-        get: operations["ListStories"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * CreateSession
+     * @description Verifies a Firebase ID token and starts a session (sets an HttpOnly cookie).
+     *
+     *     Creating an account requires ``ageConfirmed`` (13+). An existing session
+     *     for this browser is replaced.
+     */
+    post: operations['CreateSession'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/sessions/current': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/trivia/{date}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetTrivia
-         * @description Returns the Credit check for a local date: the same for every player, without answers.
-         */
-        get: operations["GetTrivia"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetCurrentSession
+     * @description Returns the signed-in user and the CSRF token, e.g. after a page reload.
+     */
+    get: operations['GetCurrentSession'];
+    put?: never;
+    post?: never;
+    /**
+     * DeleteCurrentSession
+     * @description Signs this browser out.
+     */
+    delete: operations['DeleteCurrentSession'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/sessions:local': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/trivia/{date}:check": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * CheckTrivia
-         * @description Checks one answer. The verdict comes with the right option and its credits.
-         */
-        post: operations["CheckTrivia"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * CreateLocalSession
+     * @description Development only: signs in as a named local listener, with no identity provider.
+     *
+     *     Exists so linked accounts and friends can be tried on a laptop without a
+     *     Firebase project. Everywhere else it answers NOT_FOUND.
+     */
+    post: operations['CreateLocalSession'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/sessions:revokeAll': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetUser
-         * @description Returns the signed-in user's account.
-         */
-        get: operations["GetUser"];
-        put?: never;
-        post?: never;
-        /**
-         * DeleteUser
-         * @description Deletes the account (AC-18.4): signed out everywhere, data gone now, purged in 30 days.
-         */
-        delete: operations["DeleteUser"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * RevokeAllSessions
+     * @description Signs the user out on every device.
+     */
+    post: operations['RevokeAllSessions'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/shares': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/blockedArtists": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListBlockedArtists
-         * @description Lists the user's blocked artists, oldest first.
-         */
-        get: operations["ListBlockedArtists"];
-        put?: never;
-        /**
-         * CreateBlockedArtist
-         * @description Blocks an artist: it disappears from lists, paths and suggestions everywhere.
-         */
-        post: operations["CreateBlockedArtist"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * CreateShare
+     * @description Sends an artist, song, comparison or path to a friend, with an optional note.
+     */
+    post: operations['CreateShare'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/shares/{share}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/blockedArtists/{artist}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * DeleteBlockedArtist
-         * @description Unblocks an artist.
-         */
-        delete: operations["DeleteBlockedArtist"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * DeleteShare
+     * @description Removes a share. The recipient clears it from their inbox; the sender can unsend it.
+     */
+    delete: operations['DeleteShare'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/shares/{share}:markRead': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/blockedUsers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListBlockedUsers
-         * @description Lists people the user blocked.
-         */
-        get: operations["ListBlockedUsers"];
-        put?: never;
-        /**
-         * CreateBlockedUser
-         * @description Blocks someone you know: the friendship ends and shares between you disappear.
-         *
-         *     The other person is not told. Neither of you can see, invite or share with the other.
-         */
-        post: operations["CreateBlockedUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * MarkShareRead
+     * @description Marks a received share read.
+     */
+    post: operations['MarkShareRead'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/shelves': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/blockedUsers/{blocked}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * DeleteBlockedUser
-         * @description Unblocks someone. You aren't friends again until one of you sends a new invite.
-         */
-        delete: operations["DeleteBlockedUser"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListShelves
+     * @description Lists the home page's shelves, in display order, each item with its reason.
+     *
+     *     The same for everyone for a catalog version and date, minus the artists a
+     *     signed-in viewer blocked. Shelves with fewer than three items are left out.
+     */
+    get: operations['ListShelves'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/stories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/communities": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetUserCommunities
-         * @description Returns the campus and city the listener joined (none until they opt in).
-         */
-        get: operations["GetUserCommunities"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * UpdateUserCommunities
-         * @description Joins, switches or leaves (empty value) a campus or city. Leaving deletes it now.
-         */
-        patch: operations["UpdateUserCommunities"];
-        trace?: never;
+    /**
+     * ListStories
+     * @description Lists generated connection stories, each with the credits that prove it.
+     *
+     *     The feed is the same for everyone for a catalog version; artists a signed-in
+     *     viewer blocked are left out.
+     */
+    get: operations['ListStories'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/tasteProfiles:compute': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/friendInvites": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListFriendInvites
-         * @description Lists the user's open invites. Codes are not shown again (only hashes are kept).
-         */
-        get: operations["ListFriendInvites"];
-        put?: never;
-        /**
-         * CreateFriendInvite
-         * @description Creates a single-use invite, valid for 7 days. The code is in this response only.
-         */
-        post: operations["CreateFriendInvite"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * ComputeTasteProfile
+     * @description Profiles a list of artists ("Your Nexus") without storing anything.
+     *
+     *     For signed-out listeners who matched a playlist on their device: send the
+     *     matched artists' resource names, most important first. Artists not in the
+     *     catalog, or blocked, are skipped and counted.
+     */
+    post: operations['ComputeTasteProfile'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/trivia/{date}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/friendInvites/{invite}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * DeleteFriendInvite
-         * @description Revokes an invite: its code stops working at once.
-         */
-        delete: operations["DeleteFriendInvite"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetTrivia
+     * @description Returns the Credit check for a local date: the same for every player, without answers.
+     */
+    get: operations['GetTrivia'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/trivia/{date}:check': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/friends": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListFriends
-         * @description Lists friends, oldest friendship first.
-         */
-        get: operations["ListFriends"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * CheckTrivia
+     * @description Checks one answer. The verdict comes with the right option and its credits.
+     *
+     *     For a signed-in player the first answer to each question is kept for two days,
+     *     so a score submitted later counts that answer (ADR 0010).
+     */
+    post: operations['CheckTrivia'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/trivia/{date}:submitScore': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/friends/{friend}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * DeleteFriend
-         * @description Ends a friendship for both people. Shares already sent stay in inboxes.
-         */
-        delete: operations["DeleteFriend"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * SubmitTriviaScore
+     * @description Submits today's Credit check answers (opt-in). The server marks them.
+     *
+     *     A question already checked with CheckTrivia counts with its first answer.
+     *     One score per day; it counts for your campus and your friends can see it.
+     */
+    post: operations['SubmitTriviaScore'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/inbox": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListInbox
-         * @description Lists shares received, newest first.
-         *
-         *     Shares about an artist the listener blocked are left out (US-17 applies here too).
-         */
-        get: operations["ListInbox"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetUser
+     * @description Returns the signed-in user's account.
+     */
+    get: operations['GetUser'];
+    put?: never;
+    post?: never;
+    /**
+     * DeleteUser
+     * @description Deletes the account (AC-18.4): signed out everywhere, data gone now, purged in 30 days.
+     */
+    delete: operations['DeleteUser'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/blockedArtists': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/inbox:markRead": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * MarkInboxRead
-         * @description Marks every share in the inbox read.
-         */
-        post: operations["MarkInboxRead"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListBlockedArtists
+     * @description Lists the user's blocked artists, oldest first.
+     */
+    get: operations['ListBlockedArtists'];
+    put?: never;
+    /**
+     * CreateBlockedArtist
+     * @description Blocks an artist: it disappears from lists, paths and suggestions everywhere.
+     */
+    post: operations['CreateBlockedArtist'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/blockedArtists/{artist}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/linkedAccounts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListLinkedAccounts
-         * @description Lists every provider: how it links, whether it is offered here, and the link if any.
-         */
-        get: operations["ListLinkedAccounts"];
-        put?: never;
-        /**
-         * CreateLinkedAccount
-         * @description Links ListenBrainz (user token) or Apple Music (MusicKit user token).
-         */
-        post: operations["CreateLinkedAccount"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * DeleteBlockedArtist
+     * @description Unblocks an artist.
+     */
+    delete: operations['DeleteBlockedArtist'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/blockedUsers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/linkedAccounts/{provider}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * DeleteLinkedAccount
-         * @description Unlinks: deletes the token and every play count synced from the account.
-         */
-        delete: operations["DeleteLinkedAccount"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListBlockedUsers
+     * @description Lists people the user blocked.
+     */
+    get: operations['ListBlockedUsers'];
+    put?: never;
+    /**
+     * CreateBlockedUser
+     * @description Blocks someone you know: the friendship ends and shares between you disappear.
+     *
+     *     The other person is not told. Neither of you can see, invite or share with the other.
+     */
+    post: operations['CreateBlockedUser'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/blockedUsers/{blocked}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/linkedAccounts/{provider}:sync": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * SyncLinkedAccount
-         * @description Syncs one linked account now ("Sync now").
-         */
-        post: operations["SyncLinkedAccount"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * DeleteBlockedUser
+     * @description Unblocks someone. You aren't friends again until one of you sends a new invite.
+     */
+    delete: operations['DeleteBlockedUser'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/communities': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/linkedAccounts:start": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * StartLink
-         * @description Starts linking a provider that approves on its own site; returns where to go.
-         */
-        post: operations["StartLink"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * GetUserCommunities
+     * @description Returns the campus and city the listener joined (none until they opt in).
+     */
+    get: operations['GetUserCommunities'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * UpdateUserCommunities
+     * @description Joins, switches or leaves (empty value) a campus or city. Leaving deletes it now.
+     */
+    patch: operations['UpdateUserCommunities'];
+    trace?: never;
+  };
+  '/v1/users/{user}/friendInvites': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/listening": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ListListening
-         * @description The listener's artists from linked accounts, most played first (blocked artists hidden).
-         */
-        get: operations["ListListening"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * ListFriendInvites
+     * @description Lists the user's open invites. Codes are not shown again (only hashes are kept).
+     */
+    get: operations['ListFriendInvites'];
+    put?: never;
+    /**
+     * CreateFriendInvite
+     * @description Creates a single-use invite, valid for 7 days. The code is in this response only.
+     */
+    post: operations['CreateFriendInvite'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/friendInvites/{invite}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/preferences": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetPreferences
-         * @description Returns the user's preferences (defaults until first saved).
-         */
-        get: operations["GetPreferences"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * UpdatePreferences
-         * @description Updates preferences. Stale ETags are rejected with ABORTED (AC-18.3).
-         */
-        patch: operations["UpdatePreferences"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * DeleteFriendInvite
+     * @description Revokes an invite: its code stops working at once.
+     */
+    delete: operations['DeleteFriendInvite'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/friendLeaderboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/profile": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetProfile
-         * @description Returns the user's profile. Profiles are private: only the owner can read one (AC-9.2).
-         */
-        get: operations["GetProfile"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * UpdateProfile
-         * @description Updates the Top 5. A sixth artist is rejected (AC-9.1).
-         */
-        patch: operations["UpdateProfile"];
-        trace?: never;
+    /**
+     * GetFriendLeaderboard
+     * @description You and your accepted friends who submitted scores in the period, best first.
+     */
+    get: operations['GetFriendLeaderboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/friends': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}/socialProfile": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * GetSocialProfile
-         * @description Returns the name the user shows to friends (empty until picked).
-         */
-        get: operations["GetSocialProfile"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * UpdateSocialProfile
-         * @description Sets the name friends see. It passes the moderation hook like notes do.
-         */
-        patch: operations["UpdateSocialProfile"];
-        trace?: never;
+    /**
+     * ListFriends
+     * @description Lists friends, oldest friendship first.
+     */
+    get: operations['ListFriends'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/friends/{friend}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/v1/users/{user}:export": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * ExportUserData
-         * @description Returns everything we store about the user, as JSON (target M4-07).
-         */
-        get: operations["ExportUserData"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * DeleteFriend
+     * @description Ends a friendship for both people. Shares already sent stay in inboxes.
+     */
+    delete: operations['DeleteFriend'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/friends/{friend}/paths': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /**
+     * GetFriendPaths
+     * @description Shared artists, shared collaborators and the shortest paths between your top artists.
+     *
+     *     Top artists are your chosen Top 5, then your most played linked-account artists.
+     *
+     *     Errors: FRIEND_NOT_FOUND (not friends, or blocked either way), VIEWER_NOT_SHARING
+     *     and FRIEND_NOT_SHARING (``shareTopArtists`` off), NO_TOP_ARTISTS (metadata
+     *     ``side``: ``viewer`` or ``friend``).
+     */
+    get: operations['GetFriendPaths'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/gameScores': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * ListGameScores
+     * @description Lists your own submitted scores of the last 14 days, newest first.
+     */
+    get: operations['ListGameScores'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/inbox': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * ListInbox
+     * @description Lists shares received, newest first.
+     *
+     *     Shares about an artist the listener blocked are left out (US-17 applies here too).
+     */
+    get: operations['ListInbox'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/inbox:markRead': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * MarkInboxRead
+     * @description Marks every share in the inbox read.
+     */
+    post: operations['MarkInboxRead'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/linkedAccounts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * ListLinkedAccounts
+     * @description Lists every provider: how it links, whether it is offered here, and the link if any.
+     */
+    get: operations['ListLinkedAccounts'];
+    put?: never;
+    /**
+     * CreateLinkedAccount
+     * @description Links ListenBrainz (user token) or Apple Music (MusicKit user token).
+     */
+    post: operations['CreateLinkedAccount'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/linkedAccounts/{provider}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * DeleteLinkedAccount
+     * @description Unlinks: deletes the token and every play count synced from the account.
+     */
+    delete: operations['DeleteLinkedAccount'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/linkedAccounts/{provider}:sync': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * SyncLinkedAccount
+     * @description Syncs one linked account now ("Sync now").
+     */
+    post: operations['SyncLinkedAccount'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/linkedAccounts:start': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * StartLink
+     * @description Starts linking a provider that approves on its own site; returns where to go.
+     */
+    post: operations['StartLink'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/listening': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * ListListening
+     * @description The listener's artists from linked accounts, most played first (blocked artists hidden).
+     */
+    get: operations['ListListening'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}/preferences': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * GetPreferences
+     * @description Returns the user's preferences (defaults until first saved).
+     */
+    get: operations['GetPreferences'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * UpdatePreferences
+     * @description Updates preferences. Stale ETags are rejected with ABORTED (AC-18.3).
+     */
+    patch: operations['UpdatePreferences'];
+    trace?: never;
+  };
+  '/v1/users/{user}/profile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * GetProfile
+     * @description Returns the user's profile. Profiles are private: only the owner can read one (AC-9.2).
+     */
+    get: operations['GetProfile'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * UpdateProfile
+     * @description Updates the Top 5. A sixth artist is rejected (AC-9.1).
+     */
+    patch: operations['UpdateProfile'];
+    trace?: never;
+  };
+  '/v1/users/{user}/socialProfile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * GetSocialProfile
+     * @description Returns the name the user shows to friends (empty until picked).
+     */
+    get: operations['GetSocialProfile'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * UpdateSocialProfile
+     * @description Sets the name friends see (moderated like notes) and/or top-artist sharing.
+     *
+     *     Sharing top artists needs a display name; it is off until the user turns it on.
+     */
+    patch: operations['UpdateSocialProfile'];
+    trace?: never;
+  };
+  '/v1/users/{user}/tasteProfile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * GetTasteProfile
+     * @description The signed-in listener's profile, from the artists their linked accounts played.
+     *
+     *     Artists are weighted by 1 + ln(plays). Without listening data every part is empty.
+     */
+    get: operations['GetTasteProfile'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/{user}:export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * ExportUserData
+     * @description Returns everything we store about the user, as JSON (target M4-07).
+     */
+    get: operations['ExportUserData'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /**
-         * Alias
-         * @description Another name for an artist.
-         */
-        Alias: {
-            /** Aliastype */
-            aliasType: string;
-            /** Displayname */
-            displayName: string;
-            /** Locale */
-            locale: string | null;
-        };
-        /**
-         * AnalyzePlaylistRequest
-         * @description AnalyzePlaylist. Raw files never leave the device; only names and titles are sent.
-         */
-        AnalyzePlaylistRequest: {
-            /** Categories */
-            categories?: components["schemas"]["ConnectionCategory"][];
-            /** Tracks */
-            tracks: components["schemas"]["PlaylistTrack"][];
-        };
-        /**
-         * AnalyzePlaylistResponse
-         * @description AnalyzePlaylist.
-         */
-        AnalyzePlaylistResponse: {
-            /** Artists */
-            artists: components["schemas"]["PlaylistArtist"][];
-            cohesion: components["schemas"]["Cohesion"];
-            /** Connectors */
-            connectors: components["schemas"]["PlaylistConnector"][];
-            /** Graphversion */
-            graphVersion: string;
-            /** Links */
-            links: components["schemas"]["PlaylistLink"][];
-            thread: components["schemas"]["PlaylistThread"];
-        };
-        /**
-         * Appearance
-         * @description A release a recording appears on.
-         */
-        Appearance: {
-            /** Discnumber */
-            discNumber: number;
-            /** Displayname */
-            displayName: string;
-            /** Position */
-            position: number;
-            /** Release */
-            release: string;
-            /** Year */
-            year: number | null;
-        };
-        /**
-         * Artist
-         * @description GetArtist.
-         */
-        Artist: {
-            /** Aliases */
-            aliases: components["schemas"]["Alias"][];
-            /** Artisttype */
-            artistType: string | null;
-            /** Begindate */
-            beginDate: string | null;
-            /**
-             * Connectioncount
-             * @description Direct connections under the default categories.
-             */
-            connectionCount: number;
-            /** Country */
-            country: string | null;
-            /**
-             * Detaillevel
-             * @description `full`, `profile` or `stub`: how much the catalog knows about this artist.
-             */
-            detailLevel: string;
-            /** Disambiguation */
-            disambiguation: string | null;
-            /** Displayname */
-            displayName: string;
-            /**
-             * Genreknown
-             * @description Whether our data has genres for this artist (AC-12.2).
-             * @default false
-             */
-            genreKnown: boolean;
-            /** Genres */
-            genres: components["schemas"]["GenreShare"][];
-            /** Graphversion */
-            graphVersion: string;
-            /**
-             * Labels
-             * @description Labels the artist's releases in our data came out on.
-             */
-            labels: components["schemas"]["ArtistLabel"][];
-            /** Links */
-            links: components["schemas"]["Link"][];
-            /**
-             * Name
-             * @description Resource name `artists/{artist}`.
-             * @example artists/0b2c…
-             */
-            name: string;
-            /**
-             * Oftenplayedwith
-             * @description Catalog artists ListenBrainz listeners most often play with this one.
-             */
-            oftenPlayedWith: components["schemas"]["CoListener"][];
-            /** Sources */
-            sources: components["schemas"]["SourceLink"][];
-        };
-        /**
-         * ArtistLabel
-         * @description A label an artist released on.
-         */
-        ArtistLabel: {
-            /** Displayname */
-            displayName: string;
-            /** Firstyear */
-            firstYear: number | null;
-            /**
-             * Label
-             * @description Resource name `labels/{label}`.
-             */
-            label: string;
-            /** Lastyear */
-            lastYear: number | null;
-            /** Releasecount */
-            releaseCount: number;
-        };
-        /**
-         * ArtistSummary
-         * @description An artist as shown in lists.
-         */
-        ArtistSummary: {
-            /** Artisttype */
-            artistType: string | null;
-            /** Country */
-            country: string | null;
-            /** Disambiguation */
-            disambiguation: string | null;
-            /** Displayname */
-            displayName: string;
-            /**
-             * Genreknown
-             * @description Whether our data has genres for this artist (AC-12.2).
-             * @default false
-             */
-            genreKnown: boolean;
-            /**
-             * Name
-             * @description Resource name `artists/{artist}`.
-             * @example artists/0b2c…
-             */
-            name: string;
-        };
-        /**
-         * AskAnswer
-         * @description The short answer as a client message: an ID and its values (lists are names).
-         */
-        AskAnswer: {
-            /**
-             * Messageid
-             * @description Client message key, e.g. `ask.answer.path`.
-             */
-            messageId: string;
-            /** Params */
-            params: {
-                [key: string]: string | number | string[];
-            };
-        };
-        /**
-         * AskCandidate
-         * @description A catalog entity a name refers to (or might).
-         */
-        AskCandidate: {
-            /** Displayname */
-            displayName: string;
-            /**
-             * Name
-             * @description Resource name `artists/{id}` or `recordings/{id}`.
-             */
-            name: string;
-            /**
-             * Subtitle
-             * @default
-             */
-            subtitle: string;
-        };
-        /**
-         * AskCreditRole
-         * @description Which credits of a song were asked about.
-         * @enum {string}
-         */
-        AskCreditRole: "PRODUCER" | "FEATURED" | "PERFORMER" | "ALL";
-        /**
-         * AskEntity
-         * @description A name from the question and what it resolved to.
-         */
-        AskEntity: {
-            /**
-             * Alternatives
-             * @description Other entities with this name (ambiguous: pick one).
-             */
-            alternatives: components["schemas"]["AskCandidate"][];
-            /**
-             * Entitytype
-             * @description `ARTIST` or `RECORDING`.
-             */
-            entityType: string;
-            match: components["schemas"]["AskCandidate"] | null;
-            /** Mention */
-            mention: string;
-            status: components["schemas"]["EntityStatus"];
-        };
-        /**
-         * AskIntent
-         * @description What the question was understood to ask.
-         * @enum {string}
-         */
-        AskIntent: "FIND_PATH" | "COMPARE_ARTISTS" | "COMPARE_SONGS" | "SONG_CREDITS" | "COLLABORATORS" | "CONNECTIONS" | "LOOKUP" | "UNKNOWN";
-        /**
-         * AskInterpretation
-         * @description The question as understood: an intent and its narrowing, never a fact.
-         */
-        AskInterpretation: {
-            collaborationType: components["schemas"]["CollaborationType"] | null;
-            creditRole: components["schemas"]["AskCreditRole"] | null;
-            direction: components["schemas"]["ProductionDirection"] | null;
-            /** Endyear */
-            endYear: number | null;
-            /**
-             * Genre
-             * @description Resource name `genres/{genre}`.
-             */
-            genre: string | null;
-            /** Genredisplayname */
-            genreDisplayName: string | null;
-            intent: components["schemas"]["AskIntent"];
-            interpretedBy: components["schemas"]["InterpretedBy"];
-            /** Startyear */
-            startYear: number | null;
-            /**
-             * Strongest
-             * @default false
-             */
-            strongest: boolean;
-        };
-        /**
-         * AskModelInfo
-         * @description The language model behind interpretation, for "How this answer works".
-         */
-        AskModelInfo: {
-            /** Configured */
-            configured: boolean;
-            /** Model */
-            model: string | null;
-            /** Provider */
-            provider: string | null;
-            /**
-             * Used
-             * @description Whether the model read this question.
-             */
-            used: boolean;
-        };
-        /**
-         * AskRequest
-         * @description AskCatalog: only the question text (and any "Did you mean" picks) is sent.
-         */
-        AskRequest: {
-            /**
-             * Choices
-             * @description Resource names picked for ambiguous names (`artists/{id}`, `recordings/{id}`) from a previous answer's alternatives.
-             */
-            choices?: string[];
-            /**
-             * Query
-             * @description The question as typed.
-             */
-            query: string;
-        };
-        /**
-         * AskResponse
-         * @description AskCatalog.
-         */
-        AskResponse: {
-            answer: components["schemas"]["AskAnswer"];
-            /**
-             * Artists
-             * @description Every artist the answer and its evidence mention, to name them.
-             */
-            artists: components["schemas"]["ArtistSummary"][];
-            /**
-             * Destination
-             * @description The app page with the full answer, e.g. `/compare?a=…&b=…`.
-             */
-            destination: string | null;
-            /** Entities */
-            entities: components["schemas"]["AskEntity"][];
-            /** Graphversion */
-            graphVersion: string;
-            interpretation: components["schemas"]["AskInterpretation"];
-            model: components["schemas"]["AskModelInfo"];
-            /** Results */
-            results: components["schemas"]["AskRow"][];
-        };
-        /**
-         * AskRow
-         * @description A supporting result: an artist or a song, and why it is here.
-         */
-        AskRow: {
-            artist: components["schemas"]["ArtistSummary"] | null;
-            /**
-             * Count
-             * @description Collaborations behind it, if counted.
-             */
-            count: number | null;
-            /** Evidence */
-            evidence: components["schemas"]["Evidence"][];
-            /** Firstyear */
-            firstYear: number | null;
-            /** Lastyear */
-            lastYear: number | null;
-            recording: components["schemas"]["AskCandidate"] | null;
-            /**
-             * Role
-             * @description Credit role on the song, e.g. `producer`.
-             */
-            role: string | null;
-            /**
-             * Sources
-             * @description For a credit row: where the credit can be checked.
-             */
-            sources: components["schemas"]["SourceLink"][];
-        };
-        /**
-         * AudioDescriptors
-         * @description What AcousticBrainz measured for a recording (CC0). Any field may be missing.
-         */
-        AudioDescriptors: {
-            /**
-             * Averageloudness
-             * @description In [0, 1].
-             */
-            averageLoudness: number | null;
-            /** Bpm */
-            bpm: number | null;
-            /**
-             * Dynamiccomplexity
-             * @description In dB.
-             */
-            dynamicComplexity: number | null;
-            /**
-             * Key
-             * @description Tonic, e.g. `C#`.
-             */
-            key: string | null;
-            /** Keystrength */
-            keyStrength: number | null;
-            /** Lengths */
-            lengthS: number | null;
-            /**
-             * Moods
-             * @description Probability of each class: danceable, acoustic, aggressive, electronic, happy, party, relaxed, sad, instrumental, bright.
-             */
-            moods: {
-                [key: string]: number;
-            };
-            /**
-             * Scale
-             * @description `major` or `minor`.
-             */
-            scale: string | null;
-            source: components["schemas"]["SourceLink"];
-        };
-        /**
-         * BlockedArtist
-         * @description An artist the user never wants to see in lists or paths.
-         */
-        BlockedArtist: {
-            /** @description Null when the artist left the catalog. */
-            artist: components["schemas"]["ArtistSummary"] | null;
-            /** Createtime */
-            createTime: string;
-            /**
-             * Name
-             * @description `users/{user}/blockedArtists/{artist}`.
-             */
-            name: string;
-        };
-        /**
-         * BlockedUser
-         * @description A person the user blocked. Blocks are silent and hide both people from each other.
-         */
-        BlockedUser: {
-            /** Createtime */
-            createTime: string;
-            /**
-             * Name
-             * @description `users/{user}/blockedUsers/{blocked}`.
-             */
-            name: string;
-            person: components["schemas"]["Person"];
-        };
-        /**
-         * ChartMovement
-         * @description An artist's movement since the chart a week earlier.
-         * @enum {string}
-         */
-        ChartMovement: "UP" | "DOWN" | "SAME" | "NEW";
-        /**
-         * ChartState
-         * @description Whether a community has enough listeners to show its chart.
-         * @enum {string}
-         */
-        ChartState: "LOCKED" | "UNLOCKED";
-        /**
-         * CheckMoveRequest
-         * @description CheckMove: is ``to`` directly connected to ``from``?
-         */
-        CheckMoveRequest: {
-            /**
-             * Fromartist
-             * @description Resource name of the current artist.
-             */
-            fromArtist: string;
-            /**
-             * Toartist
-             * @description Resource name of the artist the player named.
-             */
-            toArtist: string;
-        };
-        /**
-         * CheckMoveResponse
-         * @description A correct move shows its evidence and the steps left; a wrong move reveals nothing.
-         */
-        CheckMoveResponse: {
-            artist: components["schemas"]["ArtistSummary"] | null;
-            /** Connected */
-            connected: boolean;
-            /** Evidence */
-            evidence: components["schemas"]["Evidence"][];
-            /**
-             * Reachedtarget
-             * @default false
-             */
-            reachedTarget: boolean;
-            /**
-             * Stepstotarget
-             * @description Steps left after this move; null if far or unreachable.
-             */
-            stepsToTarget: number | null;
-        };
-        /**
-         * CheckTriviaRequest
-         * @description CheckTrivia: is this option the right one for the question?
-         */
-        CheckTriviaRequest: {
-            /**
-             * Option
-             * @description The chosen option's resource name.
-             */
-            option: string;
-            /**
-             * Question
-             * @description The question ID, e.g. `q1`.
-             */
-            question: string;
-        };
-        /**
-         * CheckTriviaResponse
-         * @description The verdict, the right option and the credits behind it.
-         */
-        CheckTriviaResponse: {
-            /** Correct */
-            correct: boolean;
-            correctOption: components["schemas"]["TriviaOption"];
-            /**
-             * Evidence
-             * @description Credits that make the right option right, with sources. Empty for WHICH_LABEL, which cites `sources` instead.
-             */
-            evidence: components["schemas"]["Evidence"][];
-            /**
-             * Sources
-             * @description Pages where the fact can be checked (the release and the label).
-             */
-            sources: components["schemas"]["SourceLink"][];
-            subject: components["schemas"]["Subject"] | null;
-        };
-        /**
-         * CoListener
-         * @description An artist often played with another, by rank (ListenBrainz).
-         */
-        CoListener: {
-            artist: components["schemas"]["ArtistSummary"];
-            /** Rank */
-            rank: number;
-        };
-        /**
-         * Cohesion
-         * @description The share of matched artist pairs within 2 steps of each other.
-         */
-        Cohesion: {
-            /** Pairs */
-            pairs: number;
-            /** Pairswithintwo */
-            pairsWithinTwo: number;
-            /**
-             * Score
-             * @description Null with fewer than two matched artists.
-             */
-            score: number | null;
-        };
-        /**
-         * Collaboration
-         * @description A collaborator under one type.
-         */
-        Collaboration: {
-            artist: components["schemas"]["ArtistSummary"];
-            /** Count */
-            count: number;
-            /**
-             * Directions
-             * @description For PRODUCTION: which ways it went; empty otherwise.
-             */
-            directions: components["schemas"]["ProductionDirection"][];
-            /** Evidence */
-            evidence: components["schemas"]["Evidence"][];
-            /** Firstyear */
-            firstYear: number | null;
-            /** Lastyear */
-            lastYear: number | null;
-            type: components["schemas"]["CollaborationType"];
-        };
-        /**
-         * CollaborationOrder
-         * @description How collaborators are listed.
-         * @enum {string}
-         */
-        CollaborationOrder: "COUNT" | "FIRST_YEAR";
-        /**
-         * CollaborationType
-         * @description A collaborations tab.
-         * @enum {string}
-         */
-        CollaborationType: "FEATURE" | "PRODUCTION" | "BAND" | "CREDIT";
-        /**
-         * Community
-         * @description A campus or city listeners can join (from the curated Wikidata directory).
-         */
-        Community: {
-            /** City */
-            city: string;
-            /** Citycommunity */
-            cityCommunity: string | null;
-            /** Country */
-            country: string;
-            /** Displayname */
-            displayName: string;
-            kind: components["schemas"]["CommunityKind"];
-            /** Name */
-            name: string;
-            /** Region */
-            region: string;
-            /** Shortname */
-            shortName: string;
-            /** Sourceurl */
-            sourceUrl: string;
-            /**
-             * Synthetic
-             * @default false
-             */
-            synthetic: boolean;
-            /** Website */
-            website: string;
-        };
-        /**
-         * CommunityChart
-         * @description GetCommunityChart: what a community listens to, aggregated and anonymous.
-         */
-        CommunityChart: {
-            /** Artists */
-            artists: components["schemas"]["CommunityChartArtist"][];
-            community: components["schemas"]["Community"];
-            /** Demodata */
-            demoData: boolean;
-            /** Genres */
-            genres: components["schemas"]["CommunityChartGenre"][];
-            /** Graphversion */
-            graphVersion: string;
-            /** Historyavailable */
-            historyAvailable: boolean;
-            listeners: components["schemas"]["ListenerRange"] | null;
-            /** Listenersneeded */
-            listenersNeeded: number;
-            /** Minartistlisteners */
-            minArtistListeners: number;
-            /** Minlisteners */
-            minListeners: number;
-            /** Name */
-            name: string;
-            /** Nextupdatetime */
-            nextUpdateTime: string;
-            /** Rising */
-            rising: components["schemas"]["CommunityChartArtist"][];
-            state: components["schemas"]["ChartState"];
-            /** Updatetime */
-            updateTime: string;
-        };
-        /**
-         * CommunityChartArtist
-         * @description A chart row: rank, artist, listeners as a range, movement.
-         */
-        CommunityChartArtist: {
-            artist: components["schemas"]["ArtistSummary"];
-            listeners: components["schemas"]["ListenerRange"];
-            movement: components["schemas"]["ChartMovement"] | null;
-            /**
-             * Places
-             * @default 0
-             */
-            places: number;
-            /** Rank */
-            rank: number;
-            /**
-             * Rising
-             * @default false
-             */
-            rising: boolean;
-        };
-        /**
-         * CommunityChartGenre
-         * @description A genre the community listens to, with listeners as a range.
-         */
-        CommunityChartGenre: {
-            /** Displayname */
-            displayName: string;
-            /** Genre */
-            genre: string;
-            listeners: components["schemas"]["ListenerRange"];
-        };
-        /**
-         * CommunityKind
-         * @description A campus (university) or a city.
-         * @enum {string}
-         */
-        CommunityKind: "CAMPUS" | "CITY";
-        /**
-         * CommunityMembership
-         * @description A community the listener joined.
-         */
-        CommunityMembership: {
-            community: components["schemas"]["Community"];
-            /** Jointime */
-            joinTime: string;
-        };
-        /**
-         * CompareArtistsResponse
-         * @description CompareArtists.
-         */
-        CompareArtistsResponse: {
-            artistA: components["schemas"]["ArtistSummary"];
-            artistB: components["schemas"]["ArtistSummary"];
-            /** Countsa */
-            countsA: {
-                [key: string]: number;
-            };
-            /** Countsb */
-            countsB: {
-                [key: string]: number;
-            };
-            /** Directlyconnected */
-            directlyConnected: boolean;
-            /**
-             * Genreoverlap
-             * @description Weighted overlap in [0, 1]; null if unknown.
-             */
-            genreOverlap: number | null;
-            /** Graphversion */
-            graphVersion: string;
-            /** @description Null when either artist has fewer than 50 listeners or no data. */
-            listening: components["schemas"]["ListenerOverlap"] | null;
-            /** Mutualcollaborators */
-            mutualCollaborators: components["schemas"]["ArtistSummary"][];
-            /** Path */
-            path: components["schemas"]["ArtistSummary"][];
-            /** Sharedgenres */
-            sharedGenres: components["schemas"]["SharedGenre"][];
-        };
-        /**
-         * CompareRecordingsResponse
-         * @description CompareRecordings: structure side by side, an explained similarity, shared credits.
-         */
-        CompareRecordingsResponse: {
-            /**
-             * Artistpath
-             * @description Fewest-steps path between the songs' first primary artists; empty when they are the same artist or not connected in our data.
-             */
-            artistPath: components["schemas"]["ArtistSummary"][];
-            descriptorsA: components["schemas"]["AudioDescriptors"] | null;
-            descriptorsB: components["schemas"]["AudioDescriptors"] | null;
-            /** Graphversion */
-            graphVersion: string;
-            /** Parts */
-            parts: components["schemas"]["SimilarityPart"][];
-            recordingA: components["schemas"]["RecordingSummary"];
-            recordingB: components["schemas"]["RecordingSummary"];
-            /**
-             * Sharedcredits
-             * @description Roles with someone in common first.
-             */
-            sharedCredits: components["schemas"]["SharedCredit"][];
-            /**
-             * Similarity
-             * @description Weighted mean of the parts; null when neither song has data.
-             */
-            similarity: number | null;
-        };
-        /**
-         * Config
-         * @description GetConfig: feature flags and limits for the client.
-         */
-        Config: {
-            /** Flags */
-            flags: {
-                [key: string]: boolean;
-            };
-            /** Graphversion */
-            graphVersion: string | null;
-            limits: components["schemas"]["Limits"];
-        };
-        /**
-         * Connection
-         * @description A connected artist and why.
-         */
-        Connection: {
-            artist: components["schemas"]["ArtistSummary"];
-            /** Evidencecount */
-            evidenceCount: number;
-            /**
-             * Highlights
-             * @description Up to two representative evidence lines.
-             */
-            highlights: components["schemas"]["Evidence"][];
-            /** Kinds */
-            kinds: components["schemas"]["ConnectionKind"][];
-            /** Strength */
-            strength: number;
-        };
-        /**
-         * ConnectionCategory
-         * @description A toggleable group of connection kinds.
-         * @enum {string}
-         */
-        ConnectionCategory: "FEATURES" | "PRODUCERS" | "CONTRIBUTIONS" | "SAMPLES" | "BANDS" | "LABELS" | "ENGINEERING";
-        /**
-         * ConnectionDetail
-         * @description GetArtistConnection: all evidence between two artists, with sources.
-         */
-        ConnectionDetail: {
-            artist: components["schemas"]["ArtistSummary"];
-            /** Evidence */
-            evidence: components["schemas"]["Evidence"][];
-            /** Graphversion */
-            graphVersion: string;
-            /** Kinds */
-            kinds: components["schemas"]["ConnectionKind"][];
-            other: components["schemas"]["ArtistSummary"];
-            /** Strength */
-            strength: number;
-        };
-        /**
-         * ConnectionKind
-         * @description Why two artists are connected.
-         * @enum {string}
-         */
-        ConnectionKind: "PERFORMED_WITH" | "PRODUCED_FOR" | "CO_PRODUCED" | "CONTRIBUTED_TO" | "SAMPLED" | "MEMBER_OF" | "COLLABORATION" | "SUPPORTED" | "TAUGHT" | "LABEL_MATES" | "ENGINEERED";
-        /**
-         * CreateBlockedArtistRequest
-         * @description CreateBlockedArtist.
-         */
-        CreateBlockedArtistRequest: {
-            /**
-             * Artist
-             * @description Resource name `artists/{artist}` to block.
-             */
-            artist: string;
-        };
-        /**
-         * CreateBlockedUserRequest
-         * @description CreateBlockedUser: a friend, or someone who shared with you.
-         */
-        CreateBlockedUserRequest: {
-            /**
-             * User
-             * @description Resource name `users/{user}`.
-             */
-            user: string;
-        };
-        /**
-         * CreateLinkedAccountRequest
-         * @description CreateLinkedAccount: a ListenBrainz user token, or an Apple Music user token.
-         */
-        CreateLinkedAccountRequest: {
-            provider: components["schemas"]["ListeningProvider"];
-            /** Token */
-            token: string;
-        };
-        /**
-         * CreateLocalSessionRequest
-         * @description CreateLocalSession (development only): sign in as a named local listener.
-         */
-        CreateLocalSessionRequest: {
-            /**
-             * Ageconfirmed
-             * @default false
-             */
-            ageConfirmed?: boolean;
-            /**
-             * Listener
-             * @default listener
-             */
-            listener?: string;
-        };
-        /**
-         * CreateReportRequest
-         * @description CreateReport: report a share you received, or a person you know. Give one of the two.
-         */
-        CreateReportRequest: {
-            /**
-             * Details
-             * @default
-             */
-            details?: string;
-            reason: components["schemas"]["ReportReason"];
-            /**
-             * Share
-             * @description `shares/{share}` you received.
-             * @default
-             */
-            share?: string;
-            /**
-             * User
-             * @description `users/{user}`: a friend or someone who shared.
-             * @default
-             */
-            user?: string;
-        };
-        /**
-         * CreateSessionRequest
-         * @description CreateSession: exchange a Firebase ID token for a session cookie.
-         */
-        CreateSessionRequest: {
-            /**
-             * Ageconfirmed
-             * @description Required (true) when creating an account: the user is 13+.
-             * @default false
-             */
-            ageConfirmed?: boolean;
-            /** Idtoken */
-            idToken: string;
-        };
-        /**
-         * CreateShareRequest
-         * @description CreateShare: send an artist, song, comparison or path to a friend.
-         */
-        CreateShareRequest: {
-            kind: components["schemas"]["ShareKind"];
-            /**
-             * Note
-             * @default
-             */
-            note?: string;
-            /**
-             * Recipient
-             * @description A friend, `users/{user}`.
-             */
-            recipient: string;
-            /** Subjects */
-            subjects: string[];
-        };
-        /**
-         * Credit
-         * @description An artist's credit on a recording.
-         */
-        Credit: {
-            artist: components["schemas"]["ArtistSummary"];
-            /** Creditedas */
-            creditedAs: string | null;
-            /** Role */
-            role: string;
-            /**
-             * Roledetail
-             * @default
-             */
-            roleDetail: string;
-        };
-        /**
-         * DataSource
-         * @description A provider of data, with its license and what it feeds.
-         */
-        DataSource: {
-            /** Attribution */
-            attribution: string;
-            /**
-             * Checkedon
-             * @description ISO date the license was last checked.
-             */
-            checkedOn: string;
-            /** Displayname */
-            displayName: string;
-            /** Feeds */
-            feeds: string[];
-            /** Homepage */
-            homepage: string;
-            kind: components["schemas"]["SourceKind"];
-            /** License */
-            license: string;
-            /** Licenseurl */
-            licenseUrl: string;
-            /**
-             * Name
-             * @description Resource name, `dataSources/{source}`.
-             */
-            name: string;
-            /** Notes */
-            notes: string;
-            status: components["schemas"]["SourceStatus"];
-            tier: components["schemas"]["LicenseTier"];
-        };
-        /**
-         * Empty
-         * @description An empty response.
-         */
-        Empty: Record<string, never>;
-        /**
-         * EntityStatus
-         * @description How a name in the question resolved.
-         * @enum {string}
-         */
-        EntityStatus: "MATCHED" | "AMBIGUOUS" | "NOT_FOUND";
-        /**
-         * EntityType
-         * @description A searchable entity type.
-         * @enum {string}
-         */
-        EntityType: "ARTIST" | "RELEASE" | "RECORDING";
-        /**
-         * ErrorInfo
-         * @description google.rpc.ErrorInfo: the machine-readable cause.
-         */
-        ErrorInfo: {
-            /**
-             * @Type
-             * @example type.googleapis.com/google.rpc.ErrorInfo
-             */
-            "@type": string;
-            /**
-             * Domain
-             * @example songnexus.app
-             */
-            domain: string;
-            /** Metadata */
-            metadata: {
-                [key: string]: string;
-            };
-            /**
-             * Reason
-             * @example ARTIST_NOT_FOUND
-             */
-            reason: string;
-        };
-        /**
-         * ErrorResponse
-         * @description The body of every error response.
-         */
-        ErrorResponse: {
-            error: components["schemas"]["Status"];
-        };
-        /**
-         * Evidence
-         * @description One reason two artists are connected, as a localizable message.
-         */
-        Evidence: {
-            /** Fromartist */
-            fromArtist: string;
-            /** Fromrole */
-            fromRole: string;
-            kind: components["schemas"]["ConnectionKind"];
-            /**
-             * Messageid
-             * @description Client message key, e.g. `evidence.featured`.
-             */
-            messageId: string;
-            /** Sources */
-            sources: components["schemas"]["SourceLink"][];
-            subject: components["schemas"]["Subject"];
-            /** Toartist */
-            toArtist: string;
-            /** Torole */
-            toRole: string;
-        };
-        /**
-         * FeaturedArtistsResponse
-         * @description The featured artists, in editorial order.
-         */
-        FeaturedArtistsResponse: {
-            /** Artists */
-            artists: components["schemas"]["ArtistSummary"][];
-            /** Graphversion */
-            graphVersion: string;
-        };
-        /**
-         * FindPathResponse
-         * @description FindPath.
-         */
-        FindPathResponse: {
-            /**
-             * Alternatives
-             * @description Other routes, as artist sequences.
-             */
-            alternatives: components["schemas"]["ArtistSummary"][][];
-            /** Graphversion */
-            graphVersion: string;
-            outcome: components["schemas"]["PathOutcome"];
-            /** Steps */
-            steps: components["schemas"]["PathStep"][];
-        };
-        /**
-         * Friend
-         * @description A friend.
-         */
-        Friend: {
-            /** Createtime */
-            createTime: string;
-            /**
-             * Name
-             * @description `users/{user}/friends/{friend}`.
-             */
-            name: string;
-            person: components["schemas"]["Person"];
-        };
-        /**
-         * FriendInvite
-         * @description An invite code. The code is returned once, at creation; only its hash is stored.
-         */
-        FriendInvite: {
-            /**
-             * Code
-             * @description `XXXXX-XXXXX`; only in CreateFriendInvite.
-             * @default
-             */
-            code: string;
-            /** Createtime */
-            createTime: string;
-            /** Expiretime */
-            expireTime: string;
-            /**
-             * Name
-             * @description `users/{user}/friendInvites/{invite}`.
-             */
-            name: string;
-        };
-        /**
-         * FriendInvitePreview
-         * @description GetFriendInvite: who an invite is from, before accepting it.
-         */
-        FriendInvitePreview: {
-            /**
-             * Alreadyfriends
-             * @default false
-             */
-            alreadyFriends: boolean;
-            /** Expiretime */
-            expireTime: string;
-            inviter: components["schemas"]["Person"];
-        };
-        /**
-         * Genre
-         * @description A genre.
-         */
-        Genre: {
-            /**
-             * Artistcount
-             * @description Artists carrying this genre.
-             */
-            artistCount: number;
-            /**
-             * Artistcountwithsubgenres
-             * @description Artists carrying this genre or any genre below it.
-             */
-            artistCountWithSubgenres: number;
-            /** Displayname */
-            displayName: string;
-            /** Name */
-            name: string;
-            /**
-             * Parents
-             * @description Direct parent genres, `genres/{genre}`.
-             */
-            parents: string[];
-        };
-        /**
-         * GenreShare
-         * @description A genre and its share of an artist's genre votes.
-         */
-        GenreShare: {
-            /** Displayname */
-            displayName: string;
-            /**
-             * Genre
-             * @description Resource name `genres/{genre}`.
-             */
-            genre: string;
-            /**
-             * Share
-             * @description Averaged over the sources with genre data for the artist.
-             */
-            share: number;
-            /**
-             * Sources
-             * @description Data sources asserting it, `dataSources/{source}`.
-             */
-            sources: string[];
-        };
-        /**
-         * Health
-         * @description Liveness and readiness.
-         */
-        Health: {
-            /** Catalogloaded */
-            catalogLoaded: boolean;
-            /** Status */
-            status: string;
-        };
-        /**
-         * HintRequest
-         * @description GetHint.
-         */
-        HintRequest: {
-            /** Fromartist */
-            fromArtist: string;
-        };
-        /**
-         * HintResponse
-         * @description Three connections of the current artist, at least one closer to the target.
-         */
-        HintResponse: {
-            /** Candidates */
-            candidates: components["schemas"]["ArtistSummary"][];
-        };
-        /**
-         * InterpretedBy
-         * @description Who read the question: the built-in parser, the model, or no one (not understood).
-         * @enum {string}
-         */
-        InterpretedBy: "PARSER" | "MODEL" | "NONE";
-        /**
-         * Label
-         * @description GetLabel: a record label, its roster by era, and its releases in our data.
-         */
-        Label: {
-            /**
-             * Artists
-             * @description Roster, by first release year.
-             */
-            artists: components["schemas"]["LabelArtist"][];
-            /** Disambiguation */
-            disambiguation: string | null;
-            /** Displayname */
-            displayName: string;
-            /** Graphversion */
-            graphVersion: string;
-            /** Labeltype */
-            labelType: string | null;
-            /**
-             * Name
-             * @description Resource name `labels/{label}`.
-             */
-            name: string;
-            /**
-             * Releases
-             * @description Releases, oldest first.
-             */
-            releases: components["schemas"]["LabelRelease"][];
-            /** Sources */
-            sources: components["schemas"]["SourceLink"][];
-        };
-        /**
-         * LabelArtist
-         * @description An artist on a label's roster, with when they released there.
-         */
-        LabelArtist: {
-            artist: components["schemas"]["ArtistSummary"];
-            /** Firstyear */
-            firstYear: number | null;
-            /** Lastyear */
-            lastYear: number | null;
-            /** Releasecount */
-            releaseCount: number;
-        };
-        /**
-         * LabelRelease
-         * @description A release on a label.
-         */
-        LabelRelease: {
-            /** Artists */
-            artists: components["schemas"]["ArtistSummary"][];
-            /** Catalognumbers */
-            catalogNumbers: string[];
-            /** Displayname */
-            displayName: string;
-            /**
-             * Release
-             * @description Resource name `releases/{release}`.
-             */
-            release: string;
-            /** Year */
-            year: number | null;
-        };
-        /**
-         * LicenseTier
-         * @description What a data source's license allows (ADR 0005).
-         * @enum {string}
-         */
-        LicenseTier: "PRODUCTION" | "NON_COMMERCIAL" | "EVALUATION";
-        /**
-         * Limits
-         * @description Request limits clients should respect (plan §14).
-         */
-        Limits: {
-            /** Maxalternatives */
-            maxAlternatives: number;
-            /** Maxpagesize */
-            maxPageSize: number;
-            /** Maxpathsteps */
-            maxPathSteps: number;
-            /** Maxquerylength */
-            maxQueryLength: number;
-        };
-        /**
-         * Link
-         * @description An external link.
-         */
-        Link: {
-            /** Linktype */
-            linkType: string;
-            /** Url */
-            url: string;
-        };
-        /**
-         * LinkMethod
-         * @description How a provider is linked.
-         * @enum {string}
-         */
-        LinkMethod: "REDIRECT" | "TOKEN" | "MUSICKIT" | "FILE";
-        /**
-         * LinkedAccount
-         * @description A linked listening account. Tokens are never returned.
-         */
-        LinkedAccount: {
-            /**
-             * Externaluser
-             * @description The account name on the provider.
-             */
-            externalUser: string;
-            /** Lastsynctime */
-            lastSyncTime: string | null;
-            /** Linktime */
-            linkTime: string;
-            /**
-             * Name
-             * @description `users/{user}/linkedAccounts/{provider}`.
-             */
-            name: string;
-            /** Nextsynctime */
-            nextSyncTime: string | null;
-            provider: components["schemas"]["ListeningProvider"];
-            status: components["schemas"]["LinkedAccountStatus"];
-            /**
-             * Unmatchedplays
-             * @description Plays whose artist could not be matched to the catalog (counted, not kept).
-             */
-            unmatchedPlays: number;
-        };
-        /**
-         * LinkedAccountStatus
-         * @description Whether sync works.
-         * @enum {string}
-         */
-        LinkedAccountStatus: "ACTIVE" | "NEEDS_RELINK";
-        /**
-         * ListArtistCollaborationsResponse
-         * @description ListArtistCollaborations. Counts are based on releases in our data.
-         */
-        ListArtistCollaborationsResponse: {
-            /** Collaborations */
-            collaborations: components["schemas"]["Collaboration"][];
-            /** Counts */
-            counts: {
-                [key: string]: number;
-            };
-            /** Graphversion */
-            graphVersion: string;
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /**
-             * Timeline
-             * @description Every type, the genre filter applied, the year range not applied.
-             */
-            timeline: components["schemas"]["TimelineYear"][];
-            /** Totalsize */
-            totalSize: number;
-            /**
-             * Undated
-             * @description Subjects with no known year, by type.
-             */
-            undated: {
-                [key: string]: number;
-            };
-        };
-        /**
-         * ListArtistConnectionsResponse
-         * @description ListArtistConnections.
-         */
-        ListArtistConnectionsResponse: {
-            /** Connections */
-            connections: components["schemas"]["Connection"][];
-            /** Graphversion */
-            graphVersion: string;
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Totalsize */
-            totalSize: number;
-        };
-        /**
-         * ListBlockedArtistsResponse
-         * @description ListBlockedArtists.
-         */
-        ListBlockedArtistsResponse: {
-            /** Blockedartists */
-            blockedArtists: components["schemas"]["BlockedArtist"][];
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Totalsize */
-            totalSize: number;
-        };
-        /**
-         * ListBlockedUsersResponse
-         * @description ListBlockedUsers: oldest first.
-         */
-        ListBlockedUsersResponse: {
-            /** Blockedusers */
-            blockedUsers: components["schemas"]["BlockedUser"][];
-        };
-        /**
-         * ListCommunitiesResponse
-         * @description ListCommunities: communities matching a search, best first.
-         */
-        ListCommunitiesResponse: {
-            /** Communities */
-            communities: components["schemas"]["Community"][];
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Totalsize */
-            totalSize: number;
-        };
-        /**
-         * ListDataSourcesResponse
-         * @description ListDataSources.
-         */
-        ListDataSourcesResponse: {
-            /** Datasources */
-            dataSources: components["schemas"]["DataSource"][];
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Totalsize */
-            totalSize: number;
-        };
-        /**
-         * ListFriendInvitesResponse
-         * @description ListFriendInvites: the user's unexpired invites, newest first (codes not included).
-         */
-        ListFriendInvitesResponse: {
-            /** Friendinvites */
-            friendInvites: components["schemas"]["FriendInvite"][];
-        };
-        /**
-         * ListFriendsResponse
-         * @description ListFriends: oldest friendship first.
-         */
-        ListFriendsResponse: {
-            /** Friends */
-            friends: components["schemas"]["Friend"][];
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Totalsize */
-            totalSize: number;
-        };
-        /**
-         * ListGenresResponse
-         * @description ListGenres.
-         */
-        ListGenresResponse: {
-            /** Genres */
-            genres: components["schemas"]["Genre"][];
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Totalsize */
-            totalSize: number;
-        };
-        /**
-         * ListInboxResponse
-         * @description ListInbox: shares received, newest first.
-         */
-        ListInboxResponse: {
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Shares */
-            shares: components["schemas"]["Share"][];
-            /** Totalsize */
-            totalSize: number;
-            /** Unreadcount */
-            unreadCount: number;
-        };
-        /**
-         * ListLinkedAccountsResponse
-         * @description ListLinkedAccounts: every provider, linked or not.
-         */
-        ListLinkedAccountsResponse: {
-            /** Providers */
-            providers: components["schemas"]["ProviderOffer"][];
-            /** Syncintervalminutes */
-            syncIntervalMinutes: number;
-        };
-        /**
-         * ListListeningResponse
-         * @description ListListening: the listener's artists from linked accounts, most played first.
-         */
-        ListListeningResponse: {
-            /** Artists */
-            artists: components["schemas"]["ListeningArtist"][];
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Totalsize */
-            totalSize: number;
-        };
-        /**
-         * ListStoriesResponse
-         * @description ListStories: a page of the feed.
-         */
-        ListStoriesResponse: {
-            /** Graphversion */
-            graphVersion: string;
-            /**
-             * Nextpagetoken
-             * @default
-             */
-            nextPageToken: string;
-            /** Stories */
-            stories: components["schemas"]["Story"][];
-            /** Totalsize */
-            totalSize: number;
-        };
-        /**
-         * ListenerOverlap
-         * @description Shared audience, from aggregate ListenBrainz data; never about individual listeners.
-         */
-        ListenerOverlap: {
-            /** Listenersa */
-            listenersA: number;
-            /** Listenersb */
-            listenersB: number;
-            /** Listensa */
-            listensA: number;
-            /** Listensb */
-            listensB: number;
-            /** Rankaforb */
-            rankAForB: number | null;
-            /**
-             * Rankbfora
-             * @description B's rank among the artists A's listeners most often also play (1 = most).
-             */
-            rankBForA: number | null;
-            source: components["schemas"]["SourceLink"];
-            /** @description From the better rank: STRONG <= 10, MODERATE <= 50, WEAK <= 100, else NONE. */
-            strength: components["schemas"]["OverlapStrength"];
-        };
-        /**
-         * ListenerRange
-         * @description A count shown as a range: ``min`` to ``max`` listeners (``max`` null: or more).
-         */
-        ListenerRange: {
-            /** Max */
-            max: number | null;
-            /** Min */
-            min: number;
-        };
-        /**
-         * ListeningArtist
-         * @description An artist the listener played, from linked accounts.
-         */
-        ListeningArtist: {
-            artist: components["schemas"]["ArtistSummary"];
-            /** Lastplaytime */
-            lastPlayTime: string | null;
-            /** Plays */
-            plays: number;
-            /** Providers */
-            providers: components["schemas"]["ListeningProvider"][];
-        };
-        /**
-         * ListeningProvider
-         * @description A listening service (ADR 0006).
-         * @enum {string}
-         */
-        ListeningProvider: "LISTENBRAINZ" | "LASTFM" | "LIBREFM" | "SPOTIFY" | "DEEZER" | "APPLE_MUSIC" | "YOUTUBE_MUSIC";
-        /**
-         * MarkAllReadResponse
-         * @description MarkInboxRead: how many shares were marked read.
-         */
-        MarkAllReadResponse: {
-            /** Marked */
-            marked: number;
-        };
-        /**
-         * MatchStatus
-         * @description How an artist name from the playlist was matched.
-         * @enum {string}
-         */
-        MatchStatus: "MATCHED" | "AMBIGUOUS" | "NO_MATCH";
-        /**
-         * OverlapStrength
-         * @description How strongly two audiences overlap (``core.listening``).
-         * @enum {string}
-         */
-        OverlapStrength: "STRONG" | "MODERATE" | "WEAK" | "NONE";
-        /**
-         * PathChallenge
-         * @description GetPathChallenge: two well-known artists to connect, the same for everyone on a date.
-         */
-        PathChallenge: {
-            /** Date */
-            date: string;
-            fromArtist: components["schemas"]["ArtistSummary"];
-            /** Graphversion */
-            graphVersion: string;
-            /**
-             * Name
-             * @description `pathChallenges/{date}`.
-             */
-            name: string;
-            /**
-             * Steps
-             * @description Connections on a shortest path (3 to 5).
-             */
-            steps: number;
-            toArtist: components["schemas"]["ArtistSummary"];
-        };
-        /**
-         * PathMode
-         * @description How FindPath ranks routes.
-         * @enum {string}
-         */
-        PathMode: "FEWEST_STEPS" | "STRONGEST_LINKS";
-        /**
-         * PathOutcome
-         * @description Why a FindPath response does or does not contain a path.
-         * @enum {string}
-         */
-        PathOutcome: "FOUND" | "NOT_CONNECTED_WITHIN_LIMIT" | "SEARCH_LIMIT_REACHED";
-        /**
-         * PathStep
-         * @description One step of a path.
-         */
-        PathStep: {
-            /** Evidence */
-            evidence: components["schemas"]["Evidence"][];
-            fromArtist: components["schemas"]["ArtistSummary"];
-            /** Strength */
-            strength: number;
-            toArtist: components["schemas"]["ArtistSummary"];
-        };
-        /**
-         * Person
-         * @description Someone in the friends graph, as another user sees them.
-         */
-        Person: {
-            /** Displayname */
-            displayName: string;
-            /**
-             * User
-             * @description Resource name `users/{user}` (opaque).
-             */
-            user: string;
-        };
-        /**
-         * PlaylistArtist
-         * @description One distinct artist name from the playlist and what it matched.
-         */
-        PlaylistArtist: {
-            artist: components["schemas"]["ArtistSummary"] | null;
-            /**
-             * Blocked
-             * @default false
-             */
-            blocked: boolean;
-            /**
-             * Candidates
-             * @description For AMBIGUOUS: who it might be, best first.
-             */
-            candidates: components["schemas"]["ArtistSummary"][];
-            /** Query */
-            query: string;
-            status: components["schemas"]["MatchStatus"];
-            /** Trackcount */
-            trackCount: number;
-        };
-        /**
-         * PlaylistConnector
-         * @description A hidden link: an artist outside the playlist connected to several in it.
-         */
-        PlaylistConnector: {
-            artist: components["schemas"]["ArtistSummary"];
-            /**
-             * Linkedto
-             * @description Resource names of the playlist artists it links.
-             */
-            linkedTo: string[];
-            /** Score */
-            score: number;
-        };
-        /**
-         * PlaylistLink
-         * @description A direct connection between two playlist artists.
-         */
-        PlaylistLink: {
-            /** Artista */
-            artistA: string;
-            /** Artistb */
-            artistB: string;
-            /** Strength */
-            strength: number;
-        };
-        /**
-         * PlaylistThread
-         * @description Shortest paths between consecutive playlist artists, joined.
-         */
-        PlaylistThread: {
-            /** Artists */
-            artists: components["schemas"]["ArtistSummary"][];
-            /**
-             * Breaks
-             * @description Consecutive pairs with no path within the step limit.
-             */
-            breaks: number;
-        };
-        /**
-         * PlaylistTrack
-         * @description A track as the device parsed it: a title and its artist names, nothing else.
-         */
-        PlaylistTrack: {
-            /**
-             * Artists
-             * @description Artist names as written, or `artists/{artist}` for a choice the user made.
-             */
-            artists: string[];
-            /**
-             * Title
-             * @default
-             */
-            title?: string;
-        };
-        /**
-         * Preferences
-         * @description GetPreferences / UpdatePreferences (AIP-134 update mask, AIP-154 ETag).
-         */
-        "Preferences-Input": {
-            /** Categories */
-            categories?: components["schemas"]["ConnectionCategory"][];
-            /**
-             * Etag
-             * @default
-             */
-            etag?: string;
-            /** Genres */
-            genres?: string[];
-            /**
-             * Name
-             * @default
-             */
-            name?: string;
-            /** @default SYSTEM */
-            theme?: components["schemas"]["Theme"];
-            /** Updatetime */
-            updateTime?: string | null;
-        };
-        /**
-         * Preferences
-         * @description GetPreferences / UpdatePreferences (AIP-134 update mask, AIP-154 ETag).
-         */
-        "Preferences-Output": {
-            /** Categories */
-            categories: components["schemas"]["ConnectionCategory"][];
-            /**
-             * Etag
-             * @default
-             */
-            etag: string;
-            /** Genres */
-            genres: string[];
-            /**
-             * Name
-             * @default
-             */
-            name: string;
-            /** @default SYSTEM */
-            theme: components["schemas"]["Theme"];
-            /** Updatetime */
-            updateTime: string | null;
-        };
-        /**
-         * ProductionDirection
-         * @description Who produced whom, from the requested artist's side.
-         * @enum {string}
-         */
-        ProductionDirection: "PRODUCED_FOR" | "PRODUCED_BY" | "CO_PRODUCED";
-        /**
-         * Profile
-         * @description GetProfile / UpdateProfile: Top 5 artists (US-09).
-         */
-        "Profile-Input": {
-            /**
-             * Etag
-             * @default
-             */
-            etag?: string;
-            /**
-             * Name
-             * @default
-             */
-            name?: string;
-            /**
-             * Topartists
-             * @description Up to 5 `artists/{artist}`.
-             */
-            topArtists?: string[];
-            /** Updatetime */
-            updateTime?: string | null;
-            /** @default PRIVATE */
-            visibility?: components["schemas"]["Visibility"];
-        };
-        /**
-         * Profile
-         * @description GetProfile / UpdateProfile: Top 5 artists (US-09).
-         */
-        "Profile-Output": {
-            /**
-             * Etag
-             * @default
-             */
-            etag: string;
-            /**
-             * Name
-             * @default
-             */
-            name: string;
-            /**
-             * Topartists
-             * @description Up to 5 `artists/{artist}`.
-             */
-            topArtists: string[];
-            /** Updatetime */
-            updateTime: string | null;
-            /** @default PRIVATE */
-            visibility: components["schemas"]["Visibility"];
-        };
-        /**
-         * ProviderOffer
-         * @description A provider as offered to the listener.
-         */
-        ProviderOffer: {
-            /** Available */
-            available: boolean;
-            linkedAccount: components["schemas"]["LinkedAccount"] | null;
-            method: components["schemas"]["LinkMethod"];
-            provider: components["schemas"]["ListeningProvider"];
-            /**
-             * Unavailablereason
-             * @default
-             */
-            unavailableReason: string;
-        };
-        /**
-         * Puzzle
-         * @description GetDailyPuzzle: the same puzzle for every player on a date.
-         */
-        Puzzle: {
-            /** Date */
-            date: string;
-            /** Graphversion */
-            graphVersion: string;
-            /**
-             * Name
-             * @description `puzzles/{date}`, the player's local date (YYYY-MM-DD).
-             */
-            name: string;
-            /**
-             * Number
-             * @description 1 on the launch day.
-             */
-            number: number;
-            /**
-             * Par
-             * @description Steps in the shortest connection (3 or 4).
-             */
-            par: number;
-            start: components["schemas"]["ArtistSummary"];
-            target: components["schemas"]["ArtistSummary"];
-        };
-        /**
-         * Recording
-         * @description GetRecording.
-         */
-        Recording: {
-            /** Appearances */
-            appearances: components["schemas"]["Appearance"][];
-            /** Credits */
-            credits: components["schemas"]["Credit"][];
-            /** @description Absent when AcousticBrainz has no data for the recording. */
-            descriptors: components["schemas"]["AudioDescriptors"] | null;
-            /** Displayname */
-            displayName: string;
-            /** Firstreleasedate */
-            firstReleaseDate: string | null;
-            /** Lengthms */
-            lengthMs: number | null;
-            /** Name */
-            name: string;
-            /** Sources */
-            sources: components["schemas"]["SourceLink"][];
-        };
-        /**
-         * RecordingSummary
-         * @description A recording as shown in a comparison.
-         */
-        RecordingSummary: {
-            /**
-             * Artists
-             * @description Primary artists.
-             */
-            artists: components["schemas"]["ArtistSummary"][];
-            /** Displayname */
-            displayName: string;
-            /** Firstreleasedate */
-            firstReleaseDate: string | null;
-            /** Lengthms */
-            lengthMs: number | null;
-            /** Name */
-            name: string;
-        };
-        /**
-         * Report
-         * @description A filed report. Moderators review it; the reporter sees only that it was received.
-         */
-        Report: {
-            /** Createtime */
-            createTime: string;
-            /**
-             * Name
-             * @description `reports/{report}`.
-             */
-            name: string;
-            reason: components["schemas"]["ReportReason"];
-        };
-        /**
-         * ReportReason
-         * @description Why someone reported a share or a person.
-         * @enum {string}
-         */
-        ReportReason: "SPAM" | "HARASSMENT" | "HATE" | "SEXUAL_CONTENT" | "OTHER";
-        /**
-         * RevealResponse
-         * @description RevealPuzzle: a shortest solution, with evidence for every step.
-         */
-        RevealResponse: {
-            /** Graphversion */
-            graphVersion: string;
-            /** Steps */
-            steps: components["schemas"]["PathStep"][];
-        };
-        /**
-         * SearchCatalogResponse
-         * @description SearchCatalog.
-         */
-        SearchCatalogResponse: {
-            /** Graphversion */
-            graphVersion: string;
-            /** Results */
-            results: components["schemas"]["SearchResult"][];
-        };
-        /**
-         * SearchResult
-         * @description A search hit.
-         */
-        SearchResult: {
-            /**
-             * Blocked
-             * @description The viewer blocked this artist. Blocked artists appear only for an exact-name search, so they can be unblocked (AC-17.2).
-             * @default false
-             */
-            blocked: boolean;
-            /** Displayname */
-            displayName: string;
-            entityType: components["schemas"]["EntityType"];
-            /** Matchtype */
-            matchType: string;
-            /** Matchedon */
-            matchedOn: string;
-            /**
-             * Name
-             * @description Resource name of the entity.
-             */
-            name: string;
-            /** Subtitle */
-            subtitle: string;
-        };
-        /**
-         * SessionInfo
-         * @description The current session. The cookie itself is never readable by scripts.
-         */
-        SessionInfo: {
-            /**
-             * Csrftoken
-             * @description Send as `X-CSRF-Token` on every write.
-             */
-            csrfToken: string;
-            /**
-             * Newuser
-             * @default false
-             */
-            newUser: boolean;
-            /**
-             * User
-             * @description Resource name `users/{user}`.
-             */
-            user: string;
-        };
-        /**
-         * Share
-         * @description Something one friend sent another.
-         */
-        Share: {
-            /** Createtime */
-            createTime: string;
-            kind: components["schemas"]["ShareKind"];
-            /**
-             * Name
-             * @description `shares/{share}`.
-             */
-            name: string;
-            /**
-             * Note
-             * @default
-             */
-            note: string;
-            /**
-             * Read
-             * @default false
-             */
-            read: boolean;
-            recipient: components["schemas"]["Person"];
-            sender: components["schemas"]["Person"];
-            /** Subjects */
-            subjects: components["schemas"]["SharedSubject"][];
-        };
-        /**
-         * ShareKind
-         * @description What a share points at; decides how many subjects it has and of which type.
-         * @enum {string}
-         */
-        ShareKind: "ARTIST" | "RECORDING" | "ARTIST_COMPARISON" | "RECORDING_COMPARISON" | "PATH";
-        /**
-         * SharedCredit
-         * @description A credit role compared across the two songs.
-         */
-        SharedCredit: {
-            /** Both */
-            both: components["schemas"]["ArtistSummary"][];
-            /** Onlya */
-            onlyA: components["schemas"]["ArtistSummary"][];
-            /** Onlyb */
-            onlyB: components["schemas"]["ArtistSummary"][];
-            /** Role */
-            role: string;
-        };
-        /**
-         * SharedGenre
-         * @description A genre both compared artists carry.
-         */
-        SharedGenre: {
-            /** Displayname */
-            displayName: string;
-            /** Genre */
-            genre: string;
-            /** Sharea */
-            shareA: number;
-            /** Shareb */
-            shareB: number;
-        };
-        /**
-         * SharedSubject
-         * @description An artist or recording in a share, resolved against the current catalog.
-         */
-        SharedSubject: {
-            /** Available */
-            available: boolean;
-            /**
-             * Displayname
-             * @description Empty when the catalog no longer has it.
-             */
-            displayName: string;
-            /**
-             * Name
-             * @description `artists/{artist}` or `recordings/{recording}`.
-             */
-            name: string;
-        };
-        /**
-         * SimilarityPart
-         * @description One named part of the similarity score.
-         */
-        SimilarityPart: {
-            /**
-             * Contribution
-             * @description similarity x weight: what it adds to the score.
-             */
-            contribution: number;
-            /**
-             * Name
-             * @description `mood`, `tempo`, `key` or `energy`.
-             */
-            name: string;
-            /** Similarity */
-            similarity: number;
-            /**
-             * Weight
-             * @description Its weight among the parts present; they sum to 1.
-             */
-            weight: number;
-        };
-        /**
-         * SocialProfile
-         * @description The name a user shows to friends. Friends see nothing else about each other.
-         */
-        SocialProfile: {
-            /**
-             * Displayname
-             * @default
-             */
-            displayName: string;
-            /**
-             * Name
-             * @description `users/{user}/socialProfile`.
-             */
-            name: string;
-        };
-        /**
-         * SourceKind
-         * @description How the data is obtained.
-         * @enum {string}
-         */
-        SourceKind: "API" | "DATA_DUMP" | "DATASET" | "USER_ACCOUNT";
-        /**
-         * SourceLink
-         * @description A page where a person can check a fact.
-         */
-        SourceLink: {
-            /**
-             * Source
-             * @description Data source ID, e.g. `musicbrainz`.
-             */
-            source: string;
-            /** Sourceid */
-            sourceId: string;
-            /** Url */
-            url: string;
-        };
-        /**
-         * SourceStatus
-         * @description Whether SongNexus reads from the source yet.
-         * @enum {string}
-         */
-        SourceStatus: "IN_USE" | "PLANNED";
-        /**
-         * StartLinkRequest
-         * @description StartLink.
-         */
-        StartLinkRequest: {
-            provider: components["schemas"]["ListeningProvider"];
-        };
-        /**
-         * StartLinkResponse
-         * @description Where to send the listener to approve the link.
-         */
-        StartLinkResponse: {
-            /** Authorizationurl */
-            authorizationUrl: string;
-        };
-        /**
-         * Status
-         * @description google.rpc.Status, as JSON.
-         */
-        Status: {
-            /**
-             * Code
-             * @description HTTP status code.
-             * @example 404
-             */
-            code: number;
-            /** Details */
-            details: components["schemas"]["ErrorInfo"][];
-            /**
-             * Message
-             * @description Developer-facing English; not for display.
-             */
-            message: string;
-            /**
-             * Status
-             * @description Canonical status name.
-             * @example NOT_FOUND
-             */
-            status: string;
-        };
-        /**
-         * Story
-         * @description A generated connection story: a template, its artists and the credits that prove it.
-         */
-        Story: {
-            /**
-             * Credits
-             * @description The strongest credit first; every one is sourced.
-             */
-            credits: components["schemas"]["Evidence"][];
-            kind: components["schemas"]["StoryKind"];
-            /**
-             * Messageid
-             * @description Client message key, e.g. `story.sharedProducer`.
-             */
-            messageId: string;
-            /**
-             * Name
-             * @description `stories/{story}`.
-             */
-            name: string;
-            /**
-             * Params
-             * @description Other template values: counts, years, a title.
-             */
-            params: {
-                [key: string]: string | number;
-            };
-            /** Parts */
-            parts: components["schemas"]["StoryPart"][];
-        };
-        /**
-         * StoryKind
-         * @description Which template a story uses.
-         * @enum {string}
-         */
-        StoryKind: "SHARED_PRODUCER" | "TWO_STEPS" | "SESSION_PLAYER" | "LABEL_MATES" | "SAME_SAMPLE" | "SAMPLED";
-        /**
-         * StoryPart
-         * @description An artist in a story, by the role the template gives it (`a`, `b`, `via`).
-         */
-        StoryPart: {
-            artist: components["schemas"]["ArtistSummary"];
-            /** Role */
-            role: string;
-        };
-        /**
-         * Subject
-         * @description What a piece of evidence is about.
-         */
-        Subject: {
-            /** Displayname */
-            displayName: string | null;
-            /**
-             * Name
-             * @description Resource name: `recordings/{id}`, `releases/{id}`, `labels/{id}` or `relations/{id}`.
-             */
-            name: string;
-        };
-        /**
-         * SyncLinkedAccountResponse
-         * @description SyncLinkedAccount: what this sync read.
-         */
-        SyncLinkedAccountResponse: {
-            /** Artists */
-            artists: number;
-            linkedAccount: components["schemas"]["LinkedAccount"];
-            /** Plays */
-            plays: number;
-            /**
-             * Synced
-             * @description False when the provider could not be read; the account's status says why.
-             */
-            synced: boolean;
-            /** Unmatchedplays */
-            unmatchedPlays: number;
-        };
-        /**
-         * Theme
-         * @description Color theme.
-         * @enum {string}
-         */
-        Theme: "SYSTEM" | "LIGHT" | "DARK";
-        /**
-         * TimelineYear
-         * @description Distinct collaborative recordings and releases in one year, by type.
-         */
-        TimelineYear: {
-            /** Counts */
-            counts: {
-                [key: string]: number;
-            };
-            /** Year */
-            year: number;
-        };
-        /**
-         * TriviaOption
-         * @description One answer option: an artist (`artists/{id}`) or a label (`labels/{id}`).
-         */
-        TriviaOption: {
-            /** Disambiguation */
-            disambiguation: string | null;
-            /** Displayname */
-            displayName: string;
-            /** Name */
-            name: string;
-        };
-        /**
-         * TriviaQuestion
-         * @description A question and its options, never its answer.
-         */
-        TriviaQuestion: {
-            /** @description The artist the question is about: the song's main artist, or the artist in a WORKED_WITH question. */
-            artist: components["schemas"]["ArtistSummary"];
-            /**
-             * Id
-             * @description `q1` to `q5`, stable within the day.
-             * @example q1
-             */
-            id: string;
-            kind: components["schemas"]["TriviaQuestionKind"];
-            /**
-             * Messageid
-             * @description Client message key, e.g. `trivia.whoProduced`.
-             */
-            messageId: string;
-            /** Options */
-            options: components["schemas"]["TriviaOption"][];
-            /** @description The song or release asked about; null for WORKED_WITH. */
-            subject: components["schemas"]["Subject"] | null;
-        };
-        /**
-         * TriviaQuestionKind
-         * @description What a Credit check question asks.
-         * @enum {string}
-         */
-        TriviaQuestionKind: "WHO_PRODUCED" | "WHO_FEATURED" | "WORKED_WITH" | "WHICH_LABEL";
-        /**
-         * TriviaQuiz
-         * @description GetTrivia: the same Credit check for every player on a date.
-         */
-        TriviaQuiz: {
-            /** Date */
-            date: string;
-            /** Graphversion */
-            graphVersion: string;
-            /**
-             * Name
-             * @description `trivia/{date}`, the player's local date (YYYY-MM-DD).
-             */
-            name: string;
-            /**
-             * Number
-             * @description 1 on the launch day.
-             */
-            number: number;
-            /** Questions */
-            questions: components["schemas"]["TriviaQuestion"][];
-        };
-        /**
-         * UpdateSocialProfileRequest
-         * @description UpdateSocialProfile: pick the name friends see.
-         */
-        UpdateSocialProfileRequest: {
-            /** Displayname */
-            displayName: string;
-        };
-        /**
-         * UpdateUserCommunitiesRequest
-         * @description UpdateUserCommunities body: a community name to join, or "" to leave.
-         *
-         *     Only the fields in ``updateMask`` (or, without one, the fields present) change.
-         */
-        UpdateUserCommunitiesRequest: {
-            /**
-             * Campus
-             * @default
-             */
-            campus?: string;
-            /**
-             * City
-             * @default
-             */
-            city?: string;
-        };
-        /**
-         * User
-         * @description GetUser. Email and name stay with the identity provider.
-         */
-        User: {
-            /** Createtime */
-            createTime: string;
-            /** Name */
-            name: string;
-        };
-        /**
-         * UserCommunities
-         * @description GetUserCommunities: the listener's campus and city (each optional).
-         */
-        UserCommunities: {
-            campus: components["schemas"]["CommunityMembership"] | null;
-            city: components["schemas"]["CommunityMembership"] | null;
-            /** Haslisteningdata */
-            hasListeningData: boolean;
-            /** Name */
-            name: string;
-        };
-        /**
-         * Visibility
-         * @description Who can see a profile. Only PRIVATE exists in R1.
-         * @enum {string}
-         */
-        Visibility: "PRIVATE";
+  schemas: {
+    /**
+     * Alias
+     * @description Another name for an artist.
+     */
+    Alias: {
+      /** Aliastype */
+      aliasType: string;
+      /** Displayname */
+      displayName: string;
+      /** Locale */
+      locale: string | null;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /**
+     * AnalyzePlaylistRequest
+     * @description AnalyzePlaylist. Raw files never leave the device; only names and titles are sent.
+     */
+    AnalyzePlaylistRequest: {
+      /** Categories */
+      categories?: components['schemas']['ConnectionCategory'][];
+      /** Tracks */
+      tracks: components['schemas']['PlaylistTrack'][];
+    };
+    /**
+     * AnalyzePlaylistResponse
+     * @description AnalyzePlaylist.
+     */
+    AnalyzePlaylistResponse: {
+      /** Artists */
+      artists: components['schemas']['PlaylistArtist'][];
+      cohesion: components['schemas']['Cohesion'];
+      /** Connectors */
+      connectors: components['schemas']['PlaylistConnector'][];
+      /** Graphversion */
+      graphVersion: string;
+      /** Links */
+      links: components['schemas']['PlaylistLink'][];
+      thread: components['schemas']['PlaylistThread'];
+    };
+    /**
+     * Appearance
+     * @description A release a recording appears on.
+     */
+    Appearance: {
+      /** Discnumber */
+      discNumber: number;
+      /** Displayname */
+      displayName: string;
+      /** Position */
+      position: number;
+      /** Release */
+      release: string;
+      /** Year */
+      year: number | null;
+    };
+    /**
+     * Artist
+     * @description GetArtist.
+     */
+    Artist: {
+      /** Aliases */
+      aliases: components['schemas']['Alias'][];
+      /** Artisttype */
+      artistType: string | null;
+      /** Begindate */
+      beginDate: string | null;
+      /**
+       * Connectioncount
+       * @description Direct connections under the default categories.
+       */
+      connectionCount: number;
+      /** Country */
+      country: string | null;
+      /**
+       * Detaillevel
+       * @description `full`, `profile` or `stub`: how much the catalog knows about this artist.
+       */
+      detailLevel: string;
+      /** Disambiguation */
+      disambiguation: string | null;
+      /** Displayname */
+      displayName: string;
+      /**
+       * Genreknown
+       * @description Whether our data has genres for this artist (AC-12.2).
+       * @default false
+       */
+      genreKnown: boolean;
+      /** Genres */
+      genres: components['schemas']['GenreShare'][];
+      /** Graphversion */
+      graphVersion: string;
+      /** @description The artist's photo and its attribution, or null. */
+      image: components['schemas']['ArtistImage'] | null;
+      /**
+       * Imageurl
+       * @description A freely licensed photo about 330 px wide (Wikimedia Commons), or null. Its author and license are in `image` on GetArtist and must be shown with it (ADR 0009).
+       */
+      imageUrl: string | null;
+      /**
+       * Labels
+       * @description Labels the artist's releases in our data came out on.
+       */
+      labels: components['schemas']['ArtistLabel'][];
+      /** Links */
+      links: components['schemas']['Link'][];
+      /**
+       * Listeners
+       * @description How many people listen to this artist on ListenBrainz (public, aggregate data; a measure of how widely known they are), or null when unknown or below the 50-listener floor under which no audience is described.
+       */
+      listeners: number | null;
+      /**
+       * Name
+       * @description Resource name `artists/{artist}`.
+       * @example artists/0b2c…
+       */
+      name: string;
+      /**
+       * Oftenplayedwith
+       * @description Catalog artists ListenBrainz listeners most often play with this one.
+       */
+      oftenPlayedWith: components['schemas']['CoListener'][];
+      /** Sources */
+      sources: components['schemas']['SourceLink'][];
+    };
+    /**
+     * ArtistImage
+     * @description A freely licensed artist photo from Wikimedia Commons, with its attribution (ADR 0009).
+     */
+    ArtistImage: {
+      /**
+       * Author
+       * @description The author as credited on Commons, as plain text.
+       */
+      author: string | null;
+      /**
+       * Height
+       * @description Height of the original file, in pixels.
+       */
+      height: number;
+      /**
+       * License
+       * @description License short name, e.g. `CC BY-SA 4.0`, `Public domain`.
+       */
+      license: string;
+      /**
+       * Licenseurl
+       * @description Where the license is stated, when it has a URL.
+       */
+      licenseUrl: string | null;
+      /**
+       * Pageurl
+       * @description The Commons file page: full license and history.
+       */
+      pageUrl: string;
+      /**
+       * Thumbnailurl
+       * @description The photo about 330 px wide.
+       */
+      thumbnailUrl: string;
+      /**
+       * Url
+       * @description The photo about 960 px wide, on a Wikimedia media host.
+       */
+      url: string;
+      /**
+       * Width
+       * @description Width of the original file, in pixels.
+       */
+      width: number;
+    };
+    /**
+     * ArtistLabel
+     * @description A label an artist released on.
+     */
+    ArtistLabel: {
+      /** Displayname */
+      displayName: string;
+      /** Firstyear */
+      firstYear: number | null;
+      /**
+       * Label
+       * @description Resource name `labels/{label}`.
+       */
+      label: string;
+      /** Lastyear */
+      lastYear: number | null;
+      /** Releasecount */
+      releaseCount: number;
+    };
+    /**
+     * ArtistSummary
+     * @description An artist as shown in lists.
+     */
+    ArtistSummary: {
+      /** Artisttype */
+      artistType: string | null;
+      /** Country */
+      country: string | null;
+      /** Disambiguation */
+      disambiguation: string | null;
+      /** Displayname */
+      displayName: string;
+      /**
+       * Genreknown
+       * @description Whether our data has genres for this artist (AC-12.2).
+       * @default false
+       */
+      genreKnown: boolean;
+      /**
+       * Imageurl
+       * @description A freely licensed photo about 330 px wide (Wikimedia Commons), or null. Its author and license are in `image` on GetArtist and must be shown with it (ADR 0009).
+       */
+      imageUrl: string | null;
+      /**
+       * Listeners
+       * @description How many people listen to this artist on ListenBrainz (public, aggregate data; a measure of how widely known they are), or null when unknown or below the 50-listener floor under which no audience is described.
+       */
+      listeners: number | null;
+      /**
+       * Name
+       * @description Resource name `artists/{artist}`.
+       * @example artists/0b2c…
+       */
+      name: string;
+    };
+    /**
+     * AskAnswer
+     * @description The short answer as a client message: an ID and its values (lists are names).
+     */
+    AskAnswer: {
+      /**
+       * Messageid
+       * @description Client message key, e.g. `ask.answer.path`.
+       */
+      messageId: string;
+      /** Params */
+      params: {
+        [key: string]: string | number | string[];
+      };
+    };
+    /**
+     * AskCandidate
+     * @description A catalog entity a name refers to (or might).
+     */
+    AskCandidate: {
+      /** Displayname */
+      displayName: string;
+      /**
+       * Name
+       * @description Resource name `artists/{id}` or `recordings/{id}`.
+       */
+      name: string;
+      /**
+       * Subtitle
+       * @default
+       */
+      subtitle: string;
+    };
+    /**
+     * AskCreditRole
+     * @description Which credits of a song were asked about.
+     * @enum {string}
+     */
+    AskCreditRole: 'PRODUCER' | 'FEATURED' | 'PERFORMER' | 'ALL';
+    /**
+     * AskEntity
+     * @description A name from the question and what it resolved to.
+     */
+    AskEntity: {
+      /**
+       * Alternatives
+       * @description Other entities with this name (ambiguous: pick one).
+       */
+      alternatives: components['schemas']['AskCandidate'][];
+      /**
+       * Entitytype
+       * @description `ARTIST` or `RECORDING`.
+       */
+      entityType: string;
+      match: components['schemas']['AskCandidate'] | null;
+      /** Mention */
+      mention: string;
+      status: components['schemas']['EntityStatus'];
+    };
+    /**
+     * AskIntent
+     * @description What the question was understood to ask.
+     * @enum {string}
+     */
+    AskIntent:
+      | 'FIND_PATH'
+      | 'COMPARE_ARTISTS'
+      | 'COMPARE_SONGS'
+      | 'SONG_CREDITS'
+      | 'COLLABORATORS'
+      | 'CONNECTIONS'
+      | 'LOOKUP'
+      | 'UNKNOWN';
+    /**
+     * AskInterpretation
+     * @description The question as understood: an intent and its narrowing, never a fact.
+     */
+    AskInterpretation: {
+      collaborationType: components['schemas']['CollaborationType'] | null;
+      creditRole: components['schemas']['AskCreditRole'] | null;
+      direction: components['schemas']['ProductionDirection'] | null;
+      /** Endyear */
+      endYear: number | null;
+      /**
+       * Genre
+       * @description Resource name `genres/{genre}`.
+       */
+      genre: string | null;
+      /** Genredisplayname */
+      genreDisplayName: string | null;
+      intent: components['schemas']['AskIntent'];
+      interpretedBy: components['schemas']['InterpretedBy'];
+      /** Startyear */
+      startYear: number | null;
+      /**
+       * Strongest
+       * @default false
+       */
+      strongest: boolean;
+    };
+    /**
+     * AskModelInfo
+     * @description The language model behind interpretation, for "How this answer works".
+     */
+    AskModelInfo: {
+      /** Configured */
+      configured: boolean;
+      /** Model */
+      model: string | null;
+      /** Provider */
+      provider: string | null;
+      /**
+       * Used
+       * @description Whether the model read this question.
+       */
+      used: boolean;
+    };
+    /**
+     * AskRequest
+     * @description AskCatalog: only the question text (and any "Did you mean" picks) is sent.
+     */
+    AskRequest: {
+      /**
+       * Choices
+       * @description Resource names picked for ambiguous names (`artists/{id}`, `recordings/{id}`) from a previous answer's alternatives.
+       */
+      choices?: string[];
+      /**
+       * Query
+       * @description The question as typed.
+       */
+      query: string;
+    };
+    /**
+     * AskResponse
+     * @description AskCatalog.
+     */
+    AskResponse: {
+      answer: components['schemas']['AskAnswer'];
+      /**
+       * Artists
+       * @description Every artist the answer and its evidence mention, to name them.
+       */
+      artists: components['schemas']['ArtistSummary'][];
+      /**
+       * Destination
+       * @description The app page with the full answer, e.g. `/compare?a=…&b=…`.
+       */
+      destination: string | null;
+      /** Entities */
+      entities: components['schemas']['AskEntity'][];
+      /** Graphversion */
+      graphVersion: string;
+      interpretation: components['schemas']['AskInterpretation'];
+      model: components['schemas']['AskModelInfo'];
+      /** Results */
+      results: components['schemas']['AskRow'][];
+    };
+    /**
+     * AskRow
+     * @description A supporting result: an artist or a song, and why it is here.
+     */
+    AskRow: {
+      artist: components['schemas']['ArtistSummary'] | null;
+      /**
+       * Count
+       * @description Collaborations behind it, if counted.
+       */
+      count: number | null;
+      /** Evidence */
+      evidence: components['schemas']['Evidence'][];
+      /** Firstyear */
+      firstYear: number | null;
+      /** Lastyear */
+      lastYear: number | null;
+      recording: components['schemas']['AskCandidate'] | null;
+      /**
+       * Role
+       * @description Credit role on the song, e.g. `producer`.
+       */
+      role: string | null;
+      /**
+       * Sources
+       * @description For a credit row: where the credit can be checked.
+       */
+      sources: components['schemas']['SourceLink'][];
+    };
+    /**
+     * AudioDescriptors
+     * @description What AcousticBrainz measured for a recording (CC0). Any field may be missing.
+     */
+    AudioDescriptors: {
+      /**
+       * Averageloudness
+       * @description In [0, 1].
+       */
+      averageLoudness: number | null;
+      /** Bpm */
+      bpm: number | null;
+      /**
+       * Dynamiccomplexity
+       * @description In dB.
+       */
+      dynamicComplexity: number | null;
+      /**
+       * Key
+       * @description Tonic, e.g. `C#`.
+       */
+      key: string | null;
+      /** Keystrength */
+      keyStrength: number | null;
+      /** Lengths */
+      lengthS: number | null;
+      /**
+       * Moods
+       * @description Probability of each class: danceable, acoustic, aggressive, electronic, happy, party, relaxed, sad, instrumental, bright.
+       */
+      moods: {
+        [key: string]: number;
+      };
+      /**
+       * Scale
+       * @description `major` or `minor`.
+       */
+      scale: string | null;
+      source: components['schemas']['SourceLink'];
+    };
+    /**
+     * BlockedArtist
+     * @description An artist the user never wants to see in lists or paths.
+     */
+    BlockedArtist: {
+      /** @description Null when the artist left the catalog. */
+      artist: components['schemas']['ArtistSummary'] | null;
+      /** Createtime */
+      createTime: string;
+      /**
+       * Name
+       * @description `users/{user}/blockedArtists/{artist}`.
+       */
+      name: string;
+    };
+    /**
+     * BlockedUser
+     * @description A person the user blocked. Blocks are silent and hide both people from each other.
+     */
+    BlockedUser: {
+      /** Createtime */
+      createTime: string;
+      /**
+       * Name
+       * @description `users/{user}/blockedUsers/{blocked}`.
+       */
+      name: string;
+      person: components['schemas']['Person'];
+    };
+    /**
+     * CampusLeaderboard
+     * @description GetCampusLeaderboard: the top campuses for a day or week.
+     */
+    CampusLeaderboard: {
+      /** Campuses */
+      campuses: components['schemas']['CampusStanding'][];
+      /**
+       * Demodata
+       * @description Synthetic demo players contributed.
+       * @default false
+       */
+      demoData: boolean;
+      /** Enddate */
+      endDate: string;
+      game: components['schemas']['Game'];
+      /** Minplayers */
+      minPlayers: number;
+      /**
+       * Name
+       * @description `leaderboards/campuses`.
+       */
+      name: string;
+      period: components['schemas']['LeaderboardPeriod'];
+      /**
+       * Rankedcampuses
+       * @description How many campuses met the player floor.
+       */
+      rankedCampuses: number;
+      /** Startdate */
+      startDate: string;
+      /** @description Signed-in only. */
+      viewerCampus: components['schemas']['ViewerCampus'] | null;
+    };
+    /**
+     * CampusStanding
+     * @description A campus on the leaderboard: aggregate only.
+     */
+    CampusStanding: {
+      /**
+       * Averagepoints
+       * @description Members' average points over the period, rounded.
+       */
+      averagePoints: number;
+      community: components['schemas']['Community'];
+      players: components['schemas']['ListenerRange'];
+      /** Rank */
+      rank: number;
+    };
+    /**
+     * ChartMovement
+     * @description An artist's movement since the chart a week earlier.
+     * @enum {string}
+     */
+    ChartMovement: 'UP' | 'DOWN' | 'SAME' | 'NEW';
+    /**
+     * ChartMover
+     * @description An artist that moved. A rank is null where the artist was not on that chart.
+     */
+    ChartMover: {
+      artist: components['schemas']['ArtistSummary'];
+      /**
+       * Places
+       * @default 0
+       */
+      places: number;
+      /** Previousrank */
+      previousRank: number | null;
+      /** Rank */
+      rank: number | null;
+    };
+    /**
+     * ChartState
+     * @description Whether a community has enough listeners to show its chart.
+     * @enum {string}
+     */
+    ChartState: 'LOCKED' | 'UNLOCKED';
+    /**
+     * CheckMoveRequest
+     * @description CheckMove: is ``to`` directly connected to ``from``?
+     */
+    CheckMoveRequest: {
+      /**
+       * Fromartist
+       * @description Resource name of the current artist.
+       */
+      fromArtist: string;
+      /**
+       * Toartist
+       * @description Resource name of the artist the player named.
+       */
+      toArtist: string;
+    };
+    /**
+     * CheckMoveResponse
+     * @description A correct move shows its evidence and the steps left; a wrong move reveals nothing.
+     */
+    CheckMoveResponse: {
+      artist: components['schemas']['ArtistSummary'] | null;
+      /** Connected */
+      connected: boolean;
+      /** Evidence */
+      evidence: components['schemas']['Evidence'][];
+      /**
+       * Reachedtarget
+       * @default false
+       */
+      reachedTarget: boolean;
+      /**
+       * Stepstotarget
+       * @description Steps left after this move; null if far or unreachable.
+       */
+      stepsToTarget: number | null;
+    };
+    /**
+     * CheckTriviaRequest
+     * @description CheckTrivia: is this option the right one for the question?
+     */
+    CheckTriviaRequest: {
+      /**
+       * Option
+       * @description The chosen option's resource name.
+       */
+      option: string;
+      /**
+       * Question
+       * @description The question ID, e.g. `q1`.
+       */
+      question: string;
+    };
+    /**
+     * CheckTriviaResponse
+     * @description The verdict, the right option and the credits behind it.
+     */
+    CheckTriviaResponse: {
+      /** Correct */
+      correct: boolean;
+      correctOption: components['schemas']['TriviaOption'];
+      /**
+       * Evidence
+       * @description Credits that make the right option right, with sources. Empty for WHICH_LABEL, which cites `sources` instead.
+       */
+      evidence: components['schemas']['Evidence'][];
+      /**
+       * Sources
+       * @description Pages where the fact can be checked (the release and the label).
+       */
+      sources: components['schemas']['SourceLink'][];
+      subject: components['schemas']['Subject'] | null;
+    };
+    /**
+     * CoListener
+     * @description An artist often played with another, by rank (ListenBrainz).
+     */
+    CoListener: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Rank */
+      rank: number;
+    };
+    /**
+     * Cohesion
+     * @description The share of matched artist pairs within 2 steps of each other.
+     */
+    Cohesion: {
+      /** Pairs */
+      pairs: number;
+      /** Pairswithintwo */
+      pairsWithinTwo: number;
+      /**
+       * Score
+       * @description Null with fewer than two matched artists.
+       */
+      score: number | null;
+    };
+    /**
+     * Collaboration
+     * @description A collaborator under one type.
+     */
+    Collaboration: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Count */
+      count: number;
+      /**
+       * Directions
+       * @description For PRODUCTION: which ways it went; empty otherwise.
+       */
+      directions: components['schemas']['ProductionDirection'][];
+      /** Evidence */
+      evidence: components['schemas']['Evidence'][];
+      /** Firstyear */
+      firstYear: number | null;
+      /** Lastyear */
+      lastYear: number | null;
+      type: components['schemas']['CollaborationType'];
+    };
+    /**
+     * CollaborationOrder
+     * @description How collaborators are listed.
+     * @enum {string}
+     */
+    CollaborationOrder: 'COUNT' | 'FIRST_YEAR';
+    /**
+     * CollaborationType
+     * @description A collaborations tab.
+     * @enum {string}
+     */
+    CollaborationType: 'FEATURE' | 'PRODUCTION' | 'BAND' | 'CREDIT';
+    /**
+     * Community
+     * @description A campus or city listeners can join (from the curated Wikidata directory).
+     */
+    Community: {
+      /** City */
+      city: string;
+      /** Citycommunity */
+      cityCommunity: string | null;
+      /** Country */
+      country: string;
+      /** Displayname */
+      displayName: string;
+      kind: components['schemas']['CommunityKind'];
+      /** Name */
+      name: string;
+      /** Region */
+      region: string;
+      /** Shortname */
+      shortName: string;
+      /** Sourceurl */
+      sourceUrl: string;
+      /**
+       * Synthetic
+       * @default false
+       */
+      synthetic: boolean;
+      /** Website */
+      website: string;
+    };
+    /**
+     * CommunityChart
+     * @description GetCommunityChart: what a community listens to, aggregated and anonymous.
+     */
+    CommunityChart: {
+      /** Artists */
+      artists: components['schemas']['CommunityChartArtist'][];
+      community: components['schemas']['Community'];
+      /** Demodata */
+      demoData: boolean;
+      /** Genres */
+      genres: components['schemas']['CommunityChartGenre'][];
+      /** Graphversion */
+      graphVersion: string;
+      /** Historyavailable */
+      historyAvailable: boolean;
+      listeners: components['schemas']['ListenerRange'] | null;
+      /** Listenersneeded */
+      listenersNeeded: number;
+      /** Minartistlisteners */
+      minArtistListeners: number;
+      /** Minlisteners */
+      minListeners: number;
+      /** Name */
+      name: string;
+      /** Nextupdatetime */
+      nextUpdateTime: string;
+      /** Rising */
+      rising: components['schemas']['CommunityChartArtist'][];
+      state: components['schemas']['ChartState'];
+      /** Updatetime */
+      updateTime: string;
+    };
+    /**
+     * CommunityChartArtist
+     * @description A chart row: rank, artist, listeners as a range, movement.
+     */
+    CommunityChartArtist: {
+      artist: components['schemas']['ArtistSummary'];
+      listeners: components['schemas']['ListenerRange'];
+      movement: components['schemas']['ChartMovement'] | null;
+      /**
+       * Places
+       * @default 0
+       */
+      places: number;
+      /** Rank */
+      rank: number;
+      /**
+       * Rising
+       * @default false
+       */
+      rising: boolean;
+    };
+    /**
+     * CommunityChartGenre
+     * @description A genre the community listens to, with listeners as a range.
+     */
+    CommunityChartGenre: {
+      /** Displayname */
+      displayName: string;
+      /** Genre */
+      genre: string;
+      listeners: components['schemas']['ListenerRange'];
+    };
+    /**
+     * CommunityKind
+     * @description A campus (university) or a city.
+     * @enum {string}
+     */
+    CommunityKind: 'CAMPUS' | 'CITY';
+    /**
+     * CommunityMembership
+     * @description A community the listener joined.
+     */
+    CommunityMembership: {
+      community: components['schemas']['Community'];
+      /** Jointime */
+      joinTime: string;
+    };
+    /**
+     * CompareArtistsResponse
+     * @description CompareArtists.
+     */
+    CompareArtistsResponse: {
+      artistA: components['schemas']['ArtistSummary'];
+      artistB: components['schemas']['ArtistSummary'];
+      /** Countsa */
+      countsA: {
+        [key: string]: number;
+      };
+      /** Countsb */
+      countsB: {
+        [key: string]: number;
+      };
+      /** Directlyconnected */
+      directlyConnected: boolean;
+      /**
+       * Genreoverlap
+       * @description Weighted overlap in [0, 1]; null if unknown.
+       */
+      genreOverlap: number | null;
+      /** Graphversion */
+      graphVersion: string;
+      /** @description Null when either artist has fewer than 50 listeners or no data. */
+      listening: components['schemas']['ListenerOverlap'] | null;
+      /** Mutualcollaborators */
+      mutualCollaborators: components['schemas']['ArtistSummary'][];
+      /** Path */
+      path: components['schemas']['ArtistSummary'][];
+      /** Sharedgenres */
+      sharedGenres: components['schemas']['SharedGenre'][];
+    };
+    /**
+     * CompareRecordingsResponse
+     * @description CompareRecordings: structure side by side, an explained similarity, shared credits.
+     */
+    CompareRecordingsResponse: {
+      /**
+       * Artistpath
+       * @description Fewest-steps path between the songs' first primary artists; empty when they are the same artist or not connected in our data.
+       */
+      artistPath: components['schemas']['ArtistSummary'][];
+      descriptorsA: components['schemas']['AudioDescriptors'] | null;
+      descriptorsB: components['schemas']['AudioDescriptors'] | null;
+      /** Graphversion */
+      graphVersion: string;
+      /** Parts */
+      parts: components['schemas']['SimilarityPart'][];
+      recordingA: components['schemas']['RecordingSummary'];
+      recordingB: components['schemas']['RecordingSummary'];
+      /**
+       * Sharedcredits
+       * @description Roles with someone in common first.
+       */
+      sharedCredits: components['schemas']['SharedCredit'][];
+      /**
+       * Similarity
+       * @description Weighted mean of the parts; null when neither song has data.
+       */
+      similarity: number | null;
+    };
+    /**
+     * ComputeTasteProfileRequest
+     * @description ComputeTasteProfile: the artists to profile (e.g. matched from a playlist on the device).
+     */
+    ComputeTasteProfileRequest: {
+      /**
+       * Artists
+       * @description Artist resource names, most important first; duplicates are ignored.
+       */
+      artists: string[];
+    };
+    /**
+     * Config
+     * @description GetConfig: feature flags and limits for the client.
+     */
+    Config: {
+      /** Flags */
+      flags: {
+        [key: string]: boolean;
+      };
+      /** Graphversion */
+      graphVersion: string | null;
+      limits: components['schemas']['Limits'];
+    };
+    /**
+     * Connection
+     * @description A connected artist and why.
+     */
+    Connection: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Evidencecount */
+      evidenceCount: number;
+      /**
+       * Highlights
+       * @description Up to two representative evidence lines.
+       */
+      highlights: components['schemas']['Evidence'][];
+      /** Kinds */
+      kinds: components['schemas']['ConnectionKind'][];
+      /** Strength */
+      strength: number;
+    };
+    /**
+     * ConnectionCategory
+     * @description A toggleable group of connection kinds.
+     * @enum {string}
+     */
+    ConnectionCategory:
+      | 'FEATURES'
+      | 'PRODUCERS'
+      | 'CONTRIBUTIONS'
+      | 'SAMPLES'
+      | 'BANDS'
+      | 'LABELS'
+      | 'ENGINEERING';
+    /**
+     * ConnectionDetail
+     * @description GetArtistConnection: all evidence between two artists, with sources.
+     */
+    ConnectionDetail: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Evidence */
+      evidence: components['schemas']['Evidence'][];
+      /** Graphversion */
+      graphVersion: string;
+      /** Kinds */
+      kinds: components['schemas']['ConnectionKind'][];
+      other: components['schemas']['ArtistSummary'];
+      /** Strength */
+      strength: number;
+    };
+    /**
+     * ConnectionKind
+     * @description Why two artists are connected.
+     * @enum {string}
+     */
+    ConnectionKind:
+      | 'PERFORMED_WITH'
+      | 'PRODUCED_FOR'
+      | 'CO_PRODUCED'
+      | 'CONTRIBUTED_TO'
+      | 'SAMPLED'
+      | 'MEMBER_OF'
+      | 'COLLABORATION'
+      | 'SUPPORTED'
+      | 'TAUGHT'
+      | 'LABEL_MATES'
+      | 'ENGINEERED';
+    /**
+     * CreateBlockedArtistRequest
+     * @description CreateBlockedArtist.
+     */
+    CreateBlockedArtistRequest: {
+      /**
+       * Artist
+       * @description Resource name `artists/{artist}` to block.
+       */
+      artist: string;
+    };
+    /**
+     * CreateBlockedUserRequest
+     * @description CreateBlockedUser: a friend, or someone who shared with you.
+     */
+    CreateBlockedUserRequest: {
+      /**
+       * User
+       * @description Resource name `users/{user}`.
+       */
+      user: string;
+    };
+    /**
+     * CreateLinkedAccountRequest
+     * @description CreateLinkedAccount: a ListenBrainz user token, or an Apple Music user token.
+     */
+    CreateLinkedAccountRequest: {
+      provider: components['schemas']['ListeningProvider'];
+      /** Token */
+      token: string;
+    };
+    /**
+     * CreateLocalSessionRequest
+     * @description CreateLocalSession (development only): sign in as a named local listener.
+     */
+    CreateLocalSessionRequest: {
+      /**
+       * Ageconfirmed
+       * @default false
+       */
+      ageConfirmed?: boolean;
+      /**
+       * Listener
+       * @default listener
+       */
+      listener?: string;
+    };
+    /**
+     * CreateReportRequest
+     * @description CreateReport: report a share you received, or a person you know. Give one of the two.
+     */
+    CreateReportRequest: {
+      /**
+       * Details
+       * @default
+       */
+      details?: string;
+      reason: components['schemas']['ReportReason'];
+      /**
+       * Share
+       * @description `shares/{share}` you received.
+       * @default
+       */
+      share?: string;
+      /**
+       * User
+       * @description `users/{user}`: a friend or someone who shared.
+       * @default
+       */
+      user?: string;
+    };
+    /**
+     * CreateSessionRequest
+     * @description CreateSession: exchange a Firebase ID token for a session cookie.
+     */
+    CreateSessionRequest: {
+      /**
+       * Ageconfirmed
+       * @description Required (true) when creating an account: the user is 13+.
+       * @default false
+       */
+      ageConfirmed?: boolean;
+      /** Idtoken */
+      idToken: string;
+    };
+    /**
+     * CreateShareRequest
+     * @description CreateShare: send an artist, song, comparison or path to a friend.
+     */
+    CreateShareRequest: {
+      kind: components['schemas']['ShareKind'];
+      /**
+       * Note
+       * @default
+       */
+      note?: string;
+      /**
+       * Recipient
+       * @description A friend, `users/{user}`.
+       */
+      recipient: string;
+      /** Subjects */
+      subjects: string[];
+    };
+    /**
+     * Credit
+     * @description An artist's credit on a recording.
+     */
+    Credit: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Creditedas */
+      creditedAs: string | null;
+      /** Role */
+      role: string;
+      /**
+       * Roledetail
+       * @default
+       */
+      roleDetail: string;
+    };
+    /**
+     * DataSource
+     * @description A provider of data, with its license and what it feeds.
+     */
+    DataSource: {
+      /** Attribution */
+      attribution: string;
+      /**
+       * Checkedon
+       * @description ISO date the license was last checked.
+       */
+      checkedOn: string;
+      /** Displayname */
+      displayName: string;
+      /** Feeds */
+      feeds: string[];
+      /** Homepage */
+      homepage: string;
+      kind: components['schemas']['SourceKind'];
+      /** License */
+      license: string;
+      /** Licenseurl */
+      licenseUrl: string;
+      /**
+       * Name
+       * @description Resource name, `dataSources/{source}`.
+       */
+      name: string;
+      /** Notes */
+      notes: string;
+      status: components['schemas']['SourceStatus'];
+      tier: components['schemas']['LicenseTier'];
+    };
+    /**
+     * Empty
+     * @description An empty response.
+     */
+    Empty: Record<string, never>;
+    /**
+     * EntityStatus
+     * @description How a name in the question resolved.
+     * @enum {string}
+     */
+    EntityStatus: 'MATCHED' | 'AMBIGUOUS' | 'NOT_FOUND';
+    /**
+     * EntityType
+     * @description A searchable entity type.
+     * @enum {string}
+     */
+    EntityType: 'ARTIST' | 'RELEASE' | 'RECORDING';
+    /**
+     * ErrorInfo
+     * @description google.rpc.ErrorInfo: the machine-readable cause.
+     */
+    ErrorInfo: {
+      /**
+       * @Type
+       * @example type.googleapis.com/google.rpc.ErrorInfo
+       */
+      '@type': string;
+      /**
+       * Domain
+       * @example songnexus.app
+       */
+      domain: string;
+      /** Metadata */
+      metadata: {
+        [key: string]: string;
+      };
+      /**
+       * Reason
+       * @example ARTIST_NOT_FOUND
+       */
+      reason: string;
+    };
+    /**
+     * ErrorResponse
+     * @description The body of every error response.
+     */
+    ErrorResponse: {
+      error: components['schemas']['Status'];
+    };
+    /**
+     * Evidence
+     * @description One reason two artists are connected, as a localizable message.
+     */
+    Evidence: {
+      /** Fromartist */
+      fromArtist: string;
+      /** Fromrole */
+      fromRole: string;
+      kind: components['schemas']['ConnectionKind'];
+      /**
+       * Messageid
+       * @description Client message key, e.g. `evidence.featured`.
+       */
+      messageId: string;
+      /** Sources */
+      sources: components['schemas']['SourceLink'][];
+      subject: components['schemas']['Subject'];
+      /** Toartist */
+      toArtist: string;
+      /** Torole */
+      toRole: string;
+    };
+    /**
+     * FeaturedArtistsResponse
+     * @description The featured artists, in editorial order.
+     */
+    FeaturedArtistsResponse: {
+      /** Artists */
+      artists: components['schemas']['ArtistSummary'][];
+      /** Graphversion */
+      graphVersion: string;
+    };
+    /**
+     * FindPathResponse
+     * @description FindPath.
+     */
+    FindPathResponse: {
+      /**
+       * Alternatives
+       * @description Other routes, as artist sequences.
+       */
+      alternatives: components['schemas']['ArtistSummary'][][];
+      /** Graphversion */
+      graphVersion: string;
+      outcome: components['schemas']['PathOutcome'];
+      /** Steps */
+      steps: components['schemas']['PathStep'][];
+    };
+    /**
+     * Friend
+     * @description A friend.
+     */
+    Friend: {
+      /** Createtime */
+      createTime: string;
+      /**
+       * Name
+       * @description `users/{user}/friends/{friend}`.
+       */
+      name: string;
+      person: components['schemas']['Person'];
+    };
+    /**
+     * FriendInvite
+     * @description An invite code. The code is returned once, at creation; only its hash is stored.
+     */
+    FriendInvite: {
+      /**
+       * Code
+       * @description `XXXXX-XXXXX`; only in CreateFriendInvite.
+       * @default
+       */
+      code: string;
+      /** Createtime */
+      createTime: string;
+      /** Expiretime */
+      expireTime: string;
+      /**
+       * Name
+       * @description `users/{user}/friendInvites/{invite}`.
+       */
+      name: string;
+    };
+    /**
+     * FriendInvitePreview
+     * @description GetFriendInvite: who an invite is from, before accepting it.
+     */
+    FriendInvitePreview: {
+      /**
+       * Alreadyfriends
+       * @default false
+       */
+      alreadyFriends: boolean;
+      /** Expiretime */
+      expireTime: string;
+      inviter: components['schemas']['Person'];
+    };
+    /**
+     * FriendLeaderboard
+     * @description GetFriendLeaderboard: the viewer and accepted friends who scored in the period.
+     */
+    FriendLeaderboard: {
+      /** Enddate */
+      endDate: string;
+      game: components['schemas']['Game'];
+      /**
+       * Name
+       * @description `users/{user}/friendLeaderboard`.
+       */
+      name: string;
+      period: components['schemas']['LeaderboardPeriod'];
+      /** Standings */
+      standings: components['schemas']['FriendStanding'][];
+      /** Startdate */
+      startDate: string;
+    };
+    /**
+     * FriendPath
+     * @description A shortest connection from one of your top artists to one of your friend's.
+     */
+    FriendPath: {
+      fromArtist: components['schemas']['ArtistSummary'];
+      /** Steps */
+      steps: components['schemas']['PathStep'][];
+      toArtist: components['schemas']['ArtistSummary'];
+    };
+    /**
+     * FriendPaths
+     * @description GetFriendPaths: how your top artists connect to an accepted friend's.
+     */
+    FriendPaths: {
+      /**
+       * Demodata
+       * @description The friend is a synthetic demo listener.
+       * @default false
+       */
+      demoData: boolean;
+      friend: components['schemas']['Person'];
+      /** Friendartists */
+      friendArtists: components['schemas']['ArtistSummary'][];
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Name
+       * @description `users/{user}/friends/{friend}/paths`.
+       */
+      name: string;
+      /** Paths */
+      paths: components['schemas']['FriendPath'][];
+      /** Sharedartists */
+      sharedArtists: components['schemas']['ArtistSummary'][];
+      /** Sharedcollaborators */
+      sharedCollaborators: components['schemas']['SharedCollaborator'][];
+      /** Viewerartists */
+      viewerArtists: components['schemas']['ArtistSummary'][];
+    };
+    /**
+     * FriendStanding
+     * @description The viewer or an accepted friend on the friends leaderboard.
+     */
+    FriendStanding: {
+      /** Daysplayed */
+      daysPlayed: number;
+      /**
+       * Isviewer
+       * @default false
+       */
+      isViewer: boolean;
+      person: components['schemas']['Person'];
+      /** Points */
+      points: number;
+      /** Rank */
+      rank: number;
+    };
+    /**
+     * Game
+     * @description A game with a leaderboard: the daily puzzle or Credit check.
+     * @enum {string}
+     */
+    Game: 'PUZZLE' | 'TRIVIA';
+    /**
+     * GameScore
+     * @description A score the server computed from a submitted play (one per game per day).
+     */
+    GameScore: {
+      /**
+       * Campus
+       * @description `communities/{id}` it counts for.
+       */
+      campus: string | null;
+      /** Correct */
+      correct: number | null;
+      /** Date */
+      date: string;
+      game: components['schemas']['Game'];
+      /** Maxpoints */
+      maxPoints: number;
+      /**
+       * Name
+       * @description `users/{user}/gameScores/{game}-{date}`.
+       */
+      name: string;
+      /** Par */
+      par: number | null;
+      /** Points */
+      points: number;
+      /** Steps */
+      steps: number | null;
+      /** Submittime */
+      submitTime: string;
+      /**
+       * Synthetic
+       * @description Demo data from `songnexus seed-demo`.
+       * @default false
+       */
+      synthetic: boolean;
+      /** Total */
+      total: number | null;
+    };
+    /**
+     * Genre
+     * @description A genre.
+     */
+    Genre: {
+      /**
+       * Artistcount
+       * @description Artists carrying this genre.
+       */
+      artistCount: number;
+      /**
+       * Artistcountwithsubgenres
+       * @description Artists carrying this genre or any genre below it.
+       */
+      artistCountWithSubgenres: number;
+      /** Displayname */
+      displayName: string;
+      /** Name */
+      name: string;
+      /**
+       * Parents
+       * @description Direct parent genres, `genres/{genre}`.
+       */
+      parents: string[];
+    };
+    /**
+     * GenreArtist
+     * @description An artist in a genre.
+     */
+    GenreArtist: {
+      artist: components['schemas']['ArtistSummary'];
+      /**
+       * Collaboratorcount
+       * @description Distinct collaborators (as on artist pages).
+       */
+      collaboratorCount: number;
+      /**
+       * Genreshare
+       * @description Share of the artist's genres in this genre, 0 to 1.
+       */
+      genreShare: number;
+    };
+    /**
+     * GenreDetail
+     * @description GetGenre: a genre, where it sits in the hierarchy, and how many artists it has.
+     */
+    GenreDetail: {
+      /**
+       * Artistcount
+       * @description Artists carrying this genre.
+       */
+      artistCount: number;
+      /**
+       * Artistcountwithsubgenres
+       * @description Artists carrying this genre or any genre below it.
+       */
+      artistCountWithSubgenres: number;
+      /**
+       * Children
+       * @description Direct subgenres with artists, most artists first.
+       */
+      children: components['schemas']['GenreRef'][];
+      /** Displayname */
+      displayName: string;
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Membercount
+       * @description Artists listed by ListGenreArtists: at least 20% of their genre shares in this genre or its subgenres (the genre filter's rule).
+       */
+      memberCount: number;
+      /**
+       * Name
+       * @description `genres/{genre}`.
+       */
+      name: string;
+      /** Parents */
+      parents: components['schemas']['GenreRef'][];
+      /**
+       * Toplevel
+       * @description True when the genre has no parent.
+       */
+      topLevel: boolean;
+    };
+    /**
+     * GenreRef
+     * @description A related genre with its artist counts.
+     */
+    GenreRef: {
+      /** Artistcount */
+      artistCount: number;
+      /** Artistcountwithsubgenres */
+      artistCountWithSubgenres: number;
+      /** Displayname */
+      displayName: string;
+      /**
+       * Name
+       * @description `genres/{genre}`.
+       */
+      name: string;
+    };
+    /**
+     * GenreShare
+     * @description A genre and its share of an artist's genre votes.
+     */
+    GenreShare: {
+      /** Displayname */
+      displayName: string;
+      /**
+       * Genre
+       * @description Resource name `genres/{genre}`.
+       */
+      genre: string;
+      /**
+       * Share
+       * @description Averaged over the sources with genre data for the artist.
+       */
+      share: number;
+      /**
+       * Sources
+       * @description Data sources asserting it, `dataSources/{source}`.
+       */
+      sources: string[];
+    };
+    /**
+     * Health
+     * @description Liveness and readiness.
+     */
+    Health: {
+      /** Catalogloaded */
+      catalogLoaded: boolean;
+      /** Status */
+      status: string;
+    };
+    /**
+     * HintRequest
+     * @description GetHint.
+     */
+    HintRequest: {
+      /** Fromartist */
+      fromArtist: string;
+    };
+    /**
+     * HintResponse
+     * @description Three connections of the current artist, at least one closer to the target.
+     */
+    HintResponse: {
+      /** Candidates */
+      candidates: components['schemas']['ArtistSummary'][];
+    };
+    /**
+     * InterpretedBy
+     * @description Who read the question: the built-in parser, the model, or no one (not understood).
+     * @enum {string}
+     */
+    InterpretedBy: 'PARSER' | 'MODEL' | 'NONE';
+    /**
+     * Label
+     * @description GetLabel: a record label, its roster by era, and its releases in our data.
+     */
+    Label: {
+      /**
+       * Artists
+       * @description Roster, by first release year.
+       */
+      artists: components['schemas']['LabelArtist'][];
+      /** Disambiguation */
+      disambiguation: string | null;
+      /** Displayname */
+      displayName: string;
+      /** Graphversion */
+      graphVersion: string;
+      /** Labeltype */
+      labelType: string | null;
+      /**
+       * Name
+       * @description Resource name `labels/{label}`.
+       */
+      name: string;
+      /**
+       * Releases
+       * @description Releases, oldest first.
+       */
+      releases: components['schemas']['LabelRelease'][];
+      /** Sources */
+      sources: components['schemas']['SourceLink'][];
+    };
+    /**
+     * LabelArtist
+     * @description An artist on a label's roster, with when they released there.
+     */
+    LabelArtist: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Firstyear */
+      firstYear: number | null;
+      /** Lastyear */
+      lastYear: number | null;
+      /** Releasecount */
+      releaseCount: number;
+    };
+    /**
+     * LabelRelease
+     * @description A release on a label.
+     */
+    LabelRelease: {
+      /** Artists */
+      artists: components['schemas']['ArtistSummary'][];
+      /** Catalognumbers */
+      catalogNumbers: string[];
+      /** Displayname */
+      displayName: string;
+      /**
+       * Release
+       * @description Resource name `releases/{release}`.
+       */
+      release: string;
+      /** Year */
+      year: number | null;
+    };
+    /**
+     * LeaderboardPeriod
+     * @description One day, or the ISO week (Monday to Sunday) containing the date.
+     * @enum {string}
+     */
+    LeaderboardPeriod: 'DAY' | 'WEEK';
+    /**
+     * LicenseTier
+     * @description What a data source's license allows (ADR 0005).
+     * @enum {string}
+     */
+    LicenseTier: 'PRODUCTION' | 'NON_COMMERCIAL' | 'EVALUATION';
+    /**
+     * Limits
+     * @description Request limits clients should respect (plan §14).
+     */
+    Limits: {
+      /** Maxalternatives */
+      maxAlternatives: number;
+      /** Maxpagesize */
+      maxPageSize: number;
+      /** Maxpathsteps */
+      maxPathSteps: number;
+      /** Maxquerylength */
+      maxQueryLength: number;
+    };
+    /**
+     * Link
+     * @description An external link.
+     */
+    Link: {
+      /** Linktype */
+      linkType: string;
+      /** Url */
+      url: string;
+    };
+    /**
+     * LinkMethod
+     * @description How a provider is linked.
+     * @enum {string}
+     */
+    LinkMethod: 'REDIRECT' | 'TOKEN' | 'MUSICKIT' | 'FILE';
+    /**
+     * LinkedAccount
+     * @description A linked listening account. Tokens are never returned.
+     */
+    LinkedAccount: {
+      /**
+       * Externaluser
+       * @description The account name on the provider.
+       */
+      externalUser: string;
+      /** Lastsynctime */
+      lastSyncTime: string | null;
+      /** Linktime */
+      linkTime: string;
+      /**
+       * Name
+       * @description `users/{user}/linkedAccounts/{provider}`.
+       */
+      name: string;
+      /** Nextsynctime */
+      nextSyncTime: string | null;
+      provider: components['schemas']['ListeningProvider'];
+      status: components['schemas']['LinkedAccountStatus'];
+      /**
+       * Unmatchedplays
+       * @description Plays whose artist could not be matched to the catalog (counted, not kept).
+       */
+      unmatchedPlays: number;
+    };
+    /**
+     * LinkedAccountStatus
+     * @description Whether sync works.
+     * @enum {string}
+     */
+    LinkedAccountStatus: 'ACTIVE' | 'NEEDS_RELINK';
+    /**
+     * ListArtistCollaborationsResponse
+     * @description ListArtistCollaborations. Counts are based on releases in our data.
+     */
+    ListArtistCollaborationsResponse: {
+      /** Collaborations */
+      collaborations: components['schemas']['Collaboration'][];
+      /** Counts */
+      counts: {
+        [key: string]: number;
+      };
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /**
+       * Timeline
+       * @description Every type, the genre filter applied, the year range not applied.
+       */
+      timeline: components['schemas']['TimelineYear'][];
+      /** Totalsize */
+      totalSize: number;
+      /**
+       * Undated
+       * @description Subjects with no known year, by type.
+       */
+      undated: {
+        [key: string]: number;
+      };
+    };
+    /**
+     * ListArtistConnectionsResponse
+     * @description ListArtistConnections.
+     */
+    ListArtistConnectionsResponse: {
+      /** Connections */
+      connections: components['schemas']['Connection'][];
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListBlockedArtistsResponse
+     * @description ListBlockedArtists.
+     */
+    ListBlockedArtistsResponse: {
+      /** Blockedartists */
+      blockedArtists: components['schemas']['BlockedArtist'][];
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListBlockedUsersResponse
+     * @description ListBlockedUsers: oldest first.
+     */
+    ListBlockedUsersResponse: {
+      /** Blockedusers */
+      blockedUsers: components['schemas']['BlockedUser'][];
+    };
+    /**
+     * ListCommunitiesResponse
+     * @description ListCommunities: communities matching a search, best first.
+     */
+    ListCommunitiesResponse: {
+      /** Communities */
+      communities: components['schemas']['Community'][];
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListDataSourcesResponse
+     * @description ListDataSources.
+     */
+    ListDataSourcesResponse: {
+      /** Datasources */
+      dataSources: components['schemas']['DataSource'][];
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListFriendInvitesResponse
+     * @description ListFriendInvites: the user's unexpired invites, newest first (codes not included).
+     */
+    ListFriendInvitesResponse: {
+      /** Friendinvites */
+      friendInvites: components['schemas']['FriendInvite'][];
+    };
+    /**
+     * ListFriendsResponse
+     * @description ListFriends: oldest friendship first.
+     */
+    ListFriendsResponse: {
+      /** Friends */
+      friends: components['schemas']['Friend'][];
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListGameScoresResponse
+     * @description ListGameScores: the player's own scores of the last two weeks, newest first.
+     */
+    ListGameScoresResponse: {
+      /** Gamescores */
+      gameScores: components['schemas']['GameScore'][];
+    };
+    /**
+     * ListGenreArtistsResponse
+     * @description ListGenreArtists: a genre's artists, most connected first.
+     */
+    ListGenreArtistsResponse: {
+      /** Artists */
+      artists: components['schemas']['GenreArtist'][];
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListGenresResponse
+     * @description ListGenres.
+     */
+    ListGenresResponse: {
+      /** Genres */
+      genres: components['schemas']['Genre'][];
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListInboxResponse
+     * @description ListInbox: shares received, newest first.
+     */
+    ListInboxResponse: {
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Shares */
+      shares: components['schemas']['Share'][];
+      /** Totalsize */
+      totalSize: number;
+      /** Unreadcount */
+      unreadCount: number;
+    };
+    /**
+     * ListLinkedAccountsResponse
+     * @description ListLinkedAccounts: every provider, linked or not.
+     */
+    ListLinkedAccountsResponse: {
+      /** Providers */
+      providers: components['schemas']['ProviderOffer'][];
+      /** Syncintervalminutes */
+      syncIntervalMinutes: number;
+    };
+    /**
+     * ListListeningResponse
+     * @description ListListening: the listener's artists from linked accounts, most played first.
+     */
+    ListListeningResponse: {
+      /** Artists */
+      artists: components['schemas']['ListeningArtist'][];
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListShelvesResponse
+     * @description ListShelves: the home page's shelves, in display order. Empty shelves are left out.
+     */
+    ListShelvesResponse: {
+      /** Graphversion */
+      graphVersion: string;
+      /** Shelves */
+      shelves: components['schemas']['Shelf'][];
+    };
+    /**
+     * ListStoriesResponse
+     * @description ListStories: a page of the feed.
+     */
+    ListStoriesResponse: {
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Nextpagetoken
+       * @default
+       */
+      nextPageToken: string;
+      /** Stories */
+      stories: components['schemas']['Story'][];
+      /** Totalsize */
+      totalSize: number;
+    };
+    /**
+     * ListenerOverlap
+     * @description Shared audience, from aggregate ListenBrainz data; never about individual listeners.
+     */
+    ListenerOverlap: {
+      /** Listenersa */
+      listenersA: number;
+      /** Listenersb */
+      listenersB: number;
+      /** Listensa */
+      listensA: number;
+      /** Listensb */
+      listensB: number;
+      /** Rankaforb */
+      rankAForB: number | null;
+      /**
+       * Rankbfora
+       * @description B's rank among the artists A's listeners most often also play (1 = most).
+       */
+      rankBForA: number | null;
+      source: components['schemas']['SourceLink'];
+      /** @description From the better rank: STRONG <= 10, MODERATE <= 50, WEAK <= 100, else NONE. */
+      strength: components['schemas']['OverlapStrength'];
+    };
+    /**
+     * ListenerRange
+     * @description A count shown as a range: ``min`` to ``max`` listeners (``max`` null: or more).
+     */
+    ListenerRange: {
+      /** Max */
+      max: number | null;
+      /** Min */
+      min: number;
+    };
+    /**
+     * ListeningArtist
+     * @description An artist the listener played, from linked accounts.
+     */
+    ListeningArtist: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Lastplaytime */
+      lastPlayTime: string | null;
+      /** Plays */
+      plays: number;
+      /** Providers */
+      providers: components['schemas']['ListeningProvider'][];
+    };
+    /**
+     * ListeningProvider
+     * @description A listening service (ADR 0006).
+     * @enum {string}
+     */
+    ListeningProvider:
+      | 'LISTENBRAINZ'
+      | 'LASTFM'
+      | 'LIBREFM'
+      | 'SPOTIFY'
+      | 'DEEZER'
+      | 'APPLE_MUSIC'
+      | 'YOUTUBE_MUSIC';
+    /**
+     * MarkAllReadResponse
+     * @description MarkInboxRead: how many shares were marked read.
+     */
+    MarkAllReadResponse: {
+      /** Marked */
+      marked: number;
+    };
+    /**
+     * MatchStatus
+     * @description How an artist name from the playlist was matched.
+     * @enum {string}
+     */
+    MatchStatus: 'MATCHED' | 'AMBIGUOUS' | 'NO_MATCH';
+    /**
+     * MoversState
+     * @description Whether a weekly recap can be shown.
+     * @enum {string}
+     */
+    MoversState: 'LOCKED' | 'NO_HISTORY' | 'AVAILABLE';
+    /**
+     * OverlapStrength
+     * @description How strongly two audiences overlap (``core.listening``).
+     * @enum {string}
+     */
+    OverlapStrength: 'STRONG' | 'MODERATE' | 'WEAK' | 'NONE';
+    /**
+     * PathChallenge
+     * @description GetPathChallenge: two well-known artists to connect, the same for everyone on a date.
+     */
+    PathChallenge: {
+      /** Date */
+      date: string;
+      fromArtist: components['schemas']['ArtistSummary'];
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Name
+       * @description `pathChallenges/{date}`.
+       */
+      name: string;
+      /**
+       * Steps
+       * @description Connections on a shortest path (3 to 5).
+       */
+      steps: number;
+      toArtist: components['schemas']['ArtistSummary'];
+    };
+    /**
+     * PathMode
+     * @description How FindPath ranks routes.
+     * @enum {string}
+     */
+    PathMode: 'FEWEST_STEPS' | 'STRONGEST_LINKS';
+    /**
+     * PathOutcome
+     * @description Why a FindPath response does or does not contain a path.
+     * @enum {string}
+     */
+    PathOutcome:
+      'FOUND' | 'NOT_CONNECTED_WITHIN_LIMIT' | 'SEARCH_LIMIT_REACHED';
+    /**
+     * PathStep
+     * @description One step of a path.
+     */
+    PathStep: {
+      /** Evidence */
+      evidence: components['schemas']['Evidence'][];
+      fromArtist: components['schemas']['ArtistSummary'];
+      /** Strength */
+      strength: number;
+      toArtist: components['schemas']['ArtistSummary'];
+      /** @description One recording proving this step, different from earlier steps' tracks where possible. Null when only a relation (such as band membership) connects them. */
+      track: components['schemas']['PathTrack'] | null;
+    };
+    /**
+     * PathTrack
+     * @description A real recording that stands for one step of a path (to turn a path into a playlist).
+     */
+    PathTrack: {
+      /**
+       * Artists
+       * @description The recording's primary artists.
+       */
+      artists: components['schemas']['ArtistSummary'][];
+      /** Displayname */
+      displayName: string;
+      /** Firstreleasedate */
+      firstReleaseDate: string | null;
+      /**
+       * Recording
+       * @description `recordings/{recording}`.
+       */
+      recording: string;
+      /**
+       * Release
+       * @description Set (`releases/{release}`) when the step's credit is on this release, not the recording itself; the recording is then the release's first track.
+       */
+      release: string | null;
+      /** Year */
+      year: number | null;
+    };
+    /**
+     * Person
+     * @description Someone in the friends graph, as another user sees them.
+     */
+    Person: {
+      /** Displayname */
+      displayName: string;
+      /**
+       * User
+       * @description Resource name `users/{user}` (opaque).
+       */
+      user: string;
+    };
+    /**
+     * PlaylistArtist
+     * @description One distinct artist name from the playlist and what it matched.
+     */
+    PlaylistArtist: {
+      artist: components['schemas']['ArtistSummary'] | null;
+      /**
+       * Blocked
+       * @default false
+       */
+      blocked: boolean;
+      /**
+       * Candidates
+       * @description For AMBIGUOUS: who it might be, best first.
+       */
+      candidates: components['schemas']['ArtistSummary'][];
+      /** Query */
+      query: string;
+      status: components['schemas']['MatchStatus'];
+      /** Trackcount */
+      trackCount: number;
+    };
+    /**
+     * PlaylistConnector
+     * @description A hidden link: an artist outside the playlist connected to several in it.
+     */
+    PlaylistConnector: {
+      artist: components['schemas']['ArtistSummary'];
+      /**
+       * Linkedto
+       * @description Resource names of the playlist artists it links.
+       */
+      linkedTo: string[];
+      /** Score */
+      score: number;
+    };
+    /**
+     * PlaylistLink
+     * @description A direct connection between two playlist artists.
+     */
+    PlaylistLink: {
+      /** Artista */
+      artistA: string;
+      /** Artistb */
+      artistB: string;
+      /** Strength */
+      strength: number;
+    };
+    /**
+     * PlaylistThread
+     * @description Shortest paths between consecutive playlist artists, joined.
+     */
+    PlaylistThread: {
+      /** Artists */
+      artists: components['schemas']['ArtistSummary'][];
+      /**
+       * Breaks
+       * @description Consecutive pairs with no path within the step limit.
+       */
+      breaks: number;
+    };
+    /**
+     * PlaylistTrack
+     * @description A track as the device parsed it: a title and its artist names, nothing else.
+     */
+    PlaylistTrack: {
+      /**
+       * Artists
+       * @description Artist names as written, or `artists/{artist}` for a choice the user made.
+       */
+      artists: string[];
+      /**
+       * Title
+       * @default
+       */
+      title?: string;
+    };
+    /**
+     * Preferences
+     * @description GetPreferences / UpdatePreferences (AIP-134 update mask, AIP-154 ETag).
+     */
+    'Preferences-Input': {
+      /** Categories */
+      categories?: components['schemas']['ConnectionCategory'][];
+      /**
+       * Etag
+       * @default
+       */
+      etag?: string;
+      /** Genres */
+      genres?: string[];
+      /**
+       * Name
+       * @default
+       */
+      name?: string;
+      /** @default SYSTEM */
+      theme?: components['schemas']['Theme'];
+      /** Updatetime */
+      updateTime?: string | null;
+    };
+    /**
+     * Preferences
+     * @description GetPreferences / UpdatePreferences (AIP-134 update mask, AIP-154 ETag).
+     */
+    'Preferences-Output': {
+      /** Categories */
+      categories: components['schemas']['ConnectionCategory'][];
+      /**
+       * Etag
+       * @default
+       */
+      etag: string;
+      /** Genres */
+      genres: string[];
+      /**
+       * Name
+       * @default
+       */
+      name: string;
+      /** @default SYSTEM */
+      theme: components['schemas']['Theme'];
+      /** Updatetime */
+      updateTime: string | null;
+    };
+    /**
+     * ProductionDirection
+     * @description Who produced whom, from the requested artist's side.
+     * @enum {string}
+     */
+    ProductionDirection: 'PRODUCED_FOR' | 'PRODUCED_BY' | 'CO_PRODUCED';
+    /**
+     * Profile
+     * @description GetProfile / UpdateProfile: Top 5 artists (US-09).
+     */
+    'Profile-Input': {
+      /**
+       * Etag
+       * @default
+       */
+      etag?: string;
+      /**
+       * Name
+       * @default
+       */
+      name?: string;
+      /**
+       * Topartists
+       * @description Up to 5 `artists/{artist}`.
+       */
+      topArtists?: string[];
+      /** Updatetime */
+      updateTime?: string | null;
+      /** @default PRIVATE */
+      visibility?: components['schemas']['Visibility'];
+    };
+    /**
+     * Profile
+     * @description GetProfile / UpdateProfile: Top 5 artists (US-09).
+     */
+    'Profile-Output': {
+      /**
+       * Etag
+       * @default
+       */
+      etag: string;
+      /**
+       * Name
+       * @default
+       */
+      name: string;
+      /**
+       * Topartists
+       * @description Up to 5 `artists/{artist}`.
+       */
+      topArtists: string[];
+      /** Updatetime */
+      updateTime: string | null;
+      /** @default PRIVATE */
+      visibility: components['schemas']['Visibility'];
+    };
+    /**
+     * ProviderOffer
+     * @description A provider as offered to the listener.
+     */
+    ProviderOffer: {
+      /** Available */
+      available: boolean;
+      linkedAccount: components['schemas']['LinkedAccount'] | null;
+      method: components['schemas']['LinkMethod'];
+      provider: components['schemas']['ListeningProvider'];
+      /**
+       * Unavailablereason
+       * @default
+       */
+      unavailableReason: string;
+    };
+    /**
+     * Puzzle
+     * @description GetDailyPuzzle: the same puzzle for every player on a date.
+     */
+    Puzzle: {
+      /** Date */
+      date: string;
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Name
+       * @description `puzzles/{date}`, the player's local date (YYYY-MM-DD).
+       */
+      name: string;
+      /**
+       * Number
+       * @description 1 on the launch day.
+       */
+      number: number;
+      /**
+       * Par
+       * @description Steps in the shortest connection (3 or 4).
+       */
+      par: number;
+      start: components['schemas']['ArtistSummary'];
+      target: components['schemas']['ArtistSummary'];
+    };
+    /**
+     * Reason
+     * @description A machine-readable reason: a kind, its client message key and the numbers behind it.
+     */
+    Reason: {
+      kind: components['schemas']['ShelfReasonKind'];
+      /**
+       * Messageid
+       * @description Client message key, e.g. `reason.producedRecordings`.
+       */
+      messageId: string;
+      /**
+       * Params
+       * @description Counts, years and roles.
+       */
+      params: {
+        [key: string]: string | number;
+      };
+    };
+    /**
+     * RecommendArtistsResponse
+     * @description RecommendArtists.
+     */
+    RecommendArtistsResponse: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Graphversion */
+      graphVersion: string;
+      /** Recommendations */
+      recommendations: components['schemas']['Recommendation'][];
+    };
+    /**
+     * Recommendation
+     * @description A recommended artist, not directly connected to the one asked about.
+     */
+    Recommendation: {
+      artist: components['schemas']['ArtistSummary'];
+      /**
+       * Reasons
+       * @description Never empty.
+       */
+      reasons: components['schemas']['RecommendationReason'][];
+      /**
+       * Score
+       * @description Ranking score (higher first); for ordering only.
+       */
+      score: number;
+    };
+    /**
+     * RecommendationReason
+     * @description One checkable reason for a recommendation.
+     */
+    RecommendationReason: {
+      kind: components['schemas']['RecommendationReasonKind'];
+      /** @description SAME_LABEL: the shared label. */
+      label: components['schemas']['ShelfLabel'] | null;
+      /**
+       * Messageid
+       * @description Client message key, e.g. `recommend.sharedCollaborators`.
+       */
+      messageId: string;
+      /** Params */
+      params: {
+        [key: string]: string | number;
+      };
+      /** @description LISTENERS_IN_COMMON: where the aggregate data comes from. */
+      source: components['schemas']['SourceLink'] | null;
+      /**
+       * Via
+       * @description SHARED_COLLABORATORS: up to 3 shared collaborators, strongest links first. Each link opens as a connection.
+       */
+      via: components['schemas']['ArtistSummary'][];
+    };
+    /**
+     * RecommendationReasonKind
+     * @description Why an artist is recommended.
+     * @enum {string}
+     */
+    RecommendationReasonKind:
+      'SHARED_COLLABORATORS' | 'LISTENERS_IN_COMMON' | 'SAME_LABEL';
+    /**
+     * Recording
+     * @description GetRecording.
+     */
+    Recording: {
+      /** Appearances */
+      appearances: components['schemas']['Appearance'][];
+      /** Credits */
+      credits: components['schemas']['Credit'][];
+      /** @description Absent when AcousticBrainz has no data for the recording. */
+      descriptors: components['schemas']['AudioDescriptors'] | null;
+      /** Displayname */
+      displayName: string;
+      /** Firstreleasedate */
+      firstReleaseDate: string | null;
+      /** Lengthms */
+      lengthMs: number | null;
+      /** Name */
+      name: string;
+      /** Sources */
+      sources: components['schemas']['SourceLink'][];
+    };
+    /**
+     * RecordingSummary
+     * @description A recording as shown in a comparison.
+     */
+    RecordingSummary: {
+      /**
+       * Artists
+       * @description Primary artists.
+       */
+      artists: components['schemas']['ArtistSummary'][];
+      /** Displayname */
+      displayName: string;
+      /** Firstreleasedate */
+      firstReleaseDate: string | null;
+      /** Lengthms */
+      lengthMs: number | null;
+      /** Name */
+      name: string;
+    };
+    /**
+     * Report
+     * @description A filed report. Moderators review it; the reporter sees only that it was received.
+     */
+    Report: {
+      /** Createtime */
+      createTime: string;
+      /**
+       * Name
+       * @description `reports/{report}`.
+       */
+      name: string;
+      reason: components['schemas']['ReportReason'];
+    };
+    /**
+     * ReportReason
+     * @description Why someone reported a share or a person.
+     * @enum {string}
+     */
+    ReportReason: 'SPAM' | 'HARASSMENT' | 'HATE' | 'SEXUAL_CONTENT' | 'OTHER';
+    /**
+     * RevealResponse
+     * @description RevealPuzzle: a shortest solution, with evidence for every step.
+     */
+    RevealResponse: {
+      /** Graphversion */
+      graphVersion: string;
+      /** Steps */
+      steps: components['schemas']['PathStep'][];
+    };
+    /**
+     * SearchCatalogResponse
+     * @description SearchCatalog.
+     */
+    SearchCatalogResponse: {
+      /** Graphversion */
+      graphVersion: string;
+      /** Results */
+      results: components['schemas']['SearchResult'][];
+    };
+    /**
+     * SearchResult
+     * @description A search hit.
+     */
+    SearchResult: {
+      /**
+       * Blocked
+       * @description The viewer blocked this artist. Blocked artists appear only for an exact-name search, so they can be unblocked (AC-17.2).
+       * @default false
+       */
+      blocked: boolean;
+      /** Displayname */
+      displayName: string;
+      entityType: components['schemas']['EntityType'];
+      /**
+       * Imageurl
+       * @description For an artist, its photo about 330 px wide (as `ArtistSummary.imageUrl`).
+       */
+      imageUrl: string | null;
+      /** Matchtype */
+      matchType: string;
+      /** Matchedon */
+      matchedOn: string;
+      /**
+       * Name
+       * @description Resource name of the entity.
+       */
+      name: string;
+      /** Subtitle */
+      subtitle: string;
+    };
+    /**
+     * SessionInfo
+     * @description The current session. The cookie itself is never readable by scripts.
+     */
+    SessionInfo: {
+      /**
+       * Csrftoken
+       * @description Send as `X-CSRF-Token` on every write.
+       */
+      csrfToken: string;
+      /**
+       * Newuser
+       * @default false
+       */
+      newUser: boolean;
+      /**
+       * User
+       * @description Resource name `users/{user}`.
+       */
+      user: string;
+    };
+    /**
+     * Share
+     * @description Something one friend sent another.
+     */
+    Share: {
+      /** Createtime */
+      createTime: string;
+      kind: components['schemas']['ShareKind'];
+      /**
+       * Name
+       * @description `shares/{share}`.
+       */
+      name: string;
+      /**
+       * Note
+       * @default
+       */
+      note: string;
+      /**
+       * Read
+       * @default false
+       */
+      read: boolean;
+      recipient: components['schemas']['Person'];
+      sender: components['schemas']['Person'];
+      /** Subjects */
+      subjects: components['schemas']['SharedSubject'][];
+    };
+    /**
+     * ShareKind
+     * @description What a share points at; decides how many subjects it has and of which type.
+     * @enum {string}
+     */
+    ShareKind:
+      | 'ARTIST'
+      | 'RECORDING'
+      | 'ARTIST_COMPARISON'
+      | 'RECORDING_COMPARISON'
+      | 'PATH';
+    /**
+     * SharedCollaborator
+     * @description An artist who worked with one of your top artists and one of your friend's.
+     */
+    SharedCollaborator: {
+      artist: components['schemas']['ArtistSummary'];
+      /**
+       * Friendartists
+       * @description Your friend's top artists it connects to.
+       */
+      friendArtists: string[];
+      /**
+       * Viewerartists
+       * @description Your top artists it connects to.
+       */
+      viewerArtists: string[];
+    };
+    /**
+     * SharedCredit
+     * @description A credit role compared across the two songs.
+     */
+    SharedCredit: {
+      /** Both */
+      both: components['schemas']['ArtistSummary'][];
+      /** Onlya */
+      onlyA: components['schemas']['ArtistSummary'][];
+      /** Onlyb */
+      onlyB: components['schemas']['ArtistSummary'][];
+      /** Role */
+      role: string;
+    };
+    /**
+     * SharedGenre
+     * @description A genre both compared artists carry.
+     */
+    SharedGenre: {
+      /** Displayname */
+      displayName: string;
+      /** Genre */
+      genre: string;
+      /** Sharea */
+      shareA: number;
+      /** Shareb */
+      shareB: number;
+    };
+    /**
+     * SharedSubject
+     * @description An artist or recording in a share, resolved against the current catalog.
+     */
+    SharedSubject: {
+      /** Available */
+      available: boolean;
+      /**
+       * Displayname
+       * @description Empty when the catalog no longer has it.
+       */
+      displayName: string;
+      /**
+       * Name
+       * @description `artists/{artist}` or `recordings/{recording}`.
+       */
+      name: string;
+    };
+    /**
+     * Shelf
+     * @description A home shelf: a title template, its parameters and its items, best first.
+     */
+    Shelf: {
+      /**
+       * Genre
+       * @description For GENRE shelves, `genres/{genre}` (the see-all page).
+       */
+      genre: string | null;
+      /** Items */
+      items: components['schemas']['ShelfItem'][];
+      kind: components['schemas']['ShelfKind'];
+      /**
+       * Messageid
+       * @description Client message key for the title, e.g. `shelf.genre`.
+       */
+      messageId: string;
+      /**
+       * Name
+       * @description `shelves/{shelf}`, stable within a catalog version.
+       */
+      name: string;
+      /**
+       * Params
+       * @description Title template values.
+       */
+      params: {
+        [key: string]: string | number;
+      };
+    };
+    /**
+     * ShelfItem
+     * @description One shelf item: exactly one of `artist`, `recording` or `label` is set.
+     */
+    ShelfItem: {
+      artist: components['schemas']['ArtistSummary'] | null;
+      label: components['schemas']['ShelfLabel'] | null;
+      reason: components['schemas']['Reason'];
+      recording: components['schemas']['ShelfRecording'] | null;
+    };
+    /**
+     * ShelfKind
+     * @description Which kind of shelf.
+     * @enum {string}
+     */
+    ShelfKind:
+      | 'BEHIND_THE_HITS'
+      | 'SUPER_CONNECTORS'
+      | 'GENRE_BRIDGES'
+      | 'ON_THIS_DAY'
+      | 'GENRE'
+      | 'DECADE'
+      | 'LABELS';
+    /**
+     * ShelfLabel
+     * @description A label on a shelf.
+     */
+    ShelfLabel: {
+      /** Displayname */
+      displayName: string;
+      /**
+       * Name
+       * @description `labels/{label}`.
+       */
+      name: string;
+    };
+    /**
+     * ShelfReasonKind
+     * @description Why an item is on a shelf.
+     * @enum {string}
+     */
+    ShelfReasonKind:
+      | 'PRODUCED_RECORDINGS'
+      | 'COLLABORATORS'
+      | 'GENRES_BRIDGED'
+      | 'RELEASED_ON_DAY'
+      | 'CREDITED_RECORDINGS'
+      | 'LABEL_RELEASES';
+    /**
+     * ShelfRecording
+     * @description A recording on a shelf.
+     */
+    ShelfRecording: {
+      /**
+       * Artists
+       * @description Primary artists.
+       */
+      artists: components['schemas']['ArtistSummary'][];
+      /** Displayname */
+      displayName: string;
+      /** Firstreleasedate */
+      firstReleaseDate: string | null;
+      /**
+       * Name
+       * @description `recordings/{recording}`.
+       */
+      name: string;
+      /** Year */
+      year: number | null;
+    };
+    /**
+     * SimilarityPart
+     * @description One named part of the similarity score.
+     */
+    SimilarityPart: {
+      /**
+       * Contribution
+       * @description similarity x weight: what it adds to the score.
+       */
+      contribution: number;
+      /**
+       * Name
+       * @description `mood`, `tempo`, `key` or `energy`.
+       */
+      name: string;
+      /** Similarity */
+      similarity: number;
+      /**
+       * Weight
+       * @description Its weight among the parts present; they sum to 1.
+       */
+      weight: number;
+    };
+    /**
+     * SocialProfile
+     * @description The name a user shows to friends, and whether friends may see their top artists.
+     */
+    SocialProfile: {
+      /**
+       * Displayname
+       * @default
+       */
+      displayName: string;
+      /**
+       * Name
+       * @description `users/{user}/socialProfile`.
+       */
+      name: string;
+      /**
+       * Sharetopartists
+       * @description Friends who also share may see your top artists in friend paths. Off by default.
+       * @default false
+       */
+      shareTopArtists: boolean;
+    };
+    /**
+     * SourceKind
+     * @description How the data is obtained.
+     * @enum {string}
+     */
+    SourceKind: 'API' | 'DATA_DUMP' | 'DATASET' | 'USER_ACCOUNT';
+    /**
+     * SourceLink
+     * @description A page where a person can check a fact.
+     */
+    SourceLink: {
+      /**
+       * Source
+       * @description Data source ID, e.g. `musicbrainz`.
+       */
+      source: string;
+      /** Sourceid */
+      sourceId: string;
+      /** Url */
+      url: string;
+    };
+    /**
+     * SourceStatus
+     * @description Whether SongNexus reads from the source yet.
+     * @enum {string}
+     */
+    SourceStatus: 'IN_USE' | 'PLANNED';
+    /**
+     * StartLinkRequest
+     * @description StartLink.
+     */
+    StartLinkRequest: {
+      provider: components['schemas']['ListeningProvider'];
+    };
+    /**
+     * StartLinkResponse
+     * @description Where to send the listener to approve the link.
+     */
+    StartLinkResponse: {
+      /** Authorizationurl */
+      authorizationUrl: string;
+    };
+    /**
+     * Status
+     * @description google.rpc.Status, as JSON.
+     */
+    Status: {
+      /**
+       * Code
+       * @description HTTP status code.
+       * @example 404
+       */
+      code: number;
+      /** Details */
+      details: components['schemas']['ErrorInfo'][];
+      /**
+       * Message
+       * @description Developer-facing English; not for display.
+       */
+      message: string;
+      /**
+       * Status
+       * @description Canonical status name.
+       * @example NOT_FOUND
+       */
+      status: string;
+    };
+    /**
+     * Story
+     * @description A generated connection story: a template, its artists and the credits that prove it.
+     */
+    Story: {
+      /**
+       * Credits
+       * @description The strongest credit first; every one is sourced.
+       */
+      credits: components['schemas']['Evidence'][];
+      kind: components['schemas']['StoryKind'];
+      /**
+       * Messageid
+       * @description Client message key, e.g. `story.sharedProducer`.
+       */
+      messageId: string;
+      /**
+       * Name
+       * @description `stories/{story}`.
+       */
+      name: string;
+      /**
+       * Params
+       * @description Other template values: counts, years, a title.
+       */
+      params: {
+        [key: string]: string | number;
+      };
+      /** Parts */
+      parts: components['schemas']['StoryPart'][];
+    };
+    /**
+     * StoryKind
+     * @description Which template a story uses.
+     * @enum {string}
+     */
+    StoryKind:
+      | 'SHARED_PRODUCER'
+      | 'TWO_STEPS'
+      | 'SESSION_PLAYER'
+      | 'LABEL_MATES'
+      | 'SAME_SAMPLE'
+      | 'SAMPLED';
+    /**
+     * StoryPart
+     * @description An artist in a story, by the role the template gives it (`a`, `b`, `via`).
+     */
+    StoryPart: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Role */
+      role: string;
+    };
+    /**
+     * Subject
+     * @description What a piece of evidence is about.
+     */
+    Subject: {
+      /** Displayname */
+      displayName: string | null;
+      /**
+       * Name
+       * @description Resource name: `recordings/{id}`, `releases/{id}`, `labels/{id}` or `relations/{id}`.
+       */
+      name: string;
+    };
+    /**
+     * SubmitPuzzleScoreRequest
+     * @description SubmitPuzzleScore: the moves that solved the puzzle, start first and target last.
+     */
+    SubmitPuzzleScoreRequest: {
+      /**
+       * Moves
+       * @description `artists/{artist}` in the order played.
+       */
+      moves: string[];
+    };
+    /**
+     * SubmitTriviaScoreRequest
+     * @description SubmitTriviaScore: an answer to every question of the day.
+     */
+    SubmitTriviaScoreRequest: {
+      /** Answers */
+      answers: components['schemas']['TriviaAnswer'][];
+    };
+    /**
+     * SyncLinkedAccountResponse
+     * @description SyncLinkedAccount: what this sync read.
+     */
+    SyncLinkedAccountResponse: {
+      /** Artists */
+      artists: number;
+      linkedAccount: components['schemas']['LinkedAccount'];
+      /** Plays */
+      plays: number;
+      /**
+       * Synced
+       * @description False when the provider could not be read; the account's status says why.
+       */
+      synced: boolean;
+      /** Unmatchedplays */
+      unmatchedPlays: number;
+    };
+    /**
+     * TasteCentral
+     * @description The profiled artist directly connected to the most of the others.
+     */
+    TasteCentral: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Linkedcount */
+      linkedCount: number;
+    };
+    /**
+     * TasteCluster
+     * @description The tightest group: every member is directly connected to `minLinks` others in it.
+     */
+    TasteCluster: {
+      /**
+       * Artists
+       * @description Up to 25 members, heaviest first.
+       */
+      artists: components['schemas']['ArtistSummary'][];
+      /**
+       * Links
+       * @description Direct connections inside the group.
+       */
+      links: number;
+      /** Minlinks */
+      minLinks: number;
+      /** Size */
+      size: number;
+    };
+    /**
+     * TasteConnector
+     * @description An artist outside the list connected to several of its artists.
+     */
+    TasteConnector: {
+      artist: components['schemas']['ArtistSummary'];
+      /** Linkedcount */
+      linkedCount: number;
+      /**
+       * Linkedto
+       * @description The profiled artists it connects, `artists/{id}`.
+       */
+      linkedTo: string[];
+    };
+    /**
+     * TasteDecade
+     * @description A decade's share.
+     */
+    TasteDecade: {
+      /**
+       * Artistcount
+       * @description Profiled artists contributing to this slice.
+       */
+      artistCount: number;
+      /**
+       * Decade
+       * @example 1990
+       */
+      decade: number;
+      /**
+       * Share
+       * @description 0 to 1; the shares of one breakdown sum to 1.
+       */
+      share: number;
+    };
+    /**
+     * TasteGenre
+     * @description A top-level genre's share.
+     */
+    TasteGenre: {
+      /**
+       * Artistcount
+       * @description Profiled artists contributing to this slice.
+       */
+      artistCount: number;
+      /** Displayname */
+      displayName: string;
+      /**
+       * Genre
+       * @description `genres/{genre}`.
+       */
+      genre: string;
+      /**
+       * Share
+       * @description 0 to 1; the shares of one breakdown sum to 1.
+       */
+      share: number;
+    };
+    /**
+     * TastePair
+     * @description Two profiled artists far apart: open them with FindPath.
+     */
+    TastePair: {
+      artistA: components['schemas']['ArtistSummary'];
+      artistB: components['schemas']['ArtistSummary'];
+      /** Steps */
+      steps: number;
+    };
+    /**
+     * TasteProfile
+     * @description A taste profile, computed from the graph only. Missing parts are null or empty.
+     */
+    TasteProfile: {
+      /**
+       * Artistcount
+       * @description Artists profiled.
+       */
+      artistCount: number;
+      /** Collaboratorsreached */
+      collaboratorsReached: number;
+      /**
+       * Decades
+       * @description Oldest first.
+       */
+      decades: components['schemas']['TasteDecade'][];
+      /**
+       * Genres
+       * @description Top-level genres, largest share first (10 max).
+       */
+      genres: components['schemas']['TasteGenre'][];
+      /** Graphversion */
+      graphVersion: string;
+      /** Hiddenconnectors */
+      hiddenConnectors: components['schemas']['TasteConnector'][];
+      mostCentral: components['schemas']['TasteCentral'] | null;
+      /**
+       * Skippedartistcount
+       * @description Artists left out: not in the catalog, blocked, or beyond the first 500.
+       * @default 0
+       */
+      skippedArtistCount: number;
+      /** @description Among the 20 heaviest artists, the farthest connected pair. */
+      surprisingPair: components['schemas']['TastePair'] | null;
+      tightestCluster: components['schemas']['TasteCluster'] | null;
+      /** Undatedartistcount */
+      undatedArtistCount: number;
+      /** Unknowngenreartistcount */
+      unknownGenreArtistCount: number;
+    };
+    /**
+     * Theme
+     * @description Color theme.
+     * @enum {string}
+     */
+    Theme: 'SYSTEM' | 'LIGHT' | 'DARK';
+    /**
+     * TimelineYear
+     * @description Distinct collaborative recordings and releases in one year, by type.
+     */
+    TimelineYear: {
+      /** Counts */
+      counts: {
+        [key: string]: number;
+      };
+      /** Year */
+      year: number;
+    };
+    /**
+     * TriviaAnswer
+     * @description One answered Credit check question.
+     */
+    TriviaAnswer: {
+      /**
+       * Option
+       * @description The chosen `artists/{id}` or `labels/{id}`.
+       */
+      option: string;
+      /**
+       * Question
+       * @description Question ID, `q1` to `q5`.
+       */
+      question: string;
+    };
+    /**
+     * TriviaOption
+     * @description One answer option: an artist (`artists/{id}`) or a label (`labels/{id}`).
+     */
+    TriviaOption: {
+      /** Disambiguation */
+      disambiguation: string | null;
+      /** Displayname */
+      displayName: string;
+      /** Name */
+      name: string;
+    };
+    /**
+     * TriviaQuestion
+     * @description A question and its options, never its answer.
+     */
+    TriviaQuestion: {
+      /** @description The artist the question is about: the song's main artist, or the artist in a WORKED_WITH question. */
+      artist: components['schemas']['ArtistSummary'];
+      /**
+       * Id
+       * @description `q1` to `q5`, stable within the day.
+       * @example q1
+       */
+      id: string;
+      kind: components['schemas']['TriviaQuestionKind'];
+      /**
+       * Messageid
+       * @description Client message key, e.g. `trivia.whoProduced`.
+       */
+      messageId: string;
+      /** Options */
+      options: components['schemas']['TriviaOption'][];
+      /** @description The song or release asked about; null for WORKED_WITH. */
+      subject: components['schemas']['Subject'] | null;
+    };
+    /**
+     * TriviaQuestionKind
+     * @description What a Credit check question asks.
+     * @enum {string}
+     */
+    TriviaQuestionKind:
+      'WHO_PRODUCED' | 'WHO_FEATURED' | 'WORKED_WITH' | 'WHICH_LABEL';
+    /**
+     * TriviaQuiz
+     * @description GetTrivia: the same Credit check for every player on a date.
+     */
+    TriviaQuiz: {
+      /** Date */
+      date: string;
+      /** Graphversion */
+      graphVersion: string;
+      /**
+       * Name
+       * @description `trivia/{date}`, the player's local date (YYYY-MM-DD).
+       */
+      name: string;
+      /**
+       * Number
+       * @description 1 on the launch day.
+       */
+      number: number;
+      /** Questions */
+      questions: components['schemas']['TriviaQuestion'][];
+    };
+    /**
+     * UpdateSocialProfileRequest
+     * @description UpdateSocialProfile: pick the name friends see, or turn top-artist sharing on or off.
+     */
+    UpdateSocialProfileRequest: {
+      /** Displayname */
+      displayName?: string | null;
+      /** Sharetopartists */
+      shareTopArtists?: boolean | null;
+    };
+    /**
+     * UpdateUserCommunitiesRequest
+     * @description UpdateUserCommunities body: a community name to join, or "" to leave.
+     *
+     *     Only the fields in ``updateMask`` (or, without one, the fields present) change.
+     */
+    UpdateUserCommunitiesRequest: {
+      /**
+       * Campus
+       * @default
+       */
+      campus?: string;
+      /**
+       * City
+       * @default
+       */
+      city?: string;
+    };
+    /**
+     * User
+     * @description GetUser. Email and name stay with the identity provider.
+     */
+    User: {
+      /** Createtime */
+      createTime: string;
+      /** Name */
+      name: string;
+    };
+    /**
+     * UserCommunities
+     * @description GetUserCommunities: the listener's campus and city (each optional).
+     */
+    UserCommunities: {
+      campus: components['schemas']['CommunityMembership'] | null;
+      city: components['schemas']['CommunityMembership'] | null;
+      /** Haslisteningdata */
+      hasListeningData: boolean;
+      /** Name */
+      name: string;
+    };
+    /**
+     * ViewerCampus
+     * @description The signed-in viewer's campus on this leaderboard.
+     */
+    ViewerCampus: {
+      community: components['schemas']['Community'] | null;
+      /**
+       * Playersneeded
+       * @default 0
+       */
+      playersNeeded: number;
+      /** Rank */
+      rank: number | null;
+      state: components['schemas']['ViewerCampusState'];
+    };
+    /**
+     * ViewerCampusState
+     * @description Where the viewer's campus stands.
+     * @enum {string}
+     */
+    ViewerCampusState: 'RANKED' | 'NEEDS_PLAYERS' | 'NO_CAMPUS';
+    /**
+     * Visibility
+     * @description Who can see a profile. Only PRIVATE exists in R1.
+     * @enum {string}
+     */
+    Visibility: 'PRIVATE';
+    /**
+     * WeeklyMovers
+     * @description GetWeeklyMovers: the community chart's rises, falls, entries and exits this week.
+     */
+    WeeklyMovers: {
+      community: components['schemas']['Community'];
+      /**
+       * Demodata
+       * @default false
+       */
+      demoData: boolean;
+      /** Entered */
+      entered: components['schemas']['ChartMover'][];
+      /** Fell */
+      fell: components['schemas']['ChartMover'][];
+      /** Graphversion */
+      graphVersion: string;
+      /** Left */
+      left: components['schemas']['ChartMover'][];
+      /**
+       * Name
+       * @description `communities/{community}/weeklyMovers`.
+       */
+      name: string;
+      /** Previousupdatetime */
+      previousUpdateTime: string | null;
+      /** Rose */
+      rose: components['schemas']['ChartMover'][];
+      state: components['schemas']['MoversState'];
+      /** Updatetime */
+      updateTime: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    Health: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Health"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetArtist: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                artist: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Artist"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListArtistCollaborations: {
-        parameters: {
-            query?: {
-                type?: components["schemas"]["CollaborationType"];
-                /** @description With type PRODUCTION: only collaborations that went this way. */
-                direction?: components["schemas"]["ProductionDirection"] | null;
-                /** @description Only evidence from this year on. */
-                startYear?: number | null;
-                /** @description Only evidence up to this year. */
-                endYear?: number | null;
-                orderBy?: components["schemas"]["CollaborationOrder"];
-                pageSize?: number;
-                pageToken?: string;
-                /** @description Genre resource names to stay within. */
-                genres?: string[];
-                /** @description Keep artists with no genre data (often producers and session players). */
-                includeUnknownGenre?: boolean;
-                /** @description A genre includes the genres below it. */
-                includeSubgenres?: boolean;
-            };
-            header?: never;
-            path: {
-                artist: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListArtistCollaborationsResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListArtistConnections: {
-        parameters: {
-            query?: {
-                /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
-                categories?: components["schemas"]["ConnectionCategory"][];
-                orderBy?: string;
-                pageSize?: number;
-                pageToken?: string;
-                /** @description Genre resource names to stay within. */
-                genres?: string[];
-                /** @description Keep artists with no genre data (often producers and session players). */
-                includeUnknownGenre?: boolean;
-                /** @description A genre includes the genres below it. */
-                includeSubgenres?: boolean;
-            };
-            header?: never;
-            path: {
-                artist: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListArtistConnectionsResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetArtistConnection: {
-        parameters: {
-            query?: {
-                /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
-                categories?: components["schemas"]["ConnectionCategory"][];
-            };
-            header?: never;
-            path: {
-                artist: string;
-                other: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ConnectionDetail"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CompareArtists: {
-        parameters: {
-            query: {
-                /** @description Resource name of the artist to compare with. */
-                other: string;
-                /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
-                categories?: components["schemas"]["ConnectionCategory"][];
-                /** @description Genre resource names to stay within. */
-                genres?: string[];
-                /** @description Keep artists with no genre data (often producers and session players). */
-                includeUnknownGenre?: boolean;
-                /** @description A genre includes the genres below it. */
-                includeSubgenres?: boolean;
-            };
-            header?: never;
-            path: {
-                artist: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompareArtistsResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    FindPath: {
-        parameters: {
-            query: {
-                /** @description Resource name of the artist to reach. */
-                target: string;
-                mode?: components["schemas"]["PathMode"];
-                maxSteps?: number;
-                alternatives?: number;
-                /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
-                categories?: components["schemas"]["ConnectionCategory"][];
-                /** @description Genre resource names to stay within. */
-                genres?: string[];
-                /** @description Keep artists with no genre data (often producers and session players). */
-                includeUnknownGenre?: boolean;
-                /** @description A genre includes the genres below it. */
-                includeSubgenres?: boolean;
-            };
-            header?: never;
-            path: {
-                artist: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FindPathResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListFeaturedArtists: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeaturedArtistsResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    AskCatalog: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AskRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AskResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    SearchCatalog: {
-        parameters: {
-            query: {
-                query: string;
-                types?: components["schemas"]["EntityType"][];
-                pageSize?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SearchCatalogResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListCommunities: {
-        parameters: {
-            query?: {
-                query?: string;
-                kind?: components["schemas"]["CommunityKind"] | null;
-                country?: string;
-                synthetic?: boolean | null;
-                pageSize?: number;
-                pageToken?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListCommunitiesResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetCommunity: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                community: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Community"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetCommunityChart: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                community: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CommunityChart"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetConfig: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Config"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListDataSources: {
-        parameters: {
-            query?: {
-                pageSize?: number;
-                pageToken?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListDataSourcesResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetFriendInvite: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                code: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FriendInvitePreview"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    AcceptFriendInvite: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                code: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Friend"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListGenres: {
-        parameters: {
-            query?: {
-                pageSize?: number;
-                pageToken?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListGenresResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetLabel: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                label: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Label"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    FinishLink: {
-        parameters: {
-            query?: {
-                state?: string;
-                code?: string;
-                /** @description Last.fm and Libre.fm. */
-                token?: string;
-                error?: string;
-            };
-            header?: never;
-            path: {
-                provider: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            303: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetPathChallenge: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PathChallenge"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    AnalyzePlaylist: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AnalyzePlaylistRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnalyzePlaylistResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetDailyPuzzle: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Puzzle"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CheckMove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CheckMoveRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CheckMoveResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetHint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["HintRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HintResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    RevealPuzzle: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RevealResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ReportPuzzleShare: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetRecording: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                recording: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Recording"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CompareRecordings: {
-        parameters: {
-            query: {
-                /** @description Resource name of the recording to compare with. */
-                other: string;
-            };
-            header?: never;
-            path: {
-                recording: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CompareRecordingsResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CreateReport: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateReportRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Report"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CreateSession: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateSessionRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionInfo"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetCurrentSession: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionInfo"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    DeleteCurrentSession: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CreateLocalSession: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateLocalSessionRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionInfo"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    RevokeAllSessions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CreateShare: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateShareRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Share"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    DeleteShare: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                share: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    MarkShareRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                share: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Share"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListStories: {
-        parameters: {
-            query?: {
-                pageSize?: number;
-                pageToken?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListStoriesResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetTrivia: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TriviaQuiz"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CheckTrivia: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                date: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CheckTriviaRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CheckTriviaResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["User"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    DeleteUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListBlockedArtists: {
-        parameters: {
-            query?: {
-                pageSize?: number;
-                pageToken?: string;
-            };
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListBlockedArtistsResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CreateBlockedArtist: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateBlockedArtistRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BlockedArtist"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    DeleteBlockedArtist: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-                artist: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListBlockedUsers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListBlockedUsersResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CreateBlockedUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateBlockedUserRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BlockedUser"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    DeleteBlockedUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-                blocked: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetUserCommunities: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserCommunities"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    UpdateUserCommunities: {
-        parameters: {
-            query?: {
-                updateMask?: string | null;
-            };
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateUserCommunitiesRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserCommunities"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListFriendInvites: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListFriendInvitesResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CreateFriendInvite: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FriendInvite"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    DeleteFriendInvite: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-                invite: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListFriends: {
-        parameters: {
-            query?: {
-                pageSize?: number;
-                pageToken?: string;
-            };
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListFriendsResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    DeleteFriend: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-                friend: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListInbox: {
-        parameters: {
-            query?: {
-                pageSize?: number;
-                pageToken?: string;
-            };
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListInboxResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    MarkInboxRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MarkAllReadResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListLinkedAccounts: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListLinkedAccountsResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    CreateLinkedAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateLinkedAccountRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LinkedAccount"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    DeleteLinkedAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-                provider: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Empty"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    SyncLinkedAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-                provider: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SyncLinkedAccountResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    StartLink: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StartLinkRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StartLinkResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ListListening: {
-        parameters: {
-            query?: {
-                pageSize?: number;
-                pageToken?: string;
-            };
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListListeningResponse"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetPreferences: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Preferences-Output"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    UpdatePreferences: {
-        parameters: {
-            query?: {
-                updateMask?: string | null;
-            };
-            header?: {
-                "if-match"?: string | null;
-            };
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Preferences-Input"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Preferences-Output"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Profile-Output"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    UpdateProfile: {
-        parameters: {
-            query?: {
-                updateMask?: string | null;
-            };
-            header?: {
-                "if-match"?: string | null;
-            };
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Profile-Input"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Profile-Output"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    GetSocialProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SocialProfile"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    UpdateSocialProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateSocialProfileRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SocialProfile"];
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    ExportUserData: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
+  Health: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Health'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetArtist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        artist: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Artist'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListArtistCollaborations: {
+    parameters: {
+      query?: {
+        type?: components['schemas']['CollaborationType'];
+        /** @description With type PRODUCTION: only collaborations that went this way. */
+        direction?: components['schemas']['ProductionDirection'] | null;
+        /** @description Only evidence from this year on. */
+        startYear?: number | null;
+        /** @description Only evidence up to this year. */
+        endYear?: number | null;
+        orderBy?: components['schemas']['CollaborationOrder'];
+        pageSize?: number;
+        pageToken?: string;
+        /** @description Genre resource names to stay within. */
+        genres?: string[];
+        /** @description Keep artists with no genre data (often producers and session players). */
+        includeUnknownGenre?: boolean;
+        /** @description A genre includes the genres below it. */
+        includeSubgenres?: boolean;
+      };
+      header?: never;
+      path: {
+        artist: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListArtistCollaborationsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListArtistConnections: {
+    parameters: {
+      query?: {
+        /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
+        categories?: components['schemas']['ConnectionCategory'][];
+        orderBy?: string;
+        pageSize?: number;
+        pageToken?: string;
+        /** @description Genre resource names to stay within. */
+        genres?: string[];
+        /** @description Keep artists with no genre data (often producers and session players). */
+        includeUnknownGenre?: boolean;
+        /** @description A genre includes the genres below it. */
+        includeSubgenres?: boolean;
+      };
+      header?: never;
+      path: {
+        artist: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListArtistConnectionsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetArtistConnection: {
+    parameters: {
+      query?: {
+        /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
+        categories?: components['schemas']['ConnectionCategory'][];
+      };
+      header?: never;
+      path: {
+        artist: string;
+        other: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ConnectionDetail'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CompareArtists: {
+    parameters: {
+      query: {
+        /** @description Resource name of the artist to compare with. */
+        other: string;
+        /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
+        categories?: components['schemas']['ConnectionCategory'][];
+        /** @description Genre resource names to stay within. */
+        genres?: string[];
+        /** @description Keep artists with no genre data (often producers and session players). */
+        includeUnknownGenre?: boolean;
+        /** @description A genre includes the genres below it. */
+        includeSubgenres?: boolean;
+      };
+      header?: never;
+      path: {
+        artist: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CompareArtistsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  FindPath: {
+    parameters: {
+      query: {
+        /** @description Resource name of the artist to reach. */
+        target: string;
+        mode?: components['schemas']['PathMode'];
+        maxSteps?: number;
+        alternatives?: number;
+        /** @description Connection categories to include (default: all except LABELS, ENGINEERING). */
+        categories?: components['schemas']['ConnectionCategory'][];
+        /** @description Genre resource names to stay within. */
+        genres?: string[];
+        /** @description Keep artists with no genre data (often producers and session players). */
+        includeUnknownGenre?: boolean;
+        /** @description A genre includes the genres below it. */
+        includeSubgenres?: boolean;
+      };
+      header?: never;
+      path: {
+        artist: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FindPathResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  RecommendArtists: {
+    parameters: {
+      query?: {
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        artist: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecommendArtistsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListFeaturedArtists: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FeaturedArtistsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  AskCatalog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AskRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AskResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  SearchCatalog: {
+    parameters: {
+      query: {
+        query: string;
+        types?: components['schemas']['EntityType'][];
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SearchCatalogResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListCommunities: {
+    parameters: {
+      query?: {
+        query?: string;
+        kind?: components['schemas']['CommunityKind'] | null;
+        country?: string;
+        synthetic?: boolean | null;
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListCommunitiesResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetCommunity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        community: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Community'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetCommunityChart: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        community: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommunityChart'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetWeeklyMovers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        community: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WeeklyMovers'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetConfig: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Config'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListDataSources: {
+    parameters: {
+      query?: {
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListDataSourcesResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetFriendInvite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FriendInvitePreview'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  AcceptFriendInvite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Friend'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListGenres: {
+    parameters: {
+      query?: {
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListGenresResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetGenre: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        genre: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GenreDetail'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListGenreArtists: {
+    parameters: {
+      query?: {
+        /** @description Count artists of subgenres too. */
+        includeSubgenres?: boolean;
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path: {
+        genre: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListGenreArtistsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetLabel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        label: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Label'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetCampusLeaderboard: {
+    parameters: {
+      query: {
+        game: components['schemas']['Game'];
+        period?: components['schemas']['LeaderboardPeriod'];
+        /** @description YYYY-MM-DD */
+        date?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CampusLeaderboard'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  FinishLink: {
+    parameters: {
+      query?: {
+        state?: string;
+        code?: string;
+        /** @description Last.fm and Libre.fm. */
+        token?: string;
+        error?: string;
+      };
+      header?: never;
+      path: {
+        provider: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      303: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetPathChallenge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PathChallenge'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  AnalyzePlaylist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AnalyzePlaylistRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AnalyzePlaylistResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetDailyPuzzle: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Puzzle'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CheckMove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CheckMoveRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CheckMoveResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetHint: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['HintRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HintResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  RevealPuzzle: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RevealResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  SubmitPuzzleScore: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubmitPuzzleScoreRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GameScore'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ReportPuzzleShare: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetRecording: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        recording: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Recording'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CompareRecordings: {
+    parameters: {
+      query: {
+        /** @description Resource name of the recording to compare with. */
+        other: string;
+      };
+      header?: never;
+      path: {
+        recording: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CompareRecordingsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CreateReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateReportRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Report'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CreateSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateSessionRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionInfo'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetCurrentSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionInfo'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  DeleteCurrentSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CreateLocalSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateLocalSessionRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionInfo'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  RevokeAllSessions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CreateShare: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateShareRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Share'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  DeleteShare: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        share: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  MarkShareRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        share: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Share'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListShelves: {
+    parameters: {
+      query?: {
+        /** @description The viewer's local date (YYYY-MM-DD), for the ON_THIS_DAY shelf. Accepted in the daily puzzle's window; without it there is no ON_THIS_DAY shelf. */
+        date?: string | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListShelvesResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListStories: {
+    parameters: {
+      query?: {
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListStoriesResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ComputeTasteProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ComputeTasteProfileRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TasteProfile'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetTrivia: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TriviaQuiz'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CheckTrivia: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CheckTriviaRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CheckTriviaResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  SubmitTriviaScore: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubmitTriviaScoreRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GameScore'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['User'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  DeleteUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListBlockedArtists: {
+    parameters: {
+      query?: {
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListBlockedArtistsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CreateBlockedArtist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateBlockedArtistRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BlockedArtist'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  DeleteBlockedArtist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+        artist: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListBlockedUsers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListBlockedUsersResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CreateBlockedUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateBlockedUserRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BlockedUser'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  DeleteBlockedUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+        blocked: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetUserCommunities: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserCommunities'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  UpdateUserCommunities: {
+    parameters: {
+      query?: {
+        updateMask?: string | null;
+      };
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateUserCommunitiesRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserCommunities'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListFriendInvites: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListFriendInvitesResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CreateFriendInvite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FriendInvite'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  DeleteFriendInvite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+        invite: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetFriendLeaderboard: {
+    parameters: {
+      query: {
+        game: components['schemas']['Game'];
+        period?: components['schemas']['LeaderboardPeriod'];
+        /** @description YYYY-MM-DD */
+        date?: string;
+      };
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FriendLeaderboard'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListFriends: {
+    parameters: {
+      query?: {
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListFriendsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  DeleteFriend: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+        friend: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetFriendPaths: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+        friend: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FriendPaths'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListGameScores: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListGameScoresResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListInbox: {
+    parameters: {
+      query?: {
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListInboxResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  MarkInboxRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MarkAllReadResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListLinkedAccounts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListLinkedAccountsResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  CreateLinkedAccount: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateLinkedAccountRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LinkedAccount'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  DeleteLinkedAccount: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+        provider: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Empty'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  SyncLinkedAccount: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+        provider: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncLinkedAccountResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  StartLink: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StartLinkRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StartLinkResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ListListening: {
+    parameters: {
+      query?: {
+        pageSize?: number;
+        pageToken?: string;
+      };
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListListeningResponse'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetPreferences: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Preferences-Output'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  UpdatePreferences: {
+    parameters: {
+      query?: {
+        updateMask?: string | null;
+      };
+      header?: {
+        'if-match'?: string | null;
+      };
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Preferences-Input'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Preferences-Output'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Profile-Output'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  UpdateProfile: {
+    parameters: {
+      query?: {
+        updateMask?: string | null;
+      };
+      header?: {
+        'if-match'?: string | null;
+      };
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Profile-Input'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Profile-Output'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetSocialProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SocialProfile'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  UpdateSocialProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateSocialProfileRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SocialProfile'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  GetTasteProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TasteProfile'];
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  ExportUserData: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description An error (AIP-193): see `error.status` and `error.details[0].reason`. */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
 }

@@ -325,6 +325,34 @@ class ArtistCoListening(ProvenanceMixin, Base):
     rank: Mapped[int] = mapped_column(Integer)
 
 
+class ArtistImage(Base):
+    """A freely licensed photo of an artist from Wikimedia Commons (ADR 0009).
+
+    Found through the artist's Wikidata item (P434 MusicBrainz ID, P18 image).
+    One row per artist; ``songnexus fetch-images`` replaces it on each run.
+    Attribution (author, license, file page) is stored with the URLs because
+    the license requires it to travel with the image wherever it is shown.
+    """
+
+    __tablename__ = "artist_images"
+
+    artist_id: Mapped[str] = mapped_column(
+        ForeignKey("artists.id", ondelete="CASCADE"), primary_key=True
+    )
+    wikidata_id: Mapped[str] = mapped_column(String(32))
+    commons_file: Mapped[str] = mapped_column(String(512))
+    thumbnail_url: Mapped[str] = mapped_column(String(2048))
+    large_url: Mapped[str] = mapped_column(String(2048))
+    width: Mapped[int] = mapped_column(Integer)
+    height: Mapped[int] = mapped_column(Integer)
+    page_url: Mapped[str] = mapped_column(String(2048))
+    author: Mapped[str | None] = mapped_column(String(512))
+    license: Mapped[str] = mapped_column(String(128))
+    license_url: Mapped[str | None] = mapped_column(String(2048))
+    attribution_required: Mapped[bool] = mapped_column(Boolean, default=True)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
 class GenreParent(ProvenanceMixin, Base):
     """``genre_id`` is a kind of ``parent_genre_id`` (e.g. trap is a kind of hip hop)."""
 
@@ -458,6 +486,9 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     age_confirmed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    # Development demo data only (docs/synthetic-data.md): the command that created
+    # this synthetic account ("seed-demo"); None for every real account.
+    synthetic_source: Mapped[str | None] = mapped_column(String(32), index=True)
 
 
 class UserSession(Base):
@@ -575,6 +606,8 @@ class SocialProfile(Base):
         ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
     display_name: Mapped[str] = mapped_column(String(40))
+    # Opt-in (off by default): friends may see the user's top artists in friend paths.
+    share_top_artists: Mapped[bool] = mapped_column(Boolean, default=False)
     update_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
@@ -707,3 +740,47 @@ class CommunityChart(Base):
         DateTime(timezone=True), primary_key=True, index=True
     )
     payload: Mapped[dict[str, Any]] = mapped_column(JsonType)
+
+
+# ---------------------------------------------------------------------------
+# Game scores (ADR 0010): opt-in, one per player per game per day.
+# ---------------------------------------------------------------------------
+
+
+class GameScore(Base):
+    """A score a signed-in player chose to submit, computed by the server from their play.
+
+    ``campus_id`` is the campus the player belonged to when submitting; a score
+    counts for a campus only while the player is still a member of it.
+    """
+
+    __tablename__ = "game_scores"
+    __table_args__ = (Index("ix_game_scores_game_day", "game", "day"),)
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    game: Mapped[str] = mapped_column(String(16), primary_key=True)  # PUZZLE | TRIVIA
+    day: Mapped[str] = mapped_column(DATE, primary_key=True)  # the player's local date
+    points: Mapped[int] = mapped_column(Integer)
+    detail: Mapped[dict[str, Any]] = mapped_column(JsonType, default=dict)
+    campus_id: Mapped[str | None] = mapped_column(String(128))
+    submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class TriviaAnswer(Base):
+    """Whether a signed-in player's first answer to a Credit check question was right.
+
+    The first answer counts: checking an answer reveals the right one, so a later
+    score submission cannot replace it. Kept two days, then purged.
+    """
+
+    __tablename__ = "trivia_answers"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    day: Mapped[str] = mapped_column(DATE, primary_key=True)
+    question_id: Mapped[str] = mapped_column(String(8), primary_key=True)
+    correct: Mapped[bool] = mapped_column(Boolean)
+    answered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)

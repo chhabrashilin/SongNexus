@@ -28,6 +28,31 @@ def artist_summary(graph: ArtistGraph, artist_id: str) -> api.ArtistSummary:
         artist_type=node.artist_type,
         country=node.country,
         genre_known=bool(node.genres),
+        image_url=image_url(graph, artist_id),
+        listeners=graph.listeners.get(artist_id),
+    )
+
+
+def image_url(graph: ArtistGraph, artist_id: str) -> str | None:
+    """Returns the ~330 px photo URL of an artist, or None (no photo, or not an artist)."""
+    image = graph.images.get(artist_id)
+    return image.thumbnail_url if image else None
+
+
+def artist_image(graph: ArtistGraph, artist_id: str) -> api.ArtistImage | None:
+    """Returns an artist's photo with its attribution, or None."""
+    image = graph.images.get(artist_id)
+    if image is None:
+        return None
+    return api.ArtistImage(
+        url=image.url,
+        thumbnail_url=image.thumbnail_url,
+        width=image.width,
+        height=image.height,
+        page_url=image.page_url,
+        author=image.author,
+        license=image.license,
+        license_url=image.license_url,
     )
 
 

@@ -111,3 +111,21 @@ export function useUpdateMyCommunities() {
     },
   });
 }
+
+export type WeeklyMovers = Schemas['WeeklyMovers'];
+export type ChartMover = Schemas['ChartMover'];
+
+/** The chart's rises, falls, entries and exits since a week ago. */
+export function useWeeklyMovers(id: string | undefined) {
+  return useQuery({
+    queryKey: ['community', id, 'movers'],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/communities/{community}/weeklyMovers', {
+          params: {path: {community: id!}},
+        }),
+      ),
+    enabled: Boolean(id),
+    staleTime: 5 * MINUTE,
+  });
+}

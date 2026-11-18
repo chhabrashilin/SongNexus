@@ -35,7 +35,7 @@ from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import db_session
 from songnexus.storage import accounts_repository as accounts
-from songnexus.storage import community_repository
+from songnexus.storage import community_repository, games_repository
 from songnexus.storage import models as m
 from songnexus.storage import social_repository as social
 from songnexus.storage import user_repository as users
@@ -198,6 +198,22 @@ def export_user_data(
                 community_repository.memberships(session, user_id).values(), key=lambda r: r.kind
             )
         ],
+        # Game scores (ADR 0010) and first Credit check answers (kept two days).
+        "gameScores": [
+            {
+                "game": s.game,
+                "date": s.day,
+                "points": s.points,
+                "detail": dict(s.detail or {}),
+                "campus": f"communities/{s.campus_id}" if s.campus_id else None,
+                "submitTime": _timestamp(s.submitted_at),
+            }
+            for s in games_repository.scores_of(session, user_id, "")
+        ],
+        "triviaFirstAnswers": [
+            {"date": a.day, "question": a.question_id, "correct": a.correct}
+            for a in session.query(m.TriviaAnswer).filter(m.TriviaAnswer.user_id == user_id)
+        ],
         "auditLog": [
             {"action": e.action, "time": _timestamp(e.created_at)}
             for e in sorted(audit_entries, key=lambda e: e.id)
@@ -222,6 +238,7 @@ def _social_export(session: Session, user_id: str) -> dict[str, Any]:
 
     return {
         "displayName": social.display_name(session, user_id),
+        "shareTopArtists": social.shares_top_artists(session, user_id),
         "friends": [
             {"user": f"users/{f.friend_id}", "createTime": _timestamp(f.created_at)}
             for f in social.friends(session, user_id)

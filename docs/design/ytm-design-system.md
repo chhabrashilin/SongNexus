@@ -84,7 +84,8 @@ Dark is the default. Light exists (`data-theme="light"`) and every role is
 
 ## The connection web
 
-`explore/ConnectionWeb.tsx` draws; `screens/ExploreScreen.tsx` owns the state
+The product reasoning (orbits, relevance, songs on lines, sharing) is in
+[connection-web-v5.md](connection-web-v5.md). `explore/ConnectionWeb.tsx` draws; `screens/ExploreScreen.tsx` owns the state
 and the page; `explore/graphState.ts` is the pure reducer (unit-tested).
 
 - An artist is a circle carrying their cover; the starting artist has a red
@@ -115,3 +116,44 @@ and the page; `explore/graphState.ts` is the pure reducer (unit-tested).
 - No inline `<style>` and no third-party font or script requests (CSP). Fonts
   are self-hosted through `@fontsource-variable/roboto`.
 - Initial JavaScript stays under 200 KB gzip (`scripts/check-bundle-size.mjs`).
+
+## v5: the immersive layer (2026-11-16)
+
+The redesign above made SongNexus look like YouTube Music today. v5 is where that
+product would be several versions on: the page takes the color of its subject,
+real photos replace letters wherever a freely licensed one exists, type is
+larger and tighter, and things move to explain where they came from. The rules
+above still hold; these are added.
+
+### What changed in the foundation
+
+| Area | v5 |
+| --- | --- |
+| Type | Google Sans Flex (self-hosted, OFL) for everything Latin; Roboto behind it. Tokens: `--display-hero`, `--display-large`, `--display-small`, `--overline` with `--tracking-display`, `--tracking-title`, `--tracking-overline`. Headlines use `text-wrap: balance`. |
+| Shape | Rounder: chips and buttons are pills, cards `--shape-l` (18px), heroes and stages `--shape-xl` (28px), covers `--shape-cover` (10px). |
+| Photos | `Cover`, `Avatar`, `CoverCard` take `image`; pass `imageOf(artist)` (`components/ArtistRow.tsx`). The generated art stays underneath, so a missing or slow photo is never a hole. Photos are Wikimedia Commons files (ADR 0009); wherever a photo is shown large (a hero), show its credit with `.photo-credit` (author, license, link to the file page). |
+| Ambient color | `useAmbient(name)` from `app/ambient.ts` on any page about someone or something: the top of the page washes in that subject's hue (`--ambient-hue`, animated between pages). Pages about nothing in particular call `useAmbient(null)`. Local elements can use `--ambient`, `--ambient-soft`, `--ambient-faint`. |
+| Motion | Pages rise in (shell does it). Lists and grids that arrive: add `.stagger` to the container and `--i` (index) to each child. Pressable surfaces lift on hover (`translateY(-3px)`, `--motion-spring`) and compress on press. Loading: `.skeleton` blocks shaped like the content, not a spinner, wherever the layout is known. All motion goes through `--duration-*`, which are 0 under reduced motion. |
+| Glass | Anything floating over content (toolbars over the web, sheets, the phone tab bar, popovers): `.glass`. |
+| Layout pieces | `.stage` (Home's hero carousel), `.bento` + `.bento__tile` (feature tiles), `.rank-grid` + `.rank-row` (ranked lists with numerals), `.stats` + `.stat` (big numbers), `.kbd`, `.listen` (the "Listen on YouTube Music" pill). All in `styles/immersive.css`. |
+| Shell | Top bar is clear over the ambient color and turns to glass on scroll; search is a pill focused by `/` or Ctrl/⌘+K; on phones the tab bar floats. |
+
+### The bar for a v5 screen
+
+1. **A hero, not a header.** The first screenful says what this is with its
+   largest type, its subject's photo or art, and the one primary action.
+2. **Show, then list.** Prefer shelves of covers, ranked rows, stats and small
+   visualizations over long uniform lists. A list longer than ~8 rows is
+   collapsed behind "Show all" or paged.
+3. **Every state designed.** Loading (skeletons), empty (what to do next),
+   error (what happened, retry), signed-out (what signing in adds), flag off.
+4. **Listening is one tap away.** Artists and songs offer "Listen on YouTube
+   Music" (`https://music.youtube.com/search?q=…`, opens in a new tab,
+   `rel="noopener noreferrer"`). We never claim playback we don't have.
+5. **Phone first.** Check 390px wide: nothing scrolls sideways, targets are
+   44px, the floating tab bar never covers the last control.
+6. **Still honest.** Synthetic or demo data is labeled where it appears.
+   "Not in our data yet" stays the wording for gaps.
+7. **Still accessible.** One `h1`, landmarks, keyboard paths, visible focus,
+   4.5:1 text contrast on whatever is behind it (photos get a scrim), names
+   in `<bdi>`, logical properties, strings through `t()`.

@@ -151,7 +151,8 @@ def save_chart(
     """Stores a chart; earlier charts from the same UTC day are replaced (one per day)."""
     day = computed_at.astimezone(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
     session.execute(
-        delete(m.CommunityChart).where(
+        delete(m.CommunityChart)
+        .where(
             m.CommunityChart.community_id == community_id,
             m.CommunityChart.computed_at >= day,
             m.CommunityChart.computed_at < day + timedelta(days=1),
@@ -193,7 +194,15 @@ def add_synthetic_member(
 ) -> str:
     """Creates a synthetic account (no sign-in identity) with a membership and tallies."""
     user_id = str(uuid.uuid4())
-    session.add(m.User(id=user_id, firebase_uid=None, created_at=now, age_confirmed_at=now))
+    session.add(
+        m.User(
+            id=user_id,
+            firebase_uid=None,
+            created_at=now,
+            age_confirmed_at=now,
+            synthetic_source="seed-community",
+        )
+    )
     session.flush()
     session.add(
         m.CommunityMembership(

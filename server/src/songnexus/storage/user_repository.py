@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
 
-from songnexus.storage import community_repository, social_repository
+from songnexus.storage import community_repository, games_repository, social_repository
 from songnexus.storage import models as m
 
 
@@ -142,6 +142,8 @@ def erase_user(session: Session, user_id: str, now: datetime) -> None:
     social_repository.erase(session, user_id)
     # Around you: campus and city memberships.
     community_repository.erase(session, user_id)
+    # Game scores and first trivia answers (ADR 0010).
+    games_repository.erase(session, user_id)
     session.execute(
         update(m.User).where(m.User.id == user_id).values(deleted_at=now, firebase_uid=None)
     )

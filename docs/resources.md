@@ -13,7 +13,8 @@ Status **Planned** means the source is approved but no code reads from it yet; t
 | [MusicBrainz](https://musicbrainz.org) | CC0-1.0 | Production-safe | In Use | artists, recordings, releases and labels; credits and artist relationships (every connection); collaborations, six degrees, compare, the daily puzzle |
 | [MusicBrainz genres](https://musicbrainz.org/doc/Genre) | CC-BY-NC-SA-3.0 | Non-commercial | In Use | artist genres; genre filters and shared genres in compare |
 | [Discogs data dumps](https://data.discogs.com) | CC0-1.0 | Production-safe | In Use | artist genres (commercial-safe); genre filters and shared genres in compare |
-| [Wikidata](https://www.wikidata.org) | CC0-1.0 | Production-safe | In Use | genre hierarchy (subgenres); links from MusicBrainz artists to Discogs; Around you: the campuses and cities listeners can join |
+| [Wikidata](https://www.wikidata.org) | CC0-1.0 | Production-safe | In Use | genre hierarchy (subgenres); links from MusicBrainz artists to Discogs; Around you: the campuses and cities listeners can join; artist photos: which Commons file shows an artist |
+| [Wikimedia Commons](https://commons.wikimedia.org) | Per file: public domain, CC0, CC BY or CC BY-SA | Production-safe | In Use | artist photos |
 | [AcousticBrainz](https://acousticbrainz.org) | CC0-1.0 | Production-safe | In Use | song comparison: tempo, key, loudness, mood and other audio descriptors |
 | [ListenBrainz](https://listenbrainz.org) | CC0-1.0 | Production-safe | In Use | listener overlap in artist comparison; 'often played with' on artist pages |
 | [Spotify Tracks Dataset (Kaggle, maharshipandya)](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset) | CC0-1.0 (as stated by the uploader) | Evaluation only | Planned | evaluating song similarity against genre labels |
@@ -47,9 +48,18 @@ CC0 or equivalent. Usable in a commercial YouTube Music feature.
 - **ID:** `wikidata`
 - **Obtained via:** its API
 - **License:** [CC0-1.0](https://www.wikidata.org/wiki/Wikidata:Licensing) (checked 2026-11-16)
-- **Feeds:** genre hierarchy (subgenres); links from MusicBrainz artists to Discogs; Around you: the campuses and cities listeners can join
+- **Feeds:** genre hierarchy (subgenres); links from MusicBrainz artists to Discogs; Around you: the campuses and cities listeners can join; artist photos: which Commons file shows an artist
 - **Attribution:** “Data from Wikidata”
 - **Notes:** Structured data is CC0. Used for 'subclass of' (P279) links between items carrying MusicBrainz genre IDs (P8052), and for items carrying both a MusicBrainz artist ID (P434) and a Discogs artist ID (P1953). The Around you list is the largest US universities by student count (P2196) plus a few abroad, their cities, US cities over 100,000 people and national capitals, rebuilt with `songnexus fetch-communities`.
+
+### Wikimedia Commons
+
+- **ID:** `wikimedia-commons`
+- **Obtained via:** its API
+- **License:** [Per file: public domain, CC0, CC BY or CC BY-SA](https://commons.wikimedia.org/wiki/Commons:Licensing) (checked 2026-11-16)
+- **Feeds:** artist photos
+- **Attribution:** “Each photo is credited with its author, license and Commons file page”
+- **Notes:** Found through the image (P18) on the artist's Wikidata item, matched by MusicBrainz ID (P434); fetched with `songnexus fetch-images` (ADR 0009). Each file carries its own license: only public domain, CC0, CC BY and CC BY-SA raster images are kept; non-free, unlicensed and non-commercial files are skipped. Images are hot-linked from Wikimedia's media hosts (upload.wikimedia.org, thumb.wikimedia.org), never copied, and the API returns the author, license and file page with every photo.
 
 ### AcousticBrainz
 

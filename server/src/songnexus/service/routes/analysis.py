@@ -27,6 +27,7 @@ from songnexus.service.deps import (
 )
 from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
+from songnexus.service.routes.browse import browse_index, path_tracks
 from songnexus.service.routes.catalog import Categories, kinds_from
 from songnexus.service.routes.common import (
     MAX_ALTERNATIVES,
@@ -117,6 +118,7 @@ def find_path(
         ):
             if route != result.path and len(other_routes) < alternatives:
                 other_routes.append([convert.artist_summary(graph, a) for a in route])
+    tracks = path_tracks(browse_index(model, session), result.path, kinds, who)
     return api.FindPathResponse(
         outcome=api.PathOutcome.FOUND,
         steps=[
@@ -125,8 +127,11 @@ def find_path(
                 to_artist=convert.artist_summary(graph, v),
                 strength=round(adjacency[u][v], 4),
                 evidence=[convert.evidence(e, sources) for e in explanations],
+                track=track,
             )
-            for (u, v), explanations in zip(itertools.pairwise(result.path), steps, strict=True)
+            for (u, v), explanations, track in zip(
+                itertools.pairwise(result.path), steps, tracks, strict=True
+            )
         ],
         alternatives=other_routes,
         graph_version=model.version,

@@ -1,4 +1,5 @@
 /** The things you can do, as compact rows: an icon tile, a name, one line of what it does. */
+import type {CSSProperties} from 'react';
 import {Link} from 'react-router';
 
 import {useI18n} from '../i18n/i18n';
@@ -15,6 +16,9 @@ export interface Tool {
   /** Kill-switch flag from /v1/config; the tool is hidden when it is off. */
   flag?: string;
 }
+
+/** Tile colors, spread around the wheel so neighbors differ. */
+const BENTO_HUES = [350, 262, 205, 158, 28, 312, 190, 45];
 
 export const TOOLS: Record<string, Tool> = {
   web: {
@@ -124,6 +128,52 @@ export function ToolGrid({
             </Link>
           </li>
         ))}
+    </ul>
+  );
+}
+
+/**
+ * Which tiles are double width in the four-column layout: the first two, and
+ * the last two when they would otherwise leave half a row empty.
+ */
+function wide(index: number, count: number): boolean {
+  if (index < 2) return true;
+  return (count - 2) % 4 === 2 && index >= count - 2;
+}
+
+/** The same tools as tiles of different weight, for Home. */
+export function Bento({
+  tools,
+  flags,
+}: {
+  tools: Tool[];
+  flags: Record<string, boolean>;
+}) {
+  const {t} = useI18n();
+  const shown = tools.filter(tool => !tool.flag || flags[tool.flag] !== false);
+  return (
+    <ul className="bento stagger">
+      {shown.map((tool, index) => (
+        <li
+          key={tool.id}
+          data-span={wide(index, shown.length) ? 2 : undefined}
+          style={{'--i': index} as CSSProperties}
+        >
+          <Link
+            className="bento__tile"
+            to={tool.to}
+            style={
+              {'--hue': BENTO_HUES[index % BENTO_HUES.length]} as CSSProperties
+            }
+          >
+            <span className="bento__icon">
+              <Icon name={tool.icon} />
+            </span>
+            <span className="bento__title">{t(tool.title)}</span>
+            <span className="bento__body">{t(tool.body)}</span>
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 }

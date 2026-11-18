@@ -79,6 +79,8 @@ export interface ConnectionParams extends GenreSelection {
   categories: ConnectionCategory[];
   pageSize?: number;
   pageToken?: string;
+  /** `relevance desc` blends strength with how widely known an artist is. */
+  orderBy?: 'strength desc' | 'relevance desc' | 'displayName';
 }
 
 export function fetchConnections(id: string, params: ConnectionParams) {
@@ -463,8 +465,9 @@ export function useAnalyzePlaylist() {
 // Play (US-04)
 // ---------------------------------------------------------------------------
 
-export function usePuzzle(date: string) {
+export function usePuzzle(date: string, enabled = true) {
   return useQuery({
+    enabled,
     queryKey: ['puzzle', date],
     queryFn: () =>
       unwrap(api.GET('/v1/puzzles/{date}', {params: {path: {date}}})),

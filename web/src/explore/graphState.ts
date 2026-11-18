@@ -16,6 +16,16 @@ export interface WebNode {
   name: string;
   expanded: boolean;
   genreKnown: boolean;
+  /** A freely licensed photo (Wikimedia Commons), when we have one. */
+  image: string | null;
+  /** Public ListenBrainz listener count (how widely known), when known. */
+  listeners: number | null;
+}
+
+/** A song two artists share, from a connection's highlights. */
+export interface WebSong {
+  id: string;
+  title: string;
 }
 
 export interface WebEdge {
@@ -26,6 +36,20 @@ export interface WebEdge {
   /** How many credits link the two artists. */
   evidenceCount: number;
   kinds: Schemas['ConnectionKind'][];
+  /** Their best-known shared songs (the server puts originals first). */
+  songs: WebSong[];
+}
+
+/** Where a direct connection of the starting artist sits in the web. */
+export type Orbit = 'FEATURES' | 'PRODUCTION' | 'CREDITS';
+export const ORBITS: readonly Orbit[] = ['FEATURES', 'PRODUCTION', 'CREDITS'];
+
+/** The orbit for a connection: performed together, made the music, or anything else credited. */
+export function orbitOf(kinds: readonly Schemas['ConnectionKind'][]): Orbit {
+  if (kinds.includes('PERFORMED_WITH')) return 'FEATURES';
+  if (kinds.includes('PRODUCED_FOR') || kinds.includes('CO_PRODUCED'))
+    return 'PRODUCTION';
+  return 'CREDITS';
 }
 
 export interface Expansion {
@@ -90,13 +114,61 @@ function addNode(
   artist: ArtistSummary,
 ): string {
   const id = idOf(artist.name);
-  nodes[id] ??= {
-    id,
-    name: artist.displayName,
-    expanded: false,
-    genreKnown: artist.genreKnown ?? false,
-  };
+  const image = photoOf(artist);
+  const listeners = listenersOf(artist);
+  const known = nodes[id];
+  if (!known)
+    nodes[id] = {
+      id,
+      name: artist.displayName,
+      expanded: false,
+      genreKnown: artist.genreKnown ?? false,
+      image,
+      listeners,
+    };
+  // A later page can carry data an earlier one (or an older cache) lacked.
+  else if ((!known.image && image) || (known.listeners === null && listeners))
+    nodes[id] = {
+      ...known,
+      image: known.image ?? image,
+      listeners: known.listeners ?? listeners,
+    };
   return id;
+}
+
+/** The public listener count on an artist summary, read loosely like the photo. */
+export function listenersOf(artist: object): number | null {
+  const value = (artist as {listeners?: unknown}).listeners;
+  return typeof value === 'number' && value > 0 ? value : null;
+}
+
+/** Shared songs named in a connection's highlights, without repeats. */
+export function songsOf(
+  highlights: readonly {
+    subject?: {name: string; displayName?: string | null} | null;
+  }[],
+): WebSong[] {
+  const songs: WebSong[] = [];
+  const seen = new Set<string>();
+  for (const highlight of highlights) {
+    const subject = highlight.subject;
+    if (!subject?.name.startsWith('recordings/') || !subject.displayName)
+      continue;
+    const key = subject.displayName.toLocaleLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    songs.push({id: idOf(subject.name), title: subject.displayName});
+  }
+  return songs;
+}
+
+/**
+ * The photo on an artist summary. Read loosely: summaries cached before photos
+ * existed have no `imageUrl` at all.
+ */
+export function photoOf(artist: object): string | null {
+  const url = (artist as {imageUrl?: unknown}).imageUrl;
+  return typeof url === 'string' && url ? url : null;
 }
 
 function merge(
@@ -118,6 +190,7 @@ function merge(
     }
     addNode(nodes, connection.artist);
     const key = edgeKey(sourceId, otherId);
+    const songs = songsOf(connection.highlights ?? []);
     edges[key] = {
       key,
       a: sourceId,
@@ -125,6 +198,8 @@ function merge(
       strength: connection.strength,
       evidenceCount: connection.evidenceCount ?? 0,
       kinds: connection.kinds,
+      // Seen again from the other side: keep the songs if this page has none.
+      songs: songs.length ? songs : (edges[key]?.songs ?? []),
     };
     shownNow++;
   }

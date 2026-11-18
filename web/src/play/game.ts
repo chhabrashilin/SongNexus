@@ -81,6 +81,30 @@ export function applyStep(
   };
 }
 
+/**
+ * The move that produced each step of the current chain. `moves` also records
+ * "back" (undo), so replay it: each move pushes a step, each "back" pops one.
+ */
+export function stepMoves(state: GameState): ('closer' | 'same' | 'farther')[] {
+  const stack: ('closer' | 'same' | 'farther')[] = [];
+  for (const m of state.moves) {
+    if (m === 'back') stack.pop();
+    else stack.push(m);
+  }
+  return state.chain.map((_, i) => stack[i] ?? 'same');
+}
+
+/**
+ * Empty places to draw between the current artist and the target: one fewer
+ * than the steps left (the last step lands on the target), none when there is
+ * no route from here or the game is over. Capped so a long detour stays tidy.
+ */
+export function openSlots(state: GameState, par: number, cap = 4): number {
+  if (state.status !== 'playing') return 0;
+  const left = stepsLeft(state, par);
+  return left === null ? 0 : Math.max(0, Math.min(cap, left - 1));
+}
+
 export function applyMiss(state: GameState): GameState {
   return state.status === 'playing'
     ? {...state, misses: state.misses + 1}

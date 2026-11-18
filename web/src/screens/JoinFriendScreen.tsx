@@ -1,4 +1,8 @@
-/** Accept a friend invite from a link (`/friends/join/:code`) or a typed code. */
+/**
+ * Accept a friend invite from a link (`/friends/join/:code`) or a typed code:
+ * one welcoming card with both of you, what being friends means, and accept.
+ */
+import type {CSSProperties, ReactNode} from 'react';
 import {Link, useNavigate, useParams} from 'react-router';
 
 import {ApiError} from '../api/client';
@@ -7,15 +11,84 @@ import {
   useInvitePreview,
   useSocialProfile,
 } from '../api/social';
+import {useAmbient} from '../app/ambient';
 import {usePageTitle} from '../app/Shell';
 import {useAuth} from '../auth/AuthProvider';
+import {hueOf} from '../components/ArtistRow';
 import {Icon} from '../components/Icon';
 import {Cover} from '../components/Shelf';
 import {useSnackbar} from '../components/Snackbar';
-import {EmptyState, Spinner} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 
 import {NameCard} from './FriendsScreen';
+
+function Perks() {
+  const {t} = useI18n();
+  return (
+    <ul className="join__perks">
+      <li>
+        <Icon name="send" />
+        {t('friends.join.perk.share')}
+      </li>
+      <li>
+        <Icon name="route" />
+        {t('friends.join.perk.paths')}
+      </li>
+      <li>
+        <Icon name="shield" />
+        {t('friends.join.perk.private')}
+      </li>
+    </ul>
+  );
+}
+
+function JoinCard({
+  inviter,
+  you,
+  eyebrow,
+  title,
+  body,
+  children,
+}: {
+  inviter: string;
+  you: string;
+  eyebrow: string;
+  title?: string;
+  body?: string;
+  children?: ReactNode;
+}) {
+  const {t} = useI18n();
+  return (
+    <section
+      className="join"
+      aria-labelledby="join-title"
+      style={{'--hue': hueOf(inviter || 'friends')} as CSSProperties}
+    >
+      <div className="join__people" aria-hidden="true">
+        <Cover
+          name={inviter || '?'}
+          icon={inviter ? undefined : 'person'}
+          round
+        />
+        <span className="join__bridge">
+          <Icon name="link" />
+        </span>
+        <Cover name={you || '?'} icon={you ? undefined : 'person'} round />
+      </div>
+      <p className="join__eyebrow">{eyebrow}</p>
+      <h1 id="join-title" className="join__title">
+        {t('friends.join.title')}
+      </h1>
+      {title && (
+        <p className="join__headline">
+          <bdi>{title}</bdi>
+        </p>
+      )}
+      {body && <p className="join__body">{body}</p>}
+      {children}
+    </section>
+  );
+}
 
 export default function JoinFriendScreen() {
   const {t} = useI18n();
@@ -28,63 +101,85 @@ export default function JoinFriendScreen() {
   const preview = useInvitePreview(code, signedIn);
   const accept = useAcceptInvite();
   usePageTitle(t('friends.join.title'));
+  useAmbient(preview.data?.inviter.displayName ?? null);
 
-  let body;
-  if (!signedIn) {
-    body = (
-      <EmptyState
-        title={t('friends.join.signIn')}
-        action={
-          <button
-            type="button"
-            className="btn btn--filled"
-            onClick={() => void auth.signIn()}
-            disabled={auth.status !== 'signedOut'}
-          >
-            {t('shell.signIn')}
-          </button>
-        }
-      />
-    );
-  } else if (preview.isPending || profile.isPending) {
-    body = <Spinner />;
-  } else if (preview.isError) {
-    body = (
-      <EmptyState
-        title={t('friends.join.invalid.title')}
-        body={t('friends.join.invalid.body')}
-        action={
-          <Link className="btn btn--tonal" to="/friends">
-            {t('friends.title')}
-          </Link>
-        }
-      />
-    );
-  } else {
-    const inviter = preview.data.inviter.displayName;
-    const needsName = !profile.data?.displayName;
-    body = (
-      <div className="join-card stack">
-        <div className="join-card__people" aria-hidden="true">
-          <Cover name={inviter} round />
-          <span className="join-card__link">
-            <Icon name="link" />
-          </span>
-          <Cover name={profile.data?.displayName || '?'} round />
-        </div>
-        <h2>{t('friends.join.from', {name: inviter})}</h2>
-        <p className="muted">{t('friends.join.what')}</p>
-        {preview.data.alreadyFriends ? (
-          <Link className="btn btn--tonal" to="/friends">
-            {t('friends.join.already')}
-          </Link>
-        ) : needsName ? (
-          <NameCard lead={t('friends.join.nameFirst', {name: inviter})} />
-        ) : (
-          <div className="row" style={{justifyContent: 'center'}}>
+  if (!signedIn)
+    return (
+      <div className="join-page">
+        <JoinCard
+          inviter=""
+          you=""
+          eyebrow={t('friends.join.eyebrow')}
+          body={t('friends.join.signIn')}
+        >
+          <div className="join__actions">
             <button
               type="button"
-              className="btn btn--accent"
+              className="btn btn--filled"
+              onClick={() => void auth.signIn()}
+              disabled={auth.status !== 'signedOut'}
+            >
+              <Icon name="person" />
+              {t('shell.signIn')}
+            </button>
+          </div>
+          <Perks />
+        </JoinCard>
+      </div>
+    );
+
+  if (preview.isPending || profile.isPending)
+    return (
+      <div className="join-page" role="status">
+        <span className="visually-hidden">{t('state.loading')}</span>
+        <span className="skeleton join-skel" />
+      </div>
+    );
+
+  if (preview.isError)
+    return (
+      <div className="join-page">
+        <JoinCard
+          inviter=""
+          you={profile.data?.displayName ?? ''}
+          eyebrow={t('friends.join.invalid.title')}
+          body={t('friends.join.invalid.body')}
+        >
+          <div className="join__actions">
+            <Link className="btn btn--tonal" to="/friends">
+              <Icon name="people" />
+              {t('friends.title')}
+            </Link>
+          </div>
+        </JoinCard>
+      </div>
+    );
+
+  const inviter = preview.data.inviter.displayName;
+  const you = profile.data?.displayName ?? '';
+  return (
+    <div className="join-page">
+      <JoinCard
+        inviter={inviter}
+        you={you}
+        eyebrow={t('friends.join.eyebrow')}
+        title={t('friends.join.from', {name: inviter})}
+        body={t('friends.join.what')}
+      >
+        {preview.data.alreadyFriends ? (
+          <div className="join__actions">
+            <Link className="btn btn--tonal" to="/friends">
+              <Icon name="check" />
+              {t('friends.join.already')}
+            </Link>
+          </div>
+        ) : !you ? (
+          <NameCard lead={t('friends.join.nameFirst', {name: inviter})} />
+        ) : (
+          <div className="join__actions">
+            <button
+              type="button"
+              className="btn btn--filled"
               disabled={accept.isPending}
               onClick={() =>
                 accept.mutate(code, {
@@ -111,17 +206,8 @@ export default function JoinFriendScreen() {
               : t('friends.join.invalid.body')}
           </p>
         )}
-      </div>
-    );
-  }
-
-  return (
-    <div className="stack product-screen">
-      <section className="product-hero stack">
-        <p className="product-hero__label">{t('nav.friends')}</p>
-        <h1>{t('friends.join.title')}</h1>
-      </section>
-      {body}
+        <Perks />
+      </JoinCard>
     </div>
   );
 }

@@ -22,10 +22,14 @@ DEFAULT_FLAGS: Mapping[str, bool] = MappingProxyType(
         "stories": True,
         "community": True,  # Around you: campus and city charts
         "ask": True,  # questions in the search bar (ADR 0008); works without a model
+        "browse": True,  # home shelves and genre pages
+        "recommendations": True,  # explained recommendations on artist pages
+        "tasteProfile": True,  # Your Nexus: taste profiles from listening or a playlist
         "playlistImport": True,
         "signIn": True,
         "linkedAccounts": True,
         "friends": True,
+        "leaderboards": True,  # opt-in game scores and campus leaderboards (ADR 0010)
     }
 )
 

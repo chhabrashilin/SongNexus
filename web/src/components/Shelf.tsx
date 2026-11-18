@@ -10,7 +10,7 @@ import {Link} from 'react-router';
 
 import {useI18n} from '../i18n/i18n';
 
-import {hueOf, initialOf} from './ArtistRow';
+import {CoverImage, hueOf, initialOf} from './ArtistRow';
 import {Icon, type IconName} from './Icon';
 import {artistIdFromPath, useIntentPrefetch} from './useIntentPrefetch';
 
@@ -20,19 +20,27 @@ export function Cover({
   name,
   round = false,
   icon,
+  image,
+  eager = false,
 }: {
   name: string;
-  round?: boolean;
+  round?: boolean | undefined;
   /** Shown instead of the initial (for things that aren't named, like "you"). */
-  icon?: IconName;
+  icon?: IconName | undefined;
+  /** A photo to lay over the generated art. */
+  image?: string | null | undefined;
+  /** Load the photo right away (above the fold) instead of when it nears view. */
+  eager?: boolean;
 }) {
   return (
     <span
       className={round ? 'cover cover--round' : 'cover'}
       style={{'--hue': hueOf(name)} as CSSProperties}
+      data-photo={image ? true : undefined}
       aria-hidden="true"
     >
       {icon ? <Icon name={icon} /> : initialOf(name)}
+      {image && <CoverImage src={image} eager={eager} />}
     </span>
   );
 }
@@ -42,17 +50,25 @@ export function CoverCard({
   title,
   subtitle,
   round = false,
+  image,
+  badge,
 }: {
   to: string;
   title: string;
   subtitle?: ReactNode;
-  round?: boolean;
+  round?: boolean | undefined;
+  image?: string | null | undefined;
+  /** A short label pinned to the cover ("#1", "New"). */
+  badge?: ReactNode;
 }) {
   const intent = useIntentPrefetch(artistIdFromPath(to));
   return (
     <li className="cover-card" data-round={round || undefined}>
       <Link className="cover-card__link" to={to} {...intent}>
-        <Cover name={title} round={round} />
+        <span className="cover-card__art">
+          <Cover name={title} round={round} image={image} />
+          {badge && <span className="cover-card__badge">{badge}</span>}
+        </span>
         <span className="cover-card__title">
           <bdi>{title}</bdi>
         </span>
@@ -70,7 +86,7 @@ export function Shelf({
   children,
 }: {
   title: string;
-  eyebrow?: string;
+  eyebrow?: string | undefined;
   action?: ReactNode;
   children: ReactNode;
 }) {

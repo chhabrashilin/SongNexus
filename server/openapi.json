@@ -230,6 +230,29 @@
             "title": "Graphversion",
             "type": "string"
           },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ArtistImage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The artist's photo and its attribution, or null."
+          },
+          "imageUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A freely licensed photo about 330 px wide (Wikimedia Commons), or null. Its author and license are in `image` on GetArtist and must be shown with it (ADR 0009).",
+            "title": "Imageurl"
+          },
           "labels": {
             "description": "Labels the artist's releases in our data came out on.",
             "items": {
@@ -244,6 +267,18 @@
             },
             "title": "Links",
             "type": "array"
+          },
+          "listeners": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How many people listen to this artist on ListenBrainz (public, aggregate data; a measure of how widely known they are), or null when unknown or below the 50-listener floor under which no audience is described.",
+            "title": "Listeners"
           },
           "name": {
             "description": "Resource name `artists/{artist}`.",
@@ -276,6 +311,8 @@
           "artistType",
           "country",
           "genreKnown",
+          "imageUrl",
+          "listeners",
           "beginDate",
           "detailLevel",
           "genres",
@@ -285,9 +322,81 @@
           "labels",
           "oftenPlayedWith",
           "sources",
+          "image",
           "graphVersion"
         ],
         "title": "Artist",
+        "type": "object"
+      },
+      "ArtistImage": {
+        "description": "A freely licensed artist photo from Wikimedia Commons, with its attribution (ADR 0009).",
+        "properties": {
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The author as credited on Commons, as plain text.",
+            "title": "Author"
+          },
+          "height": {
+            "description": "Height of the original file, in pixels.",
+            "title": "Height",
+            "type": "integer"
+          },
+          "license": {
+            "description": "License short name, e.g. `CC BY-SA 4.0`, `Public domain`.",
+            "title": "License",
+            "type": "string"
+          },
+          "licenseUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Where the license is stated, when it has a URL.",
+            "title": "Licenseurl"
+          },
+          "pageUrl": {
+            "description": "The Commons file page: full license and history.",
+            "title": "Pageurl",
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "description": "The photo about 330 px wide.",
+            "title": "Thumbnailurl",
+            "type": "string"
+          },
+          "url": {
+            "description": "The photo about 960 px wide, on a Wikimedia media host.",
+            "title": "Url",
+            "type": "string"
+          },
+          "width": {
+            "description": "Width of the original file, in pixels.",
+            "title": "Width",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "url",
+          "thumbnailUrl",
+          "width",
+          "height",
+          "pageUrl",
+          "author",
+          "license",
+          "licenseUrl"
+        ],
+        "title": "ArtistImage",
         "type": "object"
       },
       "ArtistLabel": {
@@ -385,6 +494,30 @@
             "title": "Genreknown",
             "type": "boolean"
           },
+          "imageUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A freely licensed photo about 330 px wide (Wikimedia Commons), or null. Its author and license are in `image` on GetArtist and must be shown with it (ADR 0009).",
+            "title": "Imageurl"
+          },
+          "listeners": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How many people listen to this artist on ListenBrainz (public, aggregate data; a measure of how widely known they are), or null when unknown or below the 50-listener floor under which no audience is described.",
+            "title": "Listeners"
+          },
           "name": {
             "description": "Resource name `artists/{artist}`.",
             "examples": [
@@ -400,7 +533,9 @@
           "disambiguation",
           "artistType",
           "country",
-          "genreKnown"
+          "genreKnown",
+          "imageUrl",
+          "listeners"
         ],
         "title": "ArtistSummary",
         "type": "object"
@@ -1040,6 +1175,105 @@
         "title": "BlockedUser",
         "type": "object"
       },
+      "CampusLeaderboard": {
+        "description": "GetCampusLeaderboard: the top campuses for a day or week.",
+        "properties": {
+          "campuses": {
+            "items": {
+              "$ref": "#/components/schemas/CampusStanding"
+            },
+            "title": "Campuses",
+            "type": "array"
+          },
+          "demoData": {
+            "default": false,
+            "description": "Synthetic demo players contributed.",
+            "title": "Demodata",
+            "type": "boolean"
+          },
+          "endDate": {
+            "title": "Enddate",
+            "type": "string"
+          },
+          "game": {
+            "$ref": "#/components/schemas/Game"
+          },
+          "minPlayers": {
+            "title": "Minplayers",
+            "type": "integer"
+          },
+          "name": {
+            "description": "`leaderboards/campuses`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "period": {
+            "$ref": "#/components/schemas/LeaderboardPeriod"
+          },
+          "rankedCampuses": {
+            "description": "How many campuses met the player floor.",
+            "title": "Rankedcampuses",
+            "type": "integer"
+          },
+          "startDate": {
+            "title": "Startdate",
+            "type": "string"
+          },
+          "viewerCampus": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ViewerCampus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Signed-in only."
+          }
+        },
+        "required": [
+          "name",
+          "game",
+          "period",
+          "startDate",
+          "endDate",
+          "minPlayers",
+          "campuses",
+          "rankedCampuses",
+          "viewerCampus",
+          "demoData"
+        ],
+        "title": "CampusLeaderboard",
+        "type": "object"
+      },
+      "CampusStanding": {
+        "description": "A campus on the leaderboard: aggregate only.",
+        "properties": {
+          "averagePoints": {
+            "description": "Members' average points over the period, rounded.",
+            "title": "Averagepoints",
+            "type": "integer"
+          },
+          "community": {
+            "$ref": "#/components/schemas/Community"
+          },
+          "players": {
+            "$ref": "#/components/schemas/ListenerRange"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rank",
+          "community",
+          "players",
+          "averagePoints"
+        ],
+        "title": "CampusStanding",
+        "type": "object"
+      },
       "ChartMovement": {
         "description": "An artist's movement since the chart a week earlier.",
         "enum": [
@@ -1050,6 +1284,49 @@
         ],
         "title": "ChartMovement",
         "type": "string"
+      },
+      "ChartMover": {
+        "description": "An artist that moved. A rank is null where the artist was not on that chart.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "places": {
+            "default": 0,
+            "title": "Places",
+            "type": "integer"
+          },
+          "previousRank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previousrank"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          }
+        },
+        "required": [
+          "artist",
+          "rank",
+          "previousRank",
+          "places"
+        ],
+        "title": "ChartMover",
+        "type": "object"
       },
       "ChartState": {
         "description": "Whether a community has enough listeners to show its chart.",
@@ -1780,6 +2057,26 @@
         "title": "CompareRecordingsResponse",
         "type": "object"
       },
+      "ComputeTasteProfileRequest": {
+        "description": "ComputeTasteProfile: the artists to profile (e.g. matched from a playlist on the device).",
+        "properties": {
+          "artists": {
+            "description": "Artist resource names, most important first; duplicates are ignored.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "title": "Artists",
+            "type": "array"
+          }
+        },
+        "required": [
+          "artists"
+        ],
+        "title": "ComputeTasteProfileRequest",
+        "type": "object"
+      },
       "Config": {
         "description": "GetConfig: feature flags and limits for the client.",
         "properties": {
@@ -2462,6 +2759,293 @@
         "title": "FriendInvitePreview",
         "type": "object"
       },
+      "FriendLeaderboard": {
+        "description": "GetFriendLeaderboard: the viewer and accepted friends who scored in the period.",
+        "properties": {
+          "endDate": {
+            "title": "Enddate",
+            "type": "string"
+          },
+          "game": {
+            "$ref": "#/components/schemas/Game"
+          },
+          "name": {
+            "description": "`users/{user}/friendLeaderboard`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "period": {
+            "$ref": "#/components/schemas/LeaderboardPeriod"
+          },
+          "standings": {
+            "items": {
+              "$ref": "#/components/schemas/FriendStanding"
+            },
+            "title": "Standings",
+            "type": "array"
+          },
+          "startDate": {
+            "title": "Startdate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "game",
+          "period",
+          "startDate",
+          "endDate",
+          "standings"
+        ],
+        "title": "FriendLeaderboard",
+        "type": "object"
+      },
+      "FriendPath": {
+        "description": "A shortest connection from one of your top artists to one of your friend's.",
+        "properties": {
+          "fromArtist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/PathStep"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "toArtist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          }
+        },
+        "required": [
+          "fromArtist",
+          "toArtist",
+          "steps"
+        ],
+        "title": "FriendPath",
+        "type": "object"
+      },
+      "FriendPaths": {
+        "description": "GetFriendPaths: how your top artists connect to an accepted friend's.",
+        "properties": {
+          "demoData": {
+            "default": false,
+            "description": "The friend is a synthetic demo listener.",
+            "title": "Demodata",
+            "type": "boolean"
+          },
+          "friend": {
+            "$ref": "#/components/schemas/Person"
+          },
+          "friendArtists": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Friendartists",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "name": {
+            "description": "`users/{user}/friends/{friend}/paths`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "paths": {
+            "items": {
+              "$ref": "#/components/schemas/FriendPath"
+            },
+            "title": "Paths",
+            "type": "array"
+          },
+          "sharedArtists": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Sharedartists",
+            "type": "array"
+          },
+          "sharedCollaborators": {
+            "items": {
+              "$ref": "#/components/schemas/SharedCollaborator"
+            },
+            "title": "Sharedcollaborators",
+            "type": "array"
+          },
+          "viewerArtists": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Viewerartists",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "friend",
+          "viewerArtists",
+          "friendArtists",
+          "sharedArtists",
+          "sharedCollaborators",
+          "paths",
+          "demoData",
+          "graphVersion"
+        ],
+        "title": "FriendPaths",
+        "type": "object"
+      },
+      "FriendStanding": {
+        "description": "The viewer or an accepted friend on the friends leaderboard.",
+        "properties": {
+          "daysPlayed": {
+            "title": "Daysplayed",
+            "type": "integer"
+          },
+          "isViewer": {
+            "default": false,
+            "title": "Isviewer",
+            "type": "boolean"
+          },
+          "person": {
+            "$ref": "#/components/schemas/Person"
+          },
+          "points": {
+            "title": "Points",
+            "type": "integer"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rank",
+          "person",
+          "points",
+          "daysPlayed",
+          "isViewer"
+        ],
+        "title": "FriendStanding",
+        "type": "object"
+      },
+      "Game": {
+        "description": "A game with a leaderboard: the daily puzzle or Credit check.",
+        "enum": [
+          "PUZZLE",
+          "TRIVIA"
+        ],
+        "title": "Game",
+        "type": "string"
+      },
+      "GameScore": {
+        "description": "A score the server computed from a submitted play (one per game per day).",
+        "properties": {
+          "campus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "`communities/{id}` it counts for.",
+            "title": "Campus"
+          },
+          "correct": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correct"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "game": {
+            "$ref": "#/components/schemas/Game"
+          },
+          "maxPoints": {
+            "title": "Maxpoints",
+            "type": "integer"
+          },
+          "name": {
+            "description": "`users/{user}/gameScores/{game}-{date}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "par": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Par"
+          },
+          "points": {
+            "title": "Points",
+            "type": "integer"
+          },
+          "steps": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Steps"
+          },
+          "submitTime": {
+            "title": "Submittime",
+            "type": "string"
+          },
+          "synthetic": {
+            "default": false,
+            "description": "Demo data from `songnexus seed-demo`.",
+            "title": "Synthetic",
+            "type": "boolean"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          }
+        },
+        "required": [
+          "name",
+          "game",
+          "date",
+          "points",
+          "maxPoints",
+          "steps",
+          "par",
+          "correct",
+          "total",
+          "campus",
+          "submitTime",
+          "synthetic"
+        ],
+        "title": "GameScore",
+        "type": "object"
+      },
       "Genre": {
         "description": "A genre.",
         "properties": {
@@ -2500,6 +3084,127 @@
           "parents"
         ],
         "title": "Genre",
+        "type": "object"
+      },
+      "GenreArtist": {
+        "description": "An artist in a genre.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "collaboratorCount": {
+            "description": "Distinct collaborators (as on artist pages).",
+            "title": "Collaboratorcount",
+            "type": "integer"
+          },
+          "genreShare": {
+            "description": "Share of the artist's genres in this genre, 0 to 1.",
+            "title": "Genreshare",
+            "type": "number"
+          }
+        },
+        "required": [
+          "artist",
+          "collaboratorCount",
+          "genreShare"
+        ],
+        "title": "GenreArtist",
+        "type": "object"
+      },
+      "GenreDetail": {
+        "description": "GetGenre: a genre, where it sits in the hierarchy, and how many artists it has.",
+        "properties": {
+          "artistCount": {
+            "description": "Artists carrying this genre.",
+            "title": "Artistcount",
+            "type": "integer"
+          },
+          "artistCountWithSubgenres": {
+            "description": "Artists carrying this genre or any genre below it.",
+            "title": "Artistcountwithsubgenres",
+            "type": "integer"
+          },
+          "children": {
+            "description": "Direct subgenres with artists, most artists first.",
+            "items": {
+              "$ref": "#/components/schemas/GenreRef"
+            },
+            "title": "Children",
+            "type": "array"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "memberCount": {
+            "description": "Artists listed by ListGenreArtists: at least 20% of their genre shares in this genre or its subgenres (the genre filter's rule).",
+            "title": "Membercount",
+            "type": "integer"
+          },
+          "name": {
+            "description": "`genres/{genre}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "parents": {
+            "items": {
+              "$ref": "#/components/schemas/GenreRef"
+            },
+            "title": "Parents",
+            "type": "array"
+          },
+          "topLevel": {
+            "description": "True when the genre has no parent.",
+            "title": "Toplevel",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "artistCount",
+          "artistCountWithSubgenres",
+          "memberCount",
+          "topLevel",
+          "parents",
+          "children",
+          "graphVersion"
+        ],
+        "title": "GenreDetail",
+        "type": "object"
+      },
+      "GenreRef": {
+        "description": "A related genre with its artist counts.",
+        "properties": {
+          "artistCount": {
+            "title": "Artistcount",
+            "type": "integer"
+          },
+          "artistCountWithSubgenres": {
+            "title": "Artistcountwithsubgenres",
+            "type": "integer"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "name": {
+            "description": "`genres/{genre}`.",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "artistCount",
+          "artistCountWithSubgenres"
+        ],
+        "title": "GenreRef",
         "type": "object"
       },
       "GenreShare": {
@@ -2761,6 +3466,15 @@
         ],
         "title": "LabelRelease",
         "type": "object"
+      },
+      "LeaderboardPeriod": {
+        "description": "One day, or the ISO week (Monday to Sunday) containing the date.",
+        "enum": [
+          "DAY",
+          "WEEK"
+        ],
+        "title": "LeaderboardPeriod",
+        "type": "string"
       },
       "LicenseTier": {
         "description": "What a data source's license allows (ADR 0005).",
@@ -3148,6 +3862,56 @@
         "title": "ListFriendsResponse",
         "type": "object"
       },
+      "ListGameScoresResponse": {
+        "description": "ListGameScores: the player's own scores of the last two weeks, newest first.",
+        "properties": {
+          "gameScores": {
+            "items": {
+              "$ref": "#/components/schemas/GameScore"
+            },
+            "title": "Gamescores",
+            "type": "array"
+          }
+        },
+        "required": [
+          "gameScores"
+        ],
+        "title": "ListGameScoresResponse",
+        "type": "object"
+      },
+      "ListGenreArtistsResponse": {
+        "description": "ListGenreArtists: a genre's artists, most connected first.",
+        "properties": {
+          "artists": {
+            "items": {
+              "$ref": "#/components/schemas/GenreArtist"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "nextPageToken": {
+            "default": "",
+            "title": "Nextpagetoken",
+            "type": "string"
+          },
+          "totalSize": {
+            "title": "Totalsize",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artists",
+          "nextPageToken",
+          "totalSize",
+          "graphVersion"
+        ],
+        "title": "ListGenreArtistsResponse",
+        "type": "object"
+      },
       "ListGenresResponse": {
         "description": "ListGenres.",
         "properties": {
@@ -3257,6 +4021,28 @@
           "totalSize"
         ],
         "title": "ListListeningResponse",
+        "type": "object"
+      },
+      "ListShelvesResponse": {
+        "description": "ListShelves: the home page's shelves, in display order. Empty shelves are left out.",
+        "properties": {
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "shelves": {
+            "items": {
+              "$ref": "#/components/schemas/Shelf"
+            },
+            "title": "Shelves",
+            "type": "array"
+          }
+        },
+        "required": [
+          "shelves",
+          "graphVersion"
+        ],
+        "title": "ListShelvesResponse",
         "type": "object"
       },
       "ListStoriesResponse": {
@@ -3457,6 +4243,16 @@
         "title": "MatchStatus",
         "type": "string"
       },
+      "MoversState": {
+        "description": "Whether a weekly recap can be shown.",
+        "enum": [
+          "LOCKED",
+          "NO_HISTORY",
+          "AVAILABLE"
+        ],
+        "title": "MoversState",
+        "type": "string"
+      },
       "OverlapStrength": {
         "description": "How strongly two audiences overlap (``core.listening``).",
         "enum": [
@@ -3545,15 +4341,93 @@
           },
           "toArtist": {
             "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "track": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PathTrack"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "One recording proving this step, different from earlier steps' tracks where possible. Null when only a relation (such as band membership) connects them."
           }
         },
         "required": [
           "fromArtist",
           "toArtist",
           "strength",
-          "evidence"
+          "evidence",
+          "track"
         ],
         "title": "PathStep",
+        "type": "object"
+      },
+      "PathTrack": {
+        "description": "A real recording that stands for one step of a path (to turn a path into a playlist).",
+        "properties": {
+          "artists": {
+            "description": "The recording's primary artists.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "firstReleaseDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firstreleasedate"
+          },
+          "recording": {
+            "description": "`recordings/{recording}`.",
+            "title": "Recording",
+            "type": "string"
+          },
+          "release": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set (`releases/{release}`) when the step's credit is on this release, not the recording itself; the recording is then the release's first track.",
+            "title": "Release"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "recording",
+          "displayName",
+          "artists",
+          "year",
+          "firstReleaseDate",
+          "release"
+        ],
+        "title": "PathTrack",
         "type": "object"
       },
       "Person": {
@@ -4008,6 +4882,172 @@
         "title": "Puzzle",
         "type": "object"
       },
+      "Reason": {
+        "description": "A machine-readable reason: a kind, its client message key and the numbers behind it.",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ShelfReasonKind"
+          },
+          "messageId": {
+            "description": "Client message key, e.g. `reason.producedRecordings`.",
+            "title": "Messageid",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "description": "Counts, years and roles.",
+            "title": "Params",
+            "type": "object"
+          }
+        },
+        "required": [
+          "kind",
+          "messageId",
+          "params"
+        ],
+        "title": "Reason",
+        "type": "object"
+      },
+      "RecommendArtistsResponse": {
+        "description": "RecommendArtists.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "recommendations": {
+            "items": {
+              "$ref": "#/components/schemas/Recommendation"
+            },
+            "title": "Recommendations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "artist",
+          "recommendations",
+          "graphVersion"
+        ],
+        "title": "RecommendArtistsResponse",
+        "type": "object"
+      },
+      "Recommendation": {
+        "description": "A recommended artist, not directly connected to the one asked about.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "reasons": {
+            "description": "Never empty.",
+            "items": {
+              "$ref": "#/components/schemas/RecommendationReason"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "score": {
+            "description": "Ranking score (higher first); for ordering only.",
+            "title": "Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "artist",
+          "score",
+          "reasons"
+        ],
+        "title": "Recommendation",
+        "type": "object"
+      },
+      "RecommendationReason": {
+        "description": "One checkable reason for a recommendation.",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/RecommendationReasonKind"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShelfLabel"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "SAME_LABEL: the shared label."
+          },
+          "messageId": {
+            "description": "Client message key, e.g. `recommend.sharedCollaborators`.",
+            "title": "Messageid",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Params",
+            "type": "object"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SourceLink"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "LISTENERS_IN_COMMON: where the aggregate data comes from."
+          },
+          "via": {
+            "description": "SHARED_COLLABORATORS: up to 3 shared collaborators, strongest links first. Each link opens as a connection.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Via",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "messageId",
+          "params",
+          "via",
+          "label",
+          "source"
+        ],
+        "title": "RecommendationReason",
+        "type": "object"
+      },
+      "RecommendationReasonKind": {
+        "description": "Why an artist is recommended.",
+        "enum": [
+          "SHARED_COLLABORATORS",
+          "LISTENERS_IN_COMMON",
+          "SAME_LABEL"
+        ],
+        "title": "RecommendationReasonKind",
+        "type": "string"
+      },
       "Recording": {
         "description": "GetRecording.",
         "properties": {
@@ -4235,6 +5275,18 @@
           "entityType": {
             "$ref": "#/components/schemas/EntityType"
           },
+          "imageUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "For an artist, its photo about 330 px wide (as `ArtistSummary.imageUrl`).",
+            "title": "Imageurl"
+          },
           "matchType": {
             "title": "Matchtype",
             "type": "string"
@@ -4260,7 +5312,8 @@
           "subtitle",
           "matchType",
           "matchedOn",
-          "blocked"
+          "blocked",
+          "imageUrl"
         ],
         "title": "SearchResult",
         "type": "object"
@@ -4356,6 +5409,37 @@
         "title": "ShareKind",
         "type": "string"
       },
+      "SharedCollaborator": {
+        "description": "An artist who worked with one of your top artists and one of your friend's.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "friendArtists": {
+            "description": "Your friend's top artists it connects to.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Friendartists",
+            "type": "array"
+          },
+          "viewerArtists": {
+            "description": "Your top artists it connects to.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Viewerartists",
+            "type": "array"
+          }
+        },
+        "required": [
+          "artist",
+          "viewerArtists",
+          "friendArtists"
+        ],
+        "title": "SharedCollaborator",
+        "type": "object"
+      },
       "SharedCredit": {
         "description": "A credit role compared across the two songs.",
         "properties": {
@@ -4449,6 +5533,214 @@
         "title": "SharedSubject",
         "type": "object"
       },
+      "Shelf": {
+        "description": "A home shelf: a title template, its parameters and its items, best first.",
+        "properties": {
+          "genre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "For GENRE shelves, `genres/{genre}` (the see-all page).",
+            "title": "Genre"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ShelfItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ShelfKind"
+          },
+          "messageId": {
+            "description": "Client message key for the title, e.g. `shelf.genre`.",
+            "title": "Messageid",
+            "type": "string"
+          },
+          "name": {
+            "description": "`shelves/{shelf}`, stable within a catalog version.",
+            "title": "Name",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "description": "Title template values.",
+            "title": "Params",
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "messageId",
+          "params",
+          "genre",
+          "items"
+        ],
+        "title": "Shelf",
+        "type": "object"
+      },
+      "ShelfItem": {
+        "description": "One shelf item: exactly one of `artist`, `recording` or `label` is set.",
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ArtistSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "label": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShelfLabel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "$ref": "#/components/schemas/Reason"
+          },
+          "recording": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShelfRecording"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "artist",
+          "recording",
+          "label",
+          "reason"
+        ],
+        "title": "ShelfItem",
+        "type": "object"
+      },
+      "ShelfKind": {
+        "description": "Which kind of shelf.",
+        "enum": [
+          "BEHIND_THE_HITS",
+          "SUPER_CONNECTORS",
+          "GENRE_BRIDGES",
+          "ON_THIS_DAY",
+          "GENRE",
+          "DECADE",
+          "LABELS"
+        ],
+        "title": "ShelfKind",
+        "type": "string"
+      },
+      "ShelfLabel": {
+        "description": "A label on a shelf.",
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "name": {
+            "description": "`labels/{label}`.",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "displayName"
+        ],
+        "title": "ShelfLabel",
+        "type": "object"
+      },
+      "ShelfReasonKind": {
+        "description": "Why an item is on a shelf.",
+        "enum": [
+          "PRODUCED_RECORDINGS",
+          "COLLABORATORS",
+          "GENRES_BRIDGED",
+          "RELEASED_ON_DAY",
+          "CREDITED_RECORDINGS",
+          "LABEL_RELEASES"
+        ],
+        "title": "ShelfReasonKind",
+        "type": "string"
+      },
+      "ShelfRecording": {
+        "description": "A recording on a shelf.",
+        "properties": {
+          "artists": {
+            "description": "Primary artists.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "firstReleaseDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firstreleasedate"
+          },
+          "name": {
+            "description": "`recordings/{recording}`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "name",
+          "displayName",
+          "year",
+          "firstReleaseDate",
+          "artists"
+        ],
+        "title": "ShelfRecording",
+        "type": "object"
+      },
       "SimilarityPart": {
         "description": "One named part of the similarity score.",
         "properties": {
@@ -4482,7 +5774,7 @@
         "type": "object"
       },
       "SocialProfile": {
-        "description": "The name a user shows to friends. Friends see nothing else about each other.",
+        "description": "The name a user shows to friends, and whether friends may see their top artists.",
         "properties": {
           "displayName": {
             "default": "",
@@ -4494,11 +5786,18 @@
             "description": "`users/{user}/socialProfile`.",
             "title": "Name",
             "type": "string"
+          },
+          "shareTopArtists": {
+            "default": false,
+            "description": "Friends who also share may see your top artists in friend paths. Off by default.",
+            "title": "Sharetopartists",
+            "type": "boolean"
           }
         },
         "required": [
           "name",
-          "displayName"
+          "displayName",
+          "shareTopArtists"
         ],
         "title": "SocialProfile",
         "type": "object"
@@ -4732,6 +6031,45 @@
         "title": "Subject",
         "type": "object"
       },
+      "SubmitPuzzleScoreRequest": {
+        "description": "SubmitPuzzleScore: the moves that solved the puzzle, start first and target last.",
+        "properties": {
+          "moves": {
+            "description": "`artists/{artist}` in the order played.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 21,
+            "minItems": 2,
+            "title": "Moves",
+            "type": "array"
+          }
+        },
+        "required": [
+          "moves"
+        ],
+        "title": "SubmitPuzzleScoreRequest",
+        "type": "object"
+      },
+      "SubmitTriviaScoreRequest": {
+        "description": "SubmitTriviaScore: an answer to every question of the day.",
+        "properties": {
+          "answers": {
+            "items": {
+              "$ref": "#/components/schemas/TriviaAnswer"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Answers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "answers"
+        ],
+        "title": "SubmitTriviaScoreRequest",
+        "type": "object"
+      },
       "SyncLinkedAccountResponse": {
         "description": "SyncLinkedAccount: what this sync read.",
         "properties": {
@@ -4764,6 +6102,270 @@
           "unmatchedPlays"
         ],
         "title": "SyncLinkedAccountResponse",
+        "type": "object"
+      },
+      "TasteCentral": {
+        "description": "The profiled artist directly connected to the most of the others.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "linkedCount": {
+            "title": "Linkedcount",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artist",
+          "linkedCount"
+        ],
+        "title": "TasteCentral",
+        "type": "object"
+      },
+      "TasteCluster": {
+        "description": "The tightest group: every member is directly connected to `minLinks` others in it.",
+        "properties": {
+          "artists": {
+            "description": "Up to 25 members, heaviest first.",
+            "items": {
+              "$ref": "#/components/schemas/ArtistSummary"
+            },
+            "title": "Artists",
+            "type": "array"
+          },
+          "links": {
+            "description": "Direct connections inside the group.",
+            "title": "Links",
+            "type": "integer"
+          },
+          "minLinks": {
+            "title": "Minlinks",
+            "type": "integer"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artists",
+          "size",
+          "minLinks",
+          "links"
+        ],
+        "title": "TasteCluster",
+        "type": "object"
+      },
+      "TasteConnector": {
+        "description": "An artist outside the list connected to several of its artists.",
+        "properties": {
+          "artist": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "linkedCount": {
+            "title": "Linkedcount",
+            "type": "integer"
+          },
+          "linkedTo": {
+            "description": "The profiled artists it connects, `artists/{id}`.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Linkedto",
+            "type": "array"
+          }
+        },
+        "required": [
+          "artist",
+          "linkedCount",
+          "linkedTo"
+        ],
+        "title": "TasteConnector",
+        "type": "object"
+      },
+      "TasteDecade": {
+        "description": "A decade's share.",
+        "properties": {
+          "artistCount": {
+            "description": "Profiled artists contributing to this slice.",
+            "title": "Artistcount",
+            "type": "integer"
+          },
+          "decade": {
+            "examples": [
+              1990
+            ],
+            "title": "Decade",
+            "type": "integer"
+          },
+          "share": {
+            "description": "0 to 1; the shares of one breakdown sum to 1.",
+            "title": "Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "share",
+          "artistCount",
+          "decade"
+        ],
+        "title": "TasteDecade",
+        "type": "object"
+      },
+      "TasteGenre": {
+        "description": "A top-level genre's share.",
+        "properties": {
+          "artistCount": {
+            "description": "Profiled artists contributing to this slice.",
+            "title": "Artistcount",
+            "type": "integer"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "genre": {
+            "description": "`genres/{genre}`.",
+            "title": "Genre",
+            "type": "string"
+          },
+          "share": {
+            "description": "0 to 1; the shares of one breakdown sum to 1.",
+            "title": "Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "share",
+          "artistCount",
+          "genre",
+          "displayName"
+        ],
+        "title": "TasteGenre",
+        "type": "object"
+      },
+      "TastePair": {
+        "description": "Two profiled artists far apart: open them with FindPath.",
+        "properties": {
+          "artistA": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "artistB": {
+            "$ref": "#/components/schemas/ArtistSummary"
+          },
+          "steps": {
+            "title": "Steps",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artistA",
+          "artistB",
+          "steps"
+        ],
+        "title": "TastePair",
+        "type": "object"
+      },
+      "TasteProfile": {
+        "description": "A taste profile, computed from the graph only. Missing parts are null or empty.",
+        "properties": {
+          "artistCount": {
+            "description": "Artists profiled.",
+            "title": "Artistcount",
+            "type": "integer"
+          },
+          "collaboratorsReached": {
+            "title": "Collaboratorsreached",
+            "type": "integer"
+          },
+          "decades": {
+            "description": "Oldest first.",
+            "items": {
+              "$ref": "#/components/schemas/TasteDecade"
+            },
+            "title": "Decades",
+            "type": "array"
+          },
+          "genres": {
+            "description": "Top-level genres, largest share first (10 max).",
+            "items": {
+              "$ref": "#/components/schemas/TasteGenre"
+            },
+            "title": "Genres",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "hiddenConnectors": {
+            "items": {
+              "$ref": "#/components/schemas/TasteConnector"
+            },
+            "title": "Hiddenconnectors",
+            "type": "array"
+          },
+          "mostCentral": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TasteCentral"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skippedArtistCount": {
+            "default": 0,
+            "description": "Artists left out: not in the catalog, blocked, or beyond the first 500.",
+            "title": "Skippedartistcount",
+            "type": "integer"
+          },
+          "surprisingPair": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TastePair"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Among the 20 heaviest artists, the farthest connected pair."
+          },
+          "tightestCluster": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TasteCluster"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "undatedArtistCount": {
+            "title": "Undatedartistcount",
+            "type": "integer"
+          },
+          "unknownGenreArtistCount": {
+            "title": "Unknowngenreartistcount",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artistCount",
+          "skippedArtistCount",
+          "genres",
+          "unknownGenreArtistCount",
+          "decades",
+          "undatedArtistCount",
+          "mostCentral",
+          "hiddenConnectors",
+          "tightestCluster",
+          "surprisingPair",
+          "collaboratorsReached",
+          "graphVersion"
+        ],
+        "title": "TasteProfile",
         "type": "object"
       },
       "Theme": {
@@ -4799,6 +6401,29 @@
           "counts"
         ],
         "title": "TimelineYear",
+        "type": "object"
+      },
+      "TriviaAnswer": {
+        "description": "One answered Credit check question.",
+        "properties": {
+          "option": {
+            "description": "The chosen `artists/{id}` or `labels/{id}`.",
+            "maxLength": 64,
+            "title": "Option",
+            "type": "string"
+          },
+          "question": {
+            "description": "Question ID, `q1` to `q5`.",
+            "maxLength": 8,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question",
+          "option"
+        ],
+        "title": "TriviaAnswer",
         "type": "object"
       },
       "TriviaOption": {
@@ -4936,18 +6561,33 @@
         "type": "object"
       },
       "UpdateSocialProfileRequest": {
-        "description": "UpdateSocialProfile: pick the name friends see.",
+        "description": "UpdateSocialProfile: pick the name friends see, or turn top-artist sharing on or off.",
         "properties": {
           "displayName": {
-            "maxLength": 40,
-            "minLength": 1,
-            "title": "Displayname",
-            "type": "string"
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
+          "shareTopArtists": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sharetopartists"
           }
         },
-        "required": [
-          "displayName"
-        ],
         "title": "UpdateSocialProfileRequest",
         "type": "object"
       },
@@ -5028,6 +6668,58 @@
         "title": "UserCommunities",
         "type": "object"
       },
+      "ViewerCampus": {
+        "description": "The signed-in viewer's campus on this leaderboard.",
+        "properties": {
+          "community": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Community"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "playersNeeded": {
+            "default": 0,
+            "title": "Playersneeded",
+            "type": "integer"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ViewerCampusState"
+          }
+        },
+        "required": [
+          "state",
+          "community",
+          "rank",
+          "playersNeeded"
+        ],
+        "title": "ViewerCampus",
+        "type": "object"
+      },
+      "ViewerCampusState": {
+        "description": "Where the viewer's campus stands.",
+        "enum": [
+          "RANKED",
+          "NEEDS_PLAYERS",
+          "NO_CAMPUS"
+        ],
+        "title": "ViewerCampusState",
+        "type": "string"
+      },
       "Visibility": {
         "description": "Who can see a profile. Only PRIVATE exists in R1.",
         "enum": [
@@ -5035,6 +6727,89 @@
         ],
         "title": "Visibility",
         "type": "string"
+      },
+      "WeeklyMovers": {
+        "description": "GetWeeklyMovers: the community chart's rises, falls, entries and exits this week.",
+        "properties": {
+          "community": {
+            "$ref": "#/components/schemas/Community"
+          },
+          "demoData": {
+            "default": false,
+            "title": "Demodata",
+            "type": "boolean"
+          },
+          "entered": {
+            "items": {
+              "$ref": "#/components/schemas/ChartMover"
+            },
+            "title": "Entered",
+            "type": "array"
+          },
+          "fell": {
+            "items": {
+              "$ref": "#/components/schemas/ChartMover"
+            },
+            "title": "Fell",
+            "type": "array"
+          },
+          "graphVersion": {
+            "title": "Graphversion",
+            "type": "string"
+          },
+          "left": {
+            "items": {
+              "$ref": "#/components/schemas/ChartMover"
+            },
+            "title": "Left",
+            "type": "array"
+          },
+          "name": {
+            "description": "`communities/{community}/weeklyMovers`.",
+            "title": "Name",
+            "type": "string"
+          },
+          "previousUpdateTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previousupdatetime"
+          },
+          "rose": {
+            "items": {
+              "$ref": "#/components/schemas/ChartMover"
+            },
+            "title": "Rose",
+            "type": "array"
+          },
+          "state": {
+            "$ref": "#/components/schemas/MoversState"
+          },
+          "updateTime": {
+            "title": "Updatetime",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "community",
+          "state",
+          "rose",
+          "fell",
+          "entered",
+          "left",
+          "updateTime",
+          "previousUpdateTime",
+          "demoData",
+          "graphVersion"
+        ],
+        "title": "WeeklyMovers",
+        "type": "object"
       }
     }
   },
@@ -5303,7 +7078,7 @@
     },
     "/v1/artists/{artist}/connections": {
       "get": {
-        "description": "Lists an artist's direct connections, strongest first.",
+        "description": "Lists an artist's direct connections, strongest first.\n\n``orderBy=relevance desc`` blends strength with how widely known the other\nartist is (public listener counts), for views that show only the first few\n(the connection web). Highlights put original songs before remixes and edits.",
         "operationId": "ListArtistConnections",
         "parameters": [
           {
@@ -5747,6 +7522,61 @@
         ]
       }
     },
+    "/v1/artists/{artist}:recommend": {
+      "get": {
+        "description": "Recommends artists not directly connected to this one, each with checkable reasons.\n\nReasons are shared collaborators (up to three named, and the count),\nlisteners in common (aggregate co-listening, above the privacy floor) or a\nshared label. An artist with no reason is never recommended. The artist\nasked about is the viewer's choice and is allowed even when blocked.",
+        "operationId": "RecommendArtists",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendArtistsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "RecommendArtists",
+        "tags": [
+          "browse"
+        ]
+      }
+    },
     "/v1/artists:featured": {
       "get": {
         "description": "Lists well-known artists to start from, in order, skipping any not in the catalog.",
@@ -6088,6 +7918,49 @@
         ]
       }
     },
+    "/v1/communities/{community}/weeklyMovers": {
+      "get": {
+        "description": "The chart's biggest rises and falls, new entries and exits since a week ago.\n\nLOCKED while the chart is locked; NO_HISTORY until an unlocked chart from at\nleast seven days ago is stored. The viewer's blocked artists are left out.",
+        "operationId": "GetWeeklyMovers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "community",
+            "required": true,
+            "schema": {
+              "title": "Community",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeeklyMovers"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetWeeklyMovers",
+        "tags": [
+          "community"
+        ]
+      }
+    },
     "/v1/config": {
       "get": {
         "description": "Returns feature flags and request limits for the client.",
@@ -6320,6 +8193,127 @@
         ]
       }
     },
+    "/v1/genres/{genre}": {
+      "get": {
+        "description": "Returns a genre: its parents, its subgenres with artists, and its artist counts.",
+        "operationId": "GetGenre",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genre",
+            "required": true,
+            "schema": {
+              "title": "Genre",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenreDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetGenre",
+        "tags": [
+          "browse"
+        ]
+      }
+    },
+    "/v1/genres/{genre}/artists": {
+      "get": {
+        "description": "Lists a genre's artists, most connected first.\n\nAn artist is in the genre when at least 20% of its genre shares fall in the\ngenre (or, by default, its subgenres): the genre filter's rule.",
+        "operationId": "ListGenreArtists",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genre",
+            "required": true,
+            "schema": {
+              "title": "Genre",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Count artists of subgenres too.",
+            "in": "query",
+            "name": "includeSubgenres",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Count artists of subgenres too.",
+              "title": "Includesubgenres",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 1000,
+              "minimum": 0,
+              "title": "Pagesize",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 512,
+              "title": "Pagetoken",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListGenreArtistsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListGenreArtists",
+        "tags": [
+          "browse"
+        ]
+      }
+    },
     "/v1/labels/{label}": {
       "get": {
         "description": "Returns a label: its roster by era and its releases in our data.\n\nThe roster lists the primary artists of the label's releases we hold, so it\nis \"artists on this label in our data\", never a complete roster.",
@@ -6360,6 +8354,70 @@
         "summary": "GetLabel",
         "tags": [
           "catalog"
+        ]
+      }
+    },
+    "/v1/leaderboards/campuses": {
+      "get": {
+        "description": "The top 10 campuses by members' average points, and the viewer's campus rank.\n\nA campus appears only when at least 10 members scored in the period; players\nare shown as a range. No person is ever named here.",
+        "operationId": "GetCampusLeaderboard",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "game",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Game"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/LeaderboardPeriod",
+              "default": "DAY"
+            }
+          },
+          {
+            "description": "YYYY-MM-DD",
+            "in": "query",
+            "name": "date",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "YYYY-MM-DD",
+              "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}$",
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusLeaderboard"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetCampusLeaderboard",
+        "tags": [
+          "games"
         ]
       }
     },
@@ -6719,6 +8777,59 @@
         "summary": "RevealPuzzle",
         "tags": [
           "play"
+        ]
+      }
+    },
+    "/v1/puzzles/{date}:submitScore": {
+      "post": {
+        "description": "Submits today's solved puzzle (opt-in). The server checks every move and scores it.\n\n100 points at par, 15 fewer per extra step (at least 10). One score per day;\nit counts for your campus and your friends can see it.",
+        "operationId": "SubmitPuzzleScore",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitPuzzleScoreRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameScore"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "SubmitPuzzleScore",
+        "tags": [
+          "games"
         ]
       }
     },
@@ -7192,6 +9303,59 @@
         ]
       }
     },
+    "/v1/shelves": {
+      "get": {
+        "description": "Lists the home page's shelves, in display order, each item with its reason.\n\nThe same for everyone for a catalog version and date, minus the artists a\nsigned-in viewer blocked. Shelves with fewer than three items are left out.",
+        "operationId": "ListShelves",
+        "parameters": [
+          {
+            "description": "The viewer's local date (YYYY-MM-DD), for the ON_THIS_DAY shelf. Accepted in the daily puzzle's window; without it there is no ON_THIS_DAY shelf.",
+            "in": "query",
+            "name": "date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 10,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The viewer's local date (YYYY-MM-DD), for the ON_THIS_DAY shelf. Accepted in the daily puzzle's window; without it there is no ON_THIS_DAY shelf.",
+              "title": "Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListShelvesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListShelves",
+        "tags": [
+          "browse"
+        ]
+      }
+    },
     "/v1/stories": {
       "get": {
         "description": "Lists generated connection stories, each with the credits that prove it.\n\nThe feed is the same for everyone for a catalog version; artists a signed-in\nviewer blocked are left out.",
@@ -7249,6 +9413,48 @@
         ]
       }
     },
+    "/v1/tasteProfiles:compute": {
+      "post": {
+        "description": "Profiles a list of artists (\"Your Nexus\") without storing anything.\n\nFor signed-out listeners who matched a playlist on their device: send the\nmatched artists' resource names, most important first. Artists not in the\ncatalog, or blocked, are skipped and counted.",
+        "operationId": "ComputeTasteProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComputeTasteProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TasteProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ComputeTasteProfile",
+        "tags": [
+          "browse"
+        ]
+      }
+    },
     "/v1/trivia/{date}": {
       "get": {
         "description": "Returns the Credit check for a local date: the same for every player, without answers.",
@@ -7294,7 +9500,7 @@
     },
     "/v1/trivia/{date}:check": {
       "post": {
-        "description": "Checks one answer. The verdict comes with the right option and its credits.",
+        "description": "Checks one answer. The verdict comes with the right option and its credits.\n\nFor a signed-in player the first answer to each question is kept for two days,\nso a score submitted later counts that answer (ADR 0010).",
         "operationId": "CheckTrivia",
         "parameters": [
           {
@@ -7342,6 +9548,59 @@
         "summary": "CheckTrivia",
         "tags": [
           "discover"
+        ]
+      }
+    },
+    "/v1/trivia/{date}:submitScore": {
+      "post": {
+        "description": "Submits today's Credit check answers (opt-in). The server marks them.\n\nA question already checked with CheckTrivia counts with its first answer.\nOne score per day; it counts for your campus and your friends can see it.",
+        "operationId": "SubmitTriviaScore",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitTriviaScoreRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameScore"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "SubmitTriviaScore",
+        "tags": [
+          "games"
         ]
       }
     },
@@ -7990,6 +10249,79 @@
         ]
       }
     },
+    "/v1/users/{user}/friendLeaderboard": {
+      "get": {
+        "description": "You and your accepted friends who submitted scores in the period, best first.",
+        "operationId": "GetFriendLeaderboard",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "game",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Game"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/LeaderboardPeriod",
+              "default": "WEEK"
+            }
+          },
+          {
+            "description": "YYYY-MM-DD",
+            "in": "query",
+            "name": "date",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "YYYY-MM-DD",
+              "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}$",
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FriendLeaderboard"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetFriendLeaderboard",
+        "tags": [
+          "games"
+        ]
+      }
+    },
     "/v1/users/{user}/friends": {
       "get": {
         "description": "Lists friends, oldest friendship first.",
@@ -8105,6 +10437,101 @@
         "summary": "DeleteFriend",
         "tags": [
           "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/friends/{friend}/paths": {
+      "get": {
+        "description": "Shared artists, shared collaborators and the shortest paths between your top artists.\n\nTop artists are your chosen Top 5, then your most played linked-account artists.\n\nErrors: FRIEND_NOT_FOUND (not friends, or blocked either way), VIEWER_NOT_SHARING\nand FRIEND_NOT_SHARING (``shareTopArtists`` off), NO_TOP_ARTISTS (metadata\n``side``: ``viewer`` or ``friend``).",
+        "operationId": "GetFriendPaths",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "friend",
+            "required": true,
+            "schema": {
+              "title": "Friend",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FriendPaths"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetFriendPaths",
+        "tags": [
+          "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/gameScores": {
+      "get": {
+        "description": "Lists your own submitted scores of the last 14 days, newest first.",
+        "operationId": "ListGameScores",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListGameScoresResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "ListGameScores",
+        "tags": [
+          "games"
         ]
       }
     },
@@ -8829,7 +11256,7 @@
         ]
       },
       "patch": {
-        "description": "Sets the name friends see. It passes the moderation hook like notes do.",
+        "description": "Sets the name friends see (moderated like notes) and/or top-artist sharing.\n\nSharing top artists needs a display name; it is off until the user turns it on.",
         "operationId": "UpdateSocialProfile",
         "parameters": [
           {
@@ -8877,6 +11304,49 @@
         "summary": "UpdateSocialProfile",
         "tags": [
           "social"
+        ]
+      }
+    },
+    "/v1/users/{user}/tasteProfile": {
+      "get": {
+        "description": "The signed-in listener's profile, from the artists their linked accounts played.\n\nArtists are weighted by 1 + ln(plays). Without listening data every part is empty.",
+        "operationId": "GetTasteProfile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "title": "User",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TasteProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`."
+          }
+        },
+        "summary": "GetTasteProfile",
+        "tags": [
+          "browse"
         ]
       }
     },

@@ -135,6 +135,7 @@ def get_social_profile(
     return api.SocialProfile(
         name=f"users/{user_id}/socialProfile",
         display_name=social.display_name(session, user_id) or "",
+        share_top_artists=social.shares_top_artists(session, user_id),
     )
 
 
@@ -152,18 +153,32 @@ def update_social_profile(
     who: ViewerDep,
     session: SessionDep,
 ) -> api.SocialProfile:
-    """Sets the name friends see. It passes the moderation hook like notes do."""
+    """Sets the name friends see (moderated like notes) and/or top-artist sharing.
+
+    Sharing top artists needs a display name; it is off until the user turns it on.
+    """
     _enabled(request)
     user_id = authorize_user(user, who)
     check_write_origin(request, who)
-    name = " ".join(body.display_name.split())
-    if not name:
-        raise invalid_argument("A name is required.", field="displayName")
-    _moderate(request, name, "displayName")
-    row = social.set_display_name(session, user_id, name, datetime.now(UTC))
+    if body.display_name is None and body.share_top_artists is None:
+        raise invalid_argument("Set displayName or shareTopArtists.", field="displayName")
+    now = datetime.now(UTC)
+    if body.display_name is not None:
+        name = " ".join(body.display_name.split())
+        if not name:
+            raise invalid_argument("A name is required.", field="displayName")
+        _moderate(request, name, "displayName")
+        social.set_display_name(session, user_id, name, now)
+    if body.share_top_artists is not None:
+        _require_name(session, user_id)
+        social.set_share_top_artists(session, user_id, body.share_top_artists, now)
     _audit(session, user_id, "socialProfile.update")
     _private(response)
-    return api.SocialProfile(name=f"users/{user_id}/socialProfile", display_name=row.display_name)
+    return api.SocialProfile(
+        name=f"users/{user_id}/socialProfile",
+        display_name=social.display_name(session, user_id) or "",
+        share_top_artists=social.shares_top_artists(session, user_id),
+    )
 
 
 # ---------------------------------------------------------------------------

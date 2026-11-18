@@ -20,10 +20,19 @@
   gap: var(--space-3);
   block-size: var(--nav-height);
   padding-inline: var(--space-3) var(--space-4);
+  /* Clear at the top of a page so the ambient color shows through; glass once
+     content scrolls under it (data-scrolled is set by the shell). */
+  background: transparent;
+  border-block-end: 1px solid transparent;
+  transition:
+    background var(--duration-medium) var(--motion-standard),
+    border-color var(--duration-medium) var(--motion-standard);
+}
+.shell[data-scrolled] .top-bar {
   background: var(--glass);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  border-block-end: 1px solid var(--md-outline-variant);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-block-end-color: var(--md-outline-variant);
 }
 .top-bar__start {
   display: flex;
@@ -43,8 +52,8 @@
   padding-inline: var(--space-1);
   border-radius: var(--shape-s);
   color: var(--md-on-surface);
-  font: 700 1.3125rem/1 var(--font);
-  letter-spacing: -0.045em;
+  font: 750 1.375rem/1 var(--font);
+  letter-spacing: -0.04em;
   text-decoration: none;
 }
 .brand__mark {
@@ -56,18 +65,41 @@
 .top-bar__search {
   flex: 1;
   min-inline-size: 0;
-  max-inline-size: 560px;
+  max-inline-size: 640px;
   margin-inline: auto;
 }
 .top-bar__search .field {
-  min-block-size: 40px;
-  border-radius: var(--shape-s);
-  background: var(--fill-2);
+  min-block-size: 44px;
+  border-radius: var(--shape-full);
+  background: var(--fill-1);
   box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  transition:
+    background var(--duration-short) var(--motion-standard),
+    box-shadow var(--duration-short) var(--motion-standard);
+}
+.top-bar__search .field:hover {
+  background: var(--fill-2);
 }
 .top-bar__search .field:focus-within {
   background: var(--md-surface-container-high);
-  box-shadow: inset 0 0 0 1px var(--md-outline);
+  box-shadow:
+    inset 0 0 0 1px var(--md-outline),
+    0 0 0 4px var(--fill-1);
+}
+/* The shortcut that focuses search, shown until the listener is typing. */
+.search-hint {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+.top-bar__search .field:focus-within .search-hint {
+  display: none;
+}
+@media (min-width: 840px) and (hover: hover) {
+  .search-hint {
+    display: inline-flex;
+  }
 }
 .top-bar__search .field .icon {
   color: var(--md-on-surface-variant);
@@ -126,7 +158,7 @@
   inline-size: 100%;
   max-inline-size: var(--content-max);
   margin-inline: auto;
-  padding: var(--page-y) var(--page-x) calc(var(--nav-height) + var(--space-7));
+  padding: var(--page-y) var(--page-x) calc(var(--nav-height) + var(--space-8));
 }
 /* Full-bleed pages (the connection web) manage their own layout. */
 .main--wide {
@@ -153,14 +185,17 @@
 /* The guide. On phones it is the bottom bar. */
 .nav {
   position: fixed;
-  inset-inline: 0;
-  inset-block-end: 0;
+  inset-inline: var(--space-3);
+  inset-block-end: calc(var(--space-2) + env(safe-area-inset-bottom));
   z-index: 20;
-  padding-block-end: env(safe-area-inset-bottom);
-  background: var(--glass);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  border-block-start: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-xl);
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow:
+    var(--edge-light),
+    inset 0 0 0 1px var(--md-outline-variant),
+    var(--elevation-3);
 }
 .nav__links {
   display: grid;
@@ -199,6 +234,16 @@
 }
 .nav__item[aria-current='page'] {
   color: var(--md-on-surface);
+}
+/* The current tab's icon sits on a pill. */
+.nav__icon {
+  inline-size: 52px;
+  block-size: 28px;
+  border-radius: var(--shape-full);
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.nav__item[aria-current='page'] .nav__icon {
+  background: var(--fill-3);
 }
 
 /* Unread count: a red dot on the icon; the number is in the full guide. */
@@ -244,13 +289,20 @@
     flex-direction: column;
     block-size: calc(100dvh - var(--nav-height));
     overflow-y: auto;
-    padding: var(--space-2);
-    background: var(--md-surface);
+    padding: var(--space-2) var(--space-3);
+    border-radius: 0;
+    background: transparent;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    border-block-start: 0;
-    border-inline-end: 1px solid var(--md-outline-variant);
+    box-shadow: none;
     scrollbar-width: thin;
+  }
+  .nav__icon {
+    inline-size: auto;
+    block-size: auto;
+  }
+  .nav__item[aria-current='page'] .nav__icon {
+    background: none;
   }
   .nav__links .nav__item:not([data-phone]) {
     display: flex;
@@ -264,19 +316,21 @@
   .nav__item {
     flex-direction: row;
     justify-content: flex-start;
-    gap: var(--space-5);
+    gap: var(--space-4);
     min-block-size: 48px;
     padding-inline: var(--space-4);
-    border-radius: var(--shape-s);
-    color: var(--md-on-surface);
-    font: 500 1rem/1.25 var(--font);
+    border-radius: var(--shape-full);
+    color: var(--md-on-surface-variant);
+    font: 550 0.9375rem/1.25 var(--font);
     transition: background var(--duration-short) var(--motion-standard);
   }
   .nav__item:hover {
     background: var(--fill-1);
+    color: var(--md-on-surface);
   }
   .nav__item[aria-current='page'] {
     background: var(--fill-2);
+    color: var(--md-on-surface);
     font-weight: 700;
   }
   .nav__label {
@@ -313,7 +367,7 @@
     gap: var(--space-3);
     min-block-size: 48px;
     padding-inline: var(--space-4);
-    border-radius: var(--shape-s);
+    border-radius: var(--shape-full);
     color: var(--md-on-surface);
     text-decoration: none;
   }
@@ -354,7 +408,8 @@
     gap: 6px;
     min-block-size: 64px;
     padding-inline: 2px;
-    font: 500 0.625rem/1 var(--font);
+    border-radius: var(--shape-l);
+    font: 550 0.625rem/1 var(--font);
   }
   .shell[data-rail] .nav__label {
     flex: none;

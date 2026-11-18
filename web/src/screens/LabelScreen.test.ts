@@ -2,11 +2,12 @@ import {describe, expect, it} from 'vitest';
 
 import type {Schemas} from '../api/client';
 
-import {byEra} from './LabelScreen';
+import {byEra, flagship} from './LabelScreen';
 
 const entry = (
   id: string,
   firstYear: number | null,
+  releaseCount = 1,
 ): Schemas['LabelArtist'] => ({
   artist: {
     name: `artists/${id}`,
@@ -15,8 +16,10 @@ const entry = (
     artistType: null,
     country: null,
     genreKnown: false,
+    imageUrl: null,
+    listeners: null,
   },
-  releaseCount: 1,
+  releaseCount,
   firstYear,
   lastYear: firstYear,
 });
@@ -39,5 +42,18 @@ describe('label roster by era', () => {
       [1990, ['a', 'd']],
       [null, ['b']],
     ]);
+  });
+});
+
+describe('label flagship', () => {
+  it('picks the most releases, then the earliest', () => {
+    expect(
+      flagship([entry('a', 2001, 2), entry('b', 1999, 4), entry('c', 1990, 4)])
+        ?.artist.displayName,
+    ).toBe('c');
+  });
+
+  it('is null for an empty roster', () => {
+    expect(flagship([])).toBeNull();
   });
 });

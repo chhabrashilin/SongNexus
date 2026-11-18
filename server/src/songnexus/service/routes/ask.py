@@ -30,13 +30,13 @@ from songnexus.core.ask.interpreter import (
     ModelOutcome,
     Store,
 )
-from songnexus.core.ask.llm import make_provider
 from songnexus.core.ask.resolve import Candidate, Resolved, genre_vocabulary
 from songnexus.core.search import EntityType
 from songnexus.core.songs import Descriptors, similarity
 from songnexus.service import convert
 from songnexus.service import schemas as api
 from songnexus.service import schemas_ask as ask
+from songnexus.service.ask_providers import make_provider
 from songnexus.service.deps import (
     Viewer,
     app_state,

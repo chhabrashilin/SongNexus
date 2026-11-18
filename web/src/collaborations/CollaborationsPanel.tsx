@@ -28,9 +28,13 @@ import {ConnectionSheet} from '../components/ConnectionSheet';
 import {GenreFilter} from '../components/Filters';
 import {Icon} from '../components/Icon';
 import {EmptyState, ErrorState, SkeletonRows} from '../components/States';
+import {ShowAllButton} from '../entity/Entity';
 import {useI18n} from '../i18n/i18n';
 
 import {Timeline, type YearRange} from './Timeline';
+
+/** Rows shown on the artist page before "Show all". */
+const COMPACT_LIMIT = 8;
 
 const TABS: CollaborationType[] = ['FEATURE', 'PRODUCTION', 'BAND', 'CREDIT'];
 const DIRECTIONS: (ProductionDirection | null)[] = [
@@ -105,12 +109,18 @@ export function CollaborationsPanel({
   );
   const counts = query.data?.counts ?? {};
   const tabsId = useId();
+  const headingId = useId();
+  const [expanded, setExpanded] = useState(false);
+  const collapsible = !full && items.length > COMPACT_LIMIT + 1;
+  const visible =
+    collapsible && !expanded ? items.slice(0, COMPACT_LIMIT) : items;
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const yearsKey = `${range.from}-${range.to}-${order}`;
 
   useEffect(() => {
     setItems([]);
     setPageToken('');
+    setExpanded(false);
   }, [artistId, tab, genreFilter, activeDirection, yearsKey]);
   useEffect(() => {
     const page = query.data?.collaborations;
@@ -142,38 +152,40 @@ export function CollaborationsPanel({
 
   const years = (query.data?.timeline ?? []).map(y => y.year);
   return (
-    <section className="section">
-      <div className="section__header">
-        <h2>{t('collab.title')}</h2>
-        <span className="muted" style={{font: 'var(--body-small)'}}>
-          {t('collab.basis')}
-        </span>
-        <button
-          type="button"
-          className="btn btn--text"
-          aria-expanded={showFilters}
-          onClick={() => setShowFilters(open => !open)}
-        >
-          <Icon name="tune" />
-          {t('collab.filter')}
-        </button>
-        {!full && (
-          <Link
-            className="btn btn--text"
-            to={`/artist/${artistId}/collaborations`}
+    <section className="entity-section collab" aria-labelledby={headingId}>
+      <div className="entity-section__header">
+        <div className="entity-section__titles">
+          <p className="entity-section__eyebrow">{t('collab.basis')}</p>
+          <h2 id={headingId}>{t('collab.title')}</h2>
+        </div>
+        <div className="entity-section__action">
+          <button
+            type="button"
+            className="btn btn--outlined btn--compact"
+            aria-expanded={showFilters}
+            onClick={() => setShowFilters(open => !open)}
           >
-            {t('collab.seeAll')}
-          </Link>
-        )}
+            <Icon name="tune" />
+            {t('collab.filter')}
+          </button>
+          {!full && (
+            <Link
+              className="btn btn--outlined btn--compact"
+              to={`/artist/${artistId}/collaborations`}
+            >
+              {t('collab.seeAll')}
+            </Link>
+          )}
+        </div>
       </div>
       {showFilters && (
-        <div className="card stack">
+        <div className="card stack collab__filters">
           <GenreFilter selection={genreFilter} onChange={setGenreFilter} />
         </div>
       )}
 
       {full && query.data && (
-        <div className="card stack">
+        <div className="card stack collab__timeline">
           <Timeline
             timeline={query.data.timeline}
             undated={query.data.undated}
@@ -308,8 +320,8 @@ export function CollaborationsPanel({
         {query.isSuccess && items.length === 0 && !query.isPlaceholderData && (
           <EmptyState title={t('collab.empty', {type: tab})} />
         )}
-        <ul className="list">
-          {items.map(item => (
+        <ul className="list entity-rows">
+          {visible.map(item => (
             <ArtistRow
               key={item.artist.name}
               artist={item.artist}
@@ -354,16 +366,25 @@ export function CollaborationsPanel({
             />
           ))}
         </ul>
-        {query.data?.nextPageToken && (
-          <button
-            type="button"
-            className="btn btn--text"
-            disabled={query.isFetching}
-            onClick={() => setPageToken(query.data.nextPageToken)}
-          >
-            {t('action.showMore')}
-          </button>
-        )}
+        <div className="collab__more">
+          {collapsible && (
+            <ShowAllButton
+              expanded={expanded}
+              count={query.data?.totalSize ?? items.length}
+              onClick={() => setExpanded(value => !value)}
+            />
+          )}
+          {(!collapsible || expanded) && query.data?.nextPageToken && (
+            <button
+              type="button"
+              className="btn btn--tonal btn--compact"
+              disabled={query.isFetching}
+              onClick={() => setPageToken(query.data.nextPageToken)}
+            >
+              {t('action.showMore')}
+            </button>
+          )}
+        </div>
       </div>
       <ConnectionSheet
         a={evidenceWith ? artistId : null}

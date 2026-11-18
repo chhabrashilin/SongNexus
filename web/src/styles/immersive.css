@@ -1,0 +1,640 @@
+/*
+ * The v5 layer: what makes the app feel alive. Photos over generated art,
+ * ambient color that follows the subject of the page, motion that explains
+ * where things come from, glass for anything that floats, and the bento and
+ * spotlight layouts used by Home and the hubs.
+ *
+ * Everything here degrades: no photo → generated art; reduced motion → no
+ * movement (durations are 0); forced colors → borders instead of fills.
+ */
+
+/* ---------- Photos over generated art ---------- */
+
+.cover__img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  object-fit: cover;
+  /* Portraits are framed on the face, which sits in the upper third. */
+  object-position: 50% 22%;
+  opacity: 0;
+  transition: opacity var(--duration-medium) var(--motion-standard);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.cover__img[data-loaded] {
+  opacity: 1;
+}
+.avatar.cover {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------- Cover cards: lift, light and a badge ---------- */
+
+.cover-card__art {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  border-radius: var(--shape-cover);
+  transition: transform var(--duration-medium) var(--motion-spring);
+}
+.cover-card[data-round] .cover-card__art {
+  border-radius: var(--shape-full);
+}
+.cover-card__art .cover {
+  box-shadow: var(--elevation-2);
+}
+/* A ring of the cover's own color appears on hover and focus. */
+.cover-card__art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
+  pointer-events: none;
+  transition: box-shadow var(--duration-short) var(--motion-standard);
+}
+.cover-card__link:hover .cover-card__art,
+.cover-card__link:focus-visible .cover-card__art {
+  transform: translateY(-4px) scale(1.02);
+}
+.cover-card__link:hover .cover-card__art::after,
+.cover-card__link:focus-visible .cover-card__art::after {
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 55%);
+}
+.cover-card__link:active .cover-card__art {
+  transform: scale(0.98);
+}
+.cover-card__badge {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  z-index: 1;
+  min-inline-size: 28px;
+  padding: 3px 8px;
+  border-radius: var(--shape-full);
+  background: rgb(0 0 0 / 62%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font: 700 0.75rem/1.15 var(--font);
+  text-align: center;
+}
+.cover-card[data-round] .cover-card__badge {
+  inset-block-start: 4%;
+  inset-inline-start: 4%;
+}
+.cover-card__title {
+  letter-spacing: var(--tracking-title);
+}
+
+/* ---------- Ambient color ----------
+   A wash of the page subject's color behind the top of the page. The hue is a
+   custom property on <html> (set by useAmbient), registered so it animates
+   from one page's color to the next instead of snapping. */
+
+@property --ambient-hue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 350;
+}
+html {
+  transition: --ambient-hue var(--duration-long) var(--motion-standard);
+}
+.ambient {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: -1;
+  block-size: min(78vh, 720px);
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      60% 80% at 12% -10%,
+      hsl(var(--ambient-hue) 80% 55% / 26%),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 70% at 92% -20%,
+      hsl(calc(var(--ambient-hue) + 50) 80% 55% / 16%),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      hsl(var(--ambient-hue) 60% 40% / 14%),
+      transparent 80%
+    );
+  mask-image: linear-gradient(180deg, #000 30%, transparent);
+}
+:root[data-theme='light'] .ambient {
+  opacity: 0.55;
+}
+.shell {
+  position: relative;
+  isolation: isolate;
+}
+
+/* ---------- Motion ---------- */
+
+/* A new page rises into place; the shell stays still. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+.main[data-entering] > * {
+  animation: page-enter var(--duration-medium) var(--motion-decelerate) both;
+}
+/* Items in a row arrive one after another (set --i on each). */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+.stagger > * {
+  animation: rise-in var(--duration-long) var(--motion-decelerate) both;
+  animation-delay: calc(min(var(--i, 0), 12) * 40ms);
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.skeleton {
+  border-radius: var(--shape-s);
+  background: linear-gradient(
+      90deg,
+      var(--fill-1) 25%,
+      var(--fill-2) 50%,
+      var(--fill-1) 75%
+    )
+    0 0 / 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .main[data-entering] > *,
+  .stagger > *,
+  .skeleton {
+    animation: none;
+  }
+  .cover-card__link:hover .cover-card__art,
+  .cover-card__link:focus-visible .cover-card__art {
+    transform: none;
+  }
+}
+
+/* ---------- Glass ---------- */
+
+.glass {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow:
+    var(--edge-light),
+    inset 0 0 0 1px var(--md-outline-variant),
+    var(--elevation-3);
+}
+
+/* A key you can press, shown next to what it does. */
+.kbd {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: 22px;
+  block-size: 22px;
+  padding-inline: 6px;
+  border-radius: 6px;
+  background: var(--fill-1);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+  font: 600 0.6875rem/1 var(--font);
+}
+
+/* ---------- Home: the stage ----------
+   One large moment at the top of Home: today's story, puzzle or challenge,
+   as slides the listener can step through. */
+
+.stage {
+  position: relative;
+  display: grid;
+  min-block-size: clamp(340px, 46vh, 460px);
+  overflow: hidden;
+  border-radius: var(--shape-xl);
+  background: var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  isolation: isolate;
+}
+.stage__slide {
+  --hue: var(--ambient-hue);
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--duration-long) var(--motion-standard),
+    visibility 0s linear var(--duration-long);
+}
+.stage__slide[data-current] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--duration-long) var(--motion-standard),
+    visibility 0s;
+}
+.stage__slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      90% 130% at 100% 0%,
+      hsl(var(--hue) 85% 55% / 42%),
+      transparent 62%
+    ),
+    radial-gradient(
+      70% 100% at 0% 100%,
+      hsl(calc(var(--hue) - 60) 80% 50% / 24%),
+      transparent 60%
+    );
+}
+.stage__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  max-inline-size: 640px;
+}
+.stage__overline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 5px 10px;
+  border-radius: var(--shape-full);
+  background: rgb(255 255 255 / 12%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--md-on-surface);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.stage__overline .icon {
+  inline-size: 14px;
+  block-size: 14px;
+}
+.stage__title {
+  font: var(--display-large);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+/* A whole sentence as the title (a story): a size down. */
+.stage__title--long {
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
+}
+.stage__body {
+  max-inline-size: 52ch;
+  color: light-dark(#3c3c3c, #d0d0d0);
+  font: var(--body-large);
+  text-wrap: pretty;
+}
+.stage__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+}
+/* The people in the slide: overlapping portraits. */
+.stage__art {
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+  justify-self: end;
+  align-self: center;
+  padding-inline-end: var(--space-4);
+}
+.stage__art .cover {
+  inline-size: clamp(120px, 15vw, 208px);
+  flex: none;
+  box-shadow:
+    0 0 0 5px var(--md-surface-container-low),
+    var(--elevation-3);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+.stage__art .cover + .cover {
+  margin-inline-start: clamp(-56px, -4vw, -32px);
+}
+.stage__art .cover:nth-child(2) {
+  transform: translateY(14%);
+}
+.stage__art .cover:nth-child(3) {
+  inline-size: clamp(88px, 10vw, 144px);
+  transform: translateY(-36%);
+}
+.stage__dots {
+  position: absolute;
+  inset-block-end: var(--space-4);
+  inset-inline-end: var(--space-5);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.stage__dot {
+  position: relative;
+  inline-size: 28px;
+  block-size: 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.stage__dot::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline: 4px;
+  block-size: 4px;
+  border-radius: 2px;
+  background: var(--fill-3);
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.stage__dot[aria-current='true']::before {
+  background: var(--md-on-surface);
+}
+@media (min-width: 840px) {
+  .stage__slide {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    padding: var(--space-7);
+  }
+  .stage__art {
+    display: flex;
+  }
+}
+
+/* ---------- Bento: features as tiles of different weight ---------- */
+
+.bento {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bento__tile {
+  --hue: 350;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  min-block-size: 132px;
+  block-size: 100%;
+  overflow: hidden;
+  padding: var(--space-4);
+  border-radius: var(--shape-l);
+  background:
+    radial-gradient(
+      120% 120% at 100% 0%,
+      hsl(var(--hue) 80% 52% / 30%),
+      transparent 60%
+    ),
+    var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--duration-medium) var(--motion-spring),
+    box-shadow var(--duration-short) var(--motion-standard);
+}
+.bento__tile:hover,
+.bento__tile:focus-visible {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--hue) 80% 62% / 55%),
+    var(--elevation-2);
+}
+.bento__tile:active {
+  transform: scale(0.985);
+}
+.bento__icon {
+  position: absolute;
+  inset-block-start: var(--space-4);
+  inset-inline-start: var(--space-4);
+  display: grid;
+  place-items: center;
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: var(--shape-m);
+  background: hsl(var(--hue) 75% 50% / 28%);
+  color: hsl(var(--hue) 95% light-dark(30%, 82%));
+}
+.bento__title {
+  font: var(--title-large);
+  letter-spacing: var(--tracking-title);
+}
+.bento__body {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+  text-wrap: pretty;
+}
+.bento__tile[data-new]::after {
+  content: attr(data-new);
+  position: absolute;
+  inset-block-start: var(--space-4);
+  inset-inline-end: var(--space-4);
+  padding: 3px 8px;
+  border-radius: var(--shape-full);
+  background: var(--brand-strong);
+  color: var(--on-brand);
+  font: 700 0.6875rem/1.2 var(--font);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+@media (min-width: 720px) {
+  .bento {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+  .bento__tile {
+    min-block-size: 168px;
+    padding: var(--space-5);
+  }
+  .bento__icon {
+    inset-block-start: var(--space-5);
+    inset-inline-start: var(--space-5);
+  }
+  .bento > [data-span='2'] {
+    grid-column: span 2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bento__tile:hover,
+  .bento__tile:focus-visible {
+    transform: none;
+  }
+}
+
+/* ---------- Spotlight rows: a ranked list with numbers that read as design ---------- */
+
+.rank-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: var(--space-1) var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 64px;
+  padding: var(--space-2);
+  border-radius: var(--shape-m);
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.rank-row:hover {
+  background: var(--fill-1);
+}
+.rank-row__n {
+  inline-size: 2ch;
+  flex: none;
+  color: var(--md-on-surface-variant);
+  font: 700 1.25rem/1 var(--font);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.rank-row .cover {
+  inline-size: 48px;
+  flex: none;
+  font-size: 1.125rem;
+}
+.rank-row__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.rank-row__title,
+.rank-row__sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rank-row__title {
+  font: var(--title-medium);
+}
+.rank-row__sub {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+
+/* A statistic set large: the number is the headline. */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat__value {
+  font: 750 clamp(1.75rem, 1.3rem + 1.6vw, 2.75rem)/1 var(--font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-display);
+}
+.stat__label {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5) var(--space-7);
+}
+
+/* "Listen on YouTube Music": a quiet pill with the red play disc. */
+.listen {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.listen__disc {
+  display: grid;
+  place-items: center;
+  inline-size: 20px;
+  block-size: 20px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+}
+.listen__disc .icon {
+  inline-size: 12px;
+  block-size: 12px;
+  margin: 0;
+}
+
+/* Photo credit under a hero image: required by the photo's license. */
+.photo-credit {
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+}
+.photo-credit a {
+  color: inherit;
+}
+
+@media (forced-colors: active) {
+  .bento__tile,
+  .stage,
+  .glass {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* ---------- Search suggestions and the Ask answer float on glass ---------- */
+
+.combobox__popup,
+.ask {
+  inset-block-start: calc(100% + var(--space-2));
+  border-radius: var(--shape-l);
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  backdrop-filter: blur(28px) saturate(1.6);
+  box-shadow:
+    var(--edge-light),
+    inset 0 0 0 1px var(--md-outline-variant),
+    var(--elevation-3);
+  animation: popup-in var(--duration-short) var(--motion-decelerate);
+}
+@keyframes popup-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.combobox__option {
+  border-radius: var(--shape-m);
+}
+@media (prefers-reduced-motion: reduce) {
+  .combobox__popup,
+  .ask {
+    animation: none;
+  }
+}

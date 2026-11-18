@@ -22,7 +22,7 @@
      served vocabulary. It runs on every question, costs nothing, and is the whole interpreter when no model is
      configured. A model is only asked when the parser finds no shape, or only a lookup for text that reads like a
      question.
-  3. **Strict validation of model output** (`core/ask/llm.py`). Providers are asked for JSON constrained by one
+  3. **Strict validation of model output** (`core/ask/llm.py`; the HTTP providers live in `service/ask_providers.py` so `core` stays free of network code). Providers are asked for JSON constrained by one
      schema; the result is validated again (closed enums, strict types, year bounds, at most two names, no extra
      fields) and every name must appear in the question (allowing case and small typos), so a model can copy names
      but never add one. Anything off-schema is discarded and the parser's reading stands.
