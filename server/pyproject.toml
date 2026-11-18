@@ -11,6 +11,8 @@ dependencies = [
     "fastapi>=0.115",
     "firebase-admin>=6.6",
     "httpx>=0.28",
+    # Z-star (ADR 0010): artist embeddings, ranking and offline evaluation.
+    "numpy>=2.1",
     "psycopg[binary]>=3.2",
     "pydantic>=2.9",
     "pydantic-settings>=2.6",
@@ -75,6 +77,7 @@ convention = "google"
 "tests/**" = ["D", "S", "PLR2004", "PLC0415"]
 "src/songnexus/storage/migrations/**" = ["D", "N999", "PLR0915"]
 "src/songnexus/cli.py" = ["PLC0415", "T201"]
+"src/songnexus/core/links.py" = ["PLR2004"]  # URL path-segment counts read clearer as numbers
 "src/songnexus/service/routes/**" = ["PLR0917"]  # FastAPI injects handler parameters by name  # lazy imports keep each command's startup small
 
 [tool.ruff.format]

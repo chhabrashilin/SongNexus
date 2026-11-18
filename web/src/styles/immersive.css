@@ -576,19 +576,10 @@ html {
   gap: var(--space-2);
 }
 .listen__disc {
-  display: grid;
-  place-items: center;
+  display: block;
   inline-size: 20px;
   block-size: 20px;
   flex: none;
-  border-radius: 50%;
-  background: var(--brand);
-  color: #fff;
-}
-.listen__disc .icon {
-  inline-size: 12px;
-  block-size: 12px;
-  margin: 0;
 }
 
 /* Photo credit under a hero image: required by the photo's license. */

@@ -19,6 +19,7 @@ import {
   type ListeningProvider,
   type ProviderOffer,
 } from '../api/queries';
+import {BrandMark} from '../components/BrandMark';
 import {Icon} from '../components/Icon';
 import {Sheet} from '../components/Sheet';
 import {useSnackbar} from '../components/Snackbar';
@@ -36,17 +37,6 @@ const ORDER: ListeningProvider[] = [
   'DEEZER',
   'LIBREFM',
 ];
-
-/** Brand-neutral monograms (no logos: we don't have the right to use them). */
-const MONOGRAM: Record<ListeningProvider, string> = {
-  YOUTUBE_MUSIC: 'YT',
-  SPOTIFY: 'Sp',
-  APPLE_MUSIC: 'Am',
-  LASTFM: 'fm',
-  LISTENBRAINZ: 'LB',
-  DEEZER: 'Dz',
-  LIBREFM: 'Lf',
-};
 
 export function providerName(
   t: (id: MessageId) => string,
@@ -235,13 +225,11 @@ function ServiceRow({
 
   return (
     <li className="service" data-linked={Boolean(account)}>
-      <span
+      <BrandMark
+        provider={offer.provider}
+        size={44}
         className="service__mark"
-        data-provider={offer.provider}
-        aria-hidden="true"
-      >
-        {MONOGRAM[offer.provider]}
-      </span>
+      />
       <span className="list-row__body">
         <span className="list-row__title">
           {name}

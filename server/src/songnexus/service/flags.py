@@ -28,6 +28,7 @@ DEFAULT_FLAGS: Mapping[str, bool] = MappingProxyType(
         "playlistImport": True,
         "signIn": True,
         "linkedAccounts": True,
+        "linkResolver": True,  # open links shared from other music apps
         "friends": True,
         "leaderboards": True,  # opt-in game scores and campus leaderboards (ADR 0010)
     }

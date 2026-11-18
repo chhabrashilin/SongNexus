@@ -39,6 +39,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.sql import true
 
 JsonType = JSON().with_variant(JSONB(), "postgresql")
 ID = String(36)
@@ -514,6 +515,9 @@ class Preferences(Base):
     genre_ids: Mapped[list[str]] = mapped_column(JsonType, default=list)
     categories: Mapped[list[str]] = mapped_column(JsonType, default=list)
     theme: Mapped[str] = mapped_column(String(16))
+    # For You (ADR 0010): learn from what the listener does in the app. Off means
+    # no interaction events are stored and the feed uses explicit signals only.
+    personalize: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
     etag: Mapped[str] = mapped_column(String(32))
     update_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
@@ -784,3 +788,115 @@ class TriviaAnswer(Base):
     question_id: Mapped[str] = mapped_column(String(8), primary_key=True)
     correct: Mapped[bool] = mapped_column(Boolean)
     answered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+
+
+# ---------------------------------------------------------------------------
+# For You and Z-star (ADR 0010). Personal data: exported and deleted with the
+# account; raw events are kept 180 days, served feeds 30 days.
+# ---------------------------------------------------------------------------
+
+
+class ArtistFollow(Base):
+    """An artist a listener follows (added to their artists)."""
+
+    __tablename__ = "artist_follows"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    # Not a foreign key: follows survive catalog rebuilds that drop an artist.
+    artist_id: Mapped[str] = mapped_column(ID, primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class TasteFeedback(Base):
+    """Explicit feedback on recommendations: "not interested", "more like this", "less of".
+
+    ``subject`` is ``artists/{id}`` (NOT_INTERESTED, MORE_LIKE_THIS) or
+    ``genres/{id}`` (LESS_OF_GENRE). Pressing it again refreshes ``created_at``.
+    """
+
+    __tablename__ = "taste_feedback"
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    subject: Mapped[str] = mapped_column(String(160), primary_key=True)
+    kind: Mapped[str] = mapped_column(String(24), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class InteractionEvent(Base):
+    """One thing a listener did with an artist (impression, open, listen, skip, hide, share).
+
+    ``event_id`` is chosen by the client, so a retried batch is stored once.
+    Only signed-in listeners with personalization on are logged.
+    """
+
+    __tablename__ = "interaction_events"
+    __table_args__ = (
+        Index("ix_interaction_events_user_time", "user_id", "created_at"),
+        Index("ix_interaction_events_feed", "feed_id", "artist_id"),
+    )
+
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    event_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    artist_id: Mapped[str] = mapped_column(ID)
+    surface: Mapped[str] = mapped_column(String(24))
+    feed_id: Mapped[str | None] = mapped_column(String(36))
+    position: Mapped[int | None] = mapped_column(Integer)
+    dwell_ms: Mapped[int | None] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+
+
+class FeedRequest(Base):
+    """A served For You feed: which model and experiment arm made it."""
+
+    __tablename__ = "feed_requests"
+
+    id: Mapped[str] = mapped_column(ID, primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    catalog_version: Mapped[str] = mapped_column(String(128))
+    model_version: Mapped[str] = mapped_column(String(64))
+    arm: Mapped[str] = mapped_column(String(32))
+    candidates: Mapped[int] = mapped_column(Integer)
+    cold: Mapped[bool] = mapped_column(Boolean)
+
+
+class FeedItem(Base):
+    """One card of a served feed, with exactly the features the ranker saw (for training)."""
+
+    __tablename__ = "feed_items"
+
+    feed_id: Mapped[str] = mapped_column(
+        ForeignKey("feed_requests.id", ondelete="CASCADE"), primary_key=True
+    )
+    position: Mapped[int] = mapped_column(Integer, primary_key=True)
+    artist_id: Mapped[str] = mapped_column(ID)
+    value: Mapped[float] = mapped_column(Float)
+    sources: Mapped[list[str]] = mapped_column(JsonType, default=list)
+    reason: Mapped[dict[str, Any]] = mapped_column(JsonType, default=dict)
+    features: Mapped[dict[str, float]] = mapped_column(JsonType, default=dict)
+    heads: Mapped[dict[str, float]] = mapped_column(JsonType, default=dict)
+    exploratory: Mapped[bool] = mapped_column(Boolean)
+
+
+class ZstarArtifact(Base):
+    """A stored Z-star artifact: artist embeddings for a catalog version, or a ranking model.
+
+    One ``ranker`` row is ``active`` at a time; the service serves it.
+    """
+
+    __tablename__ = "zstar_artifacts"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)  # "<kind>:<version>"
+    kind: Mapped[str] = mapped_column(String(16), index=True)  # embeddings | ranker
+    version: Mapped[str] = mapped_column(String(128))
+    payload: Mapped[dict[str, Any]] = mapped_column(JsonType)
+    metrics: Mapped[dict[str, Any]] = mapped_column(JsonType, default=dict)
+    active: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

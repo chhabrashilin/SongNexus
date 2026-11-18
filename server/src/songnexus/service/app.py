@@ -48,6 +48,8 @@ from songnexus.service.routes import (
     users,
 )
 from songnexus.service.routes import ask as ask_routes
+from songnexus.service.routes import foryou as foryou_routes
+from songnexus.service.routes import links as links_routes
 from songnexus.service.routes import community as community_routes
 from songnexus.service.routes import friend_paths as friend_paths_routes
 from songnexus.service.routes import games as games_routes
@@ -225,6 +227,7 @@ def create_app(settings: Settings | None = None, state: AppState | None = None) 
     app.include_router(friend_paths_routes.router)
     app.include_router(recap_routes.router)
     app.include_router(ask_routes.router)
+    app.include_router(foryou_routes.router)
     # The middleware added last runs outermost, so security headers cover every
     # response, including errors raised by the request-context layer.
     app.add_middleware(BodySizeLimitMiddleware)

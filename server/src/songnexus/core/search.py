@@ -120,6 +120,7 @@ class SearchIndex:
         self._typed_trigram: dict[EntityType, dict[str, list[str]]] = {}
         self._typed_by_length: dict[EntityType, dict[int, list[str]]] = {}
         self._artist_index: dict[str, int] = {}
+        self._by_id: dict[str, int] = {}
         self._frozen = False
 
     def add(self, doc: SearchDoc, names: Iterable[str], aliases: Iterable[str] = ()) -> None:
@@ -139,6 +140,7 @@ class SearchIndex:
                 doc.keys.setdefault(key, alias)
         index = len(self._docs)
         self._docs.append(doc)
+        self._by_id.setdefault(doc.entity_id, index)
         if doc.entity_type is EntityType.ARTIST:
             self._artist_index[doc.entity_id] = index
         for key in doc.keys:
@@ -164,6 +166,11 @@ class SearchIndex:
 
     def __len__(self) -> int:
         return len(self._docs)
+
+    def get(self, entity_id: str) -> SearchDoc | None:
+        """Returns the document for an entity ID, or None."""
+        index = self._by_id.get(entity_id)
+        return None if index is None else self._docs[index]
 
     def exact(self, name: str, entity_type: EntityType | None = None) -> list[SearchDoc]:
         """Returns documents whose name or alias normalizes exactly to ``name``."""

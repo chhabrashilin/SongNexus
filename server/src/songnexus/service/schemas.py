@@ -870,6 +870,11 @@ class Preferences(ApiModel):
     genres: list[str] = Field(default_factory=list, max_length=20)
     categories: list[ConnectionCategory] = Field(default_factory=list)
     theme: Theme = Theme.SYSTEM
+    personalize: bool = Field(
+        default=True,
+        description="For You learns from what you do in the app (opens, listens, skips). Off: "
+        "nothing is logged and only follows, imports, linked services and feedback count.",
+    )
     etag: str = ""
     update_time: str | None = None
 
@@ -1227,3 +1232,84 @@ class Report(ApiModel):
     name: str = Field(description="`reports/{report}`.")
     reason: ReportReason
     create_time: str
+
+
+# --- Links from other apps (ResolveLink) -------------------------------------------------
+
+
+class LinkService(enum.StrEnum):
+    """The app a shared link came from."""
+
+    SPOTIFY = "SPOTIFY"
+    APPLE_MUSIC = "APPLE_MUSIC"
+    YOUTUBE_MUSIC = "YOUTUBE_MUSIC"
+    YOUTUBE = "YOUTUBE"
+    DEEZER = "DEEZER"
+    TIDAL = "TIDAL"
+    SOUNDCLOUD = "SOUNDCLOUD"
+    BANDCAMP = "BANDCAMP"
+    LASTFM = "LASTFM"
+    AMAZON_MUSIC = "AMAZON_MUSIC"
+    MUSICBRAINZ = "MUSICBRAINZ"
+
+
+class LinkKind(enum.StrEnum):
+    """What a shared link points at."""
+
+    ARTIST = "ARTIST"
+    TRACK = "TRACK"
+    ALBUM = "ALBUM"
+    PLAYLIST = "PLAYLIST"
+
+
+class LinkOutcome(enum.StrEnum):
+    """How a link resolved."""
+
+    RESOLVED = "RESOLVED"
+    CANDIDATES = "CANDIDATES"
+    NOT_IN_CATALOG = "NOT_IN_CATALOG"
+    UNSUPPORTED = "UNSUPPORTED"
+    NOT_A_MUSIC_LINK = "NOT_A_MUSIC_LINK"
+    LOOKUP_FAILED = "LOOKUP_FAILED"
+
+
+class ResolveLinkRequest(ApiModel):
+    """A link someone shared or pasted, or the text it came in."""
+
+    url: str = Field(
+        min_length=1,
+        max_length=2048,
+        description='A link, or shared text that contains one ("Listen on Spotify: https://…").',
+    )
+
+
+class ResolveLinkResponse(ApiModel):
+    """Where a link from another app leads in SongNexus.
+
+    `RESOLVED`: open `recording` when present, else `release`'s artist, else `artist`;
+    for a playlist, `tracks` can go straight to AnalyzePlaylist. `CANDIDATES`: let the
+    listener pick. The link itself is never stored.
+    """
+
+    outcome: LinkOutcome
+    service: LinkService | None = None
+    kind: LinkKind | None = None
+    artist: ArtistSummary | None = Field(
+        default=None, description="The artist the link is about, or the song's lead artist."
+    )
+    recording: RecordingSummary | None = None
+    release: SearchResult | None = Field(default=None, description="For album links.")
+    candidates: list[SearchResult] = Field(default_factory=list)
+    title: str | None = Field(
+        default=None, description="The title the other app reported (song, album or playlist)."
+    )
+    artist_names: list[str] = Field(
+        default_factory=list, description="The artist names the other app reported."
+    )
+    tracks: list[PlaylistTrack] = Field(
+        default_factory=list, description="A playlist's tracks (public Deezer playlists)."
+    )
+    via: list[str] = Field(
+        default_factory=list, description="Data source IDs that answered, in order (`dataSources`)."
+    )
+    graph_version: str

@@ -161,15 +161,47 @@ SOURCES: tuple[DataSource, ...] = (
         tier=Tier.PRODUCTION,
         status=Status.IN_USE,
         kind=Kind.API,
-        feeds=("artist photos",),
-        attribution="Each photo is credited with its author, license and Commons file page",
+        feeds=(
+            "artist photos",
+            "Around you: campus athletics marks, logos and seals",
+            "the ListenBrainz and Libre.fm logos in connected services",
+        ),
+        attribution="Each photo and logo is credited with its author, license and file page",
         checked_on="2026-11-16",
         notes="Found through the image (P18) on the artist's Wikidata item, matched by MusicBrainz "
         "ID (P434); fetched with `songnexus fetch-images` (ADR 0009). Each file carries its own "
         "license: only public domain, CC0, CC BY and CC BY-SA raster images are kept; non-free, "
         "unlicensed and non-commercial files are skipped. Images are hot-linked from Wikimedia's "
         "media hosts (upload.wikimedia.org, thumb.wikimedia.org), never copied, and the API "
-        "returns the author, license and file page with every photo.",
+        "returns the author, license and file page with every photo. Campus marks are the current "
+        "logo (P154, no end date) of the athletics program that represents (P1268) the campus, "
+        "else the campus's small logo (P8972), logo (P154) or seal (P158), SVG or PNG under the "
+        "same license rule, chosen and hot-linked by `web/scripts/fetch-campus-logos.mjs` into "
+        "`web/src/community/campusLogos.json`; the "
+        "campus page links each logo's Commons file. The ListenBrainz (CC BY-SA 4.0, MetaBrainz "
+        "Foundation) and Libre.fm (CC BY-SA 3.0) logo files are served unmodified from "
+        "`web/public/brands`.",
+    ),
+    DataSource(
+        id="simple-icons",
+        name="Simple Icons",
+        homepage="https://simpleicons.org",
+        license="CC0-1.0 (the icons stay their brands' trademarks)",
+        license_url="https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md",
+        tier=Tier.PRODUCTION,
+        status=Status.IN_USE,
+        kind=Kind.DATA_DUMP,
+        feeds=(
+            "the YouTube Music, Spotify, Apple Music, Last.fm and Deezer marks in connected "
+            "services, the import guide and every 'Listen on YouTube Music' button",
+        ),
+        attribution="",
+        checked_on="2026-11-17",
+        notes="SVG paths from simple-icons 16.38 copied into `web/src/components/BrandMark.tsx` "
+        "with each brand's published color. The paths are CC0, but the marks are trademarks: they "
+        "are used only to name the service a listener links or listens on, as the brands' "
+        "guidelines allow, never altered or combined with the SongNexus mark (see the Simple "
+        "Icons disclaimer).",
     ),
     # --- Audio descriptors and listening -------------------------------------------------
     DataSource(

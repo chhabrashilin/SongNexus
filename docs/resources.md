@@ -14,7 +14,8 @@ Status **Planned** means the source is approved but no code reads from it yet; t
 | [MusicBrainz genres](https://musicbrainz.org/doc/Genre) | CC-BY-NC-SA-3.0 | Non-commercial | In Use | artist genres; genre filters and shared genres in compare |
 | [Discogs data dumps](https://data.discogs.com) | CC0-1.0 | Production-safe | In Use | artist genres (commercial-safe); genre filters and shared genres in compare |
 | [Wikidata](https://www.wikidata.org) | CC0-1.0 | Production-safe | In Use | genre hierarchy (subgenres); links from MusicBrainz artists to Discogs; Around you: the campuses and cities listeners can join; artist photos: which Commons file shows an artist |
-| [Wikimedia Commons](https://commons.wikimedia.org) | Per file: public domain, CC0, CC BY or CC BY-SA | Production-safe | In Use | artist photos |
+| [Wikimedia Commons](https://commons.wikimedia.org) | Per file: public domain, CC0, CC BY or CC BY-SA | Production-safe | In Use | artist photos; Around you: campus athletics marks, logos and seals; the ListenBrainz and Libre.fm logos in connected services |
+| [Simple Icons](https://simpleicons.org) | CC0-1.0 (the icons stay their brands' trademarks) | Production-safe | In Use | the YouTube Music, Spotify, Apple Music, Last.fm and Deezer marks in connected services, the import guide and every 'Listen on YouTube Music' button |
 | [AcousticBrainz](https://acousticbrainz.org) | CC0-1.0 | Production-safe | In Use | song comparison: tempo, key, loudness, mood and other audio descriptors |
 | [ListenBrainz](https://listenbrainz.org) | CC0-1.0 | Production-safe | In Use | listener overlap in artist comparison; 'often played with' on artist pages |
 | [Spotify Tracks Dataset (Kaggle, maharshipandya)](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset) | CC0-1.0 (as stated by the uploader) | Evaluation only | Planned | evaluating song similarity against genre labels |
@@ -57,9 +58,17 @@ CC0 or equivalent. Usable in a commercial YouTube Music feature.
 - **ID:** `wikimedia-commons`
 - **Obtained via:** its API
 - **License:** [Per file: public domain, CC0, CC BY or CC BY-SA](https://commons.wikimedia.org/wiki/Commons:Licensing) (checked 2026-11-16)
-- **Feeds:** artist photos
-- **Attribution:** “Each photo is credited with its author, license and Commons file page”
-- **Notes:** Found through the image (P18) on the artist's Wikidata item, matched by MusicBrainz ID (P434); fetched with `songnexus fetch-images` (ADR 0009). Each file carries its own license: only public domain, CC0, CC BY and CC BY-SA raster images are kept; non-free, unlicensed and non-commercial files are skipped. Images are hot-linked from Wikimedia's media hosts (upload.wikimedia.org, thumb.wikimedia.org), never copied, and the API returns the author, license and file page with every photo.
+- **Feeds:** artist photos; Around you: campus athletics marks, logos and seals; the ListenBrainz and Libre.fm logos in connected services
+- **Attribution:** “Each photo and logo is credited with its author, license and file page”
+- **Notes:** Found through the image (P18) on the artist's Wikidata item, matched by MusicBrainz ID (P434); fetched with `songnexus fetch-images` (ADR 0009). Each file carries its own license: only public domain, CC0, CC BY and CC BY-SA raster images are kept; non-free, unlicensed and non-commercial files are skipped. Images are hot-linked from Wikimedia's media hosts (upload.wikimedia.org, thumb.wikimedia.org), never copied, and the API returns the author, license and file page with every photo. Campus marks are the current logo (P154, no end date) of the athletics program that represents (P1268) the campus, else the campus's small logo (P8972), logo (P154) or seal (P158), SVG or PNG under the same license rule, chosen and hot-linked by `web/scripts/fetch-campus-logos.mjs` into `web/src/community/campusLogos.json`; the campus page links each logo's Commons file. The ListenBrainz (CC BY-SA 4.0, MetaBrainz Foundation) and Libre.fm (CC BY-SA 3.0) logo files are served unmodified from `web/public/brands`.
+
+### Simple Icons
+
+- **ID:** `simple-icons`
+- **Obtained via:** published data dumps
+- **License:** [CC0-1.0 (the icons stay their brands' trademarks)](https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md) (checked 2026-11-17)
+- **Feeds:** the YouTube Music, Spotify, Apple Music, Last.fm and Deezer marks in connected services, the import guide and every 'Listen on YouTube Music' button
+- **Notes:** SVG paths from simple-icons 16.38 copied into `web/src/components/BrandMark.tsx` with each brand's published color. The paths are CC0, but the marks are trademarks: they are used only to name the service a listener links or listens on, as the brands' guidelines allow, never altered or combined with the SongNexus mark (see the Simple Icons disclaimer).
 
 ### AcousticBrainz
 

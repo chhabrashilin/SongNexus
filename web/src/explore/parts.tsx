@@ -11,6 +11,7 @@ import {imageOf} from '../components/ArtistRow';
 import {Icon} from '../components/Icon';
 import {Cover, hueOf} from '../components/Shelf';
 import {useI18n} from '../i18n/i18n';
+import {BrandMark} from '../components/BrandMark';
 
 /** A search on YouTube Music: we link out, we never claim playback. */
 export function youTubeMusicUrl(query: string): string {
@@ -39,9 +40,7 @@ export function ListenLink({
       rel="noopener noreferrer"
       aria-label={name ? t('explore.listenTo', {name}) : undefined}
     >
-      <span className="listen__disc" aria-hidden="true">
-        <Icon name="play" />
-      </span>
+      <BrandMark provider="YOUTUBE_MUSIC" size={20} className="listen__disc" />
       {t('explore.listen')}
     </a>
   );

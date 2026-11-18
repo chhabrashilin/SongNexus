@@ -383,7 +383,15 @@ export function Shell() {
         className={wide ? 'main main--wide' : 'main'}
         tabIndex={-1}
       >
-        <Outlet />
+        {wide ? (
+          <Outlet />
+        ) : (
+          // At least a screen tall, so the footer stays below the fold while a
+          // page loads instead of jumping down as its content arrives.
+          <div className="main__page">
+            <Outlet />
+          </div>
+        )}
         {!wide && (
           <footer className="footer row muted">
             <Link to="/about">{t('footer.about')}</Link>

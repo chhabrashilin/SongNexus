@@ -16,6 +16,7 @@ import {useI18n} from '../i18n/i18n';
 import type {MessageId} from '../i18n/messages';
 
 import {youTubeMusicSearch, type Photo} from './facts';
+import {BrandMark} from '../components/BrandMark';
 
 export type EntityKind = 'artist' | 'song' | 'label' | 'genre';
 
@@ -126,9 +127,7 @@ export function ListenLink({
       target="_blank"
       rel="noopener noreferrer"
     >
-      <span className="listen__disc" aria-hidden="true">
-        <Icon name="play" />
-      </span>
+      <BrandMark provider="YOUTUBE_MUSIC" size={20} className="listen__disc" />
       {t('entity.listen')}
       <span className="visually-hidden">{t('entity.newTab')}</span>
     </a>

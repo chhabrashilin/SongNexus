@@ -11,6 +11,7 @@ import {Link, useSearchParams} from 'react-router';
 import {
   communityId,
   useCommunity,
+  useSeedCommunity,
   useCommunityChart,
   useMyCommunities,
   useUpdateMyCommunities,
@@ -35,11 +36,11 @@ import {cleanSlug, placeLabel} from '../community/format';
 import {hueOf} from '../components/ArtistRow';
 import {Icon} from '../components/Icon';
 import {Sheet} from '../components/Sheet';
-import {Cover} from '../components/Shelf';
 import {useSnackbar} from '../components/Snackbar';
 import {ErrorState} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 import {Block, Hero, PromiseLine, RadarArt} from '../social/Hero';
+import {campusLogo, CommunityMark} from '../community/CommunityMark';
 
 const KINDS: CommunityKind[] = ['CAMPUS', 'CITY'];
 const FIELD: Record<CommunityKind, MembershipField> = {
@@ -245,6 +246,7 @@ function CommunityHero({
   const current = mine?.[FIELD[community.kind]]?.community;
   const joined = current?.name === community.name;
   const name = plainName(community);
+  const logo = community.kind === 'CAMPUS' ? campusLogo(community) : null;
 
   return (
     <Hero
@@ -269,6 +271,16 @@ function CommunityHero({
               rel="noopener noreferrer"
             >
               {t('around.source')}
+            </a>
+          )}
+          {logo && (
+            <a
+              href={logo.page}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={[logo.author, logo.license].filter(Boolean).join(' · ')}
+            >
+              {t('around.logoCredit', {license: logo.license})}
             </a>
           )}
         </p>
@@ -303,7 +315,7 @@ function CommunityHero({
               {'--hue': hueOf(community.shortName || name)} as CSSProperties
             }
           >
-            <Cover name={community.shortName || name} eager />
+            <CommunityMark community={community} eager />
           </span>
         </div>
       }
@@ -408,6 +420,7 @@ export default function AroundYouScreen() {
   const [params, setParams] = useSearchParams();
   const [picking, setPicking] = useState(false);
   const finder = useRef<HTMLDivElement>(null);
+  const seed = useSeedCommunity();
   usePageTitle(t('nav.aroundYou'));
 
   const signedIn = auth.status === 'signedIn';
@@ -430,8 +443,10 @@ export default function AroundYouScreen() {
   }
 
   function open(community: Community) {
+    const id = communityId(community.name);
+    seed(id, community);
     setPicking(false);
-    setParams({c: communityId(community.name)});
+    setParams({c: id});
     window.scrollTo({top: 0});
   }
 

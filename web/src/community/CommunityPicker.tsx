@@ -17,12 +17,12 @@ import {
   type CommunityKind,
 } from '../api/community';
 import {Icon} from '../components/Icon';
-import {Cover} from '../components/Shelf';
 import {ErrorState} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 
 import {countryOptions} from './countries';
 import {placeLabel} from './format';
+import {CommunityMark} from './CommunityMark';
 
 /** Cards shown before "Show more". */
 const PAGE = 12;
@@ -59,7 +59,7 @@ export function CommunityCard({
         className="community-card"
         onClick={() => onPick(community)}
       >
-        <Cover name={community.shortName || name} />
+        <CommunityMark community={community} />
         <span className="community-card__text">
           <span className="community-card__name">
             <bdi>{name}</bdi>

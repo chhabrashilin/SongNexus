@@ -77,6 +77,12 @@ class Settings(BaseSettings):
     # Where the browser app is served; OAuth callbacks come back through its /v1 proxy.
     app_origin: str = "http://127.0.0.1:5173"
     spotify_client_id: str = ""
+    # With the client ID, lets ResolveLink read artists and ISRCs of shared Spotify songs
+    # (Web API, client credentials). Without it, Spotify song links resolve by title.
+    spotify_client_secret: str = ""
+    # ResolveLink may ask MusicBrainz and the linked app's public metadata (Deezer API,
+    # Apple's lookup API, oEmbed). False keeps it to links our catalog already knows.
+    link_lookups: bool = True
     # Google OAuth client (web application) with the YouTube Data API enabled: links
     # YouTube Music through liked songs. Without it, YouTube Music is file import only.
     google_client_id: str = ""
@@ -99,6 +105,9 @@ class Settings(BaseSettings):
     # on read or by `songnexus community-charts`; leaving or joining shows up at the
     # next recompute, which also keeps one person's change from being singled out.
     community_chart_ttl_minutes: int = 60
+    # For You (ADR 0010): an A/B experiment over Z-star arms, as "name:arm=share,...",
+    # e.g. "zstar-diversity:diverse=0.1". Empty: everyone gets the control arm.
+    zstar_experiment: str = ""
 
     # Ask (AI in the search bar, ADR 0008). The model only interprets questions; answers
     # come from the catalog. Providers: gemini (default), openrouter, ollama; "none" or a
