@@ -35,6 +35,7 @@ from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import PageSize, PageToken, db_session, set_cache_control
 from songnexus.storage import catalog_repository as repo
+from songnexus.storage import games_repository
 from songnexus.storage import models as m
 
 router = APIRouter(
@@ -185,10 +186,19 @@ def get_trivia(
     dependencies=[Depends(_trivia_enabled)],
 )
 def check_trivia(
-    date: str, body: disc.CheckTriviaRequest, model: ModelDep, session: SessionDep
+    date: str,
+    body: disc.CheckTriviaRequest,
+    model: ModelDep,
+    session: SessionDep,
+    who: ViewerDep,
 ) -> disc.CheckTriviaResponse:
-    """Checks one answer. The verdict comes with the right option and its credits."""
-    quiz = _quiz(model, session, _day(date))
+    """Checks one answer. The verdict comes with the right option and its credits.
+
+    For a signed-in player the first answer to each question is kept for two days,
+    so a score submitted later counts that answer (ADR 0010).
+    """
+    day = _day(date)
+    quiz = _quiz(model, session, day)
     question = quiz.question(body.question)
     if question is None:
         raise invalid_argument("Unknown question.", field="question")
@@ -196,6 +206,15 @@ def check_trivia(
     chosen = parse_name(body.option, collection, field="option")
     if chosen not in question.options:
         raise invalid_argument("That is not one of the options.", field="option")
+    if who.user_id is not None:
+        games_repository.record_first_answer(
+            session,
+            who.user_id,
+            day.isoformat(),
+            question.id,
+            correct=chosen == question.answer,
+            now=datetime.now(UTC),
+        )
     graph = model.graph
     explanations = trivia.explain_answer(graph, question)
     keys = convert.subject_keys(explanations)

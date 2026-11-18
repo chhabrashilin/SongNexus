@@ -1,24 +1,37 @@
-/** A community chart: locked progress, or top artists, rising, the ranked list and genres. */
+/**
+ * A community chart. Locked: progress toward the listener floor as pips, with
+ * share and invite. Unlocked: the top three as a podium, the rest as ranked
+ * rows with movement, what's rising, genres as bars, and a comparison.
+ */
+import {useState, type CSSProperties} from 'react';
 import {Link} from 'react-router';
 
-import {idOf} from '../api/client';
-import type {
-  ChartArtist,
-  CommunityChart,
-  ListenerRange,
+import {
+  communityId,
+  type ChartArtist,
+  type CommunityChart,
+  type ListenerRange,
 } from '../api/community';
 import {useConfigFlags} from '../app/flags';
-import {ArtistRow} from '../components/ArtistRow';
+import {artistPath, imageOf} from '../components/ArtistRow';
 import {Icon} from '../components/Icon';
-import {CoverCard, Shelf} from '../components/Shelf';
+import {Cover} from '../components/Shelf';
 import {useSnackbar} from '../components/Snackbar';
 import {useI18n} from '../i18n/i18n';
+import {Block} from '../social/Hero';
 
 import {CompareCommunities} from './CompareCommunities';
 import {rangeParts, shareUrl, unlockProgress} from './format';
+import {WeeklyMovers} from './WeeklyMovers';
 
-/** How many artists ride the shelf; the full ranked list follows it. */
-const SHELF = 10;
+/** Ranked rows shown under the podium before "Show all". */
+const ROWS = 9;
+/** Above this floor the pips become a continuous bar. */
+const MAX_PIPS = 25;
+
+export function listenUrl(name: string): string {
+  return `https://music.youtube.com/search?q=${encodeURIComponent(name)}`;
+}
 
 export function useListeners() {
   const {t, formatNumber} = useI18n();
@@ -56,89 +69,128 @@ export function useShareCommunity() {
   };
 }
 
-function Movement({row}: {row: ChartArtist}) {
+/** Movement since last week: an arrow and words, never color alone. */
+export function Movement({row}: {row: ChartArtist}) {
   const {t} = useI18n();
   if (!row.movement) return null;
   const label = t(`around.move.${row.movement}`, {places: row.places});
-  const glyph = {UP: '▲', DOWN: '▼', SAME: '–', NEW: '•'}[row.movement];
+  if (row.movement === 'NEW')
+    return (
+      <span className="movement" data-move="NEW">
+        {label}
+      </span>
+    );
   return (
-    <span className="movement" data-move={row.movement}>
-      <span aria-hidden="true">{glyph}</span>
-      <span className="movement__text">{label}</span>
+    <span className="movement" data-move={row.movement} title={label}>
+      {row.movement === 'SAME' ? (
+        <Icon name="remove" size={16} />
+      ) : (
+        <Icon
+          name={row.movement === 'UP' ? 'arrowUp' : 'arrowDown'}
+          size={16}
+        />
+      )}
+      <span className="movement__places" aria-hidden="true">
+        {row.movement === 'SAME' ? '' : row.places}
+      </span>
+      <span className="visually-hidden">{label}</span>
     </span>
   );
 }
 
-function OpenWeb({row}: {row: ChartArtist}) {
-  const {t} = useI18n();
+export function RankRow({row, index}: {row: ChartArtist; index: number}) {
+  const listeners = useListeners();
   return (
-    <Link
-      className="icon-btn"
-      to={`/explore/${idOf(row.artist.name)}`}
-      aria-label={t('around.openWeb', {name: row.artist.displayName})}
-      title={t('around.openWeb', {name: row.artist.displayName})}
-    >
-      <Icon name="explore" />
-    </Link>
+    <li style={{'--i': index} as CSSProperties}>
+      <Link className="rank-row" to={artistPath(row.artist)}>
+        <span className="rank-row__n">{row.rank}</span>
+        <Cover
+          name={row.artist.displayName}
+          image={imageOf(row.artist)}
+          round
+        />
+        <span className="rank-row__text">
+          <span className="rank-row__title">
+            <bdi>{row.artist.displayName}</bdi>
+          </span>
+          <span className="rank-row__sub">{listeners(row.listeners)}</span>
+        </span>
+        <Movement row={row} />
+      </Link>
+    </li>
   );
 }
 
-function ChartRow({row}: {row: ChartArtist}) {
+/** Progress toward the listener floor: one pip per listener needed. */
+function UnlockMeter({have, min}: {have: number; min: number}) {
   const {t} = useI18n();
-  const listeners = useListeners();
+  const label = t('around.locked.progress', {have, min});
+  if (min > MAX_PIPS)
+    return (
+      <div
+        className="unlock__bar"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={min}
+        aria-valuenow={have}
+        aria-label={label}
+      >
+        <span
+          className="unlock__bar-fill"
+          style={{inlineSize: `${unlockProgress(min - have, min) * 100}%`}}
+        />
+      </div>
+    );
   return (
-    <ArtistRow
-      artist={row.artist}
-      subtitle={
-        <>
-          <span className="chart-rank">
-            {t('around.rank', {rank: row.rank})}
-          </span>
-          {' · '}
-          {listeners(row.listeners)}
-        </>
-      }
-      meta={<Movement row={row} />}
-      action={<OpenWeb row={row} />}
-    />
+    <div
+      className="unlock__pips"
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={min}
+      aria-valuenow={have}
+      aria-label={label}
+    >
+      {Array.from({length: min}, (_, i) => (
+        <span
+          key={i}
+          className="unlock__pip"
+          data-on={i < have || undefined}
+          style={{'--i': i} as CSSProperties}
+        />
+      ))}
+    </div>
   );
 }
 
 function Locked({chart}: {chart: CommunityChart}) {
-  const {t} = useI18n();
+  const {t, formatNumber} = useI18n();
   const flags = useConfigFlags();
   const share = useShareCommunity();
   const name = chart.community.shortName;
-  const have = chart.minListeners - chart.listenersNeeded;
-  const progress = unlockProgress(chart.listenersNeeded, chart.minListeners);
+  const have = Math.max(0, chart.minListeners - chart.listenersNeeded);
   return (
-    <section className="card unlock" aria-labelledby="unlock-title">
-      <h2 id="unlock-title">
-        {t('around.locked.title', {name, count: chart.listenersNeeded})}
-      </h2>
-      <div
-        className="unlock__meter"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={chart.minListeners}
-        aria-valuenow={have}
-        aria-label={t('around.locked.progress', {
-          have,
-          min: chart.minListeners,
-        })}
-      >
-        <span
-          className="unlock__fill"
-          style={{inlineSize: `${progress * 100}%`}}
-        />
+    <section className="unlock" aria-labelledby="unlock-title">
+      <div className="unlock__head">
+        <span className="unlock__lock">
+          <Icon name="lock" />
+        </span>
+        <div className="unlock__numbers">
+          <p className="unlock__big">
+            <span className="unlock__have">{formatNumber(have)}</span>
+            <span className="unlock__of">
+              {t('around.locked.of', {min: formatNumber(chart.minListeners)})}
+            </span>
+          </p>
+          <h2 id="unlock-title" className="unlock__title">
+            {t('around.locked.title', {name, count: chart.listenersNeeded})}
+          </h2>
+        </div>
       </div>
-      <p className="unlock__count">
-        {t('around.locked.progress', {have, min: chart.minListeners})}
-      </p>
-      <p className="muted">
+      <UnlockMeter have={have} min={chart.minListeners} />
+      <p className="unlock__body">
         {t('around.locked.body', {min: chart.minListeners, name})}
       </p>
-      <div className="row">
+      <div className="unlock__actions">
         <button
           type="button"
           className="btn btn--filled"
@@ -158,97 +210,220 @@ function Locked({chart}: {chart: CommunityChart}) {
   );
 }
 
-export function ChartView({chart}: {chart: CommunityChart}) {
-  const {t, locale} = useI18n();
+/** The top three, the leader in the middle and largest. */
+function Podium({rows}: {rows: ChartArtist[]}) {
+  const {t} = useI18n();
   const listeners = useListeners();
+  return (
+    <ol className="podium stagger" aria-label={t('around.top.title')}>
+      {rows.slice(0, 3).map((row, i) => (
+        <li
+          key={row.artist.name}
+          className="podium__place"
+          data-rank={row.rank}
+          style={{'--i': i} as CSSProperties}
+        >
+          <Link className="podium__link" to={artistPath(row.artist)}>
+            <span className="podium__art">
+              <Cover
+                name={row.artist.displayName}
+                image={imageOf(row.artist)}
+                round
+                eager
+              />
+              <span className="podium__rank" aria-hidden="true">
+                {row.rank}
+              </span>
+            </span>
+            <span className="podium__name">
+              <span className="visually-hidden">
+                {t('around.rank', {rank: row.rank})}{' '}
+              </span>
+              <bdi>{row.artist.displayName}</bdi>
+            </span>
+            <span className="podium__sub">{listeners(row.listeners)}</span>
+          </Link>
+          {i === 0 && (
+            <a
+              className="btn btn--tonal btn--compact listen"
+              href={listenUrl(row.artist.displayName)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="listen__disc">
+                <Icon name="play" />
+              </span>
+              {t('around.listen')}
+            </a>
+          )}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function Genres({chart}: {chart: CommunityChart}) {
+  const {t} = useI18n();
+  const listeners = useListeners();
+  const top = Math.max(1, ...chart.genres.map(g => g.listeners.min));
+  const flat = new Set(chart.genres.map(g => g.listeners.min)).size === 1;
+  if (flat)
+    return (
+      <Block id="genres-title" title={t('around.genres.title')}>
+        <p className="muted">
+          {t('around.genres.flat', {
+            range: listeners(chart.genres[0]!.listeners),
+          })}
+        </p>
+        <ul className="chips genre-chips">
+          {chart.genres.slice(0, 12).map(genre => (
+            <li key={genre.genre} className="chip genre-chip">
+              <bdi>{genre.displayName}</bdi>
+            </li>
+          ))}
+        </ul>
+      </Block>
+    );
+  return (
+    <Block id="genres-title" title={t('around.genres.title')}>
+      <ul className="genre-bars">
+        {chart.genres.slice(0, 8).map(genre => (
+          <li key={genre.genre} className="genre-bar">
+            <span className="genre-bar__name">
+              <bdi>{genre.displayName}</bdi>
+            </span>
+            <span className="genre-bar__track" aria-hidden="true">
+              <span
+                className="genre-bar__fill"
+                style={{inlineSize: `${(genre.listeners.min / top) * 100}%`}}
+              />
+            </span>
+            <span className="genre-bar__value">
+              {listeners(genre.listeners)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </Block>
+  );
+}
+
+export function ChartView({chart}: {chart: CommunityChart}) {
+  const {t, locale, formatNumber} = useI18n();
+  const range = (value: ListenerRange) => {
+    const parts = rangeParts(value);
+    return parts.kind === 'atLeast'
+      ? t('around.range.atLeast', {min: formatNumber(parts.min)})
+      : t('around.range.between', {
+          min: formatNumber(parts.min),
+          max: formatNumber(parts.max),
+        });
+  };
+  const [all, setAll] = useState(false);
   const name = chart.community.shortName;
   const updated = new Date(chart.updateTime).toLocaleTimeString(locale, {
     hour: 'numeric',
     minute: '2-digit',
   });
+  const rest = chart.artists.slice(3);
+  const visible = all ? rest : rest.slice(0, ROWS);
 
   return (
-    <div className="chart stack">
+    <div className="chart">
       {chart.demoData && (
-        <p className="banner chart__demo" role="note">
+        <p className="demo-note" role="note">
           <Icon name="info" />
-          {t('around.demo')}
+          <span>{t('around.demo')}</span>
         </p>
       )}
       {chart.state === 'LOCKED' ? (
         <Locked chart={chart} />
       ) : (
         <>
-          {chart.listeners && (
-            <p className="muted">{listeners(chart.listeners, true)}</p>
-          )}
-          <Shelf
-            title={t('around.top.title')}
-            eyebrow={t('around.top.eyebrow', {name})}
-          >
-            {chart.artists.slice(0, SHELF).map(row => (
-              <CoverCard
-                key={row.artist.name}
-                round
-                to={`/artist/${idOf(row.artist.name)}`}
-                title={row.artist.displayName}
-                subtitle={t('around.cardSubtitle', {
-                  rank: row.rank,
-                  listeners: listeners(row.listeners),
-                })}
-              />
-            ))}
-          </Shelf>
-
-          <section className="section" aria-labelledby="rising-title">
-            <h2 id="rising-title">{t('around.rising.title')}</h2>
-            <p className="muted">
-              {chart.historyAvailable
-                ? chart.rising.length > 0
-                  ? t('around.rising.body')
-                  : t('around.rising.empty')
-                : t('around.rising.none')}
-            </p>
-            {chart.rising.length > 0 && (
-              <ol className="list">
-                {chart.rising.map(row => (
-                  <ChartRow key={row.artist.name} row={row} />
-                ))}
-              </ol>
+          <dl className="stats chart__stats">
+            {chart.listeners && (
+              <div className="stat">
+                <dt className="stat__label">{t('around.stat.listeners')}</dt>
+                <dd className="stat__value">{range(chart.listeners)}</dd>
+              </div>
             )}
-          </section>
+            <div className="stat">
+              <dt className="stat__label">{t('around.stat.artists')}</dt>
+              <dd className="stat__value">
+                {formatNumber(chart.artists.length)}
+              </dd>
+            </div>
+            <div className="stat">
+              <dt className="stat__label">{t('around.stat.updated')}</dt>
+              <dd className="stat__value stat__value--time">{updated}</dd>
+            </div>
+          </dl>
 
-          <section className="section" aria-labelledby="chart-title">
-            <h2 id="chart-title">{t('around.chart.title')}</h2>
-            <ol className="list chart__list">
-              {chart.artists.map(row => (
-                <ChartRow key={row.artist.name} row={row} />
-              ))}
-            </ol>
-          </section>
-
-          {chart.genres.length > 0 && (
-            <section className="section" aria-labelledby="genres-title">
-              <h2 id="genres-title">{t('around.genres.title')}</h2>
-              <ul className="chips chart__genres">
-                {chart.genres.map(genre => (
-                  <li key={genre.genre} className="chip chip--static">
-                    <bdi>{genre.displayName}</bdi>
-                    <span className="chip__meta">
-                      {listeners(genre.listeners)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+          {chart.artists.length === 0 ? (
+            <p className="muted">{t('around.chart.empty')}</p>
+          ) : (
+            <Block
+              id="chart-title"
+              eyebrow={t('around.top.eyebrow', {name})}
+              title={t('around.chart.title')}
+            >
+              <Podium rows={chart.artists} />
+              {rest.length > 0 && (
+                <ol className="rank-grid stagger chart__rows">
+                  {visible.map((row, i) => (
+                    <RankRow key={row.artist.name} row={row} index={i} />
+                  ))}
+                </ol>
+              )}
+              {rest.length > ROWS && (
+                <button
+                  type="button"
+                  className="btn btn--outlined chart__all"
+                  aria-expanded={all}
+                  onClick={() => setAll(value => !value)}
+                >
+                  {all
+                    ? t('around.chart.fewer')
+                    : t('around.chart.all', {count: chart.artists.length})}
+                </button>
+              )}
+            </Block>
           )}
+
+          <Block
+            id="rising-title"
+            eyebrow={t('around.rising.eyebrow')}
+            title={t('around.rising.title')}
+          >
+            {chart.rising.length > 0 ? (
+              <>
+                <p className="muted">{t('around.rising.body')}</p>
+                <ol className="rank-grid stagger">
+                  {chart.rising.slice(0, 6).map((row, i) => (
+                    <RankRow key={row.artist.name} row={row} index={i} />
+                  ))}
+                </ol>
+              </>
+            ) : (
+              <p className="quiet-note">
+                <Icon name="trendingUp" />
+                <span>
+                  {chart.historyAvailable
+                    ? t('around.rising.empty')
+                    : t('around.rising.none')}
+                </span>
+              </p>
+            )}
+          </Block>
+
+          <WeeklyMovers id={communityId(chart.community.name)} />
+
+          {chart.genres.length > 0 && <Genres chart={chart} />}
 
           <CompareCommunities chart={chart} />
         </>
       )}
-      <p className="muted chart__updated">
-        {t('around.updated', {time: updated})}
-      </p>
+      <p className="chart__updated">{t('around.updated', {time: updated})}</p>
     </div>
   );
 }

@@ -14,7 +14,7 @@ import {idOf, type Schemas} from '../api/client';
 import {useConfig, useSearch} from '../api/queries';
 import {useI18n} from '../i18n/i18n';
 
-import {Avatar} from './ArtistRow';
+import {Avatar, imageOf} from './ArtistRow';
 import {AskAnswer, useListFormat, type AskState} from './AskAnswer';
 import {Icon} from './Icon';
 
@@ -34,6 +34,8 @@ interface Props {
    * search (no custom label), off for pickers that choose one artist or song.
    */
   ask?: boolean;
+  /** Show the key that focuses this box ("/") while it is empty. */
+  shortcutHint?: boolean;
 }
 
 /** Where a result leads. R1 has artist and song pages; releases are not searchable yet. */
@@ -55,6 +57,7 @@ export function SearchBox({
   initialQuery = '',
   clearOnPick = true,
   ask,
+  shortcutHint = false,
 }: Props) {
   const {t} = useI18n();
   const formatList = useListFormat();
@@ -207,6 +210,11 @@ export function SearchBox({
             }
           }}
         />
+        {shortcutHint && !query && (
+          <span className="search-hint" aria-hidden="true">
+            <span className="kbd">/</span>
+          </span>
+        )}
         {askEnabled && query.trim() && (
           <button
             type="button"
@@ -271,7 +279,10 @@ export function SearchBox({
               }}
             >
               {option.result.entityType === 'ARTIST' ? (
-                <Avatar name={option.result.displayName} />
+                <Avatar
+                  name={option.result.displayName}
+                  image={imageOf(option.result)}
+                />
               ) : (
                 <span className="avatar" aria-hidden="true">
                   <Icon

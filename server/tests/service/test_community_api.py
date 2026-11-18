@@ -122,7 +122,8 @@ def test_the_directory_has_campuses_and_cities_from_wikidata() -> None:
     assert len({c.id for c in DIRECTORY.communities}) == len(DIRECTORY.communities)
     for campus in kinds[core.Kind.CAMPUS]:
         if campus.synthetic:
-            assert not campus.wikidata and not campus.website
+            assert not campus.wikidata
+            assert not campus.website
             continue
         assert campus.wikidata.startswith("Q")
         assert campus.city_id is None or campus.city_id in DIRECTORY.by_id

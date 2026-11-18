@@ -14,14 +14,18 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field, replace
 
 from sqlalchemy import Engine
+from sqlalchemy.orm import Session
 
 from songnexus.core.graph.algorithms import weighted_degree
 from songnexus.core.graph.model import DEFAULT_CATEGORIES, ArtistGraph, kinds_for
 from songnexus.core.graph.projection import build_graph
+from songnexus.core.listening import MIN_LISTENERS
 from songnexus.core.resolution import Resolution, resolve_batch
 from songnexus.core.search import EntityType, SearchDoc, SearchIndex, log_prior
 from songnexus.core.text import normalize
 from songnexus.service.errors import ApiError, Status
+from songnexus.storage import catalog_repository
+from songnexus.storage.artist_images import images_stamp, read_artist_images
 from songnexus.storage.catalog_reader import (
     SearchEntry,
     catalog_version,
@@ -139,12 +143,23 @@ def load_read_model(engine: Engine, genre_sources: Sequence[str] | None = None) 
     """
     started = time.perf_counter()
     with session_scope(engine) as session:
-        version = catalog_version(session)
+        version = _version(session)
         if version is None:
             raise EmptyCatalogError("no successful ingestion run; run `songnexus ingest`")
         facts = read_catalog_facts(session, genre_sources)
         entries = read_search_entries(session)
+        images = read_artist_images(session)
+        listeners = catalog_repository.audience_listeners(session)
     graph = build_graph(facts, version)
+    graph.images = {
+        artist_id: image for artist_id, image in images.items() if artist_id in graph.nodes
+    }
+    # Below the floor an audience is not described anywhere (core.listening).
+    graph.listeners = {
+        artist_id: count
+        for artist_id, count in listeners.items()
+        if artist_id in graph.nodes and count >= MIN_LISTENERS
+    }
     search = build_search_index(entries, graph)
     log.info(
         "read model built",
@@ -158,10 +173,22 @@ def load_read_model(engine: Engine, genre_sources: Sequence[str] | None = None) 
     return ReadModel(version, graph, search)
 
 
+def _version(session: Session) -> str | None:
+    """The served version: the catalog run, plus a stamp of the artist photos when any exist.
+
+    Photos are fetched after ingestion (``songnexus fetch-images``), so they get
+    their own stamp: a fetch that changes them reloads the read model and so
+    changes every cache key and ETag, without a re-ingest.
+    """
+    version = catalog_version(session)
+    stamp = images_stamp(session) if version is not None else None
+    return f"{version}.img{stamp}" if stamp else version
+
+
 def probe_version(engine: Engine) -> str | None:
     """Returns the current catalog version in the database (cheap)."""
     with session_scope(engine) as session:
-        return catalog_version(session)
+        return _version(session)
 
 
 class ReadModelHolder:

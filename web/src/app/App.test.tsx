@@ -33,8 +33,18 @@ describe('App', () => {
             ),
           );
         }
+        if (url.includes('/v1/config')) {
+          return Promise.resolve(
+            jsonResponse({flags: {}, limits: {}, graphVersion: null}),
+          );
+        }
+        // Everything else Home asks for (stories, the puzzle, shelves) is
+        // optional: the page must stand without it.
         return Promise.resolve(
-          jsonResponse({flags: {}, limits: {}, graphVersion: null}),
+          jsonResponse(
+            {error: {code: 404, status: 'NOT_FOUND', message: ''}},
+            404,
+          ),
         );
       }),
     );

@@ -142,6 +142,7 @@ SOURCES: tuple[DataSource, ...] = (
             "genre hierarchy (subgenres)",
             "links from MusicBrainz artists to Discogs",
             "Around you: the campuses and cities listeners can join",
+            "artist photos: which Commons file shows an artist",
         ),
         attribution="Data from Wikidata",
         checked_on="2026-11-16",
@@ -150,6 +151,25 @@ SOURCES: tuple[DataSource, ...] = (
         "(P434) and a Discogs artist ID (P1953). The Around you list is the largest US "
         "universities by student count (P2196) plus a few abroad, their cities, US cities over "
         "100,000 people and national capitals, rebuilt with `songnexus fetch-communities`.",
+    ),
+    DataSource(
+        id="wikimedia-commons",
+        name="Wikimedia Commons",
+        homepage="https://commons.wikimedia.org",
+        license="Per file: public domain, CC0, CC BY or CC BY-SA",
+        license_url="https://commons.wikimedia.org/wiki/Commons:Licensing",
+        tier=Tier.PRODUCTION,
+        status=Status.IN_USE,
+        kind=Kind.API,
+        feeds=("artist photos",),
+        attribution="Each photo is credited with its author, license and Commons file page",
+        checked_on="2026-11-16",
+        notes="Found through the image (P18) on the artist's Wikidata item, matched by MusicBrainz "
+        "ID (P434); fetched with `songnexus fetch-images` (ADR 0009). Each file carries its own "
+        "license: only public domain, CC0, CC BY and CC BY-SA raster images are kept; non-free, "
+        "unlicensed and non-commercial files are skipped. Images are hot-linked from Wikimedia's "
+        "media hosts (upload.wikimedia.org, thumb.wikimedia.org), never copied, and the API "
+        "returns the author, license and file page with every photo.",
     ),
     # --- Audio descriptors and listening -------------------------------------------------
     DataSource(

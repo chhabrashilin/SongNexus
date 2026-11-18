@@ -84,8 +84,9 @@ def _pairs_via_intermediates(
     names: Mapping[str, str],
     allowed: NodePredicate | None,
     not_connectors: frozenset[str],
+    with_pairs: bool = True,
 ) -> tuple[set[tuple[str, str]], list[Connector]]:
-    """Returns pairs linked through some allowed artist, and the connectors."""
+    """Returns pairs linked through some allowed artist (unless not wanted), and the connectors."""
     touching: dict[str, list[str]] = defaultdict(list)
     for member in members:
         for x in adjacency[member]:
@@ -95,14 +96,39 @@ def _pairs_via_intermediates(
     for x, linked in touching.items():
         if len(linked) < 2 or (allowed is not None and not allowed(x)):  # noqa: PLR2004
             continue
-        ordered = sorted(linked)
-        pairs.update(itertools.combinations(ordered, 2))
+        if with_pairs:
+            pairs.update(itertools.combinations(sorted(linked), 2))
         if x not in member_set and x not in not_connectors:
             score = sum(adjacency[x][m] for m in linked)
             by_name = tuple(sorted(linked, key=lambda m: names.get(m, m)))
             connectors.append(Connector(x, by_name, score))
     connectors.sort(key=lambda c: (-c.score, names.get(c.artist_id, ""), c.artist_id))
     return pairs, connectors
+
+
+def hidden_links(
+    adjacency: Mapping[str, Mapping[str, float]],
+    artist_ids: Sequence[str],
+    names: Mapping[str, str],
+    *,
+    allowed: NodePredicate | None = None,
+    not_connectors: frozenset[str] = frozenset(),
+) -> list[Connector]:
+    """Returns every artist outside ``artist_ids`` linked to two or more of them.
+
+    The same connectors ``analyze_playlist`` reports, uncapped, strongest first.
+    """
+    members = [a for a in dict.fromkeys(artist_ids) if a in adjacency]
+    _, connectors = _pairs_via_intermediates(
+        adjacency,
+        members,
+        set(members),
+        names=names,
+        allowed=allowed,
+        not_connectors=not_connectors,
+        with_pairs=False,
+    )
+    return connectors
 
 
 def _thread(

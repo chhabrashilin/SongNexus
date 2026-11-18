@@ -188,6 +188,20 @@ class ArtistNode:
         return next((g.share for g in self.genres if g.genre_id == genre_id), 0.0)
 
 
+@dataclass(frozen=True)
+class ArtistImage:
+    """A freely licensed artist photo and the attribution its license requires (ADR 0009)."""
+
+    url: str  # about 960 px wide
+    thumbnail_url: str  # about 330 px wide
+    width: int  # of the original file
+    height: int
+    page_url: str  # the Commons file page: full license and history
+    author: str | None
+    license: str
+    license_url: str | None
+
+
 MAX_CACHED_ADJACENCIES = 16
 
 
@@ -216,6 +230,12 @@ class ArtistGraph:
         self.genre_parents: dict[str, frozenset[str]] = {}
         self._genre_children: dict[str, frozenset[str]] | None = None
         self._genre_counts: dict[str, tuple[int, int]] | None = None
+        # Artist photos by artist ID; display data loaded with the read model, not
+        # graph structure, so it never affects connections.
+        self.images: dict[str, ArtistImage] = {}
+        # Public, aggregate listener counts by artist ID (ListenBrainz), for ranking
+        # what to show first. Display data like images: never affects connections.
+        self.listeners: dict[str, int] = {}
 
     def add_node(self, node: ArtistNode) -> None:
         """Adds or replaces an artist."""

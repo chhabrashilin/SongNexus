@@ -44,6 +44,25 @@ def set_display_name(session: Session, user_id: str, name: str, now: datetime) -
     return row
 
 
+def shares_top_artists(session: Session, user_id: str) -> bool:
+    """Whether the user lets friends see their top artists (friend paths). Off by default."""
+    row = session.get(m.SocialProfile, user_id)
+    return bool(row is not None and row.share_top_artists)
+
+
+def set_share_top_artists(
+    session: Session, user_id: str, share: bool, now: datetime
+) -> m.SocialProfile:
+    """Turns sharing top artists with friends on or off (needs a display name first)."""
+    row = session.get(m.SocialProfile, user_id)
+    if row is None:
+        raise LookupError("pick a display name first")
+    row.share_top_artists = share
+    row.update_time = now
+    session.flush()
+    return row
+
+
 # ---------------------------------------------------------------------------
 # Invites
 # ---------------------------------------------------------------------------

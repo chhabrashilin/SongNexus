@@ -8,7 +8,9 @@ import {useQuery} from '@tanstack/react-query';
 
 import {api, unwrap, type ArtistSummary} from '../api/client';
 
-export type Starter = Pick<ArtistSummary, 'name' | 'displayName'>;
+export type Starter = Pick<ArtistSummary, 'name' | 'displayName'> & {
+  imageUrl?: string | null;
+};
 
 const NONE: Starter[] = [];
 
@@ -23,6 +25,10 @@ export function useStarterArtists(enabled = true): Starter[] {
     retry: false,
   });
   return (
-    data?.artists.map(({name, displayName}) => ({name, displayName})) ?? NONE
+    data?.artists.map(artist => ({
+      name: artist.name,
+      displayName: artist.displayName,
+      imageUrl: (artist as {imageUrl?: string | null}).imageUrl ?? null,
+    })) ?? NONE
   );
 }

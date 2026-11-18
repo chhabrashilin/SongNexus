@@ -493,6 +493,52 @@ def _cmd_resources(_settings: Settings, args: argparse.Namespace) -> int:
     )
 
 
+# --- Artist photos (ADR 0009) -----------------------------------------------------------
+
+
+def _cmd_fetch_images(settings: Settings, args: argparse.Namespace) -> int:
+    from datetime import UTC, datetime
+
+    from songnexus.catalog.http import SourceRequestError
+    from songnexus.catalog.wikidata.fetch import WikidataClient
+    from songnexus.catalog.wikidata.images import CommonsClient, http_client, run_fetch_images
+    from songnexus.storage.db import make_engine
+
+    # Both clients get the generic User-Agent; no contact is ever sent (ADR 0009).
+    wikidata = WikidataClient(
+        sparql_url=settings.wikidata_sparql_url,
+        cache_dir=settings.raw_dir("wikidata-images"),
+        http=http_client("application/sparql-results+json"),
+    )
+    commons = CommonsClient(cache_dir=settings.raw_dir("commons"))
+    try:
+        result = run_fetch_images(
+            make_engine(settings.database_url),
+            wikidata,
+            commons,
+            now=datetime.now(UTC),
+            limit=args.limit,
+            dry_run=args.dry_run,
+        )
+    except SourceRequestError as exc:
+        print(f"fetch-images failed, nothing written: {exc}", file=sys.stderr)
+        return EXIT_FAILED
+    _print(result)
+    return EXIT_OK
+
+
+def _add_image_commands(commands: Any) -> None:
+    images = commands.add_parser(
+        "fetch-images",
+        help="find freely licensed artist photos on Wikimedia Commons through Wikidata",
+    )
+    images.add_argument("--limit", type=int, help="only the first N artists (best-known first)")
+    images.add_argument(
+        "--dry-run", action="store_true", help="report coverage without writing to the database"
+    )
+    images.set_defaults(handler=_cmd_fetch_images)
+
+
 # --- Around you (communities) ----------------------------------------------------------
 
 
@@ -576,6 +622,87 @@ def _add_community_commands(commands: Any) -> None:
         "--remove", action="store_true", help="delete synthetic members (of one community, or all)"
     )
     seed.set_defaults(handler=_cmd_seed_community)
+    demo = commands.add_parser(
+        "seed-demo",
+        help="DEVELOPMENT ONLY: create (or --reset) the labeled synthetic demo cohort and the "
+        "local demo account (docs/synthetic-data.md)",
+    )
+    demo.add_argument("--reset", action="store_true", help="remove everything seed-demo created")
+    demo.set_defaults(handler=_cmd_seed_demo)
+
+
+def _cmd_seed_demo(settings: Settings, args: argparse.Namespace) -> int:
+    from datetime import UTC, date, datetime
+
+    from songnexus.catalog.communities import load_directory
+    from songnexus.core import game, trivia
+    from songnexus.jobs.demo_seed import SeedRefusedError, preflight, reset_demo, seed_demo
+    from songnexus.service.community_job import compute
+    from songnexus.service.readmodel import EmptyCatalogError, load_read_model
+    from songnexus.service.routes.discover import _label_facts
+    from songnexus.service.routes.play import KINDS
+    from songnexus.storage.db import make_engine, session_scope
+
+    engine = make_engine(settings.database_url)
+    now = datetime.now(UTC)
+    try:
+        if args.reset:
+            _print(reset_demo(engine, settings.environment, now))
+            return EXIT_OK
+        preflight(engine, settings.environment)
+        directory = load_directory()
+        try:
+            model = load_read_model(engine, settings.genre_sources)
+        except EmptyCatalogError as exc:
+            raise SeedRefusedError("the catalog is empty; run `songnexus ingest` first") from exc
+        graph = model.graph
+        pairs = game.candidate_pairs(
+            graph.adjacency(KINDS), [n.id for n in graph.nodes.values() if n.detail_level == "full"]
+        )
+        index = trivia.build_index(graph)
+        with session_scope(engine) as session:
+            labels = _label_facts(session)
+
+        def puzzle_par(day: date) -> int | None:
+            try:
+                return game.puzzle_for(day, pairs).par
+            except ValueError:
+                return None
+
+        def trivia_total(day: date) -> int | None:
+            try:
+                return len(trivia.quiz_for(day, index, labels).questions)
+            except ValueError:
+                return None
+
+        unlocked: dict[str, bool] = {}
+
+        def build_charts(ids: list[str], at: datetime) -> None:
+            for community_id in ids:
+                with session_scope(engine) as session:
+                    unlocked[community_id] = compute(
+                        session, settings, model, community_id, at
+                    ).unlocked
+
+        def city_of(campus: str) -> str | None:
+            found = directory.by_id.get(campus)
+            return found.city_id if found else None
+
+        result = seed_demo(
+            engine,
+            settings.environment,
+            now,
+            known_communities=lambda c: c in directory.by_id,
+            city_of=city_of,
+            build_charts=build_charts,
+            puzzle_par=puzzle_par,
+            trivia_total=trivia_total,
+        )
+    except SeedRefusedError as exc:
+        print(f"seed-demo refused: {exc}", file=sys.stderr)
+        return EXIT_FAILED
+    _print({**result, "unlockedCharts": sorted(c for c, ok in unlocked.items() if ok)})
+    return EXIT_OK
 
 
 def _cmd_transfer(settings: Settings, args: argparse.Namespace) -> int:
@@ -621,9 +748,11 @@ def _add_expansion_commands(commands: Any) -> None:
     recordings = commands.add_parser(
         "fetch-recordings", help="fetch singles and album recordings for an artist MBID"
     )
-    recordings.add_argument("--artist", required=True)
+    recordings.add_argument(
+        "--artist", required=True, action="append", help="artist MBID; repeat for several"
+    )
     recordings.add_argument("--output", required=True, type=Path)
-    recordings.add_argument("--limit", default=500, type=int)
+    recordings.add_argument("--limit", default=500, type=int, help="recordings per artist")
     recordings.set_defaults(handler=_cmd_fetch_recordings)
     transfer = commands.add_parser(
         "transfer-database", help="copy to an EMPTY database; dry run by default"
@@ -739,6 +868,7 @@ def build_parser() -> argparse.ArgumentParser:
     ):
         commands.add_parser(name, help=help_text).set_defaults(handler=handler)
     _add_community_commands(commands)
+    _add_image_commands(commands)
 
     acousticbrainz = commands.add_parser(
         "fetch-acousticbrainz", help="fetch audio descriptors for catalog recordings"

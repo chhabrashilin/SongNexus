@@ -2,10 +2,10 @@
  * The connection web (S1, US-02/06): start from an artist, open their
  * connections, select a line for the credits behind it.
  *
- * The page is the web: the canvas fills it, tools float over it, and a details
- * panel answers "who is this?" and "why are they linked?" without leaving. The
- * list view carries the same content for keyboard and screen-reader users
- * (AC-2.3).
+ * The page is the web: the canvas fills it, glass tools float over it, and a
+ * details panel answers "who is this?" and "why are they linked?" without
+ * leaving (beside the web on wide screens, a bottom sheet on phones). The list
+ * view carries the same content for keyboard and screen-reader users (AC-2.3).
  */
 import {useQueryClient} from '@tanstack/react-query';
 import {
@@ -15,27 +15,34 @@ import {
   useReducer,
   useRef,
   useState,
+  type CSSProperties,
 } from 'react';
-import {Link, useParams} from 'react-router';
+import {Link, useNavigate, useParams} from 'react-router';
 
-import {idOf} from '../api/client';
+import {ApiError, idOf} from '../api/client';
 import {
   fetchConnections,
   useArtist,
   type ConnectionCategory,
 } from '../api/queries';
+import {useAmbient} from '../app/ambient';
 import {NO_GENRE_FILTER, type GenreSelection} from '../app/genreSelection';
 import {usePageTitle} from '../app/Shell';
+import {useStarterArtists} from '../app/starters';
+import {Avatar, imageOf} from '../components/ArtistRow';
 import {ConnectionEvidence} from '../components/ConnectionSheet';
 import {
   CATEGORIES,
+  CATEGORY_ENCODING,
   DEFAULT_CATEGORIES,
   dominantCategory,
 } from '../components/encoding';
 import {CategoryChips, GenreFilter, Swatch} from '../components/Filters';
 import {Icon} from '../components/Icon';
-import {Cover} from '../components/Shelf';
-import {EmptyState, ErrorState, Spinner} from '../components/States';
+import {SearchBox} from '../components/SearchBox';
+import {Cover, hueOf} from '../components/Shelf';
+import {useSnackbar} from '../components/Snackbar';
+import {EmptyState, ErrorState} from '../components/States';
 import {
   ConnectionWeb,
   type ConnectionWebHandle,
@@ -47,10 +54,15 @@ import {
   graphReducer,
   strongestUnexpanded,
   neighborsOf,
+  orbitOf,
+  ORBITS,
   type GraphState,
+  type Orbit,
   type WebEdge,
   type WebNode,
+  type WebSong,
 } from '../explore/graphState';
+import {ListenLink, Moment, Portrait, youTubeMusicUrl} from '../explore/parts';
 import {useI18n} from '../i18n/i18n';
 
 const FIRST_PAGE = 25;
@@ -60,6 +72,74 @@ const EXPAND_STRONGEST = 5;
 const MIN_CREDITS = [1, 3, 10] as const;
 /** Rows shown in the panel before "show all". */
 const PANEL_ROWS = 6;
+/** A downward swipe on the sheet's handle longer than this closes it. */
+const SWIPE_CLOSE_PX = 56;
+/** The web lists the people a listener is likely to know first (server ranking). */
+const ORDER = 'relevance desc';
+/** Remembers that the first-visit hint was dismissed (this browser only). */
+const HINT_KEY = 'songnexus.webHint';
+/** Each orbit drawn with the line color of its kind of connection. */
+const ORBIT_CATEGORY: Record<Orbit, ConnectionCategory> = {
+  FEATURES: 'FEATURES',
+  PRODUCTION: 'PRODUCERS',
+  CREDITS: 'CONTRIBUTIONS',
+};
+
+/** "24.7K": listener counts read at a glance. */
+function useCompact(): (value: number) => string {
+  const {locale} = useI18n();
+  return useMemo(() => {
+    const format = new Intl.NumberFormat(locale, {
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    });
+    return (value: number) => format.format(value);
+  }, [locale]);
+}
+
+function readHintSeen(): boolean {
+  try {
+    return localStorage.getItem(HINT_KEY) === 'seen';
+  } catch {
+    return true;
+  }
+}
+
+/** The songs two artists made together, each a page and a "play" link out. */
+function SongList({songs, artist}: {songs: WebSong[]; artist: string}) {
+  const {t} = useI18n();
+  return (
+    <ul className="web-songs">
+      {songs.map(song => (
+        <li key={song.id} className="web-song">
+          <Link className="web-song__link" to={`/song/${song.id}`}>
+            <span
+              className="web-song__art"
+              style={{'--hue': hueOf(song.title)} as CSSProperties}
+              aria-hidden="true"
+            >
+              <Icon name="note" size={18} />
+            </span>
+            <span className="web-song__title">
+              <bdi>{song.title}</bdi>
+            </span>
+          </Link>
+          <a
+            className="icon-btn web-song__play"
+            href={youTubeMusicUrl(`${song.title} ${artist}`)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon
+              name="play"
+              label={t('explore.song.play', {title: song.title})}
+            />
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 type Selection =
   {kind: 'node'; id: string} | {kind: 'edge'; a: string; b: string} | null;
@@ -89,12 +169,13 @@ function ListView({
                 aria-expanded={node.expanded}
                 onClick={() => onExpand(node.id, false)}
               >
-                <Cover name={node.name} round />
+                <Avatar name={node.name} image={node.image} />
                 <span className="list-row__body">
                   <span className="list-row__title">
                     <bdi>{node.name}</bdi>
                   </span>
                   <span className="list-row__subtitle">
+                    <Swatch category={dominantCategory(edge.kinds)} />
                     {t('connection.evidenceCount', {count: edge.evidenceCount})}
                     {' · '}
                     {t(`category.${dominantCategory(edge.kinds)}`)}
@@ -144,45 +225,154 @@ function ListView({
     : null;
 }
 
-/** One connection in the panel: who, how many credits, what kind. */
+/** One connection in the panel: who, how many credits, what kind, how strong. */
 function ConnectionRow({
   node,
   edge,
+  strongest,
   onSelect,
   onHint,
 }: {
   node: WebNode;
   edge: WebEdge;
+  /** The strongest connection in the list, to scale the strength bar. */
+  strongest: number;
   onSelect: () => void;
   onHint: (id: string | null) => void;
 }) {
   const {t} = useI18n();
+  const category = dominantCategory(edge.kinds);
   return (
     <li>
       <button
         type="button"
-        className="list-row"
+        className="list-row web-row"
         onClick={onSelect}
         onPointerEnter={() => onHint(node.id)}
         onPointerLeave={() => onHint(null)}
         onFocus={() => onHint(node.id)}
         onBlur={() => onHint(null)}
       >
-        <Cover name={node.name} round />
+        <Avatar name={node.name} image={node.image} />
         <span className="list-row__body">
           <span className="list-row__title">
             <bdi>{node.name}</bdi>
           </span>
           <span className="list-row__subtitle">
-            <Swatch category={dominantCategory(edge.kinds)} />
-            {t('connection.evidenceCount', {count: edge.evidenceCount})}
-            {' · '}
-            {t(`category.${dominantCategory(edge.kinds)}`)}
+            <Swatch category={category} />
+            {edge.songs[0] ? (
+              <bdi>
+                {t('explore.row.song', {
+                  song: edge.songs[0].title,
+                  count: edge.evidenceCount,
+                })}
+              </bdi>
+            ) : (
+              <>
+                {t('connection.evidenceCount', {count: edge.evidenceCount})}
+                {' · '}
+                {t(`category.${category}`)}
+              </>
+            )}
+          </span>
+          <span className="web-row__bar" aria-hidden="true">
+            <span
+              style={
+                {
+                  inlineSize: `${Math.max(6, (100 * edge.strength) / (strongest || 1))}%`,
+                  '--bar': CATEGORY_ENCODING[category].color,
+                } as CSSProperties
+              }
+            />
           </span>
         </span>
         <Icon name="chevron" size={20} />
       </button>
     </li>
+  );
+}
+
+/** The page's layout while the artist loads: the same shapes, shimmering. */
+function WebSkeleton() {
+  const {t} = useI18n();
+  return (
+    <div className="web" data-loading="true">
+      <div className="web__stage">
+        <div className="web-skeleton" aria-hidden="true">
+          <span className="web-skeleton__core skeleton" />
+          {Array.from({length: 9}, (_, i) => (
+            <span
+              key={i}
+              className="web-skeleton__orbit skeleton"
+              style={{'--i': i} as CSSProperties}
+            />
+          ))}
+        </div>
+        <div className="web__top">
+          <div className="web__heading">
+            <span className="skeleton web-skeleton__line" data-w="s" />
+            <span className="skeleton web-skeleton__line" data-w="l" />
+          </div>
+        </div>
+        <p className="visually-hidden" role="status">
+          {t('state.loading')}
+        </p>
+      </div>
+      <aside className="web__panel" aria-hidden="true">
+        <div className="web-panel">
+          <span className="skeleton web-skeleton__portrait" />
+          <span className="skeleton web-skeleton__line" data-w="l" />
+          <span className="skeleton web-skeleton__line" data-w="m" />
+          {Array.from({length: 5}, (_, i) => (
+            <span key={i} className="skeleton web-skeleton__row" />
+          ))}
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+/** The artist isn't in our data (yet): say so, and offer ways on. */
+function NotInData() {
+  const {t} = useI18n();
+  const navigate = useNavigate();
+  const starters = useStarterArtists();
+  return (
+    <div className="web-missing">
+      <Moment
+        icon="explore"
+        title={t('explore.missing.title')}
+        body={t('explore.missing.body')}
+      >
+        <div className="web-missing__search">
+          <SearchBox
+            label={t('explore.hub.web.search')}
+            placeholder={t('explore.hub.web.search')}
+            types={['ARTIST']}
+            onPick={result => void navigate(`/explore/${idOf(result.name)}`)}
+          />
+        </div>
+        {starters.length > 0 && (
+          <ul className="web-missing__picks">
+            {starters.slice(0, 6).map(artist => (
+              <li key={artist.name}>
+                <Link
+                  className="pill-pick"
+                  to={`/explore/${idOf(artist.name)}`}
+                >
+                  <Cover
+                    name={artist.displayName}
+                    image={imageOf(artist)}
+                    round
+                  />
+                  <bdi>{artist.displayName}</bdi>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Moment>
+    </div>
   );
 }
 
@@ -207,12 +397,19 @@ export default function ExploreScreen() {
   const [showFilters, setShowFilters] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [orbit, setOrbit] = useState<Orbit | null>(null);
+  const [hintSeen, setHintSeen] = useState(readHintSeen);
+  const [sharing, setSharing] = useState(false);
+  const snackbar = useSnackbar();
+  const compact = useCompact();
   const web = useRef<ConnectionWebHandle>(null);
+  const swipe = useRef<number | null>(null);
   usePageTitle(
     center.data
       ? `${t('explore.title')}: ${center.data.displayName}`
       : t('explore.title'),
   );
+  useAmbient(center.data?.displayName ?? null);
 
   const params = useMemo(
     () => ({categories, ...genreFilter}),
@@ -225,13 +422,14 @@ export default function ExploreScreen() {
         queryKey: [
           'connections',
           artistId,
-          {...params, pageSize: FIRST_PAGE, pageToken},
+          {...params, pageSize: FIRST_PAGE, pageToken, orderBy: ORDER},
         ],
         queryFn: () =>
           fetchConnections(artistId, {
             ...params,
             pageSize: FIRST_PAGE,
             pageToken,
+            orderBy: ORDER,
           }),
         staleTime: 5 * 60_000,
       }),
@@ -307,9 +505,13 @@ export default function ExploreScreen() {
   // What is drawn: connections with enough credits, and the artists they reach.
   const {nodes, edges} = useMemo(() => {
     const allEdges = Object.values(state.edges);
-    if (minCredits <= 1)
+    if (minCredits <= 1 && !orbit)
       return {nodes: Object.values(state.nodes), edges: allEdges};
-    const kept = allEdges.filter(edge => edge.evidenceCount >= minCredits);
+    const kept = allEdges.filter(
+      edge =>
+        edge.evidenceCount >= minCredits &&
+        (!orbit || orbitOf(edge.kinds) === orbit),
+    );
     const reached = new Set<string>(state.centerId ? [state.centerId] : []);
     for (const edge of kept) {
       reached.add(edge.a);
@@ -319,20 +521,33 @@ export default function ExploreScreen() {
       nodes: Object.values(state.nodes).filter(node => reached.has(node.id)),
       edges: kept,
     };
-  }, [minCredits, state.centerId, state.edges, state.nodes]);
+  }, [minCredits, orbit, state.centerId, state.edges, state.nodes]);
 
   /** The web as filtered, for the views that read the graph state directly. */
   const shown = useMemo<GraphState>(
     () =>
-      minCredits <= 1
+      minCredits <= 1 && !orbit
         ? state
         : {
             ...state,
             nodes: Object.fromEntries(nodes.map(node => [node.id, node])),
             edges: Object.fromEntries(edges.map(edge => [edge.key, edge])),
           },
-    [edges, minCredits, nodes, state],
+    [edges, minCredits, nodes, orbit, state],
   );
+
+  /** How many of the start's connections sit on each orbit (before the orbit filter). */
+  const orbitCounts = useMemo(() => {
+    const counts: Record<Orbit, number> = {
+      FEATURES: 0,
+      PRODUCTION: 0,
+      CREDITS: 0,
+    };
+    for (const edge of Object.values(state.edges))
+      if (edge.a === state.centerId || edge.b === state.centerId)
+        counts[orbitOf(edge.kinds)]++;
+    return counts;
+  }, [state.centerId, state.edges]);
 
   // A selection can outlive what it points to (undo, filters): drop it then.
   const visible = useMemo(() => new Set(nodes.map(n => n.id)), [nodes]);
@@ -351,26 +566,101 @@ export default function ExploreScreen() {
   }, [edges]);
 
   const describeNode = useCallback(
-    (node: WebNode) =>
-      node.expanded
-        ? t('explore.tip.opened', {name: node.name})
-        : t('explore.tip.closed', {name: node.name}),
-    [t],
+    (node: WebNode) => {
+      const name = node.listeners
+        ? t('explore.tip.reach', {
+            name: node.name,
+            listeners: compact(node.listeners),
+          })
+        : node.name;
+      return node.expanded
+        ? t('explore.tip.opened', {name})
+        : t('explore.tip.closed', {name});
+    },
+    [compact, t],
   );
   const describeEdge = useCallback(
     (edge: WebEdge, a: WebNode, b: WebNode) =>
-      t('explore.tip.edge', {
-        a: a.name,
-        b: b.name,
-        count: edge.evidenceCount,
-        category: t(`category.${dominantCategory(edge.kinds)}`),
-      }),
+      edge.songs[0]
+        ? t('explore.tip.song', {
+            a: a.name,
+            b: b.name,
+            song: edge.songs[0].title,
+            more: edge.evidenceCount - 1,
+          })
+        : t('explore.tip.edge', {
+            a: a.name,
+            b: b.name,
+            count: edge.evidenceCount,
+            category: t(`category.${dominantCategory(edge.kinds)}`),
+          }),
+    [t],
+  );
+  const describeOrbit = useCallback(
+    (which: Orbit, count: number) =>
+      t('explore.orbit.label', {orbit: t(`explore.orbit.${which}`), count}),
     [t],
   );
 
-  if (center.isPending) return <Spinner />;
+  const dismissHint = useCallback(() => {
+    setHintSeen(true);
+    try {
+      localStorage.setItem(HINT_KEY, 'seen');
+    } catch {
+      // Storage unavailable: the hint stays dismissed for this visit.
+    }
+  }, []);
+
+  /** The web as a story image: the system share sheet, or a download. */
+  const share = useCallback(
+    async (name: string) => {
+      if (!web.current || sharing) return;
+      setSharing(true);
+      try {
+        const blob = await web.current.snapshot({
+          title: name,
+          subtitle: t('explore.share.subtitle'),
+          brand: t('app.name'),
+        });
+        if (!blob) {
+          snackbar(t('explore.share.failed'));
+          return;
+        }
+        const slug = name.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase();
+        const file = new File([blob], `${slug}-songnexus.png`, {
+          type: 'image/png',
+        });
+        if (navigator.canShare?.({files: [file]})) {
+          await navigator.share({
+            files: [file],
+            title: t('explore.share.title', {name}),
+          });
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.name;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 10_000);
+        snackbar(t('explore.share.saved'));
+      } catch (e: unknown) {
+        // Closing the share sheet is not a failure.
+        if (!(e instanceof DOMException && e.name === 'AbortError'))
+          snackbar(t('explore.share.failed'));
+      } finally {
+        setSharing(false);
+      }
+    },
+    [sharing, snackbar, t],
+  );
+
+  if (center.isPending) return <WebSkeleton />;
   if (center.isError)
-    return (
+    return center.error instanceof ApiError &&
+      center.error.status === 'NOT_FOUND' ? (
+      <NotInData />
+    ) : (
       <div className="web-error">
         <ErrorState
           error={center.error}
@@ -383,18 +673,14 @@ export default function ExploreScreen() {
   const centerName = center.data.displayName;
   const focusId = selectedId ?? centerId;
   const focusNode = focusId ? state.nodes[focusId] : undefined;
-  const focusExpansion = focusId ? state.expansions[focusId] : undefined;
-  const focusNeighbors = focusId ? neighborsOf(shown, focusId) : [];
-  const linkToCenter =
-    selectedId && centerId && selectedId !== centerId
-      ? state.edges[edgeKey(selectedId, centerId)]
-      : undefined;
   const filtersActive =
+    orbit !== null ||
     minCredits > 1 ||
     genreFilter.genres.length > 0 ||
     categories.length !== DEFAULT_CATEGORIES.length ||
     categories.some(c => !DEFAULT_CATEGORIES.includes(c));
   const empty = Boolean(centerId) && edges.length === 0 && !error && !loading;
+  const drawing = loading && edges.length === 0 && !error;
 
   return (
     <div className="web" data-view={view} data-selected={selection !== null}>
@@ -413,8 +699,10 @@ export default function ExploreScreen() {
             }
             hintId={hint}
             label={t('explore.canvasLabel', {name: centerName})}
+            keyHelp={t('explore.keys')}
             describeNode={describeNode}
             describeEdge={describeEdge}
+            describeOrbit={describeOrbit}
             onSelectNode={nodeId =>
               select(nodeId ? {kind: 'node', id: nodeId} : null)
             }
@@ -447,7 +735,7 @@ export default function ExploreScreen() {
             </div>
             <div className="web__tools">
               <div
-                className="web__bar"
+                className="web__bar glass"
                 role="toolbar"
                 aria-label={t('explore.tools')}
               >
@@ -476,9 +764,18 @@ export default function ExploreScreen() {
                     {t('explore.expandStrongest', {count: EXPAND_STRONGEST})}
                   </span>
                 </button>
+                <button
+                  type="button"
+                  className="btn btn--compact btn--text"
+                  disabled={!centerId || view !== 'web' || sharing}
+                  onClick={() => void share(centerName)}
+                >
+                  <Icon name="share" />
+                  <span className="web__bar-label">{t('explore.share')}</span>
+                </button>
               </div>
               <div
-                className="web__bar"
+                className="web__bar glass"
                 role="group"
                 aria-label={t('explore.view')}
               >
@@ -513,28 +810,36 @@ export default function ExploreScreen() {
           {state.trail.length > 1 && (
             <nav className="web__trail" aria-label={t('explore.trail')}>
               <ol className="chips chips--scroll">
-                {state.trail.map(nodeId => (
-                  <li key={nodeId}>
-                    <button
-                      type="button"
-                      className="chip"
-                      aria-pressed={selectedId === nodeId}
-                      onClick={() => {
-                        select({kind: 'node', id: nodeId});
-                        web.current?.focus(nodeId);
-                      }}
-                    >
-                      <bdi>{state.nodes[nodeId]?.name ?? nodeId}</bdi>
-                    </button>
-                  </li>
-                ))}
+                {state.trail.map(nodeId => {
+                  const node = state.nodes[nodeId];
+                  return (
+                    <li key={nodeId}>
+                      <button
+                        type="button"
+                        className="chip web__crumb"
+                        aria-pressed={selectedId === nodeId}
+                        onClick={() => {
+                          select({kind: 'node', id: nodeId});
+                          web.current?.focus(nodeId);
+                        }}
+                      >
+                        <Cover
+                          name={node?.name ?? nodeId}
+                          image={node?.image}
+                          round
+                        />
+                        <bdi>{node?.name ?? nodeId}</bdi>
+                      </button>
+                    </li>
+                  );
+                })}
               </ol>
             </nav>
           )}
         </div>
 
         {showFilters && (
-          <div className="web__filters">
+          <div className="web__filters glass">
             <div className="section__header">
               <h2>{t('explore.filters')}</h2>
               <button
@@ -579,8 +884,14 @@ export default function ExploreScreen() {
         )}
 
         <div className="web__notices">
+          {drawing && view === 'web' && (
+            <p className="web__drawing glass" role="status">
+              <span className="web__drawing-dot" aria-hidden="true" />
+              {t('explore.drawing', {name: centerName})}
+            </p>
+          )}
           {Boolean(error) && (
-            <div className="web__notice">
+            <div className="web__notice glass">
               <ErrorState
                 error={error}
                 onRetry={() => setAttempt(n => n + 1)}
@@ -588,7 +899,7 @@ export default function ExploreScreen() {
             </div>
           )}
           {empty && (
-            <div className="web__notice">
+            <div className="web__notice glass">
               <EmptyState
                 title={t('explore.empty')}
                 action={
@@ -600,6 +911,7 @@ export default function ExploreScreen() {
                         setCategories([...DEFAULT_CATEGORIES]);
                         setGenreFilter(NO_GENRE_FILTER);
                         setMinCredits(1);
+                        setOrbit(null);
                       }}
                     >
                       {t('explore.clearFilters')}
@@ -621,7 +933,21 @@ export default function ExploreScreen() {
 
         {view === 'web' && (
           <>
-            <div className="web__legend">
+            <div className="web__legend glass">
+              {/* The first-visit hint lives in the legend, never over the web. */}
+              {!hintSeen && !drawing && edges.length > 0 && (
+                <div className="web__coach" role="note">
+                  <Icon name="spark" size={18} />
+                  <p>{t('explore.coach')}</p>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={dismissHint}
+                  >
+                    <Icon name="close" label={t('explore.coach.dismiss')} />
+                  </button>
+                </div>
+              )}
               <button
                 type="button"
                 className="web__legend-toggle"
@@ -636,19 +962,53 @@ export default function ExploreScreen() {
                   <p>{t('explore.howTo.artists')}</p>
                   <p>{t('explore.howTo.lines')}</p>
                   <p>{t('explore.howTo.actions')}</p>
+                  <p>{t('explore.keys')}</p>
                 </div>
               )}
-              <ul className="web__keys" aria-label={t('explore.legend')}>
-                {usedCategories.map(category => (
-                  <li key={category}>
-                    <Swatch category={category} />
-                    {t(`category.${category}`)}
-                  </li>
+              <div
+                className="web__orbits chips chips--scroll"
+                role="group"
+                aria-label={t('explore.legend')}
+              >
+                <button
+                  type="button"
+                  className="chip"
+                  aria-pressed={orbit === null}
+                  onClick={() => setOrbit(null)}
+                >
+                  {t('explore.orbit.all')}
+                </button>
+                {ORBITS.filter(o => orbitCounts[o] > 0).map(o => (
+                  <button
+                    key={o}
+                    type="button"
+                    className="chip"
+                    aria-pressed={orbit === o}
+                    onClick={() => setOrbit(orbit === o ? null : o)}
+                  >
+                    <Swatch category={ORBIT_CATEGORY[o]} />
+                    {t(`explore.orbit.${o}`)}
+                    <span className="web__orbit-count">{orbitCounts[o]}</span>
+                  </button>
                 ))}
-              </ul>
+              </div>
+              {usedCategories.some(
+                c => !Object.values(ORBIT_CATEGORY).includes(c),
+              ) && (
+                <ul className="web__keys" aria-label={t('explore.otherLines')}>
+                  {usedCategories
+                    .filter(c => !Object.values(ORBIT_CATEGORY).includes(c))
+                    .map(category => (
+                      <li key={category}>
+                        <Swatch category={category} />
+                        {t(`category.${category}`)}
+                      </li>
+                    ))}
+                </ul>
+              )}
             </div>
             <div
-              className="web__zoom"
+              className="web__zoom glass"
               role="group"
               aria-label={t('explore.camera')}
             >
@@ -679,12 +1039,29 @@ export default function ExploreScreen() {
       </div>
 
       <aside className="web__panel" aria-label={t('explore.details')}>
+        {selection && (
+          <button
+            type="button"
+            className="web__grabber"
+            onClick={() => select(null)}
+            onPointerDown={event => {
+              swipe.current = event.clientY;
+            }}
+            onPointerUp={event => {
+              const start = swipe.current;
+              swipe.current = null;
+              if (start !== null && event.clientY - start > SWIPE_CLOSE_PX)
+                select(null);
+            }}
+          >
+            <span className="visually-hidden">{t('explore.panel.hide')}</span>
+          </button>
+        )}
         {selection?.kind === 'edge' ? (
           <EdgePanel
-            a={selection.a}
-            b={selection.b}
-            nameA={state.nodes[selection.a]?.name ?? ''}
-            nameB={state.nodes[selection.b]?.name ?? ''}
+            a={state.nodes[selection.a]}
+            b={state.nodes[selection.b]}
+            edge={state.edges[edgeKey(selection.a, selection.b)]}
             categories={categories}
             onClose={() => select(null)}
             onPick={nodeId => {
@@ -692,151 +1069,258 @@ export default function ExploreScreen() {
               web.current?.focus(nodeId);
             }}
           />
-        ) : focusNode ? (
-          <div className="web-panel">
-            <header className="web-panel__header">
-              <Cover name={focusNode.name} round />
-              <div className="web-panel__titles">
-                <p className="strapline">
-                  {focusId === centerId
-                    ? t('explore.panel.center')
-                    : t('search.type.ARTIST')}
-                </p>
-                <h2>
-                  <bdi>{focusNode.name}</bdi>
-                </h2>
-              </div>
-              {selection && (
-                <button
-                  type="button"
-                  className="icon-btn"
-                  onClick={() => select(null)}
-                >
-                  <Icon name="close" label={t('action.close')} />
-                </button>
-              )}
-            </header>
-
-            {linkToCenter && (
-              <button
-                type="button"
-                className="web-panel__link"
-                onClick={() =>
-                  select({kind: 'edge', a: centerId!, b: selectedId!})
-                }
-              >
-                <Swatch category={dominantCategory(linkToCenter.kinds)} />
-                <span>
-                  {t('explore.panel.linkedTo', {
-                    name: centerName,
-                    count: linkToCenter.evidenceCount,
-                  })}
-                </span>
-                <Icon name="chevron" size={20} />
-              </button>
-            )}
-
-            <div className="web-panel__actions">
-              {!focusNode.expanded ? (
-                <button
-                  type="button"
-                  className="btn btn--filled"
-                  disabled={opening === focusNode.id}
-                  onClick={() => expand(focusNode.id, false)}
-                >
-                  <Icon name="add" />
-                  {t('explore.panel.open')}
-                </button>
-              ) : (
-                focusExpansion?.nextPageToken && (
-                  <button
-                    type="button"
-                    className="btn btn--filled"
-                    disabled={opening === focusNode.id}
-                    onClick={() => expand(focusNode.id, true)}
-                  >
-                    <Icon name="add" />
-                    {t('explore.panel.more')}
-                  </button>
-                )
-              )}
-              <Link className="btn btn--tonal" to={`/artist/${focusNode.id}`}>
-                {t('explore.panel.artistPage')}
-              </Link>
-              {focusId !== centerId && (
-                <>
-                  <Link
-                    className="btn btn--tonal"
-                    to={`/explore/${focusNode.id}`}
-                  >
-                    {t('explore.panel.recenter')}
-                  </Link>
-                  {!linkToCenter && (
-                    <Link
-                      className="btn btn--tonal"
-                      to={`/six-degrees?from=${centerId}&to=${focusNode.id}`}
-                    >
-                      {t('explore.panel.path', {name: centerName})}
-                    </Link>
-                  )}
-                </>
-              )}
-            </div>
-
-            {focusExpansion && (
-              <p className="web-panel__note">
-                {t('explore.panel.inData', {
-                  shown: focusExpansion.shown,
-                  total: focusExpansion.total,
-                })}
-              </p>
-            )}
-
-            {focusNeighbors.length > 0 && (
-              <section className="web-panel__section">
-                <h3>
-                  {focusNode.expanded
-                    ? t('explore.panel.strongest')
-                    : t('explore.panel.inWeb')}
-                </h3>
-                <ul className="list">
-                  {(showAll
-                    ? focusNeighbors
-                    : focusNeighbors.slice(0, PANEL_ROWS)
-                  ).map(({node, edge}) => (
-                    <ConnectionRow
-                      key={node.id}
-                      node={node}
-                      edge={edge}
-                      onHint={setHint}
-                      onSelect={() =>
-                        select({kind: 'edge', a: focusNode.id, b: node.id})
-                      }
-                    />
-                  ))}
-                </ul>
-                {!showAll && focusNeighbors.length > PANEL_ROWS && (
-                  <button
-                    type="button"
-                    className="btn btn--text"
-                    onClick={() => setShowAll(true)}
-                  >
-                    {t('explore.panel.showAll', {
-                      count: focusNeighbors.length,
-                    })}
-                  </button>
-                )}
-              </section>
-            )}
-
-            {!selection && (
-              <p className="web-panel__hint">{t('explore.panel.hint')}</p>
-            )}
-          </div>
+        ) : focusNode && centerId ? (
+          <ArtistPanel
+            node={focusNode}
+            state={state}
+            shown={shown}
+            centerId={centerId}
+            centerName={centerName}
+            categories={categories}
+            selected={selection !== null}
+            showAll={showAll}
+            opening={opening === focusNode.id}
+            onShowAll={() => setShowAll(true)}
+            onExpand={more => expand(focusNode.id, more)}
+            onClose={() => select(null)}
+            onHint={setHint}
+            onSelectEdge={(a, b) => select({kind: 'edge', a, b})}
+          />
         ) : (
-          <Spinner />
+          <div className="web-panel" aria-hidden="true">
+            <span className="skeleton web-skeleton__portrait" />
+            <span className="skeleton web-skeleton__line" data-w="l" />
+            <span className="skeleton web-skeleton__line" data-w="m" />
+          </div>
         )}
       </aside>
+    </div>
+  );
+}
+
+/** Who an artist is, how they link to the start, and their strongest connections. */
+function ArtistPanel({
+  node,
+  state,
+  shown,
+  centerId,
+  centerName,
+  categories,
+  selected,
+  showAll,
+  opening,
+  onShowAll,
+  onExpand,
+  onClose,
+  onHint,
+  onSelectEdge,
+}: {
+  node: WebNode;
+  state: GraphState;
+  shown: GraphState;
+  centerId: string;
+  centerName: string;
+  categories: ConnectionCategory[];
+  selected: boolean;
+  showAll: boolean;
+  opening: boolean;
+  onShowAll: () => void;
+  onExpand: (more: boolean) => void;
+  onClose: () => void;
+  onHint: (id: string | null) => void;
+  onSelectEdge: (a: string, b: string) => void;
+}) {
+  const {t} = useI18n();
+  const artist = useArtist(node.id);
+  const isCenter = node.id === centerId;
+  const expansion = state.expansions[node.id];
+  const neighbors = neighborsOf(shown, node.id);
+  const strongest = neighbors[0]?.edge.strength ?? 1;
+  const linkToCenter = !isCenter
+    ? state.edges[edgeKey(node.id, centerId)]
+    : undefined;
+  const image = node.image ?? imageOf(artist.data);
+  const total = artist.data?.connectionCount ?? expansion?.total;
+  const compact = useCompact();
+  const genres = artist.data?.genres.slice(0, 3) ?? [];
+
+  return (
+    <div
+      className="web-panel"
+      style={{'--hue': hueOf(node.name)} as CSSProperties}
+    >
+      <header className="web-panel__hero">
+        <Portrait name={node.name} image={image} size="l" eager />
+        <div className="web-panel__titles">
+          <p className="strapline">
+            {isCenter ? t('explore.panel.center') : t('search.type.ARTIST')}
+          </p>
+          <h2>
+            <bdi>{node.name}</bdi>
+          </h2>
+          {artist.data?.disambiguation && (
+            <p className="web-panel__dis">{artist.data.disambiguation}</p>
+          )}
+        </div>
+        {selected && (
+          <button
+            type="button"
+            className="icon-btn web-panel__close"
+            onClick={onClose}
+          >
+            <Icon name="close" label={t('action.close')} />
+          </button>
+        )}
+      </header>
+
+      <dl className="web-panel__stats">
+        {node.listeners !== null && (
+          <div>
+            <dt>{t('explore.panel.stat.listeners')}</dt>
+            <dd>{compact(node.listeners)}</dd>
+          </div>
+        )}
+        {total !== undefined && (
+          <div>
+            <dt>{t('explore.panel.stat.inData')}</dt>
+            <dd>{total}</dd>
+          </div>
+        )}
+        <div>
+          <dt>{t('explore.panel.stat.inWeb')}</dt>
+          <dd>{neighbors.length}</dd>
+        </div>
+        {linkToCenter && (
+          <div>
+            <dt>{t('explore.panel.stat.credits', {name: centerName})}</dt>
+            <dd>{linkToCenter.evidenceCount}</dd>
+          </div>
+        )}
+      </dl>
+
+      {genres.length > 0 && (
+        <ul className="web-panel__genres">
+          {genres.map(genre => (
+            <li key={genre.genre}>{genre.displayName}</li>
+          ))}
+        </ul>
+      )}
+
+      <div className="web-panel__actions">
+        {!node.expanded ? (
+          <button
+            type="button"
+            className="btn btn--filled"
+            disabled={opening}
+            onClick={() => onExpand(false)}
+          >
+            <Icon name="add" />
+            {t('explore.panel.open')}
+          </button>
+        ) : (
+          expansion?.nextPageToken && (
+            <button
+              type="button"
+              className="btn btn--filled"
+              disabled={opening}
+              onClick={() => onExpand(true)}
+            >
+              <Icon name="add" />
+              {t('explore.panel.more')}
+            </button>
+          )
+        )}
+        <ListenLink query={node.name} />
+        <Link className="btn btn--tonal" to={`/artist/${node.id}`}>
+          {t('explore.panel.artistPage')}
+        </Link>
+        {!isCenter && (
+          <>
+            <Link className="btn btn--tonal" to={`/explore/${node.id}`}>
+              <Icon name="explore" />
+              {t('explore.panel.recenter')}
+            </Link>
+            {!linkToCenter && (
+              <Link
+                className="btn btn--tonal"
+                to={`/six-degrees?from=${centerId}&to=${node.id}`}
+              >
+                <Icon name="route" />
+                {t('explore.panel.path', {name: centerName})}
+              </Link>
+            )}
+          </>
+        )}
+      </div>
+
+      {linkToCenter && linkToCenter.songs.length > 0 && (
+        <section className="web-panel__section">
+          <h3>{t('explore.panel.songs', {name: centerName})}</h3>
+          <SongList songs={linkToCenter.songs} artist={node.name} />
+        </section>
+      )}
+
+      {linkToCenter && (
+        <section className="web-panel__section">
+          <div className="web-panel__section-head">
+            <h3>{t('explore.panel.creditsWith', {name: centerName})}</h3>
+            <button
+              type="button"
+              className="btn btn--text btn--compact"
+              onClick={() => onSelectEdge(centerId, node.id)}
+            >
+              <Swatch category={dominantCategory(linkToCenter.kinds)} />
+              {t('explore.panel.showConnection')}
+            </button>
+          </div>
+          <ConnectionEvidence
+            a={centerId}
+            b={node.id}
+            categories={categories}
+          />
+        </section>
+      )}
+
+      {neighbors.length > 0 && (
+        <section className="web-panel__section">
+          <h3>
+            {node.expanded
+              ? t('explore.panel.strongest')
+              : t('explore.panel.inWeb')}
+          </h3>
+          <ul className="list">
+            {(showAll ? neighbors : neighbors.slice(0, PANEL_ROWS)).map(
+              ({node: other, edge}) => (
+                <ConnectionRow
+                  key={other.id}
+                  node={other}
+                  edge={edge}
+                  strongest={strongest}
+                  onHint={onHint}
+                  onSelect={() => onSelectEdge(node.id, other.id)}
+                />
+              ),
+            )}
+          </ul>
+          {!showAll && neighbors.length > PANEL_ROWS && (
+            <button type="button" className="btn btn--text" onClick={onShowAll}>
+              {t('explore.panel.showAll', {count: neighbors.length})}
+            </button>
+          )}
+          {expansion && (
+            <p className="web-panel__note">
+              {t('explore.panel.inData', {
+                shown: expansion.shown,
+                total: expansion.total,
+              })}
+            </p>
+          )}
+        </section>
+      )}
+
+      {!selected && (
+        <p className="web-panel__hint">{t('explore.panel.hint')}</p>
+      )}
     </div>
   );
 }
@@ -845,27 +1329,26 @@ export default function ExploreScreen() {
 function EdgePanel({
   a,
   b,
-  nameA,
-  nameB,
+  edge,
   categories,
   onClose,
   onPick,
 }: {
-  a: string;
-  b: string;
-  nameA: string;
-  nameB: string;
+  a: WebNode | undefined;
+  b: WebNode | undefined;
+  edge: WebEdge | undefined;
   categories: ConnectionCategory[];
   onClose: () => void;
   onPick: (id: string) => void;
 }) {
   const {t} = useI18n();
+  if (!a || !b) return null;
   return (
     <div className="web-panel">
-      <header className="web-panel__header">
+      <header className="web-panel__hero web-panel__hero--pair">
         <span className="web-panel__pair" aria-hidden="true">
-          <Cover name={nameA} round />
-          <Cover name={nameB} round />
+          <Portrait name={a.name} image={a.image} size="m" />
+          <Portrait name={b.name} image={b.image} size="m" />
         </span>
         <div className="web-panel__titles">
           <p className="strapline">{t('explore.panel.connection')}</p>
@@ -873,25 +1356,37 @@ function EdgePanel({
             <button
               type="button"
               className="web-panel__name"
-              onClick={() => onPick(a)}
+              onClick={() => onPick(a.id)}
             >
-              <bdi>{nameA}</bdi>
+              <bdi>{a.name}</bdi>
             </button>
-            <span aria-hidden="true"> · </span>
+            <span className="web-panel__amp" aria-hidden="true">
+              {' & '}
+            </span>
             <button
               type="button"
               className="web-panel__name"
-              onClick={() => onPick(b)}
+              onClick={() => onPick(b.id)}
             >
-              <bdi>{nameB}</bdi>
+              <bdi>{b.name}</bdi>
             </button>
           </h2>
         </div>
-        <button type="button" className="icon-btn" onClick={onClose}>
+        <button
+          type="button"
+          className="icon-btn web-panel__close"
+          onClick={onClose}
+        >
           <Icon name="close" label={t('action.close')} />
         </button>
       </header>
-      <ConnectionEvidence a={a} b={b} categories={categories} />
+      {edge && edge.songs.length > 0 && (
+        <section className="web-panel__section">
+          <h3>{t('explore.panel.songsTogether')}</h3>
+          <SongList songs={edge.songs} artist={`${a.name} ${b.name}`} />
+        </section>
+      )}
+      <ConnectionEvidence a={a.id} b={b.id} categories={categories} />
     </div>
   );
 }

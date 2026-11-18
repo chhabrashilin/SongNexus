@@ -4,7 +4,7 @@ import {Link, Outlet, useLocation, useNavigate} from 'react-router';
 
 import {useInbox} from '../api/social';
 import {useAuth} from '../auth/AuthProvider';
-import {artistPath} from '../components/ArtistRow';
+import {artistPath, imageOf} from '../components/ArtistRow';
 import {Icon, type IconName} from '../components/Icon';
 import {LogoMark} from '../components/Logo';
 import {SearchBox, resultPath} from '../components/SearchBox';
@@ -67,6 +67,8 @@ const GUIDE_RECENT = 6;
 const RAIL_KEY = 'songnexus.guide';
 /** How long to wait for a new page's heading before focusing the page itself. */
 const HEADING_WAIT_MS = 4000;
+/** How long the page-enter animation may run before its marker is removed. */
+const ENTER_MS = 600;
 
 function isCurrent(entry: NavEntry, pathname: string): boolean {
   if (entry.to === '/') return pathname === '/';
@@ -240,8 +242,61 @@ export function Shell() {
     return () => cancelAnimationFrame(frame);
   }, [location.pathname]);
 
+  // The top bar is clear over the ambient color until content scrolls under it.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, {passive: true});
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // A new page rises into place (CSS; nothing moves with reduced motion).
+  const mainRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main) return;
+    main.setAttribute('data-entering', '');
+    const timer = window.setTimeout(
+      () => main.removeAttribute('data-entering'),
+      ENTER_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [location.pathname]);
+
+  // "/" or Ctrl/⌘+K puts the cursor in search, from anywhere outside a text box.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const combo =
+        (event.key === 'k' || event.key === 'K') &&
+        (event.metaKey || event.ctrlKey);
+      const slash =
+        event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey;
+      if (!combo && !slash) return;
+      const target = event.target as HTMLElement | null;
+      const typing =
+        target?.isContentEditable ||
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target?.tagName ?? '');
+      if (slash && typing) return;
+      const input = document.querySelector<HTMLInputElement>(
+        '.top-bar__search input',
+      );
+      if (!input) return;
+      event.preventDefault();
+      input.focus();
+      input.select();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   return (
-    <div className="shell" data-rail={rail || wide || undefined}>
+    <div
+      className="shell"
+      data-rail={rail || wide || undefined}
+      data-scrolled={scrolled || wide || undefined}
+    >
+      {!wide && <div className="ambient" aria-hidden="true" />}
       <a className="skip-link" href="#main">
         {t('app.skipToContent')}
       </a>
@@ -261,7 +316,10 @@ export function Shell() {
           </Link>
         </div>
         <div className="top-bar__search">
-          <SearchBox onPick={result => void navigate(resultPath(result))} />
+          <SearchBox
+            shortcutHint
+            onPick={result => void navigate(resultPath(result))}
+          />
         </div>
         <div className="top-bar__end">
           <Account />
@@ -300,7 +358,11 @@ export function Shell() {
                   className="nav__recent"
                   to={artistPath(artist)}
                 >
-                  <Cover name={artist.displayName} round />
+                  <Cover
+                    name={artist.displayName}
+                    image={imageOf(artist)}
+                    round
+                  />
                   <span className="nav__recent-text">
                     <span className="nav__recent-name">
                       <bdi>{artist.displayName}</bdi>
@@ -317,6 +379,7 @@ export function Shell() {
       </nav>
       <main
         id="main"
+        ref={mainRef}
         className={wide ? 'main main--wide' : 'main'}
         tabIndex={-1}
       >

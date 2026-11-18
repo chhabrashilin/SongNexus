@@ -9,18 +9,14 @@ import pytest
 
 from songnexus.core.ask.intents import CreditRole, Intent, SongRef, Source
 from songnexus.core.ask.interpreter import Interpreter, MemoryStore, ModelOutcome, needs_model
-from songnexus.core.ask.llm import (
-    INSTRUCTIONS,
-    SCHEMA,
+from songnexus.core.ask.llm import INSTRUCTIONS, SCHEMA, LlmError, grounded, validate
+from songnexus.core.ask.parser import parse
+from songnexus.service.ask_providers import (
     GeminiProvider,
-    LlmError,
     OllamaProvider,
     OpenRouterProvider,
-    grounded,
     make_provider,
-    validate,
 )
-from songnexus.core.ask.parser import parse
 
 QUESTION = "what was the first track where Pharrell produced for Kendrick Lamar"
 

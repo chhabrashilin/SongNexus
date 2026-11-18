@@ -13,6 +13,7 @@ from songnexus.core.graph.algorithms import bidirectional_bfs_path
 from songnexus.core.graph.explain import explain_edge
 from songnexus.core.graph.filters import NodeFilter
 from songnexus.core.graph.model import DEFAULT_CATEGORIES, EdgeKind, kinds_for
+from songnexus.core.graph.relevance import best_songs_first, relevance
 from songnexus.core.search import EntityType as CoreEntityType
 from songnexus.core.search import MatchType
 from songnexus.core.songs import Descriptors, shared_credits, similarity
@@ -168,6 +169,7 @@ def get_artist(
             if other in graph.nodes
         ],
         sources=convert.source_links(details.sources),
+        image=convert.artist_image(graph, artist_id),
         graph_version=model.version,
     )
 
@@ -190,7 +192,12 @@ def list_artist_connections(
     page_size: PageSize = 25,
     page_token: PageToken = "",
 ) -> api.ListArtistConnectionsResponse:
-    """Lists an artist's direct connections, strongest first."""
+    """Lists an artist's direct connections, strongest first.
+
+    ``orderBy=relevance desc`` blends strength with how widely known the other
+    artist is (public listener counts), for views that show only the first few
+    (the connection web). Highlights put original songs before remixes and edits.
+    """
     artist_id = parse_name(artist, "artists", field="parent")
     graph = model.graph
     require_artist(graph, artist_id)
@@ -200,10 +207,17 @@ def list_artist_connections(
     neighbors = [n for n in adjacency[artist_id] if flt.allows(graph.nodes[n])]
     if order_by == "strength desc":
         neighbors.sort(key=lambda n: (-adjacency[artist_id][n], graph.nodes[n].name, n))
+    elif order_by == "relevance desc":
+        row = adjacency[artist_id]
+        neighbors.sort(
+            key=lambda n: (-relevance(row[n], graph.listeners.get(n)), graph.nodes[n].name, n)
+        )
     elif order_by == "displayName":
         neighbors.sort(key=lambda n: (graph.nodes[n].name.casefold(), n))
     else:
-        raise invalid_argument("orderBy must be `strength desc` or `displayName`.", field="orderBy")
+        raise invalid_argument(
+            "orderBy must be `strength desc`, `relevance desc` or `displayName`.", field="orderBy"
+        )
     page = paginate(
         neighbors,
         page_size=page_size,
@@ -221,7 +235,7 @@ def list_artist_connections(
     for other in page.items:
         edge = graph.edge(artist_id, other)
         assert edge is not None
-        explanations = explain_edge(graph, edge, artist_id, kinds)
+        explanations = best_songs_first(explain_edge(graph, edge, artist_id, kinds))
         connections.append(
             api.Connection(
                 artist=convert.artist_summary(graph, other),
@@ -666,6 +680,7 @@ def search_catalog(
                 match_type=h.match_type.value,
                 matched_on=h.matched_on,
                 blocked=h.entity_id in who.blocked,
+                image_url=convert.image_url(model.graph, h.entity_id),
             )
             for h in hits
         ],

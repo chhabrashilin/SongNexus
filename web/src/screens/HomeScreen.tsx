@@ -1,22 +1,29 @@
 /**
- * Home, laid out like a music app's: a row of shortcut chips, one feature, then
- * shelves (where you left off, your top artists, places to start) and the rest
- * of what SongNexus does as quick picks.
+ * Home: a stage (what SongNexus is, then today's story, puzzle and challenge),
+ * shortcut chips, shelves (where you left off, your top artists, places to
+ * start, what the catalog surfaces) and everything else as tiles.
  */
+import {useState, type CSSProperties, type ReactNode} from 'react';
 import {Link} from 'react-router';
 
 import {idOf} from '../api/client';
-import {useListening} from '../api/queries';
+import {usePathChallenge, useStories} from '../api/discover';
+import {useListening, usePuzzle} from '../api/queries';
+import {useAmbient} from '../app/ambient';
 import {useConfigFlags} from '../app/flags';
 import {useRecentArtists} from '../app/recent';
 import {usePageTitle} from '../app/Shell';
-import {useStarterArtists} from '../app/starters';
+import {useStarterArtists, type Starter} from '../app/starters';
 import {useAuth} from '../auth/AuthProvider';
-import {artistPath} from '../components/ArtistRow';
+import {artistPath, imageOf} from '../components/ArtistRow';
 import {Icon} from '../components/Icon';
-import {CoverCard, Shelf} from '../components/Shelf';
-import {ToolGrid, TOOLS} from '../components/Tools';
+import {Cover, CoverCard, hueOf, Shelf} from '../components/Shelf';
+import {Bento, TOOLS} from '../components/Tools';
+import {HomeShelves} from '../home/HomeShelves';
 import {useI18n} from '../i18n/i18n';
+import type {MessageId} from '../i18n/messages';
+import {localDate} from '../play/game';
+import {storyValues, webLink} from '../stories/stories';
 
 const SHORTCUTS = [
   TOOLS.web!,
@@ -28,8 +35,8 @@ const SHORTCUTS = [
 ];
 const MORE = [
   TOOLS.stories!,
-  TOOLS.around!,
   TOOLS.games!,
+  TOOLS.around!,
   TOOLS.path!,
   TOOLS.compare!,
   TOOLS.songs!,
@@ -37,88 +44,224 @@ const MORE = [
   TOOLS.friends!,
 ];
 
-/** A small, still connection web: what the product draws, at a glance. */
-function FeatureArt() {
-  const nodes: [number, number, number, number][] = [
-    // x, y, radius, hue
-    [200, 150, 30, 0],
-    [92, 78, 18, 210],
-    [318, 70, 20, 275],
-    [338, 204, 16, 150],
-    [86, 226, 20, 28],
-    [206, 262, 14, 320],
-    [30, 150, 11, 190],
-    [384, 132, 11, 45],
-    [262, 20, 10, 100],
-  ];
-  const lines: [number, number, string, number][] = [
-    [0, 1, 'var(--series-1)', 4],
-    [0, 2, 'var(--series-2)', 5],
-    [0, 3, 'var(--series-3)', 3],
-    [0, 4, 'var(--series-1)', 6],
-    [0, 5, 'var(--series-2)', 2.5],
-    [1, 6, 'var(--series-3)', 2],
-    [4, 6, 'var(--series-1)', 2],
-    [2, 7, 'var(--series-1)', 2.5],
-    [3, 7, 'var(--series-2)', 2],
-    [2, 8, 'var(--series-3)', 2],
-    [1, 8, 'var(--series-2)', 1.5],
-    [4, 5, 'var(--series-3)', 2],
-  ];
+interface Slide {
+  id: string;
+  /** Names the slide in its dot's label. */
+  label: string;
+  /** The name whose color the slide takes. */
+  hue: string;
+  node: ReactNode;
+}
+
+/** Overlapping portraits of the people a slide is about. */
+function StageArt({people}: {people: {displayName: string}[]}) {
   return (
-    <svg
-      className="feature__art"
-      viewBox="0 0 414 290"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        {nodes.map(([, , , hue], index) => (
-          <linearGradient
-            key={index}
-            id={`feature-node-${index}`}
-            x1="0"
-            y1="0"
-            x2="1"
-            y2="1"
-          >
-            <stop offset="0" stopColor={`hsl(${hue + 35} 85% 62%)`} />
-            <stop offset="1" stopColor={`hsl(${hue - 30} 55% 18%)`} />
-          </linearGradient>
-        ))}
-      </defs>
-      {lines.map(([from, to, stroke, width], index) => (
-        <line
-          key={index}
-          x1={nodes[from]![0]}
-          y1={nodes[from]![1]}
-          x2={nodes[to]![0]}
-          y2={nodes[to]![1]}
-          stroke={stroke}
-          strokeWidth={width}
-          strokeLinecap="round"
-          opacity="0.75"
+    <div className="stage__art" aria-hidden="true">
+      {people.slice(0, 3).map((person, index) => (
+        <Cover
+          key={`${person.displayName}-${index}`}
+          name={person.displayName}
+          image={imageOf(person)}
+          round
+          eager
         />
       ))}
-      {nodes.map(([cx, cy, r], index) => (
-        <circle
-          key={index}
-          cx={cx}
-          cy={cy}
-          r={r}
-          fill={`url(#feature-node-${index})`}
-        />
-      ))}
-      <circle
-        cx={nodes[0]![0]}
-        cy={nodes[0]![1]}
-        r={nodes[0]![2] + 5}
-        fill="none"
-        stroke="var(--brand)"
-        strokeWidth="3"
-      />
-    </svg>
+    </div>
   );
+}
+
+/**
+ * The top of Home: what the product is, then what is new today (a story, the
+ * puzzle, the path challenge), one slide at a time. It never moves by itself.
+ */
+function Stage({slides}: {slides: Slide[]}) {
+  const {t} = useI18n();
+  const [index, setIndex] = useState(0);
+  const current = Math.min(index, slides.length - 1);
+  return (
+    <section
+      className="stage"
+      aria-roledescription="carousel"
+      aria-label={t('home.stage.label')}
+    >
+      {slides.map((slide, i) => (
+        <div
+          key={slide.id}
+          className="stage__slide"
+          role="group"
+          aria-roledescription="slide"
+          aria-label={slide.label}
+          data-current={i === current || undefined}
+          style={{'--hue': hueOf(slide.hue)} as CSSProperties}
+        >
+          {slide.node}
+        </div>
+      ))}
+      {slides.length > 1 && (
+        <div className="stage__dots">
+          {slides.map((slide, i) => (
+            <button
+              key={slide.id}
+              type="button"
+              className="stage__dot"
+              aria-label={t('home.stage.show', {title: slide.label})}
+              aria-current={i === current}
+              onClick={() => setIndex(i)}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function useSlides(flags: Record<string, boolean>, starters: Starter[]) {
+  const {t} = useI18n();
+  const today = localDate();
+  const stories = useStories(flags.stories !== false);
+  const puzzle = usePuzzle(today, flags.play !== false);
+  const challenge = usePathChallenge(today, flags.play !== false);
+  const story = stories.data?.pages[0]?.stories?.[0];
+  const p = puzzle.data;
+  const c = challenge.data;
+
+  const slides: Slide[] = [
+    {
+      id: 'intro',
+      label: t('home.stage.intro'),
+      hue: 'SongNexus',
+      node: (
+        <>
+          <div className="stage__text">
+            <p className="stage__overline">{t('home.feature.strapline')}</p>
+            <h1 className="stage__title">{t('home.feature.title')}</h1>
+            <p className="stage__body">{t('home.feature.body')}</p>
+            <div className="stage__actions">
+              {flags.explore !== false && (
+                <Link className="btn btn--filled" to="/explore">
+                  <Icon name="explore" />
+                  {t('home.feature.cta')}
+                </Link>
+              )}
+              {flags.play !== false && (
+                <Link className="btn btn--tonal" to="/play">
+                  <Icon name="puzzle" />
+                  {t('home.feature.puzzle')}
+                </Link>
+              )}
+            </div>
+          </div>
+          <StageArt people={starters} />
+        </>
+      ),
+    },
+  ];
+  if (story) {
+    const web = webLink(story);
+    slides.push({
+      id: 'story',
+      label: t('home.stage.story'),
+      hue: story.parts[0]?.artist.displayName ?? story.name,
+      node: (
+        <>
+          <div className="stage__text">
+            <p className="stage__overline">
+              <Icon name="movie" />
+              {t('home.stage.story')}
+            </p>
+            <h2 className="stage__title stage__title--long">
+              <bdi>{t(story.messageId as MessageId, storyValues(story))}</bdi>
+            </h2>
+            <div className="stage__actions">
+              {web && (
+                <Link className="btn btn--filled" to={web}>
+                  <Icon name="explore" />
+                  {t('stories.openWeb')}
+                </Link>
+              )}
+              <Link className="btn btn--tonal" to="/stories">
+                {t('home.stage.moreStories')}
+              </Link>
+            </div>
+          </div>
+          <StageArt people={story.parts.map(part => part.artist)} />
+        </>
+      ),
+    });
+  }
+  if (p) {
+    slides.push({
+      id: 'puzzle',
+      label: t('home.stage.puzzle', {number: p.number}),
+      hue: p.target.displayName,
+      node: (
+        <>
+          <div className="stage__text">
+            <p className="stage__overline">
+              <Icon name="puzzle" />
+              {t('home.stage.puzzle', {number: p.number})}
+            </p>
+            <h2 className="stage__title">
+              <bdi>
+                {t('home.stage.puzzle.title', {
+                  start: p.start.displayName,
+                  target: p.target.displayName,
+                })}
+              </bdi>
+            </h2>
+            <p className="stage__body">
+              {t('home.stage.puzzle.body', {par: p.par})}
+            </p>
+            <div className="stage__actions">
+              <Link className="btn btn--filled" to="/play">
+                <Icon name="play" />
+                {t('home.playCard.action')}
+              </Link>
+            </div>
+          </div>
+          <StageArt people={[p.start, p.target]} />
+        </>
+      ),
+    });
+  }
+  if (c) {
+    slides.push({
+      id: 'challenge',
+      label: t('home.stage.challenge'),
+      hue: c.fromArtist.displayName,
+      node: (
+        <>
+          <div className="stage__text">
+            <p className="stage__overline">
+              <Icon name="route" />
+              {t('home.stage.challenge')}
+            </p>
+            <h2 className="stage__title">
+              <bdi>
+                {t('home.stage.challenge.title', {
+                  from: c.fromArtist.displayName,
+                  to: c.toArtist.displayName,
+                  steps: c.steps,
+                })}
+              </bdi>
+            </h2>
+            <p className="stage__body">{t('home.stage.challenge.body')}</p>
+            <div className="stage__actions">
+              <Link
+                className="btn btn--filled"
+                to={`/six-degrees?from=${idOf(c.fromArtist.name)}&to=${idOf(c.toArtist.name)}`}
+              >
+                <Icon name="route" />
+                {t('games.path.action')}
+              </Link>
+            </div>
+          </div>
+          <StageArt people={[c.fromArtist, c.toArtist]} />
+        </>
+      ),
+    });
+  }
+  return slides;
 }
 
 function TopArtists() {
@@ -137,12 +280,14 @@ function TopArtists() {
         </Link>
       }
     >
-      {artists.map(row => (
+      {artists.map((row, index) => (
         <CoverCard
           key={row.artist.name}
           to={artistPath(row.artist)}
           title={row.artist.displayName}
           subtitle={t('library.listening.plays', {count: row.plays})}
+          image={imageOf(row.artist)}
+          badge={index < 3 ? `#${index + 1}` : undefined}
           round
         />
       ))}
@@ -155,16 +300,21 @@ export function HomeScreen() {
   const recent = useRecentArtists();
   const flags = useConfigFlags();
   const starters = useStarterArtists(flags.explore !== false);
+  const slides = useSlides(flags, starters);
   usePageTitle(undefined);
+  useAmbient(null);
 
   return (
     <div className="home">
+      <Stage slides={slides} />
+
       <nav aria-label={t('home.shortcuts')}>
         <ul className="chips chips--scroll home__chips">
           {SHORTCUTS.filter(s => !s.flag || flags[s.flag] !== false).map(
             shortcut => (
               <li key={shortcut.id}>
                 <Link className="chip" to={shortcut.to}>
+                  <Icon name={shortcut.icon} />
                   {t(shortcut.title)}
                 </Link>
               </li>
@@ -172,29 +322,6 @@ export function HomeScreen() {
           )}
         </ul>
       </nav>
-
-      <section className="feature">
-        <div className="feature__text">
-          <p className="strapline">{t('home.feature.strapline')}</p>
-          <h1>{t('home.feature.title')}</h1>
-          <p className="lead">{t('home.feature.body')}</p>
-          <div className="feature__actions">
-            {flags.explore !== false && (
-              <Link className="btn btn--filled" to="/explore">
-                <Icon name="explore" />
-                {t('home.feature.cta')}
-              </Link>
-            )}
-            {flags.play !== false && (
-              <Link className="btn btn--outlined" to="/play">
-                <Icon name="puzzle" />
-                {t('home.feature.puzzle')}
-              </Link>
-            )}
-          </div>
-        </div>
-        <FeatureArt />
-      </section>
 
       {recent.length > 0 && (
         <Shelf
@@ -207,6 +334,7 @@ export function HomeScreen() {
               to={artistPath(artist)}
               title={artist.displayName}
               subtitle={artist.disambiguation || t('search.type.ARTIST')}
+              image={imageOf(artist)}
               round
             />
           ))}
@@ -226,17 +354,20 @@ export function HomeScreen() {
               to={`/explore/${idOf(artist.name)}`}
               title={artist.displayName}
               subtitle={t('home.starters.subtitle')}
+              image={imageOf(artist)}
               round
             />
           ))}
         </Shelf>
       )}
 
+      <HomeShelves />
+
       <section className="section" aria-labelledby="home-more">
         <h2 id="home-more" className="section-title">
           {t('home.more.title')}
         </h2>
-        <ToolGrid tools={MORE} flags={flags} />
+        <Bento tools={MORE} flags={flags} />
       </section>
     </div>
   );

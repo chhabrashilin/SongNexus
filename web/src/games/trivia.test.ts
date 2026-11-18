@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 
 import {newGame, type GameState} from '../play/game';
 
-import {puzzleStatus} from './status';
+import {archiveDays, creditStatus, finishedToday, puzzleStatus} from './status';
 import {
   computeTriviaStats,
   loadRecords,
@@ -102,5 +102,52 @@ describe('puzzle status', () => {
       state: 'gaveUp',
     });
     expect(puzzleStatus([base], '2026-11-02')).toEqual({state: 'new'});
+  });
+});
+
+describe('hub status', () => {
+  const rec = (answers: TriviaRecord['answers']): TriviaRecord => ({
+    date: '2026-11-01',
+    graphVersion: 'v1',
+    order: ['q1', 'q2'],
+    answers,
+  });
+  it('reads the credit check as new, in progress or done', () => {
+    expect(creditStatus([], '2026-11-01')).toEqual({state: 'new'});
+    expect(creditStatus([rec({})], '2026-11-01')).toEqual({state: 'new'});
+    const one = rec({q1: {option: 'a', correct: true}});
+    expect(creditStatus([one], '2026-11-01')).toEqual({
+      state: 'playing',
+      answered: 1,
+      total: 2,
+    });
+    const both = rec({
+      q1: {option: 'a', correct: true},
+      q2: {option: 'b', correct: false},
+    });
+    expect(creditStatus([both], '2026-11-01')).toEqual({
+      state: 'done',
+      score: 1,
+      total: 2,
+    });
+    expect(
+      finishedToday({state: 'gaveUp'}, {state: 'done', score: 1, total: 2}),
+    ).toBe(2);
+    expect(finishedToday({state: 'playing'}, {state: 'new'})).toBe(0);
+  });
+
+  it('lists the last days with a puzzle, oldest first, never before launch', () => {
+    const won: GameState = {...newGame('2026-11-15', 'v1'), status: 'won'};
+    const days = archiveDays([won], '2026-11-16', 3);
+    expect(days.map(d => [d.date, d.puzzle, d.isToday])).toEqual([
+      ['2026-11-14', 'new', false],
+      ['2026-11-15', 'won', false],
+      ['2026-11-16', 'new', true],
+    ]);
+    expect(days[2]!.day).toBe(16);
+    expect(archiveDays([], '2026-10-08', 7).map(d => d.date)).toEqual([
+      '2026-10-07',
+      '2026-10-08',
+    ]);
   });
 });

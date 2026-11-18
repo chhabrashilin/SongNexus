@@ -19,9 +19,11 @@
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  /* Background only: fading opacity would leave a just-enabled button briefly
-     below contrast. */
-  transition: background var(--duration-short) var(--motion-standard);
+  /* Background and press only: fading opacity would leave a just-enabled button
+     briefly below contrast. */
+  transition:
+    background var(--duration-short) var(--motion-standard),
+    transform var(--duration-short) var(--motion-spring);
 }
 /* 44px hit area around a 40px button. */
 .btn::after {
@@ -33,6 +35,9 @@
   inline-size: 20px;
   block-size: 20px;
   margin-inline-start: -2px;
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
 }
 .btn:disabled {
   opacity: 0.38;
@@ -153,10 +158,11 @@
   align-items: center;
   gap: var(--space-2);
   min-block-size: 36px;
-  padding-inline: var(--space-3);
+  padding-inline: 14px;
   border: 0;
-  border-radius: var(--shape-s);
-  background: var(--fill-2);
+  border-radius: var(--shape-full);
+  background: var(--fill-1);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
   color: var(--md-on-surface);
   font: var(--label-large);
   text-decoration: none;
@@ -229,13 +235,14 @@
 }
 .page-header h1 {
   font: var(--display-large);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
   overflow-wrap: break-word;
 }
 .strapline {
   color: var(--md-on-surface-variant);
-  font: var(--label-large);
-  letter-spacing: 0.08em;
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
   text-transform: uppercase;
 }
 .lead {
@@ -308,13 +315,13 @@
 }
 .shelf__eyebrow {
   color: var(--md-on-surface-variant);
-  font: var(--label-large);
-  letter-spacing: 0.08em;
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
   text-transform: uppercase;
 }
 .shelf__titles h2 {
-  font: 700 clamp(1.375rem, 1.1rem + 1vw, 1.875rem)/1.2 var(--font);
-  letter-spacing: -0.01em;
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
 }
 .shelf__actions {
   display: flex;
@@ -325,13 +332,15 @@
 .shelf__track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: clamp(132px, 36vw, 184px);
+  grid-auto-columns: clamp(132px, 36vw, 188px);
   gap: var(--space-5);
-  margin: 0;
-  padding: 0 0 var(--space-2);
+  /* Room for cards to lift on hover without being clipped by the scroller. */
+  margin: -8px -8px 0;
+  padding: 8px 8px var(--space-2);
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scroll-snap-type: inline proximity;
+  scroll-padding-inline: 8px;
   scrollbar-width: none;
   list-style: none;
 }
@@ -360,7 +369,7 @@
   color: inherit;
   text-decoration: none;
 }
-.cover-card__link .cover {
+.cover-card__art {
   margin-block-end: var(--space-2);
 }
 .cover-card[data-round] .cover-card__link {
@@ -378,9 +387,21 @@
   padding: 10%;
   border-radius: var(--shape-cover);
   background:
-    repeating-radial-gradient(circle at 78% 22%, rgb(255 255 255 / 5%) 0 1px, transparent 1px 7px),
-    radial-gradient(120% 100% at 85% 10%, hsl(calc(var(--hue) + 35) 85% 62% / 85%), transparent 55%),
-    linear-gradient(150deg, hsl(var(--hue) 62% 42%), hsl(calc(var(--hue) - 30) 55% 14%));
+    repeating-radial-gradient(
+      circle at 78% 22%,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 7px
+    ),
+    radial-gradient(
+      120% 100% at 85% 10%,
+      hsl(calc(var(--hue) + 35) 85% 62% / 85%),
+      transparent 55%
+    ),
+    linear-gradient(
+      150deg,
+      hsl(var(--hue) 62% 42%),
+      hsl(calc(var(--hue) - 30) 55% 14%)
+    );
   color: rgb(255 255 255 / 94%);
   font: 700 clamp(1.75rem, 6vw, 2.75rem)/0.9 var(--font);
   letter-spacing: -0.04em;
@@ -388,9 +409,21 @@
 }
 .cover--round {
   --cover-round:
-    repeating-radial-gradient(circle at 50% 50%, rgb(255 255 255 / 5%) 0 1px, transparent 1px 7px),
-    radial-gradient(90% 90% at 30% 20%, hsl(calc(var(--hue) + 35) 85% 62% / 85%), transparent 60%),
-    linear-gradient(150deg, hsl(var(--hue) 62% 42%), hsl(calc(var(--hue) - 30) 55% 14%));
+    repeating-radial-gradient(
+      circle at 50% 50%,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 7px
+    ),
+    radial-gradient(
+      90% 90% at 30% 20%,
+      hsl(calc(var(--hue) + 35) 85% 62% / 85%),
+      transparent 60%
+    ),
+    linear-gradient(
+      150deg,
+      hsl(var(--hue) 62% 42%),
+      hsl(calc(var(--hue) - 30) 55% 14%)
+    );
   place-items: center;
   padding: 0;
   border-radius: var(--shape-full);

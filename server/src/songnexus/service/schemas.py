@@ -135,6 +135,31 @@ class ArtistSummary(ApiModel):
     genre_known: bool = Field(
         default=False, description="Whether our data has genres for this artist (AC-12.2)."
     )
+    image_url: str | None = Field(
+        default=None,
+        description="A freely licensed photo about 330 px wide (Wikimedia Commons), or null. "
+        "Its author and license are in `image` on GetArtist and must be shown with it "
+        "(ADR 0009).",
+    )
+    listeners: int | None = Field(
+        default=None,
+        description="How many people listen to this artist on ListenBrainz (public, aggregate "
+        "data; a measure of how widely known they are), or null when unknown or below the "
+        "50-listener floor under which no audience is described.",
+    )
+
+
+class ArtistImage(ApiModel):
+    """A freely licensed artist photo from Wikimedia Commons, with its attribution (ADR 0009)."""
+
+    url: str = Field(description="The photo about 960 px wide, on a Wikimedia media host.")
+    thumbnail_url: str = Field(description="The photo about 330 px wide.")
+    width: int = Field(description="Width of the original file, in pixels.")
+    height: int = Field(description="Height of the original file, in pixels.")
+    page_url: str = Field(description="The Commons file page: full license and history.")
+    author: str | None = Field(description="The author as credited on Commons, as plain text.")
+    license: str = Field(description="License short name, e.g. `CC BY-SA 4.0`, `Public domain`.")
+    license_url: str | None = Field(description="Where the license is stated, when it has a URL.")
 
 
 class Subject(ApiModel):
@@ -216,6 +241,9 @@ class Artist(ArtistSummary):
         description="Catalog artists ListenBrainz listeners most often play with this one.",
     )
     sources: list[SourceLink]
+    image: ArtistImage | None = Field(
+        default=None, description="The artist's photo and its attribution, or null."
+    )
     graph_version: str
 
 
@@ -294,6 +322,21 @@ class ListArtistCollaborationsResponse(ApiModel):
     graph_version: str
 
 
+class PathTrack(ApiModel):
+    """A real recording that stands for one step of a path (to turn a path into a playlist)."""
+
+    recording: str = Field(description="`recordings/{recording}`.")
+    display_name: str
+    artists: list[ArtistSummary] = Field(description="The recording's primary artists.")
+    year: int | None = None
+    first_release_date: str | None = None
+    release: str | None = Field(
+        default=None,
+        description="Set (`releases/{release}`) when the step's credit is on this release, not "
+        "the recording itself; the recording is then the release's first track.",
+    )
+
+
 class PathStep(ApiModel):
     """One step of a path."""
 
@@ -301,6 +344,11 @@ class PathStep(ApiModel):
     to_artist: ArtistSummary
     strength: float
     evidence: list[Evidence]
+    track: PathTrack | None = Field(
+        default=None,
+        description="One recording proving this step, different from earlier steps' tracks "
+        "where possible. Null when only a relation (such as band membership) connects them.",
+    )
 
 
 class FindPathResponse(ApiModel):
@@ -486,6 +534,10 @@ class SearchResult(ApiModel):
         default=False,
         description="The viewer blocked this artist. Blocked artists appear only for an "
         "exact-name search, so they can be unblocked (AC-17.2).",
+    )
+    image_url: str | None = Field(
+        default=None,
+        description="For an artist, its photo about 330 px wide (as `ArtistSummary.imageUrl`).",
     )
 
 
@@ -1031,16 +1083,22 @@ class ReportReason(enum.StrEnum):
 
 
 class SocialProfile(ApiModel):
-    """The name a user shows to friends. Friends see nothing else about each other."""
+    """The name a user shows to friends, and whether friends may see their top artists."""
 
     name: str = Field(description="`users/{user}/socialProfile`.")
     display_name: str = Field(default="", max_length=40)
+    share_top_artists: bool = Field(
+        default=False,
+        description="Friends who also share may see your top artists in friend paths. Off "
+        "by default.",
+    )
 
 
 class UpdateSocialProfileRequest(ApiModel):
-    """UpdateSocialProfile: pick the name friends see."""
+    """UpdateSocialProfile: pick the name friends see, or turn top-artist sharing on or off."""
 
-    display_name: str = Field(min_length=1, max_length=40)
+    display_name: str | None = Field(default=None, min_length=1, max_length=40)
+    share_top_artists: bool | None = None
 
 
 class Person(ApiModel):

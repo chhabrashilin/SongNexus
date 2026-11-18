@@ -7,21 +7,19 @@
   gap: var(--space-7);
 }
 .home {
-  gap: var(--space-6);
+  gap: var(--space-7);
+}
+.home > nav {
+  margin-block: calc(-1 * var(--space-5));
 }
 .home__chips {
   margin: 0;
   padding-inline: 0;
   list-style: none;
 }
-.home > .shelf,
-.home > .section {
-  margin-block-start: var(--space-3);
-}
-
 .section-title {
-  font: 700 clamp(1.375rem, 1.1rem + 1vw, 1.875rem)/1.2 var(--font);
-  letter-spacing: -0.01em;
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
 }
 
 /* The feature: what SongNexus is, with the way in. */
@@ -35,7 +33,11 @@
   padding: var(--space-5);
   border-radius: var(--shape-xl);
   background:
-    radial-gradient(70% 120% at 100% 0%, light-dark(rgb(255 0 0 / 8%), rgb(255 0 0 / 16%)), transparent 60%),
+    radial-gradient(
+      70% 120% at 100% 0%,
+      light-dark(rgb(255 0 0 / 8%), rgb(255 0 0 / 16%)),
+      transparent 60%
+    ),
     var(--md-surface-container-low);
 }
 .feature__text {
@@ -106,14 +108,28 @@
   block-size: 56px;
   flex: none;
   border-radius: var(--shape-cover);
-  background: linear-gradient(150deg, hsl(var(--tone) 62% 42%), hsl(calc(var(--tone) - 30) 55% 14%));
+  background: linear-gradient(
+    150deg,
+    hsl(var(--tone) 62% 42%),
+    hsl(calc(var(--tone) - 30) 55% 14%)
+  );
   color: #fff;
 }
-.tool-row__icon[data-tone='1'] { --tone: 210; }
-.tool-row__icon[data-tone='2'] { --tone: 275; }
-.tool-row__icon[data-tone='3'] { --tone: 150; }
-.tool-row__icon[data-tone='4'] { --tone: 28; }
-.tool-row__icon[data-tone='5'] { --tone: 320; }
+.tool-row__icon[data-tone='1'] {
+  --tone: 210;
+}
+.tool-row__icon[data-tone='2'] {
+  --tone: 275;
+}
+.tool-row__icon[data-tone='3'] {
+  --tone: 150;
+}
+.tool-row__icon[data-tone='4'] {
+  --tone: 28;
+}
+.tool-row__icon[data-tone='5'] {
+  --tone: 320;
+}
 .tool-row__text {
   display: flex;
   flex: 1;
@@ -136,7 +152,8 @@
   padding: var(--space-5);
   border-radius: var(--shape-xl);
   background:
-    radial-gradient(circle, var(--fill-2) 1px, transparent 1.5px) 0 0 / 28px 28px,
+    radial-gradient(circle, var(--fill-2) 1px, transparent 1.5px) 0 0 / 28px
+      28px,
     var(--md-surface-container-low);
 }
 .web-start__text {

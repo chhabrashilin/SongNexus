@@ -25,14 +25,15 @@ export function rememberArtist(artist: ArtistSummary): void {
   // Keep only the summary fields, even when given a full artist.
   const {name, displayName, disambiguation, artistType, country, genreKnown} =
     artist;
-  const summary: ArtistSummary = {
+  const summary = {
     name,
     displayName,
     disambiguation,
     artistType,
     country,
     genreKnown,
-  };
+    imageUrl: (artist as {imageUrl?: string | null}).imageUrl ?? null,
+  } as ArtistSummary;
   snapshot = [summary, ...snapshot.filter(a => a.name !== name)].slice(0, MAX);
   try {
     localStorage.setItem(KEY, JSON.stringify(snapshot));

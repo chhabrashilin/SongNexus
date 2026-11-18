@@ -14,7 +14,9 @@ import {
   loadGame,
   localDate,
   newGame,
+  openSlots,
   saveGame,
+  stepMoves,
   STORAGE_KEY,
   puzzleLink,
   validPuzzleDate,
@@ -30,6 +32,8 @@ const artist = (name: string): ArtistSummary => ({
   artistType: null,
   country: null,
   genreKnown: false,
+  imageUrl: null,
+  listeners: null,
 });
 const step = (name: string, left: number | null): Step => ({
   artist: artist(name),
@@ -69,6 +73,25 @@ describe('game', () => {
     ]);
     expect(applyStep(state, step('X', 5), 3, false)).toBe(state);
     expect(applyMiss(state)).toBe(state);
+  });
+
+  it('knows which move produced each step, after undo', () => {
+    let state = newGame('2026-10-07', 'v1');
+    state = applyStep(state, step('A', 3), 3, false);
+    state = applyStep(state, step('B', 4), 3, false);
+    expect(stepMoves(state)).toEqual(['same', 'farther']);
+    state = undo(state);
+    state = applyStep(state, step('C', 2), 3, false);
+    expect(stepMoves(state)).toEqual(['same', 'closer']);
+  });
+
+  it('draws one empty place per step still needed before the target', () => {
+    const start = newGame('2026-10-07', 'v1');
+    expect(openSlots(start, 3)).toBe(2);
+    expect(openSlots(applyStep(start, step('A', 1), 3, false), 3)).toBe(0);
+    expect(openSlots(applyStep(start, step('A', null), 3, false), 3)).toBe(0);
+    expect(openSlots(applyStep(start, step('A', 9), 3, false), 3)).toBe(4);
+    expect(openSlots(giveUp(start), 3)).toBe(0);
   });
 
   it('gives up only while playing', () => {

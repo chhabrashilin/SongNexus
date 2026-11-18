@@ -18,6 +18,25 @@ From server/ (the Python module form also works while a running Windows server l
 
 Use new output paths each run. Fetch is bounded to 10,000 records per invocation and uses the existing polite cached client. Merge retains old request identities and lets the last input replace a conflicting identity. Ingest retains existing quality gates and, with `--with-enrichment`, includes the configured enrichment snapshots. This is incremental snapshot expansion, not a full-dump importer. Both merge/canonicalization remain memory-bound; importing millions of records requires a separate bulk pipeline.
 
+### Catalog expansion run (2026-11-16)
+
+`fetch-recordings` now accepts `--artist` several times (the limit is per artist) and requests `inc=artist-credits+artist-rels`. Earlier it fetched artist credits only, so producers, engineers, mixers and instrumentalists never arrived with browsed recordings.
+
+- Fetched 600 recordings per artist (or all, if fewer) for the 43 best-connected "full" artists already in the catalog (Beyonce, Drake, Ye, Rihanna, Pharrell, Kendrick Lamar, Quincy Jones, ...): 23,064 recordings in 308 requests, with the polite client, no contact, generic User-Agent. Output `data/raw/musicbrainz-recordings-top45.jsonl.gz`.
+- The earlier 100-record fetch was entirely new (none of its keys were in the sample snapshot; the dev DB had been ingested from the sample, 1,732 records). Merge of sample + that + top45 gave 24,896 records, 0 replaced, written to `data/raw/musicbrainz-expanded-2.jsonl.gz`.
+- Trial ingest into a copy of the dev DB (`data/raw/scratch-ingest.db`, via `SONGNEXUS_DATABASE_URL`) passed every quality gate (0 violations) with 0 rows garbage-collected or deleted. All old recording/release/label ids and all old recording-credit ids survived; Kendrick Lamar `10851cf2-...` kept its id. Four stub artists only gained type or country.
+- The dev DB was then backed up (`data/raw/backups/songnexus-dev-pre-expansion2-20261116T215935.sqlite`) and ingested with `--with-enrichment` (about 5 minutes). Ingest only rewrites catalog tables, raw_records, data_sources and ingestion_runs; user, community and artist_images tables are not touched.
+
+| | before | after |
+|---|---|---|
+| artists | 5,854 | 11,850 |
+| recordings | 4,740 | 17,123 |
+| recording credits | 40,949 | 84,254 |
+| co-credited artist pairs | 61,429 | 147,900 |
+| artist relations | 624 | 624 |
+
+Kendrick Lamar went from 74 to 462 credited recordings. Running servers must be restarted to see the new catalog.
+
 ## Database migration
 
 The existing SQLite schema was backed up under `data/raw/backups/` and upgraded from 0007 to 0008. A consistent post-migration SQLite backup was copied to the local Docker PostgreSQL instance on port 15432. All 146,539 rows across 39 application tables were verified; the source was not deleted. API health and synthetic-directory filtering passed against PostgreSQL.

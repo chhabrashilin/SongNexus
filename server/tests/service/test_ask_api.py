@@ -18,8 +18,8 @@ from songnexus.catalog.snapshot import write_snapshot
 from songnexus.config import Settings
 from songnexus.core import ids
 from songnexus.core.ask.interpreter import Interpreter
-from songnexus.core.ask.llm import GeminiProvider
 from songnexus.service.app import build_state, create_app
+from songnexus.service.ask_providers import GeminiProvider
 from songnexus.storage import migrate
 from songnexus.storage.db import make_engine
 from tests.catalog import fixtures as fx

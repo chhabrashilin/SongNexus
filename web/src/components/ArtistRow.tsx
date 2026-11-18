@@ -1,5 +1,5 @@
-/** A list row for an artist: initial avatar, name, disambiguation, optional meta and action. */
-import type {CSSProperties, ReactNode} from 'react';
+/** A list row for an artist: photo or initial avatar, name, disambiguation, optional meta and action. */
+import {useState, type CSSProperties, type ReactNode} from 'react';
 import {Link} from 'react-router';
 
 import {idOf, type ArtistSummary} from '../api/client';
@@ -18,7 +18,60 @@ export function hueOf(name: string): number {
   return hash % 360;
 }
 
-export function Avatar({name, large = false}: {name: string; large?: boolean}) {
+/**
+ * The artist's photo, when we have a freely licensed one (Wikimedia Commons,
+ * ADR 0009). Tolerant of summaries stored before photos existed.
+ */
+export function imageOf(subject: object | null | undefined): string | null {
+  return (subject as {imageUrl?: string | null} | null)?.imageUrl ?? null;
+}
+
+/**
+ * A photo laid over generated art. The art (a gradient keyed to the name, with
+ * the initial) is always underneath, so a slow or missing photo never leaves a
+ * hole, and the photo fades in when it has loaded.
+ */
+export function CoverImage({
+  src,
+  eager = false,
+}: {
+  src: string;
+  eager?: boolean;
+}) {
+  const [state, setState] = useState<'loading' | 'loaded' | 'failed'>(
+    'loading',
+  );
+  if (state === 'failed') return null;
+  return (
+    <img
+      className="cover__img"
+      src={src}
+      alt=""
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      referrerPolicy="no-referrer"
+      draggable={false}
+      data-loaded={state === 'loaded' || undefined}
+      // A cached image can finish before React attaches onLoad.
+      ref={img => {
+        if (img?.complete && img.naturalWidth > 0 && state === 'loading')
+          setState('loaded');
+      }}
+      onLoad={() => setState('loaded')}
+      onError={() => setState('failed')}
+    />
+  );
+}
+
+export function Avatar({
+  name,
+  large = false,
+  image,
+}: {
+  name: string;
+  large?: boolean;
+  image?: string | null | undefined;
+}) {
   return (
     <span
       className={
@@ -30,6 +83,7 @@ export function Avatar({name, large = false}: {name: string; large?: boolean}) {
       aria-hidden="true"
     >
       {initialOf(name)}
+      {image && <CoverImage src={image} />}
     </span>
   );
 }
@@ -50,7 +104,7 @@ export function ArtistRow({artist, subtitle, meta, action, onClick}: Props) {
   const intent = useIntentPrefetch(idOf(artist.name));
   const body = (
     <>
-      <Avatar name={artist.displayName} />
+      <Avatar name={artist.displayName} image={imageOf(artist)} />
       <span className="list-row__body">
         <span className="list-row__title">
           <bdi>{artist.displayName}</bdi>

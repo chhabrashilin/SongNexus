@@ -35,7 +35,7 @@
   --md-on-secondary-container: light-dark(#ffffff, #0f0f0f);
   --md-surface: light-dark(#ffffff, #030303);
   --md-surface-container-lowest: light-dark(#ffffff, #000000);
-  --md-surface-container-low: light-dark(#f6f6f6, #121212);
+  --md-surface-container-low: light-dark(#f6f6f6, #111111);
   --md-surface-container: light-dark(#f0f0f0, #1a1a1a);
   --md-surface-container-high: light-dark(#e8e8e8, #212121);
   --md-surface-container-highest: light-dark(#dcdcdc, #2e2e2e);
@@ -80,31 +80,41 @@
   --neutral-strong: light-dark(#52514e, #c3c2b7);
   --neutral-soft: light-dark(#9a9993, #6b6d76);
 
-  /* Typography: Roboto (self-hosted, variable) for Latin, Greek and Cyrillic;
-     system fonts for every other script. No third-party font requests. */
-  --font: 'Roboto Variable', Roboto, system-ui, -apple-system, 'Segoe UI', 'Noto Sans',
-    'Noto Sans CJK JP', 'Noto Sans Arabic', 'Noto Sans Ethiopic', 'Helvetica Neue', Arial,
+  /* Typography: Google Sans Flex (self-hosted, variable, OFL) for everything in
+     Latin, with Roboto behind it for Greek and Cyrillic and system fonts for
+     every other script. No third-party font requests. Display sizes are heavy
+     and tight; body sizes are regular and open. */
+  --font:
+    'Google Sans Flex Variable', 'Roboto Variable', Roboto, system-ui,
+    -apple-system, 'Segoe UI', 'Noto Sans', 'Noto Sans CJK JP',
+    'Noto Sans Arabic', 'Noto Sans Ethiopic', 'Helvetica Neue', Arial,
     sans-serif;
-  --display-large: 700 clamp(2rem, 1.5rem + 2vw, 3rem)/1.1 var(--font);
-  --display-small: 700 2rem/2.4rem var(--font);
-  --headline-medium: 700 1.75rem/2.2rem var(--font);
-  --headline-small: 700 1.5rem/2rem var(--font);
-  --title-large: 700 1.25rem/1.6rem var(--font);
-  --title-medium: 500 1rem/1.5rem var(--font);
-  --title-small: 500 0.875rem/1.25rem var(--font);
-  --body-large: 400 1rem/1.5rem var(--font);
-  --body-medium: 400 0.875rem/1.25rem var(--font);
-  --body-small: 400 0.75rem/1rem var(--font);
-  --label-large: 500 0.875rem/1.25rem var(--font);
-  --label-medium: 500 0.75rem/1rem var(--font);
+  --display-hero: 800 clamp(2.5rem, 1.4rem + 4.6vw, 5rem)/0.98 var(--font);
+  --display-large: 750 clamp(2.125rem, 1.5rem + 2.4vw, 3.5rem)/1.04 var(--font);
+  --display-small: 700 clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem)/1.12 var(--font);
+  --headline-medium: 700 1.75rem/2.125rem var(--font);
+  --headline-small: 700 1.5rem/1.875rem var(--font);
+  --title-large: 650 1.25rem/1.6rem var(--font);
+  --title-medium: 550 1rem/1.5rem var(--font);
+  --title-small: 550 0.875rem/1.25rem var(--font);
+  --body-large: 400 1rem/1.55rem var(--font);
+  --body-medium: 400 0.875rem/1.3rem var(--font);
+  --body-small: 400 0.75rem/1.05rem var(--font);
+  --label-large: 550 0.875rem/1.25rem var(--font);
+  --label-medium: 550 0.75rem/1rem var(--font);
+  /* Small capitals over a title ("STARTING ARTIST"). */
+  --overline: 600 0.6875rem/1rem var(--font);
+  --tracking-display: -0.035em;
+  --tracking-title: -0.015em;
+  --tracking-overline: 0.12em;
 
   /* Shape, spacing, elevation, motion. */
-  --shape-xs: 4px;
-  --shape-s: 8px;
-  --shape-m: 12px;
-  --shape-cover: 6px;
-  --shape-l: 12px;
-  --shape-xl: 16px;
+  --shape-xs: 6px;
+  --shape-s: 10px;
+  --shape-m: 14px;
+  --shape-cover: 10px;
+  --shape-l: 18px;
+  --shape-xl: 28px;
   --shape-full: 999px;
   --space-1: 4px;
   --space-2: 8px;
@@ -113,23 +123,41 @@
   --space-5: 24px;
   --space-6: 32px;
   --space-7: 48px;
+  --space-8: 72px;
   --touch-target: 44px;
   --elevation-1: 0 1px 2px rgb(0 0 0 / 30%), 0 1px 3px 1px rgb(0 0 0 / 15%);
-  --elevation-3: 0 8px 24px rgb(0 0 0 / 50%), 0 1px 3px rgb(0 0 0 / 30%);
+  --elevation-2: 0 6px 16px -4px rgb(0 0 0 / 45%), 0 1px 3px rgb(0 0 0 / 30%);
+  --elevation-3: 0 18px 48px -12px rgb(0 0 0 / 65%), 0 2px 6px rgb(0 0 0 / 30%);
   --elevation-glow: 0 12px 32px -12px rgb(0 0 0 / 60%);
+  /* Motion: emphasized for things that arrive, standard for state changes,
+     spring for things that respond to a press. */
   --motion-standard: cubic-bezier(0.2, 0, 0, 1);
   --motion-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --motion-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --duration-short: 150ms;
   --duration-medium: 300ms;
-  --content-max: 1440px;
+  --duration-long: 520ms;
+  --content-max: 1560px;
   --nav-height: 64px;
-  --sidebar: 240px;
-  --rail: 72px;
+  --sidebar: 248px;
+  --rail: 76px;
+
+  /* Ambient color. A page about someone takes a wash of their color: screens
+     set --ambient-hue (0-359) on .main or a hero; everything else derives. */
+  --ambient-hue: 350;
+  --ambient: hsl(var(--ambient-hue) 72% 52%);
+  --ambient-soft: hsl(var(--ambient-hue) 70% 50% / 22%);
+  --ambient-faint: hsl(var(--ambient-hue) 70% 50% / 9%);
+  /* A hairline that catches light on raised glass surfaces. */
+  --edge-light: inset 0 1px 0
+    light-dark(rgb(255 255 255 / 60%), rgb(255 255 255 / 7%));
+  --glass-strong: light-dark(rgb(255 255 255 / 78%), rgb(18 18 18 / 72%));
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --duration-short: 0ms;
     --duration-medium: 0ms;
+    --duration-long: 0ms;
   }
 }

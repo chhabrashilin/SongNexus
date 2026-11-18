@@ -1,4 +1,4 @@
-/** "Your communities" on the You page: the campus and city you joined, with one-tap leave. */
+/** "Your communities" on the You page: the campus and city you joined, with leave. */
 import {Link} from 'react-router';
 
 import {
@@ -8,11 +8,12 @@ import {
   type MembershipField,
 } from '../api/community';
 import {useConfigFlags} from '../app/flags';
+import {Icon} from '../components/Icon';
 import {Cover} from '../components/Shelf';
 import {useSnackbar} from '../components/Snackbar';
-import {SkeletonRows} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 
+import {DemoBadge, plainName} from './CommunityPicker';
 import {placeLabel} from './format';
 
 const FIELDS: MembershipField[] = ['campus', 'city'];
@@ -32,36 +33,38 @@ export function YourCommunities() {
   });
 
   return (
-    <section className="section" aria-labelledby="your-communities">
-      <h2 id="your-communities">{t('around.you.title')}</h2>
+    <div className="settings-group__body">
       <p className="muted">{t('around.you.body')}</p>
       {mine.isPending ? (
-        <SkeletonRows count={2} />
+        <span className="skeleton settings-skel" />
       ) : rows.length === 0 ? (
-        <p className="muted">{t('around.you.none')}</p>
+        <p className="quiet-note">
+          <Icon name="school" />
+          <span>{t('around.you.none')}</span>
+        </p>
       ) : (
-        <ul className="list">
+        <ul className="mini-cards">
           {rows.map(({field, community}) => (
-            <li key={field} className="row" style={{flexWrap: 'nowrap'}}>
+            <li key={field} className="mini-card">
               <Link
-                className="list-row"
-                style={{flex: 1, minInlineSize: 0}}
+                className="mini-card__link"
                 to={`/around-you?c=${communityId(community.name)}`}
               >
-                <Cover name={community.displayName} />
-                <span className="list-row__body">
-                  <span className="list-row__title">
-                    <bdi>{community.displayName}</bdi>
+                <Cover name={community.shortName || community.displayName} />
+                <span className="mini-card__text">
+                  <span className="mini-card__title">
+                    <bdi>{plainName(community)}</bdi>
                   </span>
-                  <span className="list-row__subtitle">
+                  <span className="mini-card__sub">
                     {t(`around.yours.${community.kind}`)} ·{' '}
                     <bdi>{placeLabel(community)}</bdi>
                   </span>
                 </span>
+                {community.synthetic && <DemoBadge />}
               </Link>
               <button
                 type="button"
-                className="btn btn--text"
+                className="btn btn--text btn--compact"
                 disabled={update.isPending}
                 aria-label={t('around.leaveNamed', {name: community.shortName})}
                 onClick={() =>
@@ -82,9 +85,10 @@ export function YourCommunities() {
           ))}
         </ul>
       )}
-      <Link className="btn btn--tonal" to="/around-you">
+      <Link className="btn btn--tonal settings-group__cta" to="/around-you">
+        <Icon name="place" />
         {t('around.you.open')}
       </Link>
-    </section>
+    </div>
   );
 }

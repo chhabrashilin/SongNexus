@@ -11,7 +11,12 @@ from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import Engine
 
-from songnexus.storage import accounts_repository, community_repository, social_repository
+from songnexus.storage import (
+    accounts_repository,
+    community_repository,
+    games_repository,
+    social_repository,
+)
 from songnexus.storage import user_repository as users
 from songnexus.storage.db import session_scope
 
@@ -20,6 +25,10 @@ DELETED_ACCOUNT_RETENTION = timedelta(days=30)
 REPORT_RETENTION = timedelta(days=90)
 # Community charts (aggregates only) are kept for movement and rising: a week plus 28 days.
 COMMUNITY_CHART_RETENTION = timedelta(days=36)
+# Game scores feed the day and week leaderboards; a little over a week back is enough.
+GAME_SCORE_RETENTION = timedelta(days=15)
+# First trivia answers only matter until the day's score window closes (ADR 0010).
+TRIVIA_ANSWER_RETENTION = timedelta(days=2)
 # Margin so the 30-day promise holds even if a daily run is missed.
 _SAFETY_MARGIN = timedelta(days=2)
 
@@ -36,7 +45,12 @@ def run_purge(engine: Engine, now: datetime | None = None) -> dict[str, int]:
         invites = social_repository.purge_invites(session, now)
         reports = social_repository.purge_reports(session, now - REPORT_RETENTION)
         charts = community_repository.purge_charts(session, now - COMMUNITY_CHART_RETENTION)
+        scores, answers = games_repository.purge(
+            session, now - GAME_SCORE_RETENTION, now - TRIVIA_ANSWER_RETENTION
+        )
     return {
+        "expiredGameScores": scores,
+        "expiredTriviaAnswers": answers,
         "expiredCommunityCharts": charts,
         "expiredSessions": sessions,
         "deletedAccounts": accounts,

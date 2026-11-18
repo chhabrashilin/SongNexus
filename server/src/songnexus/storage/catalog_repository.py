@@ -395,6 +395,17 @@ class Listening:
     ranks: dict[tuple[str, str], int]  # (artist, other) -> rank of other for artist
 
 
+def audience_listeners(session: Session) -> dict[str, int]:
+    """Returns {artist ID: public listener count} for every artist with audience data."""
+    return {
+        artist_id: listeners
+        for artist_id, listeners in session.execute(
+            select(m.ArtistAudience.artist_id, m.ArtistAudience.listeners)
+        )
+        if listeners is not None
+    }
+
+
 def listening(session: Session, artist_ids: list[str]) -> Listening:
     """Returns audiences of the artists and co-listening ranks among them."""
     audiences = {

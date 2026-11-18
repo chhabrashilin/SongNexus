@@ -72,3 +72,34 @@ def test_artist_pages_list_who_is_often_played_with_them(client: TestClient) -> 
         (BOB, 3),
         (CAROL, 60),
     ]
+
+
+def test_artist_summaries_carry_public_listener_counts_above_the_floor(
+    client: TestClient,
+) -> None:
+    summaries = {
+        c["artist"]["name"]: c["artist"]["listeners"]
+        for c in client.get(f"/v1/{ALICE}/connections").json()["connections"]
+    }
+    assert summaries[BOB] == 800
+    # Carol has 12 listeners: under the floor, so not described at all.
+    assert summaries[CAROL] is None
+    assert client.get(f"/v1/{ALICE}").json()["listeners"] == 5000
+
+
+def test_relevance_order_is_the_same_set_as_strength_order(client: TestClient) -> None:
+    def names(order: str) -> list[str]:
+        body = client.get(f"/v1/{ALICE}/connections", params={"orderBy": order}).json()
+        return [c["artist"]["name"] for c in body["connections"]]
+
+    by_strength, by_relevance = names("strength desc"), names("relevance desc")
+    assert sorted(by_strength) == sorted(by_relevance)
+    # Bob has public listeners and Carol does not: Bob comes first when relevance decides.
+    if BOB in by_relevance and CAROL in by_relevance:
+        assert by_relevance.index(BOB) < by_relevance.index(CAROL)
+
+
+def test_unknown_order_is_rejected_with_the_options(client: TestClient) -> None:
+    response = client.get(f"/v1/{ALICE}/connections", params={"orderBy": "popularity"})
+    assert response.status_code == 400
+    assert "relevance desc" in response.json()["error"]["message"]
