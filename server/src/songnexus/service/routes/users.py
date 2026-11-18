@@ -35,7 +35,7 @@ from songnexus.service.ratelimit import MethodClass
 from songnexus.service.readmodel import ReadModel
 from songnexus.service.routes.common import db_session
 from songnexus.storage import accounts_repository as accounts
-from songnexus.storage import community_repository, games_repository
+from songnexus.storage import community_repository, games_repository, zstar_repository
 from songnexus.storage import models as m
 from songnexus.storage import social_repository as social
 from songnexus.storage import user_repository as users
@@ -49,7 +49,7 @@ Write = [Depends(rate_limited(MethodClass.WRITE))]
 Read = [Depends(rate_limited(MethodClass.READ))]
 
 MAX_TOP_ARTISTS = 5
-PREFERENCE_FIELDS = frozenset({"genres", "categories", "theme"})
+PREFERENCE_FIELDS = frozenset({"genres", "categories", "theme", "personalize"})
 PROFILE_FIELDS = frozenset({"topArtists", "visibility"})
 
 
@@ -185,6 +185,9 @@ def export_user_data(
                 accounts.listening(session, user_id), key=lambda t: (t.provider, t.artist_id)
             )
         ],
+        # For You (ADR 0010): what Z-star learns from. Imported listening is in "listening"
+        # (provider IMPORT).
+        "forYou": _for_you_export(session, user_id),
         # Friends and sharing (R2-7): invite codes are never stored, so never exported.
         "social": _social_export(session, user_id),
         # Around you: the campus and city the listener opted in to.
@@ -265,6 +268,38 @@ def _social_export(session: Session, user_id: str) -> dict[str, Any]:
     }
 
 
+EXPORT_EVENTS = 10_000
+
+
+def _for_you_export(session: Session, user_id: str) -> dict[str, Any]:
+    prefs = session.get(m.Preferences, user_id)
+    return {
+        "personalize": prefs.personalize if prefs is not None else True,
+        "followedArtists": [
+            {"artist": f"artists/{f.artist_id}", "createTime": _timestamp(f.created_at)}
+            for f in zstar_repository.follows(session, user_id)
+        ],
+        "tasteFeedback": [
+            {"kind": f.kind, "subject": f.subject, "createTime": _timestamp(f.created_at)}
+            for f in zstar_repository.feedback(session, user_id)
+        ],
+        "eventCount": zstar_repository.event_count(session, user_id),
+        # Newest first; the full log is kept 180 days.
+        "events": [
+            {
+                "kind": e.kind,
+                "artist": f"artists/{e.artist_id}",
+                "surface": e.surface,
+                "feed": None if e.feed_id is None else f"users/{user_id}/feeds/{e.feed_id}",
+                "position": e.position,
+                "dwellMs": e.dwell_ms,
+                "time": _timestamp(e.created_at),
+            }
+            for e in zstar_repository.recent_events(session, user_id, EXPORT_EVENTS)
+        ],
+    }
+
+
 # ---------------------------------------------------------------------------
 # Preferences
 # ---------------------------------------------------------------------------
@@ -273,13 +308,16 @@ def _social_export(session: Session, user_id: str) -> dict[str, Any]:
 def _preferences(user_id: str, prefs: m.Preferences | None) -> api.Preferences:
     if prefs is None:
         default = api.Preferences(name=f"users/{user_id}/preferences")
-        content = default.model_dump(include={"genres", "categories", "theme"}, mode="json")
+        content = default.model_dump(
+            include={"genres", "categories", "theme", "personalize"}, mode="json"
+        )
         return default.model_copy(update={"etag": _etag(content)})
     return api.Preferences(
         name=f"users/{user_id}/preferences",
         genres=[f"genres/{g}" for g in prefs.genre_ids],
         categories=[api.ConnectionCategory(c) for c in prefs.categories],
         theme=api.Theme(prefs.theme),
+        personalize=prefs.personalize,
         etag=prefs.etag,
         update_time=_timestamp(prefs.update_time),
     )
@@ -337,17 +375,20 @@ def update_preferences(
         list(dict.fromkeys(body.categories)) if "categories" in fields else current.categories
     )
     theme = body.theme if "theme" in fields else current.theme
+    personalize = body.personalize if "personalize" in fields else current.personalize
 
     content = {
         "genres": genres,
         "categories": [c.value for c in categories],
         "theme": theme.value,
+        "personalize": personalize,
     }
     now = datetime.now(UTC)
     row = session.get(m.Preferences, user_id) or m.Preferences(user_id=user_id)
     row.genre_ids = [g.removeprefix("genres/") for g in genres]
     row.categories = content["categories"]  # type: ignore[assignment]
     row.theme = theme.value
+    row.personalize = personalize
     row.etag = _etag(content)
     row.update_time = now
     session.add(row)

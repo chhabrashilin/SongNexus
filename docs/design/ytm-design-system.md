@@ -81,6 +81,25 @@ Dark is the default. Light exists (`data-theme="light"`) and every role is
 - **Evidence**: `ConnectionEvidence` (inline, for panels) or `ConnectionSheet`
   (bottom sheet). Both show the count and kinds first, then credits.
 - **Icons**: `Icon` with a `name` from `components/Icon.tsx`; `size` when not 24.
+- **Service marks**: name a streaming service with `BrandMark`
+  (`components/BrandMark.tsx`): the service's real mark, as its app icon draws
+  it. Never a monogram or a tinted square, and never recolored, cropped or
+  merged with our logo. "Listen on YouTube Music" buttons carry the YouTube
+  Music mark.
+- **Campuses and cities**: `CommunityMark` (`community/CommunityMark.tsx`)
+  wherever one appears. A campus shows the mark it is known by, from Wikimedia
+  Commons: its current athletics mark (Wisconsin's motion W, Illinois's block
+  I), else its own logo or seal. Marks with a transparent background sit bare
+  on the card; a plate goes behind one only on the theme where it would
+  disappear (white on dark, near-black on light), as measured by
+  `node web/scripts/fetch-campus-logos.mjs`, which rebuilds the list. Wide
+  wordmarks get a wider tile, and the campus page links the mark's Commons
+  file. A city shows its landmark from `community/landmarks.ts`
+  (Madison's State Capitol, the Golden Gate...), a campus without a logo shows
+  its city's, and anything else gets a skyline. There is no tile: the silhouette
+  itself carries the city's color as a gradient. New landmarks are
+  silhouettes on the 64 × 64 grid, ground at y = 56, built from the helpers in
+  that file.
 
 ## The connection web
 

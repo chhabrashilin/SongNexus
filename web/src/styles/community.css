@@ -637,3 +637,95 @@
   flex: none;
   font-size: 1rem;
 }
+
+/* ---------- Campus logos and city landmarks (CommunityMark) ---------- */
+
+.community-mark {
+  --hue: 210;
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  flex: none;
+  overflow: hidden;
+  border-radius: var(--shape-cover);
+}
+/* A campus mark sits bare on the card; a plate goes behind it only on the
+   theme where it would disappear (white on dark, near-black on light). */
+.community-mark--logo {
+  --inset: 6%;
+  --plate-dark: transparent;
+  --plate-light: transparent;
+  background: light-dark(var(--plate-light), var(--plate-dark));
+}
+.community-mark--logo[data-plate-dark] {
+  --plate-dark: #fff;
+}
+.community-mark--logo[data-plate-light] {
+  --plate-light: #1f1f1f;
+}
+.community-mark--logo:is([data-plate-dark], [data-plate-light]) {
+  --inset: 11%;
+}
+.community-mark--logo[data-seal] {
+  --inset: 4%;
+}
+.community-mark--logo[data-wide] {
+  --inset: 10% 6%;
+  aspect-ratio: 8 / 5;
+}
+.community-mark--logo img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: none;
+  block-size: 100%;
+  padding: var(--inset);
+  object-fit: contain;
+}
+/* A landmark: no tile, the silhouette itself is the city's color. */
+.community-mark--place svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.landmark-ink-top {
+  stop-color: light-dark(
+    hsl(calc(var(--hue) + 40) 80% 50%),
+    hsl(calc(var(--hue) + 40) 90% 70%)
+  );
+}
+.landmark-ink-bottom {
+  stop-color: light-dark(hsl(var(--hue) 75% 36%), hsl(var(--hue) 80% 54%));
+}
+
+.community-card .community-mark {
+  inline-size: 60px;
+}
+.community-card .community-mark[data-wide] {
+  --inset: 6px 8px;
+  inline-size: 112px;
+  aspect-ratio: auto;
+  block-size: 60px;
+}
+.community-art__cover .community-mark {
+  border-radius: var(--shape-l);
+  filter: drop-shadow(0 8px 18px rgb(0 0 0 / 35%));
+}
+.community-art__cover:has(.community-mark[data-wide]) {
+  inline-size: 56%;
+}
+.versus__side .community-mark {
+  inline-size: clamp(64px, 12vw, 104px);
+  margin-block-end: var(--space-2);
+}
+.mini-card .community-mark {
+  inline-size: 48px;
+}
+.lb-row > .community-mark {
+  inline-size: 40px;
+  block-size: 40px;
+}

@@ -16,7 +16,13 @@ export default defineConfig({
       '/healthz': {target: apiTarget, changeOrigin: true},
     },
   },
-  build: {sourcemap: true},
+  build: {
+    sourcemap: true,
+    // Never inline fonts as data: URLs: the production CSP allows fonts from
+    // 'self' only, so an inlined subset would be blocked and silently fall back.
+    assetsInlineLimit: file =>
+      /\.(woff2?|ttf|otf)$/.test(file) ? false : undefined,
+  },
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.{ts,tsx}'],

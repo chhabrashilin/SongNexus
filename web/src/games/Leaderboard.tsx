@@ -22,11 +22,11 @@ import {useConfigFlags} from '../app/flags';
 import {useAuth} from '../auth/AuthProvider';
 import {Avatar} from '../components/ArtistRow';
 import {Icon} from '../components/Icon';
-import {Cover} from '../components/Shelf';
 import {ErrorState} from '../components/States';
 import {useI18n} from '../i18n/i18n';
 
 import {playersRange, scoreable, scoreFor, visibleRows} from './scores';
+import {CommunityMark} from '../community/CommunityMark';
 
 const TOP = 5;
 
@@ -201,10 +201,9 @@ function CampusBoard({
                     <span className="lb-row__n">
                       {t('lb.rank', {rank: row.rank})}
                     </span>
-                    <Cover
-                      name={
-                        row.community.shortName || row.community.displayName
-                      }
+                    <CommunityMark
+                      community={row.community}
+                      allowWide={false}
                     />
                     <span className="lb-row__text">
                       <span className="lb-row__title">

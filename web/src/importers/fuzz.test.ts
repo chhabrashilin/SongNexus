@@ -13,6 +13,11 @@ import {importFiles, type InputFile} from './importFiles';
 const ROUNDS = Number(process.env.FUZZ_ROUNDS ?? 300);
 const sample = readFileSync('e2e/fixtures/Playlist1.json', 'utf8');
 const csv = 'Artist,Track,ms_played\nA,B,100\nC,D,200\n';
+const plist =
+  '<?xml version="1.0"?><plist version="1.0"><dict><key>Tracks</key><dict><key>1</key><dict><key>Track ID</key><integer>1</integer><key>Artist</key><string>A &amp; B</string><key>Play Count</key><integer>3</integer></dict></dict><key>Playlists</key><array><dict><key>Name</key><string>P</string><key>Playlist Items</key><array><dict><key>Track ID</key><integer>1</integer></dict></array></dict></array></dict></plist>';
+const m3u = '#EXTM3U\n#EXTINF:1,A - B\nx.mp3\n#EXTART:Z\n/m/C - D.mp3\n';
+const xspf =
+  '<playlist xmlns="http://xspf.org/ns/0/"><title>T</title><trackList><track><creator>A</creator><title>B</title></track></trackList></playlist>';
 
 /** Small deterministic PRNG (mulberry32). */
 function rng(seed: number) {
@@ -68,6 +73,9 @@ describe('importer fuzzing', {timeout: 30_000}, () => {
       ['p.json', strToU8(sample)],
       ['h.csv', strToU8(csv)],
       ['x.zip', zip],
+      ['Library.xml', strToU8(plist)],
+      ['p.m3u8', strToU8(m3u)],
+      ['p.xspf', strToU8(xspf)],
     ];
     for (let i = 0; i < ROUNDS; i++) {
       const [name, bytes] = seeds[i % seeds.length]!;
@@ -77,7 +85,19 @@ describe('importer fuzzing', {timeout: 30_000}, () => {
 
   it('survives random bytes under every accepted extension', async () => {
     const next = rng(7);
-    for (const ext of ['json', 'jsonl', 'csv', 'tsv', 'txt', 'zip', 'bin']) {
+    for (const ext of [
+      'json',
+      'jsonl',
+      'csv',
+      'tsv',
+      'txt',
+      'xml',
+      'm3u',
+      'm3u8',
+      'xspf',
+      'zip',
+      'bin',
+    ]) {
       const bytes = Uint8Array.from({length: 4096}, () =>
         Math.floor(next() * 256),
       );
@@ -103,7 +123,11 @@ describe('importer fuzzing', {timeout: 30_000}, () => {
       '../../etc/passwd.csv': strToU8(csv),
       '__MACOSX/x.csv': strToU8(csv),
     });
+    const deepXml = '<dict>'.repeat(50_000);
+    const unterminated = '<!--'.repeat(50_000) + '<![CDATA['.repeat(50_000);
     await expectOutcomes([
+      file('deepdict.xml', strToU8(deepXml)),
+      file('open.xml', strToU8(unterminated)),
       file('deep.json', strToU8(deep)),
       file('wide.json', strToU8(wide)),
       file('proto.json', strToU8(proto)),

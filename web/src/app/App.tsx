@@ -1,6 +1,6 @@
 /** Application root: providers and routes. Screens beyond the first view are code-split. */
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {lazy, Suspense, useEffect, useState, type ReactNode} from 'react';
+import {useEffect, useState, type ComponentType, type ReactNode} from 'react';
 import {
   createBrowserRouter,
   redirect,
@@ -11,7 +11,6 @@ import {
 import {shouldRetry} from '../api/queries';
 import {AuthProvider} from '../auth/AuthProvider';
 import {SnackbarProvider} from '../components/Snackbar';
-import {Spinner} from '../components/States';
 import {I18nProvider, useI18n, type Locale} from '../i18n/i18n';
 import {HomeScreen} from '../screens/HomeScreen';
 import {NotFoundScreen} from '../screens/NotFoundScreen';
@@ -21,29 +20,6 @@ import {Shell} from './Shell';
 import {ThemeSync} from './theme';
 import {legacyDestination} from './legacyLinks';
 
-const ArtistScreen = lazy(() => import('../screens/ArtistScreen'));
-const ExploreHubScreen = lazy(() => import('../screens/ExploreHubScreen'));
-const AroundYouScreen = lazy(() => import('../screens/AroundYouScreen'));
-const GamesScreen = lazy(() => import('../screens/GamesScreen'));
-const StoriesScreen = lazy(() => import('../screens/StoriesScreen'));
-const ExploreScreen = lazy(() => import('../screens/ExploreScreen'));
-const SixDegreesScreen = lazy(() => import('../screens/SixDegreesScreen'));
-const CompareScreen = lazy(() => import('../screens/CompareScreen'));
-const SongScreen = lazy(() => import('../screens/SongScreen'));
-const LabelScreen = lazy(() => import('../screens/LabelScreen'));
-const GenreScreen = lazy(() => import('../screens/GenreScreen'));
-const SongCompareScreen = lazy(() => import('../screens/SongCompareScreen'));
-const CollaborationsScreen = lazy(
-  () => import('../screens/CollaborationsScreen'),
-);
-const YouScreen = lazy(() => import('../screens/YouScreen'));
-const AboutScreen = lazy(() => import('../screens/AboutScreen'));
-const PrivacyScreen = lazy(() => import('../screens/PrivacyScreen'));
-const LibraryScreen = lazy(() => import('../screens/LibraryScreen'));
-const PlayScreen = lazy(() => import('../screens/PlayScreen'));
-const FriendsScreen = lazy(() => import('../screens/FriendsScreen'));
-const JoinFriendScreen = lazy(() => import('../screens/JoinFriendScreen'));
-
 /** Pages removed in the YouTube Music redesign, and where their links go now. */
 const RETIRED: Record<string, string> = {
   discover: '/explore',
@@ -52,8 +28,13 @@ const RETIRED: Record<string, string> = {
   reels: '/stories',
 };
 
-function Lazy({children}: {children: ReactNode}) {
-  return <Suspense fallback={<Spinner />}>{children}</Suspense>;
+/**
+ * A screen whose code loads when it is first visited. The router loads it
+ * before it switches pages, so the current page stays on screen until the next
+ * one can draw: no spinner flash and no blank main area between pages.
+ */
+function screen(load: () => Promise<{default: ComponentType}>) {
+  return async () => ({Component: (await load()).default});
 }
 
 export const routes: RouteObject[] = [
@@ -71,163 +52,83 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'artist/:id',
-        element: (
-          <Lazy>
-            <ArtistScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/ArtistScreen')),
       },
       {
         path: 'explore',
-        element: (
-          <Lazy>
-            <ExploreHubScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/ExploreHubScreen')),
       },
       {
         path: 'explore/:id',
-        element: (
-          <Lazy>
-            <ExploreScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/ExploreScreen')),
       },
       {
         path: 'six-degrees',
-        element: (
-          <Lazy>
-            <SixDegreesScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/SixDegreesScreen')),
       },
       {
         path: 'compare',
-        element: (
-          <Lazy>
-            <CompareScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/CompareScreen')),
       },
       {
         path: 'song/:id',
-        element: (
-          <Lazy>
-            <SongScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/SongScreen')),
       },
       {
         path: 'artist/:id/collaborations',
-        element: (
-          <Lazy>
-            <CollaborationsScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/CollaborationsScreen')),
       },
       {
         path: 'compare/songs',
-        element: (
-          <Lazy>
-            <SongCompareScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/SongCompareScreen')),
       },
       {
         path: 'label/:id',
-        element: (
-          <Lazy>
-            <LabelScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/LabelScreen')),
       },
       {
         path: 'genre/:id',
-        element: (
-          <Lazy>
-            <GenreScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/GenreScreen')),
       },
       {
         path: 'games',
-        element: (
-          <Lazy>
-            <GamesScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/GamesScreen')),
       },
       {
         path: 'stories',
-        element: (
-          <Lazy>
-            <StoriesScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/StoriesScreen')),
       },
       {
         path: 'around-you',
-        element: (
-          <Lazy>
-            <AroundYouScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/AroundYouScreen')),
       },
       {
         path: 'play',
-        element: (
-          <Lazy>
-            <PlayScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/PlayScreen')),
       },
       {
         path: 'library',
-        element: (
-          <Lazy>
-            <LibraryScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/LibraryScreen')),
       },
       {
         path: 'friends',
-        element: (
-          <Lazy>
-            <FriendsScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/FriendsScreen')),
       },
       {
         path: 'friends/join/:code',
-        element: (
-          <Lazy>
-            <JoinFriendScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/JoinFriendScreen')),
       },
       {
         path: 'you',
-        element: (
-          <Lazy>
-            <YouScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/YouScreen')),
       },
       {
         path: 'about',
-        element: (
-          <Lazy>
-            <AboutScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/AboutScreen')),
       },
       {
         path: 'privacy',
-        element: (
-          <Lazy>
-            <PrivacyScreen />
-          </Lazy>
-        ),
+        lazy: screen(() => import('../screens/PrivacyScreen')),
       },
       // Retired hub pages: old links land on the page that replaced them.
       ...Object.entries(RETIRED).map(([path, to]) => ({

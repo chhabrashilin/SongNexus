@@ -406,6 +406,14 @@ def audience_listeners(session: Session) -> dict[str, int]:
     }
 
 
+def artist_link_urls(session: Session) -> list[tuple[str, str]]:
+    """Returns (artist ID, URL) for every stored external link (streaming pages, channels...)."""
+    return [
+        (artist_id, url)
+        for artist_id, url in session.execute(select(m.ArtistLink.artist_id, m.ArtistLink.url))
+    ]
+
+
 def listening(session: Session, artist_ids: list[str]) -> Listening:
     """Returns audiences of the artists and co-listening ranks among them."""
     audiences = {

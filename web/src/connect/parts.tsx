@@ -15,6 +15,7 @@ import {PhotoCredit} from '../entity/Entity';
 import {useI18n} from '../i18n/i18n';
 
 import {youTubeMusicUrl} from './mixtape';
+import {BrandMark} from '../components/BrandMark';
 
 /** "Listen on YouTube Music": opens a search there in a new tab. */
 export function ListenLink({
@@ -43,9 +44,7 @@ export function ListenLink({
       rel="noopener noreferrer"
       aria-label={label}
     >
-      <span className="listen__disc" aria-hidden="true">
-        <Icon name="play" />
-      </span>
+      <BrandMark provider="YOUTUBE_MUSIC" size={20} className="listen__disc" />
       {!iconOnly && t('connect.listen')}
     </a>
   );

@@ -160,6 +160,11 @@
   margin-inline: auto;
   padding: var(--page-y) var(--page-x) calc(var(--nav-height) + var(--space-8));
 }
+/* At least a screen tall, so the footer starts below the fold and never
+   jumps into view as a page's content loads. */
+.main__page {
+  min-block-size: 100dvh;
+}
 /* Full-bleed pages (the connection web) manage their own layout. */
 .main--wide {
   max-inline-size: none;

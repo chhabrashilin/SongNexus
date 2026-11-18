@@ -9,12 +9,12 @@ import {
 } from '../api/community';
 import {useConfigFlags} from '../app/flags';
 import {Icon} from '../components/Icon';
-import {Cover} from '../components/Shelf';
 import {useSnackbar} from '../components/Snackbar';
 import {useI18n} from '../i18n/i18n';
 
 import {DemoBadge, plainName} from './CommunityPicker';
 import {placeLabel} from './format';
+import {CommunityMark} from './CommunityMark';
 
 const FIELDS: MembershipField[] = ['campus', 'city'];
 
@@ -50,7 +50,7 @@ export function YourCommunities() {
                 className="mini-card__link"
                 to={`/around-you?c=${communityId(community.name)}`}
               >
-                <Cover name={community.shortName || community.displayName} />
+                <CommunityMark community={community} allowWide={false} />
                 <span className="mini-card__text">
                   <span className="mini-card__title">
                     <bdi>{plainName(community)}</bdi>

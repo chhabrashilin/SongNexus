@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 from songnexus.core.graph.algorithms import weighted_degree
 from songnexus.core.graph.model import DEFAULT_CATEGORIES, ArtistGraph, kinds_for
 from songnexus.core.graph.projection import build_graph
+from songnexus.core.links import parse_link
 from songnexus.core.listening import MIN_LISTENERS
 from songnexus.core.resolution import Resolution, resolve_batch
 from songnexus.core.search import EntityType, SearchDoc, SearchIndex, log_prior
@@ -97,6 +98,9 @@ class ReadModel:
     graph: ArtistGraph
     search: SearchIndex
     resolutions: ResolutionCache = field(default_factory=ResolutionCache)
+    # Link key (core.links) -> artist ID: the artist pages other apps link to, from the
+    # links MusicBrainz stores. Shared links resolve here without any network call.
+    artist_links: dict[str, str] = field(default_factory=dict)
     memo: Memo = field(default_factory=Memo)
 
 
@@ -150,6 +154,7 @@ def load_read_model(engine: Engine, genre_sources: Sequence[str] | None = None) 
         entries = read_search_entries(session)
         images = read_artist_images(session)
         listeners = catalog_repository.audience_listeners(session)
+        link_rows = catalog_repository.artist_link_urls(session)
     graph = build_graph(facts, version)
     graph.images = {
         artist_id: image for artist_id, image in images.items() if artist_id in graph.nodes
@@ -161,16 +166,37 @@ def load_read_model(engine: Engine, genre_sources: Sequence[str] | None = None) 
         if artist_id in graph.nodes and count >= MIN_LISTENERS
     }
     search = build_search_index(entries, graph)
+    artist_links = link_index(link_rows, graph)
     log.info(
         "read model built",
         extra={
             "version": version,
             **graph.stats(),
             "searchDocs": len(search),
+            "artistLinks": len(artist_links),
             "elapsedMs": round((time.perf_counter() - started) * 1000, 1),
         },
     )
-    return ReadModel(version, graph, search)
+    return ReadModel(version, graph, search, artist_links=artist_links)
+
+
+def link_index(rows: Sequence[tuple[str, str]], graph: ArtistGraph) -> dict[str, str]:
+    """Maps the key of every recognized artist link to its artist.
+
+    A key shared by two artists (a label's channel, a mistaken link) is dropped:
+    a shared link must never open the wrong artist.
+    """
+    index: dict[str, str] = {}
+    ambiguous: set[str] = set()
+    for artist_id, url in rows:
+        link = parse_link(url)
+        if link is None or artist_id not in graph.nodes:
+            continue
+        if index.setdefault(link.key, artist_id) != artist_id:
+            ambiguous.add(link.key)
+    for key in ambiguous:
+        del index[key]
+    return index
 
 
 def _version(session: Session) -> str | None:

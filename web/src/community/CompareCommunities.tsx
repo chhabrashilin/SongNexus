@@ -20,6 +20,7 @@ import {Block} from '../social/Hero';
 
 import {CommunityPicker, DemoBadge, plainName} from './CommunityPicker';
 import {overlap, overlapShare} from './format';
+import {CommunityMark} from './CommunityMark';
 
 function Side({
   community,
@@ -31,7 +32,7 @@ function Side({
   const {t} = useI18n();
   return (
     <div className="versus__side">
-      <Cover name={community.shortName || community.displayName} />
+      <CommunityMark community={community} allowWide={false} />
       <span className="versus__name">
         <bdi>{plainName(community)}</bdi>
       </span>

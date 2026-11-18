@@ -350,6 +350,10 @@ export const messages = {
   'library.howTo.youtube':
     'YouTube Music: Google Takeout → select YouTube and YouTube Music → history in JSON format.',
   'library.howTo.listenbrainz': 'ListenBrainz: Settings → Export listens.',
+  'library.howTo.apple':
+    'Apple Music: in the Music app, File → Library → Export Library (or export one playlist as XML).',
+  'library.howTo.playlistFiles':
+    'Other apps: M3U, M3U8 and XSPF playlist files with “Artist - Title” entries.',
   'library.howTo.csv':
     'Any CSV with an "Artist" column, for example from Exportify.',
   'library.choose': 'Choose files',
@@ -1201,6 +1205,7 @@ export const messages = {
     'Your plays count once you connect a listening service.',
   'around.connect': 'Connect a service',
   'around.source': 'Source: Wikidata',
+  'around.logoCredit': 'Logo: Wikimedia Commons ({license})',
   'around.privacy.summary': 'What joining shares, and how to leave',
   'around.privacy.shared':
     'Joining adds the play counts from your connected services to this community’s totals. Nobody can see that you joined, who else did, or what any one person plays.',

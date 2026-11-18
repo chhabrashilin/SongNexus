@@ -31,7 +31,7 @@ export interface Progress {
   current: string;
 }
 
-const PARSEABLE = /\.(json|jsonl|csv|tsv|txt)$/i;
+const PARSEABLE = /\.(json|jsonl|csv|tsv|txt|xml|m3u|m3u8|xspf)$/i;
 
 function decode(bytes: Uint8Array): string {
   // A UTF-8 byte-order mark (Excel, some exporters) is removed by the parsers' trim().

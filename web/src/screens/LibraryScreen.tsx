@@ -32,6 +32,7 @@ import {useConfigFlags} from '../app/flags';
 import {usePageTitle} from '../app/Shell';
 import {useAuth} from '../auth/AuthProvider';
 import {artistPath, imageOf} from '../components/ArtistRow';
+import {BrandMark} from '../components/BrandMark';
 import {Icon} from '../components/Icon';
 import {Cover, CoverCard, Shelf} from '../components/Shelf';
 import {useSnackbar} from '../components/Snackbar';
@@ -49,7 +50,7 @@ import {ago, shareTitle} from './FriendsScreen';
 
 /** History imports match the most-listened artists only: the rest rarely matter and cost time. */
 const MAX_HISTORY_ARTISTS = 500;
-const ACCEPT = '.zip,.json,.jsonl,.csv,.tsv,.txt';
+const ACCEPT = '.zip,.json,.jsonl,.csv,.tsv,.txt,.xml,.m3u,.m3u8,.xspf';
 /** Ranked rows before "Show all". */
 const TOP_ROWS = 10;
 
@@ -821,10 +822,34 @@ export default function LibraryScreen() {
             <details className="more">
               <summary>{t('library.howTo')}</summary>
               <ul className="more__body howto">
-                <li>{t('library.howTo.spotify')}</li>
-                <li>{t('library.howTo.youtube')}</li>
-                <li>{t('library.howTo.listenbrainz')}</li>
-                <li>{t('library.howTo.csv')}</li>
+                <li>
+                  <BrandMark provider="SPOTIFY" size={24} />
+                  <span>{t('library.howTo.spotify')}</span>
+                </li>
+                <li>
+                  <BrandMark provider="YOUTUBE_MUSIC" size={24} />
+                  <span>{t('library.howTo.youtube')}</span>
+                </li>
+                <li>
+                  <BrandMark provider="APPLE_MUSIC" size={24} />
+                  <span>{t('library.howTo.apple')}</span>
+                </li>
+                <li>
+                  <BrandMark provider="LISTENBRAINZ" size={24} />
+                  <span>{t('library.howTo.listenbrainz')}</span>
+                </li>
+                <li>
+                  <span className="howto__glyph" aria-hidden="true">
+                    <Icon name="note" size={18} />
+                  </span>
+                  <span>{t('library.howTo.playlistFiles')}</span>
+                </li>
+                <li>
+                  <span className="howto__glyph" aria-hidden="true">
+                    <Icon name="upload" size={18} />
+                  </span>
+                  <span>{t('library.howTo.csv')}</span>
+                </li>
               </ul>
             </details>
           </li>

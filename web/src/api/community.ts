@@ -64,6 +64,19 @@ export function useCommunity(id: string | undefined) {
   });
 }
 
+/**
+ * Puts a community the page already has (a picked card) into the cache, so
+ * opening it draws its page at once instead of flashing loading placeholders
+ * while the same record is fetched again.
+ */
+export function useSeedCommunity() {
+  const queryClient = useQueryClient();
+  return (id: string, community: Community) => {
+    if (queryClient.getQueryData(['community', id]) === undefined)
+      queryClient.setQueryData(['community', id], community);
+  };
+}
+
 /** A community's chart. Charts are recomputed on the server at most hourly. */
 export function useCommunityChart(id: string | undefined) {
   return useQuery({

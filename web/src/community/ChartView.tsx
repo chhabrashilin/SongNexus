@@ -23,6 +23,7 @@ import {Block} from '../social/Hero';
 import {CompareCommunities} from './CompareCommunities';
 import {rangeParts, shareUrl, unlockProgress} from './format';
 import {WeeklyMovers} from './WeeklyMovers';
+import {BrandMark} from '../components/BrandMark';
 
 /** Ranked rows shown under the podium before "Show all". */
 const ROWS = 9;
@@ -250,9 +251,11 @@ function Podium({rows}: {rows: ChartArtist[]}) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="listen__disc">
-                <Icon name="play" />
-              </span>
+              <BrandMark
+                provider="YOUTUBE_MUSIC"
+                size={20}
+                className="listen__disc"
+              />
               {t('around.listen')}
             </a>
           )}
