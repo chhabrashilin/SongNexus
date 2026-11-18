@@ -1,0 +1,1095 @@
+/*
+ * Entity pages (artist, song, label, collaborations), v5: an immersive hero
+ * with the subject's photo or generated art, big numbers, then sections of
+ * covers, cards and short lists. Uses only tokens; logical properties only.
+ */
+
+.entity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  min-inline-size: 0;
+}
+
+/* ---------- Hero ---------- */
+
+.entity-hero {
+  --hue: 340;
+  --art: clamp(168px, 22vw, 296px);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  gap: var(--space-5);
+  padding-block: var(--space-3) 0;
+}
+.entity-hero[data-compact] {
+  --art: clamp(96px, 12vw, 152px);
+}
+
+/* A photo, blurred and faded, washes the top of the page behind the hero. */
+.entity-hero__backdrop {
+  position: absolute;
+  z-index: -1;
+  inset-block-start: calc(-1 * var(--page-y) - var(--nav-height));
+  inset-inline: calc(-1 * var(--page-x));
+  block-size: calc(100% + var(--page-y) + var(--nav-height) + var(--space-7));
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(180deg, #000 20%, transparent 95%);
+}
+.entity-hero__backdrop .cover__img {
+  object-position: 50% 30%;
+  filter: blur(48px) saturate(1.4);
+  transform: scale(1.2);
+}
+.entity-hero__backdrop .cover__img[data-loaded] {
+  opacity: 0.42;
+}
+:root[data-theme='light'] .entity-hero__backdrop .cover__img[data-loaded] {
+  opacity: 0.28;
+}
+:root[data-theme='light'] .entity-hero__glow {
+  opacity: 0.6;
+}
+
+.entity-hero__art {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  inline-size: var(--art);
+}
+.entity-hero__art .cover {
+  font-size: calc(var(--art) * 0.38);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 8%),
+    var(--elevation-3);
+}
+.entity-hero[data-kind='song'] .entity-hero__art .cover,
+.entity-hero[data-kind='label'] .entity-hero__art .cover {
+  border-radius: var(--shape-l);
+}
+/* The cover's own color, glowing behind it. */
+.entity-hero__glow {
+  position: absolute;
+  z-index: -1;
+  inset: 8% 4% 4%;
+  border-radius: var(--shape-full);
+  background: hsl(var(--hue) 80% 55% / 45%);
+  filter: blur(48px);
+}
+.entity-hero__credit {
+  max-inline-size: var(--art);
+  overflow-wrap: anywhere;
+}
+
+.entity-hero__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.entity-hero__overline {
+  color: var(--md-on-surface-variant);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.entity-hero__title {
+  max-inline-size: 18ch;
+  font: var(--display-hero);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.entity-hero[data-compact] .entity-hero__title,
+.entity-hero[data-kind='song'] .entity-hero__title {
+  max-inline-size: 22ch;
+  font: var(--display-large);
+  letter-spacing: var(--tracking-display);
+}
+.entity-hero__lead {
+  max-inline-size: 60ch;
+  color: var(--md-on-surface-variant);
+  font: var(--body-large);
+  text-wrap: pretty;
+}
+.entity-hero__by {
+  color: var(--md-on-surface);
+  font: var(--title-large);
+  letter-spacing: var(--tracking-title);
+}
+.entity-hero__by a {
+  color: inherit;
+  text-decoration: none;
+}
+.entity-hero__by a:hover {
+  text-decoration: underline;
+}
+.entity-hero__note {
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+}
+.entity-hero__genres {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.entity-hero__genres .chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.entity-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+}
+
+/* Static chips (genres, other names): not pressable. */
+.chip.entity-chip {
+  cursor: default;
+}
+.chip.entity-chip:hover {
+  background: var(--fill-1);
+}
+
+/* Stats: the value reads first, the label under it (dt/dd order kept for AT). */
+.entity-stats {
+  margin: var(--space-2) 0 0;
+}
+.entity-stats .stat {
+  flex-direction: column-reverse;
+}
+.entity-stats dd {
+  margin: 0;
+}
+
+@media (min-width: 720px) {
+  .entity-hero {
+    grid-template-columns: var(--art) minmax(0, 1fr);
+    align-items: end;
+    column-gap: var(--space-7);
+    padding-block-start: var(--space-5);
+  }
+  .entity-hero[data-compact] {
+    column-gap: var(--space-5);
+  }
+  .entity-hero__art {
+    grid-row: 1;
+    align-self: center;
+  }
+}
+@media (max-width: 719px) {
+  .entity-hero__art {
+    justify-self: center;
+  }
+  .entity-hero__credit {
+    text-align: center;
+  }
+  .entity-hero[data-compact] .entity-hero__art {
+    justify-self: start;
+  }
+  .entity-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    gap: var(--space-4) var(--space-7);
+  }
+}
+
+/* ---------- Sections ---------- */
+
+.entity-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+.entity-section__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.entity-section__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+.entity-section__titles h2 {
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
+}
+.entity-section__eyebrow {
+  color: var(--md-on-surface-variant);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.entity-section__action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.entity-show-all {
+  align-self: flex-start;
+}
+.entity-banners {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-block-start: calc(-1 * var(--space-5));
+}
+.entity-banners .banner .icon {
+  color: var(--md-on-surface-variant);
+}
+
+/* A designed empty state inside a section. */
+.entity-empty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--shape-l);
+  background: var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+}
+.entity-empty .icon {
+  flex: none;
+}
+
+/* ---------- Rows, covers and cards ---------- */
+
+/* Artist rows in two or three columns on wide screens. */
+.entity-rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+  column-gap: var(--space-5);
+}
+.entity-rows .list-row__meta {
+  white-space: nowrap;
+}
+
+/* A grid of round covers (roster, performers). */
+.entity-covers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(42%, 156px), 1fr));
+  gap: var(--space-5) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cards with a square cover: labels, releases a song appears on. */
+.entity-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.entity-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  block-size: 100%;
+  padding: var(--space-3);
+  border-radius: var(--shape-l);
+  background: var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--duration-medium) var(--motion-spring),
+    background var(--duration-short) var(--motion-standard);
+}
+a.entity-card:hover,
+a.entity-card:focus-visible {
+  transform: translateY(-3px);
+  background: var(--md-surface-container);
+}
+a.entity-card:active {
+  transform: scale(0.985);
+}
+.entity-card .cover {
+  inline-size: 64px;
+  flex: none;
+  padding: 8px;
+  font-size: 1.5rem;
+}
+.entity-card__text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.entity-card__title {
+  overflow: hidden;
+  font: var(--title-medium);
+  letter-spacing: var(--tracking-title);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.entity-card__sub {
+  overflow: hidden;
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Artist: about (other names, links) ---------- */
+
+.entity-about {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+.entity-about__block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--shape-l);
+  background: var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+}
+.entity-about__block .chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.entity-about__title {
+  font: var(--title-large);
+  letter-spacing: var(--tracking-title);
+}
+.entity-about__legal {
+  font: var(--body-large);
+}
+.entity-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  inline-size: 100%;
+}
+.entity-links + .entity-links {
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--md-outline-variant);
+}
+.entity-links__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--md-on-surface-variant);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.entity-links__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.entity-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 36px;
+  padding-inline: 14px 12px;
+  border-radius: var(--shape-full);
+  background: var(--fill-1);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  color: var(--md-on-surface);
+  font: var(--label-large);
+  text-decoration: none;
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.entity-link::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+.entity-link:hover {
+  background: var(--fill-3);
+}
+.entity-link .icon {
+  color: var(--md-on-surface-variant);
+}
+
+/* ---------- Song: credits by role ---------- */
+
+.entity-roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+.entity-role {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2) var(--space-2);
+  border-radius: var(--shape-l);
+  background: var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+}
+.entity-role > .entity-show-all {
+  margin: var(--space-1) var(--space-3) var(--space-2);
+}
+.entity-role__title,
+.entity-era__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-3);
+  font: var(--title-medium);
+  letter-spacing: var(--tracking-title);
+}
+.entity-era__title {
+  padding-inline: 0;
+  font: var(--title-large);
+}
+
+/* ---------- Song: sound ---------- */
+
+.sound {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--shape-xl);
+  background:
+    radial-gradient(90% 120% at 100% 0%, var(--ambient-soft), transparent 60%),
+    var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+}
+.sound__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5) var(--space-7);
+  margin: 0;
+}
+.sound__fact {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+}
+.sound__fact dt {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+.sound__fact dd {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  font: 750 clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem)/1.1 var(--font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-title);
+}
+/* A dot that beats at the song's tempo. */
+.sound__pulse {
+  position: relative;
+  inline-size: 14px;
+  block-size: 14px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--brand);
+}
+.sound__pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: sound-beat var(--beat, 0.5s) var(--motion-decelerate) infinite;
+}
+@keyframes sound-beat {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+.sound__source {
+  justify-self: start;
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+}
+
+/* Mood equalizer: one series color; values in text carry the reading. */
+.eq {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+}
+.eq__caption {
+  font: var(--title-medium);
+}
+.eq__bars {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.eq__item {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 9rem) minmax(0, 1fr) 3rem;
+  align-items: center;
+  gap: var(--space-3);
+  font: var(--body-medium);
+}
+.eq__label {
+  overflow: hidden;
+  color: var(--md-on-surface-variant);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eq__value {
+  font: var(--label-large);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+.eq__track {
+  position: relative;
+  display: block;
+  block-size: 10px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--fill-1);
+}
+.eq__fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: calc(var(--v, 0) * 100%);
+  border-radius: 5px;
+  background: var(--chart-series-1);
+  transform-origin: left center;
+  animation: eq-grow var(--duration-long) var(--motion-decelerate) both;
+}
+[dir='rtl'] .eq__fill {
+  transform-origin: right center;
+}
+@keyframes eq-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+.eq__item[data-strong] .eq__label {
+  color: var(--md-on-surface);
+  font-weight: 600;
+}
+
+@media (min-width: 840px) {
+  .sound {
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 2fr);
+    align-items: stretch;
+    padding: var(--space-6);
+    column-gap: var(--space-7);
+  }
+  .sound__facts {
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-5);
+  }
+  .sound__source {
+    grid-column: 1 / -1;
+  }
+  /* Columns, like an equalizer. */
+  .eq__bars {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-template-columns: none;
+    gap: var(--space-3);
+    block-size: 220px;
+  }
+  .eq__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    block-size: 100%;
+    min-inline-size: 0;
+  }
+  .eq__value {
+    order: 1;
+    text-align: center;
+  }
+  .eq__track {
+    order: 2;
+    flex: 1;
+    inline-size: min(100%, 36px);
+    border-radius: 8px;
+  }
+  .eq__fill {
+    inset-inline: 0;
+    inset-block: auto 0;
+    inline-size: auto;
+    block-size: calc(var(--v, 0) * 100%);
+    border-radius: 8px;
+    transform-origin: center bottom;
+    animation-name: eq-rise;
+  }
+  .eq__label {
+    order: 3;
+    max-inline-size: 100%;
+    font: var(--label-medium);
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    min-block-size: 2lh;
+  }
+}
+@keyframes eq-rise {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+/* ---------- Label ---------- */
+
+.entity-era {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.entity-era + .entity-era {
+  margin-block-start: var(--space-3);
+}
+.entity-releases {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+  gap: var(--space-1) var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.entity-release {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 64px;
+  padding: var(--space-2);
+  border-radius: var(--shape-m);
+}
+.entity-release:hover {
+  background: var(--fill-1);
+}
+.entity-release .cover {
+  inline-size: 52px;
+  flex: none;
+  padding: 6px;
+  font-size: 1.125rem;
+}
+.entity-release__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.entity-release__title {
+  overflow: hidden;
+  font: var(--title-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.entity-release__sub,
+.entity-release__catalog {
+  overflow: hidden;
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.entity-release__catalog {
+  font: var(--body-small);
+}
+.entity-release__sub a {
+  color: inherit;
+}
+.entity-release__year {
+  flex: none;
+  color: var(--md-on-surface-variant);
+  font: var(--label-large);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Releases per year: a small column chart, one series. */
+.yearbars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-5);
+  border-radius: var(--shape-l);
+  background: var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+}
+.yearbars__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+}
+.yearbars__title {
+  font: var(--title-medium);
+}
+.yearbars__summary {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+.yearbars__plot {
+  display: flex;
+  align-items: flex-end;
+  block-size: 96px;
+  border-block-end: 1px solid var(--md-outline-variant);
+}
+.yearbars__col {
+  display: flex;
+  flex: 1 1 0;
+  align-items: flex-end;
+  justify-content: center;
+  block-size: 100%;
+  min-inline-size: 0;
+  padding-inline: 1px;
+}
+.yearbars__bar {
+  inline-size: 100%;
+  max-inline-size: 24px;
+  block-size: calc(var(--v, 0) * 100%);
+  border-start-start-radius: 4px;
+  border-start-end-radius: 4px;
+  background: var(--chart-series-1);
+  transform-origin: center bottom;
+  animation: eq-rise var(--duration-long) var(--motion-decelerate) both;
+}
+.yearbars__axis {
+  display: flex;
+  justify-content: space-between;
+  color: var(--md-on-surface-variant);
+  font: var(--label-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Artist: "If you like…" ---------- */
+
+/* Reasons sit under the name: a line per reason, the shared collaborators as
+   overlapping faces with their names. */
+.rec .shelf__track {
+  align-items: start;
+}
+.rec-card__reasons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: 100%;
+  margin-block-start: 2px;
+}
+.rec-card__reason {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  inline-size: 100%;
+}
+.rec-card__line {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-inline-size: 100%;
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+  text-wrap: balance;
+}
+.rec-card__line .icon {
+  flex: none;
+  color: var(--ambient);
+}
+.rec-card__reason[data-kind='SHARED_COLLABORATORS'] .rec-card__line {
+  color: var(--md-on-surface);
+  font: var(--label-medium);
+}
+.rec-card__via {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  inline-size: 100%;
+}
+.rec-card__faces {
+  display: flex;
+  justify-content: center;
+}
+.rec-card__faces .cover {
+  inline-size: 26px;
+  flex: none;
+  box-shadow: 0 0 0 2px var(--md-surface);
+  font-size: 0.6875rem;
+}
+.rec-card__faces .cover + .cover {
+  margin-inline-start: -8px;
+}
+.rec-card__names {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.rec-skeleton {
+  gap: var(--space-3);
+}
+.rec-skeleton__title {
+  block-size: 32px;
+}
+.rec-skeleton__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(132px, 36vw, 188px);
+  gap: var(--space-5);
+  overflow: hidden;
+}
+
+/* ---------- Genre ---------- */
+
+/* The genre's art: its four leading artists, as one square. */
+.genre-mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--shape-xl);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 8%),
+    var(--elevation-3);
+}
+.entity-hero .genre-mosaic .cover {
+  border-radius: 0;
+  box-shadow: none;
+  font-size: calc(var(--art) * 0.16);
+}
+.entity-hero[data-kind='genre'] .entity-hero__art > .cover {
+  border-radius: var(--shape-xl);
+}
+.genre-chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.genre-chips__count {
+  color: var(--md-on-surface-variant);
+  font: var(--label-medium);
+  font-variant-numeric: tabular-nums;
+}
+.entity-section .rank-grid {
+  counter-reset: none;
+}
+
+/* ---------- Collaborations ---------- */
+
+.collab .tabs {
+  margin-block-end: var(--space-2);
+}
+.collab [role='tabpanel'] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.collab [role='tabpanel'] > .chips {
+  margin-block-end: var(--space-1);
+}
+.collab__more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.collab__more:empty {
+  display: none;
+}
+.collab__timeline,
+.collab__filters {
+  padding: var(--space-5);
+  border-radius: var(--shape-l);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+}
+.collab__timeline .timeline__bars {
+  block-size: 168px;
+}
+.collab__timeline .timeline__caption {
+  font: var(--title-medium);
+}
+.collab__timeline select {
+  min-block-size: 40px;
+  padding-inline: var(--space-3);
+  border: 0;
+  border-radius: var(--shape-full);
+  background: var(--fill-2);
+  color: var(--md-on-surface);
+  font: var(--label-large);
+}
+
+/* ---------- Footer sources ---------- */
+
+.entity-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+}
+.entity-sources a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-block-size: 24px;
+  color: inherit;
+}
+
+/* ---------- Not found, error ---------- */
+
+.entity-missing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-inline-size: 560px;
+  margin: var(--space-8) auto 0;
+  text-align: center;
+}
+.entity-missing__art {
+  display: grid;
+  place-items: center;
+  inline-size: 96px;
+  block-size: 96px;
+  margin-block-end: var(--space-2);
+  border-radius: var(--shape-full);
+  background: var(--ambient-soft);
+  color: var(--md-on-surface);
+}
+.entity-missing__title {
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
+  text-wrap: balance;
+}
+.entity-missing__body {
+  color: var(--md-on-surface-variant);
+  font: var(--body-large);
+  text-wrap: pretty;
+}
+.entity-missing .entity-hero__actions {
+  justify-content: center;
+}
+
+/* ---------- Skeletons, shaped like the page ---------- */
+
+.entity-skeleton__art {
+  display: block;
+  inline-size: var(--art);
+  aspect-ratio: 1;
+  border-radius: var(--shape-l);
+}
+.entity-skeleton__art--round {
+  border-radius: var(--shape-full);
+}
+.entity-skeleton__title {
+  display: block;
+  inline-size: min(100%, 420px);
+  block-size: clamp(2.5rem, 1.4rem + 4.6vw, 5rem);
+  border-radius: var(--shape-m);
+}
+.entity-skeleton__line {
+  display: block;
+  block-size: 14px;
+  inline-size: 160px;
+}
+.entity-skeleton__line[data-w='m'] {
+  inline-size: min(100%, 260px);
+}
+.entity-skeleton__line[data-w='l'] {
+  inline-size: min(100%, 360px);
+}
+.entity-skeleton__stat {
+  display: block;
+  inline-size: 88px;
+  block-size: 52px;
+}
+.entity-skeleton__button {
+  display: block;
+  inline-size: 140px;
+  block-size: 40px;
+  border-radius: var(--shape-full);
+}
+.entity-skeleton__cover {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--shape-full);
+}
+.entity-skeleton__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 56px;
+  padding-inline: var(--space-3);
+}
+.entity-skeleton__avatar {
+  display: block;
+  inline-size: 40px;
+  block-size: 40px;
+  flex: none;
+  border-radius: var(--shape-full);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sound__pulse::after,
+  .eq__fill,
+  .yearbars__bar {
+    animation: none;
+  }
+  a.entity-card:hover,
+  a.entity-card:focus-visible {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .entity-card,
+  .entity-role,
+  .entity-about__block,
+  .sound,
+  .yearbars {
+    border: 1px solid CanvasText;
+  }
+  .eq__fill,
+  .yearbars__bar {
+    background: CanvasText;
+  }
+}

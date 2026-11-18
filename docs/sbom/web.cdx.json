@@ -1,0 +1,3612 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:2684d681-7a13-4f96-92d6-f8a0a5a7b962",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-13T22:41:00.407Z",
+    "lifecycles": [
+      {
+        "phase": "pre-build"
+      }
+    ],
+    "tools": [
+      {
+        "vendor": "npm",
+        "name": "cli",
+        "version": "11.13.0"
+      }
+    ],
+    "component": {
+      "bom-ref": "songnexus-web@0.1.0",
+      "type": "library",
+      "name": "web",
+      "version": "0.1.0",
+      "scope": "required",
+      "purl": "pkg:npm/songnexus-web@0.1.0",
+      "properties": [
+        {
+          "name": "cdx:npm:package:private",
+          "value": "true"
+        }
+      ],
+      "externalReferences": []
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "@firebase/ai@2.16.0",
+      "type": "library",
+      "name": "@firebase/ai",
+      "version": "2.16.0",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/ai@2.16.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/ai/-/ai-2.16.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "591571979f01eb53abc1feecb7bf78f59216d8be21b95f341a96ae9b5cfcbf6787fa6db16b15ad0bc98e8d0c9500e8abafa3bfc9ff3d7018e53efa3206905f4e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/analytics@0.10.25",
+      "type": "library",
+      "name": "@firebase/analytics",
+      "version": "0.10.25",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/analytics@0.10.25",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/analytics/-/analytics-0.10.25.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a036a05773c778d5c17717a692c642763f869944f5f5e0a74ce70b75078f208a2f157966df35b2dc68de6a892df4dab1db891ce258caf255345c67069a6299d4"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/analytics-compat@0.2.31",
+      "type": "library",
+      "name": "@firebase/analytics-compat",
+      "version": "0.2.31",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/analytics-compat@0.2.31",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/analytics-compat/-/analytics-compat-0.2.31.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "9ac4e51bd444ba3939ae3b4e1cd2e7822b8f9af696190b5ef2e80be3f17a64231bfbdd947bb4a08d212937120d90cf19b53adb192f378f949992dd2bf8cd538f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/analytics-types@0.8.5",
+      "type": "library",
+      "name": "@firebase/analytics-types",
+      "version": "0.8.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/analytics-types@0.8.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/analytics-types/-/analytics-types-0.8.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "91d9e8a04ec18acda3127b2a71ead1c27fd44291f90f7baf1e992eece75433d4c9377a2696eea262d6f2010e97900251809b4ed1a35ff4e3a45bc27a0f9f6808"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/app@0.16.2",
+      "type": "library",
+      "name": "@firebase/app",
+      "version": "0.16.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/app@0.16.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/app/-/app-0.16.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "7f208b3da865debd196fb5b39be24b59c38e1f749a0e003227327c1162038afe7568d8affb63e36e96ba9b212e3fb897c63989aab71b566d06505ee1db6f53d5"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/app-check@0.13.1",
+      "type": "library",
+      "name": "@firebase/app-check",
+      "version": "0.13.1",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/app-check@0.13.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/app-check/-/app-check-0.13.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "97ccb77669e1a1d5e4b3f00f030c78b56a91977b64f1bf7cef8285d452722a0d43214fa4303d25e768b3ed2f7f316f9e2bc93a723260d06d2227929002c429a3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/app-check-compat@0.4.7",
+      "type": "library",
+      "name": "@firebase/app-check-compat",
+      "version": "0.4.7",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/app-check-compat@0.4.7",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/app-check-compat/-/app-check-compat-0.4.7.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "7c16ffc5233220abf59c399c71fcf3dc8006073c7f7103b19996a2ebaac9ce27dbd6130c933b5ff36e17c7b2e1a5351eec73546d7c18f7422f27ae9f8bcabaca"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/app-check-interop-types@0.3.5",
+      "type": "library",
+      "name": "@firebase/app-check-interop-types",
+      "version": "0.3.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/app-check-interop-types@0.3.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/app-check-interop-types/-/app-check-interop-types-0.3.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a88777e29559d825d39adbb8a1f5b995e888f770ef9cebc872bff9193ecc64fc39597022ea766853e83d70d46097b2bdd142526cad1c5f1b5e9f899e60c3f266"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/app-check-types@0.5.5",
+      "type": "library",
+      "name": "@firebase/app-check-types",
+      "version": "0.5.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/app-check-types@0.5.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/app-check-types/-/app-check-types-0.5.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f8317883316b970185ca4cb7f28e13fd837faf9d65ef4c82b49d874e4c26463f0508cc0f8e6e212c7e1f41b8fa054bf392216a9620648ad16c4697f5fd866458"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/app-compat@0.5.18",
+      "type": "library",
+      "name": "@firebase/app-compat",
+      "version": "0.5.18",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/app-compat@0.5.18",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/app-compat/-/app-compat-0.5.18.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "efb1f9ed6b8612c82bbf9f4776dba11c6f9e41d3fc762ea6cb3ecef77c96eb24d9951fed2d29ac0b10aae6f1e9e805960f0495d0456d294be2cd742241954158"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/app-types@0.9.6",
+      "type": "library",
+      "name": "@firebase/app-types",
+      "version": "0.9.6",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/app-types@0.9.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/app-types/-/app-types-0.9.6.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c8f2da872ec4b1fbb6c3fca67b79ac54ae314e40d742aabab337d09fcc95390a422a24f9195163a8da4b6eecfa3645f45ae4f052276498f7b05b7af8c64be97a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/auth@1.13.6",
+      "type": "library",
+      "name": "@firebase/auth",
+      "version": "1.13.6",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/auth@1.13.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/auth/-/auth-1.13.6.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "30a44bbc5ef61c9fe2acd9f67c94741afe4539936daafd4805e2474702bc97ca59ff08bdbee530f1e73208cbd00c33717d2eae5b43160022f9282e18f0fa7e7c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/auth-compat@0.6.11",
+      "type": "library",
+      "name": "@firebase/auth-compat",
+      "version": "0.6.11",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/auth-compat@0.6.11",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/auth-compat/-/auth-compat-0.6.11.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "2fec69dc34c942b055d3c56dd1485c2ffa1f50e4a35e89bb24e25f6d3ea86ace28ee00ab4274d814ab3cc1f8ae28b987a28f01c4caf92dd82302cee8e9a02ca9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/auth-interop-types@0.2.6",
+      "type": "library",
+      "name": "@firebase/auth-interop-types",
+      "version": "0.2.6",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/auth-interop-types@0.2.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/auth-interop-types/-/auth-interop-types-0.2.6.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "160c19a83ac1aa02b404723bd104efd6fff9c26b8317d7fc7ec245bca4b1a1194ad8f3df490b59024da3857bb8a5ef41673162fdee1462eb14fdb1101dd7fa42"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/auth-types@0.13.2",
+      "type": "library",
+      "name": "@firebase/auth-types",
+      "version": "0.13.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/auth-types@0.13.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/auth-types/-/auth-types-0.13.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "394fa68aea12c4859837b193dbdd5ddb29552412f793f39e3e8eff2434a842d905428122181738007b8c8e3fec7aa148b07aea9e3ac07d10a4e297ee7e826895"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/component@0.7.5",
+      "type": "library",
+      "name": "@firebase/component",
+      "version": "0.7.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/component@0.7.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/component/-/component-0.7.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "bee14370bf7543ed99b81264c8e87ce93e2ad01e1f7cd4c38dcfc0dfcb726cee7aa1d40007145314b4c8a30096a8029e21c828dfb1a8c1631580517bde00fc43"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/data-connect@0.7.4",
+      "type": "library",
+      "name": "@firebase/data-connect",
+      "version": "0.7.4",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/data-connect@0.7.4",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/data-connect/-/data-connect-0.7.4.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "b2ed5a1969738716fec6d8200944acb9f267d450dad3a4810caef5cbe7e943e836ccc84c1318a4e8552ffe87642b3385ff17d656369b09b581723258dcc71e0c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/database@1.1.5",
+      "type": "library",
+      "name": "@firebase/database",
+      "version": "1.1.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/database@1.1.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/database/-/database-1.1.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "fc91a9becccba0d5cd8338a5457a1c8a019f145e216dc3c0f703758b5923271ea82a45e0907b5e658977950b359495f71130dfe9bbfbcc8d7994f315529e2c01"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/database-compat@2.1.7",
+      "type": "library",
+      "name": "@firebase/database-compat",
+      "version": "2.1.7",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/database-compat@2.1.7",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/database-compat/-/database-compat-2.1.7.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "941abdb099bc32724834a2679002923a3d8c6c2ebac46a1254270690fb6cb65fa592828406d0f8eaa1cb6ee0e05bf59b2cfa0a566d7b44837c0711e3f99d85db"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/database-types@1.0.22",
+      "type": "library",
+      "name": "@firebase/database-types",
+      "version": "1.0.22",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/database-types@1.0.22",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/database-types/-/database-types-1.0.22.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "60064d5ec8d8f44410fa92b0ff76b1f27e458289470bb41ec3b118e5171e61d97447664ffa40afd4ed0390a95c71eb9ef2e4023ab78708d37b3d6545a58d4dba"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/firestore@4.17.2",
+      "type": "library",
+      "name": "@firebase/firestore",
+      "version": "4.17.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/firestore@4.17.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/firestore/-/firestore-4.17.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4a2c9010ad5d60f3a322d15503e91919dbcea1102d31e6c306f51a4b124f35932429c4706182b69335a8e545d36598f9db7b8cc499e4afe28a5724843267b791"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/firestore-compat@0.4.14",
+      "type": "library",
+      "name": "@firebase/firestore-compat",
+      "version": "0.4.14",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/firestore-compat@0.4.14",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/firestore-compat/-/firestore-compat-0.4.14.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "1c9d8704d80d3eb46c58827813e29cd2ed21d54ec7945ec87fc02d62389ef4765794c526c18489697063f55166ea09128f976529935c390d0ebb6e425551baac"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/firestore-types@3.0.5",
+      "type": "library",
+      "name": "@firebase/firestore-types",
+      "version": "3.0.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/firestore-types@3.0.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/firestore-types/-/firestore-types-3.0.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "75b74c01090c77977059ce3c7aea73fd8ebf13daee6addfe818e658552ac72fbd3fc79c304410ccc95b7f3374a8607678256471a4daf52c24c38702984c1c630"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/functions@0.14.0",
+      "type": "library",
+      "name": "@firebase/functions",
+      "version": "0.14.0",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/functions@0.14.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/functions/-/functions-0.14.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0e1b9816bd1e321a7eb3f3cd124e9288cb1891cd34f9754e51e29bae5f0c3b340d648dd2290a6aa0347577e91e34302eb709874564d401d5c1a153c3fb1c5553"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/functions-compat@0.5.0",
+      "type": "library",
+      "name": "@firebase/functions-compat",
+      "version": "0.5.0",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/functions-compat@0.5.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/functions-compat/-/functions-compat-0.5.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4f7043213a04499507b7be37f30c8a60c9118ca8379b5c4022ec797d5a4dbd34509433852ee9169e2416043849db39e953d93131347af9edf54d5a3c3f5e4f67"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/functions-types@0.6.5",
+      "type": "library",
+      "name": "@firebase/functions-types",
+      "version": "0.6.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/functions-types@0.6.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/functions-types/-/functions-types-0.6.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "65cd295118ed8475f34a3e78662bc2933283495d6bff02299e61dd86af36ab6c8514f5689dc1bf6498e754c88036f41f7b0c3f427125873383a5fc14b9c57074"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/installations@0.6.24",
+      "type": "library",
+      "name": "@firebase/installations",
+      "version": "0.6.24",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/installations@0.6.24",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/installations/-/installations-0.6.24.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "522e767b2f301e85aa9016d744a2442985b2948d096688199a82d2fa8f009e1d5bc56b4adbb6588cb95ad5424001d0b90c228b276a80a7456924e8e0f15397d6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/installations-compat@0.2.24",
+      "type": "library",
+      "name": "@firebase/installations-compat",
+      "version": "0.2.24",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/installations-compat@0.2.24",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/installations-compat/-/installations-compat-0.2.24.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f0ce6795c5b062df3cd71f3708e3f6a1dab9be07fe360c0987e44c7782d14aff09235a71c037e0ac324e111ae34e07c2f49e59d2f9d05f86f5a5d37dd787b467"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/installations-types@0.5.5",
+      "type": "library",
+      "name": "@firebase/installations-types",
+      "version": "0.5.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/installations-types@0.5.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/installations-types/-/installations-types-0.5.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "7bd518723bb7a6e0e5d6f76b70a222e5d131cc72da99e393fd373ad50e3c3d8c31b6c335373661fe29066dd0504ec6d1820d04319a9d3ebd3f9b9383501a1bae"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/logger@0.5.2",
+      "type": "library",
+      "name": "@firebase/logger",
+      "version": "0.5.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/logger@0.5.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/logger/-/logger-0.5.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "27654ee0d153734c5016bc55d41fe59b96da962726f5cc2e5f669c47d627e357cdf0a814790168f95255db6d88a96d853d25ca0eef6ea3959d40559ff533db62"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/messaging@0.13.3",
+      "type": "library",
+      "name": "@firebase/messaging",
+      "version": "0.13.3",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/messaging@0.13.3",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/messaging/-/messaging-0.13.3.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "9d15cf029fb3d240372b3889b5163d924b47102bd1c1a68e3731ef8ac9458259610b024cb1c5bb89c58d400e488f23fc51cdbe192ff8a71f14cfaaf1e9fb536a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/messaging-compat@0.2.30",
+      "type": "library",
+      "name": "@firebase/messaging-compat",
+      "version": "0.2.30",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/messaging-compat@0.2.30",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/messaging-compat/-/messaging-compat-0.2.30.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "9b50cf4f6113e71d2a62a5cba07c0a300c9fd6681964e86ea04e87ebf1f838fb29f334b13080c414f696ecc69f7cf26c080e49ee41f3a3e04754d5cae19a15fb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/messaging-interop-types@0.2.6",
+      "type": "library",
+      "name": "@firebase/messaging-interop-types",
+      "version": "0.2.6",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/messaging-interop-types@0.2.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/messaging-interop-types/-/messaging-interop-types-0.2.6.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "315cef90a7b65781f6747bb9a0ec517de29071f4f05a60a09f3b02e15d6ade2c6e9f98a22fcae2099daa237e6b0e108be2094f1a2bb48c7c436e954db9329fa3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/performance@0.7.14",
+      "type": "library",
+      "name": "@firebase/performance",
+      "version": "0.7.14",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/performance@0.7.14",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/performance/-/performance-0.7.14.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f4f1f55c46551c4af119d6d796ebc6cf85328f0e16f79e47f2feccbfdac72326d1ae0e45d80736b6f7f9fa649fe44b67c56366c6b0f658b9ef3056993f8b0cad"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/performance-compat@0.2.27",
+      "type": "library",
+      "name": "@firebase/performance-compat",
+      "version": "0.2.27",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/performance-compat@0.2.27",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/performance-compat/-/performance-compat-0.2.27.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3bfa334dffc46c284df783e4edb7757940b43c00b7ebbdba030b1a889c82d1b67348159f2c649601218f1f9a5e6d459740f26d1b12096119246d7e65d106be1f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/performance-types@0.2.5",
+      "type": "library",
+      "name": "@firebase/performance-types",
+      "version": "0.2.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/performance-types@0.2.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/performance-types/-/performance-types-0.2.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3d1cce801fbf33ee802a512463c6bdc72e457f949f64f221e224a15e19f658070bfdeb926caedb74ba96cac1ddbae9cd261185b176b6d808378b1a8beab42d62"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/remote-config@0.9.2",
+      "type": "library",
+      "name": "@firebase/remote-config",
+      "version": "0.9.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/remote-config@0.9.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/remote-config/-/remote-config-0.9.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4628bddc39178ccf9113fcad1dd61aec422240b25b741afe5bc1048aa77fbdb2c2382fb515d903b918ae989069eaddf27b01c66dda9ba630777e4df3d1c67ef2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/remote-config-compat@0.2.29",
+      "type": "library",
+      "name": "@firebase/remote-config-compat",
+      "version": "0.2.29",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/remote-config-compat@0.2.29",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/remote-config-compat/-/remote-config-compat-0.2.29.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "998ec9b532122ba1788384f4c779157a9af9729d0d5cbedfe728c85175c6693ae0e2a5251415916c435a1daa99efc77098d70b9b6e21ff23ec3954650d711784"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/remote-config-types@0.5.2",
+      "type": "library",
+      "name": "@firebase/remote-config-types",
+      "version": "0.5.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/remote-config-types@0.5.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/remote-config-types/-/remote-config-types-0.5.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "8bc935a2655fa009da4f564fbf61458f1319ac04d8b0efc69c5807123e7eedf0092f38bcc0b9c61afd562b4ea81000fa96dad65d23b51f378dc9a8e7fcd8cc5b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/storage@0.14.5",
+      "type": "library",
+      "name": "@firebase/storage",
+      "version": "0.14.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/storage@0.14.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/storage/-/storage-0.14.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "af6b68ccdfc19447b02e2ef4b4935440fcd6c1b7b1f4633b3605d9b1a987290ae32847dc4748b88c680704a00a03885bc223c4f5e34c6f785cc569c3a5e259c2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/storage-compat@0.4.5",
+      "type": "library",
+      "name": "@firebase/storage-compat",
+      "version": "0.4.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/storage-compat@0.4.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/storage-compat/-/storage-compat-0.4.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "bced2d14fc576ca0ca7654eef2d613d3c4bdb7d7b351325811d2c250ba56c56ab66aaeb3a23c0dd5098007ed5ae74008fe0e3b1a5594267d573e7726fcf0d9b3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/storage-types@0.8.5",
+      "type": "library",
+      "name": "@firebase/storage-types",
+      "version": "0.8.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/storage-types@0.8.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/storage-types/-/storage-types-0.8.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "1840ece4ffab3547cd712fb0c4874e2c01df89c89f7b6617b6f4c99f28b7b2cad7d75000b4183e9c351d6d887cbee07359e8554193e6ced194527b9de0bfb8ca"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/util@1.15.3",
+      "type": "library",
+      "name": "@firebase/util",
+      "version": "1.15.3",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/util@1.15.3",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/util/-/util-1.15.3.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "73fcff81a22569a2d912e19b13ab0b52e27ad6db2483526086f85c350cd6f78f004818a76d50414676530b86f8cade0b684b49424625cb3a8b1dcbad170108bc"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@firebase/webchannel-wrapper@1.0.7",
+      "type": "library",
+      "name": "@firebase/webchannel-wrapper",
+      "version": "1.0.7",
+      "scope": "required",
+      "purl": "pkg:npm/%40firebase/webchannel-wrapper@1.0.7",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.7.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a61045c227832ef91919837d084f5914d108a01564b29af3b270b341e8c29821ed83009745e7ae469a0418df42e046e138dcedbfc351575b5abba45bf6938dc1"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@formatjs/fast-memoize@3.1.7",
+      "type": "library",
+      "name": "@formatjs/fast-memoize",
+      "version": "3.1.7",
+      "scope": "required",
+      "purl": "pkg:npm/%40formatjs/fast-memoize@3.1.7",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@formatjs/fast-memoize/-/fast-memoize-3.1.7.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "cd77e12e9bc0e93efe79f76df492db070674d2d4fb36c04c0d59c3bbcae91de34dbfc29f45900ca368241b493d94afcdcdcfffde427da489ac7ee2719372a150"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@formatjs/icu-messageformat-parser@3.5.21",
+      "type": "library",
+      "name": "@formatjs/icu-messageformat-parser",
+      "version": "3.5.21",
+      "scope": "required",
+      "purl": "pkg:npm/%40formatjs/icu-messageformat-parser@3.5.21",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@formatjs/icu-messageformat-parser/-/icu-messageformat-parser-3.5.21.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "56797b20e4b231168fe0f8efe3c7ad913da795c230ce1e105886b785ec331a56593c16dfb7e4db322af83228e90d588e2cdff586f9060b5d2860cba296c1be7f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@formatjs/icu-skeleton-parser@2.1.12",
+      "type": "library",
+      "name": "@formatjs/icu-skeleton-parser",
+      "version": "2.1.12",
+      "scope": "required",
+      "purl": "pkg:npm/%40formatjs/icu-skeleton-parser@2.1.12",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@formatjs/icu-skeleton-parser/-/icu-skeleton-parser-2.1.12.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "71aeed64c2e97c75f7b140fb84fea013faabe88abcf440dddd92de4616ec07baf4503e790c626afad9852f3ac6ae7c794ad6a151ebd0990415b5b0d11ec7c31c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@grpc/grpc-js@1.14.6",
+      "type": "library",
+      "name": "@grpc/grpc-js",
+      "version": "1.14.6",
+      "scope": "required",
+      "purl": "pkg:npm/%40grpc/grpc-js@1.14.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.14.6.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4a00bf077fd567c953c8e6780b093a7f5b245a19a43406957e25fdd2a779bb5ad15c62a4d7fffc15350437d1af394abbadf588a806240370a8cae998569392ea"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@grpc/proto-loader@0.8.1",
+      "type": "library",
+      "name": "@grpc/proto-loader",
+      "version": "0.8.1",
+      "scope": "required",
+      "purl": "pkg:npm/%40grpc/proto-loader@0.8.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.8.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c2d17a87e0d8e8cdd868304f026beeb80ea357c4a27fd323b4e2397ae2855918020e5e4f783a4fb0747dbb697a4ade5c798f00660a0d0f0c39f87bc4b1716c1a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@grpc/proto-loader@0.7.15",
+      "type": "library",
+      "name": "@grpc/proto-loader",
+      "version": "0.7.15",
+      "scope": "required",
+      "purl": "pkg:npm/%40grpc/proto-loader@0.7.15",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.7.15.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "b4c5dd4427d8562c63b852be1e4d10d6cdfc815f730e20c97d62f7875aefe10737f6820b0aed534530edefe7c6508f0ae06d458f5db91f1febbb76b3102593c9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@js-sdsl/ordered-map@4.4.2",
+      "type": "library",
+      "name": "@js-sdsl/ordered-map",
+      "version": "4.4.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40js-sdsl/ordered-map@4.4.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@js-sdsl/ordered-map/-/ordered-map-4.4.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "8942a09b9d93f07384fe66a44b18eaa1685ef79649035fc6d6c62c19ebf6243294492d78280820d4b1dbf816be20fa30d317e56e74a43ac65c3b4f02ef0d6063"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/aspromise@1.1.2",
+      "type": "library",
+      "name": "@protobufjs/aspromise",
+      "version": "1.1.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/aspromise@1.1.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "8fe80a13112e2e62b0bf3dce811397b6b276506db1f028766195316a187eb351761d9fb001c79434b92fcbacca08f551914fbe65642b771b147905e6720e2ea1"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/base64@1.1.2",
+      "type": "library",
+      "name": "@protobufjs/base64",
+      "version": "1.1.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/base64@1.1.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "01991c000e6f9cdfefe0f0ea2b2311e65c7b859b6d3c380296ff3713ffc530d851d9331c2d485f4540470a64a5d288bdccc8030ea4542644b13b7c26f39f972e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/codegen@2.0.5",
+      "type": "library",
+      "name": "@protobufjs/codegen",
+      "version": "2.0.5",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/codegen@2.0.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "ce05c52f35b7029df77ba7745a58f8306226e827bc3bcf67fdaa54686341fe3c7e870fabb96129ec4c0652c85d2ca5510b1656d767e9f6be34135990adfff7e2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/eventemitter@1.1.1",
+      "type": "library",
+      "name": "@protobufjs/eventemitter",
+      "version": "1.1.1",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/eventemitter@1.1.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "bd6d469b03193672fe80c45aa2f961f72657ef891cf934d4dc539b924baba4c691b417cb3f795d8d2f4a416970660ada444d3e76178412803177370943c79766"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/fetch@1.1.1",
+      "type": "library",
+      "name": "@protobufjs/fetch",
+      "version": "1.1.1",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/fetch@1.1.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "1a9a6d2ebb39eda74c4ae1e2dd5363d26005f1dc21dfa2cc69817a5f227a24c5a556c73eb78dad9b51d210398eb3703c7c2f72c9e8ac80b86c4d542890e674cf"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/float@1.0.2",
+      "type": "library",
+      "name": "@protobufjs/float",
+      "version": "1.0.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/float@1.0.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0dd6fe9155e55ecb7d77e47d3df4c8c61d4474d920a117b9b4e5fab74d5fd656163af26748f0c1946db8d502f37323dda0d4ec6e52d476e8c6484e11ceb4d919"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/path@1.1.2",
+      "type": "library",
+      "name": "@protobufjs/path",
+      "version": "1.1.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/path@1.1.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "e8939c2794e6d3c74e1c06dd4771abbcffb25147e48c6e5e3ec1d87333052eadd998c9000fdf1c0e0713da2035949f4d57015de2d1ff8924a87b8e185a496d10"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/pool@1.1.0",
+      "type": "library",
+      "name": "@protobufjs/pool",
+      "version": "1.1.0",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/pool@1.1.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "d2410b6864880c12af7204b8ce48f3d4f79d75ab6b8d87263163a502e00fc0079c714acf1dd52aa3f27a2e2ca61c7122253e4dac5d54570c58d787fe7f2e1643"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@protobufjs/utf8@1.1.2",
+      "type": "library",
+      "name": "@protobufjs/utf8",
+      "version": "1.1.2",
+      "scope": "required",
+      "purl": "pkg:npm/%40protobufjs/utf8@1.1.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6f5510c1c119e320a73020fc0c02f55656ef04913dfc85f8153229ec11b5c58a5fdbd48b6b32d2aea5248f8c3b639cbb70254fe84e6d72aa9c234c5e98f907ba"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@remix-run/route-pattern@0.22.1",
+      "type": "library",
+      "name": "@remix-run/route-pattern",
+      "version": "0.22.1",
+      "scope": "required",
+      "purl": "pkg:npm/%40remix-run/route-pattern@0.22.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@remix-run/route-pattern/-/route-pattern-0.22.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "733746256874f4b6a9bdcaaded56f4f4a96b5363e1449f3141a23e008b53b83f5a0c9e4c020c674b7f259f2b3a2e5fba44912a3e2694a93c0842154bc05beffb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@tanstack/query-core@5.104.1",
+      "type": "library",
+      "name": "@tanstack/query-core",
+      "version": "5.104.1",
+      "scope": "required",
+      "purl": "pkg:npm/%40tanstack/query-core@5.104.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@tanstack/query-core/-/query-core-5.104.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4e246085cac69144c4f8ce09071be93d2a41871bc8cd06a2af0f9c92cac7606afedaec02efbc96d5263d9d8c6761160ea69bee71ff2b120e9be5bca8cf8ad3a7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@tanstack/react-query@5.104.1",
+      "type": "library",
+      "name": "@tanstack/react-query",
+      "version": "5.104.1",
+      "scope": "required",
+      "purl": "pkg:npm/%40tanstack/react-query@5.104.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@tanstack/react-query/-/react-query-5.104.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "673ef41208da84d23b682cfc059c4cdef506538e32731100cccb825232de03b4958613a48376603e33c93ef1e3b3a466932fddb669eed56ce31873479a10a865"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "cliui@8.0.1",
+      "type": "library",
+      "name": "cliui",
+      "version": "8.0.1",
+      "scope": "required",
+      "purl": "pkg:npm/cliui@8.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/cliui/-/cliui-8.0.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "05278d9f2bacef90b8fff350f6042dd7f72c4d7ca8ffc49bf9a7cb024cc0a6d16e32ca1df4716890636e759a62fe8415ef786754afac47ee4f55131df83afb61"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "cookie-es@3.1.1",
+      "type": "library",
+      "name": "cookie-es",
+      "version": "3.1.1",
+      "scope": "required",
+      "purl": "pkg:npm/cookie-es@3.1.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/cookie-es/-/cookie-es-3.1.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "51a5f1c0849824f4ebf61c10c4c15867b90d8525dba0c5cff99dd3457e9fd7f3726863dfb8d5193963f5a5411bef90761e37e494860b5517d6885649c82e8da6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-color@3.1.0",
+      "type": "library",
+      "name": "d3-color",
+      "version": "3.1.0",
+      "scope": "required",
+      "purl": "pkg:npm/d3-color@3.1.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-color/-/d3-color-3.1.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "ce0fdc85b5f2781b4c4352db0ff592a16d83a42dc8d26a663dd5beca74538ffc760c0598ac863ba9e6481e2768cf0576e26e226afaf5e653702302f14663b184"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-dispatch@3.0.1",
+      "type": "library",
+      "name": "d3-dispatch",
+      "version": "3.0.1",
+      "scope": "required",
+      "purl": "pkg:npm/d3-dispatch@3.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-dispatch/-/d3-dispatch-3.0.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "af35323d4fd2eebc147e53322dcd444c37818f4351b8728a01cbee928cf086c86bea0e9ce5df338787368108d8d9b6747577862d67353c5d7be0fdad56f2a17e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-drag@3.0.0",
+      "type": "library",
+      "name": "d3-drag",
+      "version": "3.0.0",
+      "scope": "required",
+      "purl": "pkg:npm/d3-drag@3.0.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-drag/-/d3-drag-3.0.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a566d424b7444d503c95034979c331a177c7eb1fa63b6510a3cad2999f90ab171bc80de17dea6b160213fff1d6da79470a159e2083304b616afa010046485392"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-ease@3.0.1",
+      "type": "library",
+      "name": "d3-ease",
+      "version": "3.0.1",
+      "scope": "required",
+      "purl": "pkg:npm/d3-ease@3.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-ease/-/d3-ease-3.0.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c11fd72b70f75dc2c8670a5bbd0c10e5f2bef1891db358a9ec0d93c5ed32c6771749dab52fdb24706edb95c79d90e5fe65c83118098b5f516b4466c00f0ce2d3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-force@3.0.0",
+      "type": "library",
+      "name": "d3-force",
+      "version": "3.0.0",
+      "scope": "required",
+      "purl": "pkg:npm/d3-force@3.0.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-force/-/d3-force-3.0.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "cf157f4ac03e538cad7bcd39d4fe040b27630ff4bea9e62d9da23202cf6d8070aa7e0ba66bf6804038e8f3903d67a10a8418ab1d12475c88095257df4f8c1d2e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-interpolate@3.0.1",
+      "type": "library",
+      "name": "d3-interpolate",
+      "version": "3.0.1",
+      "scope": "required",
+      "purl": "pkg:npm/d3-interpolate@3.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-interpolate/-/d3-interpolate-3.0.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "ddb62cd6b383df7ba8f1aa897ca3f72563c089b830f199b6f8bf6f04a107276460faf89347ba39326bf999972278df854586803965f94890135fa9353d6cfbda"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-quadtree@3.0.1",
+      "type": "library",
+      "name": "d3-quadtree",
+      "version": "3.0.1",
+      "scope": "required",
+      "purl": "pkg:npm/d3-quadtree@3.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-quadtree/-/d3-quadtree-3.0.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "d38c43af14130d3085c0fe47ea1461b1171bf71c6fd91ce472cca01739a4488389cb73de4493fbb0d93755121b297728839eb53fda14d3fad51fabc344e02053"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-selection@3.0.0",
+      "type": "library",
+      "name": "d3-selection",
+      "version": "3.0.0",
+      "scope": "required",
+      "purl": "pkg:npm/d3-selection@3.0.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-selection/-/d3-selection-3.0.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "7e64d159b34c9ac996abac4957c0f5f54fe0c3f6f0ac77cd5f1ac837e1df6609f3a931e9f633a628c86c4d48d73899d939d658f50dbccb8c9e6cacea0ca97195"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-timer@3.0.1",
+      "type": "library",
+      "name": "d3-timer",
+      "version": "3.0.1",
+      "scope": "required",
+      "purl": "pkg:npm/d3-timer@3.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-timer/-/d3-timer-3.0.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "9dd7c9fc9c7131dde7c37d6ec8aa18da76a2bc5fabdbd57e2dcd2cbd9c5ed49bef2119a2f2152caccbdd3b0812d68eae0479a2cfdd60790d3294f3f46a3d5550"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-transition@3.0.1",
+      "type": "library",
+      "name": "d3-transition",
+      "version": "3.0.1",
+      "scope": "required",
+      "purl": "pkg:npm/d3-transition@3.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-transition/-/d3-transition-3.0.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0292af7e3b1247ab60d3ac6b2f8df80b45b274bafb25ec0107757eff7f51307b1a5d3386d339adfce0177a78393392c19b4a239b126ba68990559d5a3ef04be3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "d3-zoom@3.0.0",
+      "type": "library",
+      "name": "d3-zoom",
+      "version": "3.0.0",
+      "scope": "required",
+      "purl": "pkg:npm/d3-zoom@3.0.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/d3-zoom/-/d3-zoom-3.0.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6fc02657791f41aa9602e69c6cfb8d6cbeaf6a19ce25f94e85ec4bccc30d2e06badbefe7874273bc9d1a3bfe5ae4c560505192ec7bb53fd3f4de8ddf2640c2cb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "escalade@3.2.0",
+      "type": "library",
+      "name": "escalade",
+      "version": "3.2.0",
+      "scope": "required",
+      "purl": "pkg:npm/escalade@3.2.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "5948f6aa5c5a42d3b883a3eae5cdbd193716183c9df22b4bf334e58a98040b3dc97ac02288e2a8b5df0953aa2d0773c00a01bac64254c9585ba0c4be6e37bf8c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "faye-websocket@0.11.4",
+      "type": "library",
+      "name": "faye-websocket",
+      "version": "0.11.4",
+      "scope": "required",
+      "purl": "pkg:npm/faye-websocket@0.11.4",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/faye-websocket/-/faye-websocket-0.11.4.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0b36c297095702e891400954c9fa8f82f3e834a4dc9133c67f0655e1974085570fda587d294c498366f91a413b5db8ca4376099d0f73e83f67b4b02507eb4ff2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "fflate@0.8.3",
+      "type": "library",
+      "name": "fflate",
+      "version": "0.8.3",
+      "scope": "required",
+      "purl": "pkg:npm/fflate@0.8.3",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/fflate/-/fflate-0.8.3.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "b5b64db89acbc06529df3b2106d772e16f8e47166e221f1ae629722044030b9ad8d5fdd4db424caf2d0b977581cd4e7c1192ac12e2455e16f9830bfc0ac3ef80"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "firebase@12.19.0",
+      "type": "library",
+      "name": "firebase",
+      "version": "12.19.0",
+      "scope": "required",
+      "purl": "pkg:npm/firebase@12.19.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/firebase/-/firebase-12.19.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "9305c22dc234972da5930ca091bb91c7a4ac5f70d23bdeb7e7962b5a1f52599e6772cc4aff2e5c8ab9f7b18ea76554a205513efb69cbe87721ceed4407cba885"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "get-caller-file@2.0.5",
+      "type": "library",
+      "name": "get-caller-file",
+      "version": "2.0.5",
+      "scope": "required",
+      "purl": "pkg:npm/get-caller-file@2.0.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0f214fdc133fdd81d340e0942ffc343991d1d25a4a786af1a2d70759ca8d11d9e5b6a1705d57e110143de1e228df801f429a34ac6922e1cc8889fb58d3a87616"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "http-parser-js@0.5.10",
+      "type": "library",
+      "name": "http-parser-js",
+      "version": "0.5.10",
+      "scope": "required",
+      "purl": "pkg:npm/http-parser-js@0.5.10",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/http-parser-js/-/http-parser-js-0.5.10.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3f2b2ec3d5e952ae5d55cff648c1e9b93634d51165f1fb6d81ccae9e32fb78432118cddc23878e9a20b27090d50a8ffb3bb0a57d00f749a23a7ed0f3a8e5d830"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "idb@7.1.1",
+      "type": "library",
+      "name": "idb",
+      "version": "7.1.1",
+      "scope": "required",
+      "purl": "pkg:npm/idb@7.1.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/idb/-/idb-7.1.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "81c85eb16073caf18744ef56f2dcd45850f2728c398308ef14a7f257d145df663b179d3264ca7b98ff93da6248585c78f7389cab20b8b9e7c7335ee8eb128855"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "intl-messageformat@12.1.3",
+      "type": "library",
+      "name": "intl-messageformat",
+      "version": "12.1.3",
+      "scope": "required",
+      "purl": "pkg:npm/intl-messageformat@12.1.3",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/intl-messageformat/-/intl-messageformat-12.1.3.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "2578b9c24f11fe848408acb1488674d154bc286e8c6641ccd2a538352ed1aef216597922bf7c15a86942bc4bf25e20ef2a5b76caac1932264622ff88f2bae765"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "lodash.camelcase@4.3.0",
+      "type": "library",
+      "name": "lodash.camelcase",
+      "version": "4.3.0",
+      "scope": "required",
+      "purl": "pkg:npm/lodash.camelcase@4.3.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4f0b849c29f16dcdeb02f85ffcb6c6eed2540f386a5f2167bf776dccb38f8021bf84e0cbed6167b1bc24b640fbc9457446bade3ff9753c02eafd84a0e95be394"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "long@5.3.2",
+      "type": "library",
+      "name": "long",
+      "version": "5.3.2",
+      "scope": "required",
+      "purl": "pkg:npm/long@5.3.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/long/-/long-5.3.2.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "98d0206751a6c8d843ec0baa9d31b7fd5436ea8efad3e65804f2a33efba03bcfa72db61f5fa4d5a493ec781be8a5b758faaa59fe52949e611cd4b799612dd000"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "openapi-fetch@0.17.0",
+      "type": "library",
+      "name": "openapi-fetch",
+      "version": "0.17.0",
+      "scope": "required",
+      "purl": "pkg:npm/openapi-fetch@0.17.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/openapi-fetch/-/openapi-fetch-0.17.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3ec6d9475c003dc1bdd5e12d84a84df999fdd85307c6ffbf7da1022308d77717d338319219e818bf4b1cd4e973f8760fbca3aea177e9fb4a40d9756dd9c23422"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "openapi-typescript-helpers@0.1.0",
+      "type": "library",
+      "name": "openapi-typescript-helpers",
+      "version": "0.1.0",
+      "scope": "required",
+      "purl": "pkg:npm/openapi-typescript-helpers@0.1.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/openapi-typescript-helpers/-/openapi-typescript-helpers-0.1.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "38a4c63ed8618af2f0fdf1f3e9cdce3ed83bdaf8bceaa68c96a6c9b95276dea3af43ee77bb0d67ec77669091626e5a05ed01230eb0e4cc988e26ea1c90cfe58f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "papaparse@5.7.0",
+      "type": "library",
+      "name": "papaparse",
+      "version": "5.7.0",
+      "scope": "required",
+      "purl": "pkg:npm/papaparse@5.7.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/papaparse/-/papaparse-5.7.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a811b183fed0dca97d59f86bcf667be149ef9c74d72cd1ba8e628915e06f3f6fb2e2557b4a8fbb491eb6f99778ec9bddac2917fa70dc9ebd0e6cfcde93ffba44"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "protobufjs@7.6.6",
+      "type": "library",
+      "name": "protobufjs",
+      "version": "7.6.6",
+      "scope": "required",
+      "purl": "pkg:npm/protobufjs@7.6.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/protobufjs/-/protobufjs-7.6.6.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "7580d67634a5e5135bed280fc4641c454f86b6f3fbb367e992b634af8df63dc388699d3fac17311199d037aee226116e422570ef9e090e83ebb8f08d746b1b8e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "re2js@2.8.6",
+      "type": "library",
+      "name": "re2js",
+      "version": "2.8.6",
+      "scope": "required",
+      "purl": "pkg:npm/re2js@2.8.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/re2js/-/re2js-2.8.6.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c4b8108a5e242140ab033564f5f4529319053709b280b1635715eb2dceb9684d45d3e66c6fcaf1ba6141cb85cacaf80c0932fa922943ab7119d29884d9d3ff0e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "react-router@8.4.0",
+      "type": "library",
+      "name": "react-router",
+      "version": "8.4.0",
+      "scope": "required",
+      "purl": "pkg:npm/react-router@8.4.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/react-router/-/react-router-8.4.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "26dc9d02406f53d51311ee6a342f8f3a1bbe64134ceeb94a63621e8305dcec8763ef17d11b5eb1e5166bc379a3bbe5e5a81c5fbdbda4cbd3f78d4a7d5b2582d6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "require-directory@2.1.1",
+      "type": "library",
+      "name": "require-directory",
+      "version": "2.1.1",
+      "scope": "required",
+      "purl": "pkg:npm/require-directory@2.1.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/require-directory/-/require-directory-2.1.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "7c6c4423bfb0b06f71aef763b2b9662f6d8e3134e21d1c0032ba2211e320abc833a0b0bf3d0afb46c4434932d483f6d9019b45f9354890773aff84482abba2f9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "safe-buffer@5.2.1",
+      "type": "library",
+      "name": "safe-buffer",
+      "version": "5.2.1",
+      "scope": "required",
+      "purl": "pkg:npm/safe-buffer@5.2.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "ae9dd2a34eca71d9a629b1af81a37141226bedb1954959394bd12ad45fa9a5b468ef4f9879a0f1930e4377c34f37e183e9b8e7626d95b8fb825e6a6e62f9825d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "tslib@2.8.1",
+      "type": "library",
+      "name": "tslib",
+      "version": "2.8.1",
+      "scope": "required",
+      "purl": "pkg:npm/tslib@2.8.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a0916ef781d06fe29576e49440bef09e99aa9df98bb0e03f9c087a6fa107d30084a0ad3f98f79753a737c0a0d5f373243ae1cf447b525ca294f7d2016b34bfdb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "web-vitals@4.2.4",
+      "type": "library",
+      "name": "web-vitals",
+      "version": "4.2.4",
+      "scope": "required",
+      "purl": "pkg:npm/web-vitals@4.2.4",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/web-vitals/-/web-vitals-4.2.4.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "af80c8969ac01b027b60cd75559a7847cf389b456682be8400a7b73fe90ed0f3e3dd49eacafbf9f6b7337fa52219c6fd67c43165572a28dc2ffe0d1635d5b0b3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "websocket-driver@0.7.5",
+      "type": "library",
+      "name": "websocket-driver",
+      "version": "0.7.5",
+      "scope": "required",
+      "purl": "pkg:npm/websocket-driver@0.7.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/websocket-driver/-/websocket-driver-0.7.5.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "64bdbeddcee4301748442333ea5f2340c1f2195c63f942fec5593be0e99b89c89ba1c6bcac76b5e4bf3a075f44e68875a4bf488bfba3e7882db08ad918ca3acc"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "websocket-extensions@0.1.4",
+      "type": "library",
+      "name": "websocket-extensions",
+      "version": "0.1.4",
+      "scope": "required",
+      "purl": "pkg:npm/websocket-extensions@0.1.4",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/websocket-extensions/-/websocket-extensions-0.1.4.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3aa79d3c818e7ec0e5a37d5437061b08531268ef66f46ff47da2078f9fdd6450cc16a3d3731e94c2ac8ecb708e11a10e83ff55b0622976a9fad96e4a868292a6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "wrap-ansi@7.0.0",
+      "type": "library",
+      "name": "wrap-ansi",
+      "version": "7.0.0",
+      "scope": "required",
+      "purl": "pkg:npm/wrap-ansi@7.0.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6151888f691a98b493c70e8db198e80717d2c2c9f4c9c75eb26738a7e436d5ce733ee675a65f8d7f155dc4fb5d1ef98d54e43a5d2606e0052dcadfc58bb0f5e9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "y18n@5.0.8",
+      "type": "library",
+      "name": "y18n",
+      "version": "5.0.8",
+      "scope": "required",
+      "purl": "pkg:npm/y18n@5.0.8",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "d297c5cde81e0d62472480264cb44fd83c078dd179b3b8e8f6dbb3b5d43102120d09dbd2fb79c620da8f774d00a61a8947fd0b8403544baffeed209bf7c60e7c"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "yargs@17.7.3",
+      "type": "library",
+      "name": "yargs",
+      "version": "17.7.3",
+      "scope": "required",
+      "purl": "pkg:npm/yargs@17.7.3",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/yargs/-/yargs-17.7.3.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "199b63c66fc9ff84d2c6e2f714d6230a62e4b414e7230feb56629223229e6006699890768a0f556ae082e71b1af3618d29528302aa4e9f7295ccdb74ce6ad4d2"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "songnexus-web@0.1.0",
+      "dependsOn": [
+        "@tanstack/react-query@5.104.1",
+        "d3-drag@3.0.0",
+        "d3-force@3.0.0",
+        "d3-selection@3.0.0",
+        "d3-zoom@3.0.0",
+        "fflate@0.8.3",
+        "firebase@12.19.0",
+        "intl-messageformat@12.1.3",
+        "openapi-fetch@0.17.0",
+        "papaparse@5.7.0",
+        "react-router@8.4.0"
+      ]
+    },
+    {
+      "ref": "@firebase/ai@2.16.0",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-types@0.9.6",
+        "@firebase/app-check-interop-types@0.3.5",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/analytics@0.10.25",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/installations@0.6.24",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/analytics-compat@0.2.31",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/analytics@0.10.25",
+        "@firebase/analytics-types@0.8.5",
+        "@firebase/component@0.7.5",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/analytics-types@0.8.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "@firebase/app@0.16.2",
+      "dependsOn": [
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "idb@7.1.1",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/app-check@0.13.1",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/app-check-compat@0.4.7",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/app-check@0.13.1",
+        "@firebase/app-check-types@0.5.5",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/app-check-interop-types@0.3.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "@firebase/app-check-types@0.5.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "@firebase/app-compat@0.5.18",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/app-types@0.9.6",
+      "dependsOn": [
+        "@firebase/logger@0.5.2"
+      ]
+    },
+    {
+      "ref": "@firebase/auth@1.13.6",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/auth-compat@0.6.11",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/auth@1.13.6",
+        "@firebase/auth-types@0.13.2",
+        "@firebase/component@0.7.5",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/auth-interop-types@0.2.6",
+      "dependsOn": []
+    },
+    {
+      "ref": "@firebase/auth-types@0.13.2",
+      "dependsOn": [
+        "@firebase/app-types@0.9.6",
+        "@firebase/util@1.15.3"
+      ]
+    },
+    {
+      "ref": "@firebase/component@0.7.5",
+      "dependsOn": [
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/data-connect@0.7.4",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/auth-interop-types@0.2.6",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/database@1.1.5",
+      "dependsOn": [
+        "@firebase/app-check-interop-types@0.3.5",
+        "@firebase/auth-interop-types@0.2.6",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "faye-websocket@0.11.4",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/database-compat@2.1.7",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/component@0.7.5",
+        "@firebase/database@1.1.5",
+        "@firebase/database-types@1.0.22",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/database-types@1.0.22",
+      "dependsOn": [
+        "@firebase/app-types@0.9.6",
+        "@firebase/util@1.15.3"
+      ]
+    },
+    {
+      "ref": "@firebase/firestore@4.17.2",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "@firebase/webchannel-wrapper@1.0.7",
+        "@grpc/grpc-js@1.14.6",
+        "@grpc/proto-loader@0.7.15",
+        "re2js@2.8.6",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/firestore-compat@0.4.14",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/component@0.7.5",
+        "@firebase/firestore@4.17.2",
+        "@firebase/firestore-types@3.0.5",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/firestore-types@3.0.5",
+      "dependsOn": [
+        "@firebase/app-types@0.9.6",
+        "@firebase/util@1.15.3"
+      ]
+    },
+    {
+      "ref": "@firebase/functions@0.14.0",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-check-interop-types@0.3.5",
+        "@firebase/auth-interop-types@0.2.6",
+        "@firebase/component@0.7.5",
+        "@firebase/messaging-interop-types@0.2.6",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/functions-compat@0.5.0",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/component@0.7.5",
+        "@firebase/functions@0.14.0",
+        "@firebase/functions-types@0.6.5",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/functions-types@0.6.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "@firebase/installations@0.6.24",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/util@1.15.3",
+        "idb@7.1.1",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/installations-compat@0.2.24",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/component@0.7.5",
+        "@firebase/installations@0.6.24",
+        "@firebase/installations-types@0.5.5",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/installations-types@0.5.5",
+      "dependsOn": [
+        "@firebase/app-types@0.9.6"
+      ]
+    },
+    {
+      "ref": "@firebase/logger@0.5.2",
+      "dependsOn": [
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/messaging@0.13.3",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/installations@0.6.24",
+        "@firebase/messaging-interop-types@0.2.6",
+        "@firebase/util@1.15.3",
+        "idb@7.1.1",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/messaging-compat@0.2.30",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/component@0.7.5",
+        "@firebase/messaging@0.13.3",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/messaging-interop-types@0.2.6",
+      "dependsOn": []
+    },
+    {
+      "ref": "@firebase/performance@0.7.14",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/installations@0.6.24",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1",
+        "web-vitals@4.2.4"
+      ]
+    },
+    {
+      "ref": "@firebase/performance-compat@0.2.27",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/performance@0.7.14",
+        "@firebase/performance-types@0.2.5",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/performance-types@0.2.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "@firebase/remote-config@0.9.2",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/installations@0.6.24",
+        "@firebase/logger@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/remote-config-compat@0.2.29",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/component@0.7.5",
+        "@firebase/logger@0.5.2",
+        "@firebase/remote-config@0.9.2",
+        "@firebase/remote-config-types@0.5.2",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/remote-config-types@0.5.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "@firebase/storage@0.14.5",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/component@0.7.5",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/storage-compat@0.4.5",
+      "dependsOn": [
+        "@firebase/app@0.16.2",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/component@0.7.5",
+        "@firebase/storage@0.14.5",
+        "@firebase/storage-types@0.8.5",
+        "@firebase/util@1.15.3",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/storage-types@0.8.5",
+      "dependsOn": [
+        "@firebase/app-types@0.9.6",
+        "@firebase/util@1.15.3"
+      ]
+    },
+    {
+      "ref": "@firebase/util@1.15.3",
+      "dependsOn": [
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@firebase/webchannel-wrapper@1.0.7",
+      "dependsOn": []
+    },
+    {
+      "ref": "@formatjs/fast-memoize@3.1.7",
+      "dependsOn": []
+    },
+    {
+      "ref": "@formatjs/icu-messageformat-parser@3.5.21",
+      "dependsOn": [
+        "@formatjs/icu-skeleton-parser@2.1.12"
+      ]
+    },
+    {
+      "ref": "@formatjs/icu-skeleton-parser@2.1.12",
+      "dependsOn": []
+    },
+    {
+      "ref": "@grpc/grpc-js@1.14.6",
+      "dependsOn": [
+        "@grpc/proto-loader@0.8.1",
+        "@js-sdsl/ordered-map@4.4.2"
+      ]
+    },
+    {
+      "ref": "@grpc/proto-loader@0.8.1",
+      "dependsOn": [
+        "lodash.camelcase@4.3.0",
+        "long@5.3.2",
+        "protobufjs@7.6.6",
+        "yargs@17.7.3"
+      ]
+    },
+    {
+      "ref": "@grpc/proto-loader@0.7.15",
+      "dependsOn": [
+        "lodash.camelcase@4.3.0",
+        "long@5.3.2",
+        "protobufjs@7.6.6",
+        "yargs@17.7.3"
+      ]
+    },
+    {
+      "ref": "@js-sdsl/ordered-map@4.4.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "@protobufjs/aspromise@1.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "@protobufjs/base64@1.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "@protobufjs/codegen@2.0.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "@protobufjs/eventemitter@1.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "@protobufjs/fetch@1.1.1",
+      "dependsOn": [
+        "@protobufjs/aspromise@1.1.2"
+      ]
+    },
+    {
+      "ref": "@protobufjs/float@1.0.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "@protobufjs/path@1.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "@protobufjs/pool@1.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "@protobufjs/utf8@1.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "@remix-run/route-pattern@0.22.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "@tanstack/query-core@5.104.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "@tanstack/react-query@5.104.1",
+      "dependsOn": [
+        "@tanstack/query-core@5.104.1"
+      ]
+    },
+    {
+      "ref": "cliui@8.0.1",
+      "dependsOn": [
+        "wrap-ansi@7.0.0"
+      ]
+    },
+    {
+      "ref": "cookie-es@3.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "d3-color@3.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "d3-dispatch@3.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "d3-drag@3.0.0",
+      "dependsOn": [
+        "d3-dispatch@3.0.1",
+        "d3-selection@3.0.0"
+      ]
+    },
+    {
+      "ref": "d3-ease@3.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "d3-force@3.0.0",
+      "dependsOn": [
+        "d3-dispatch@3.0.1",
+        "d3-quadtree@3.0.1",
+        "d3-timer@3.0.1"
+      ]
+    },
+    {
+      "ref": "d3-interpolate@3.0.1",
+      "dependsOn": [
+        "d3-color@3.1.0"
+      ]
+    },
+    {
+      "ref": "d3-quadtree@3.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "d3-selection@3.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "d3-timer@3.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "d3-transition@3.0.1",
+      "dependsOn": [
+        "d3-selection@3.0.0",
+        "d3-color@3.1.0",
+        "d3-dispatch@3.0.1",
+        "d3-ease@3.0.1",
+        "d3-interpolate@3.0.1",
+        "d3-timer@3.0.1"
+      ]
+    },
+    {
+      "ref": "d3-zoom@3.0.0",
+      "dependsOn": [
+        "d3-dispatch@3.0.1",
+        "d3-drag@3.0.0",
+        "d3-interpolate@3.0.1",
+        "d3-selection@3.0.0",
+        "d3-transition@3.0.1"
+      ]
+    },
+    {
+      "ref": "escalade@3.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "faye-websocket@0.11.4",
+      "dependsOn": [
+        "websocket-driver@0.7.5"
+      ]
+    },
+    {
+      "ref": "fflate@0.8.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "firebase@12.19.0",
+      "dependsOn": [
+        "@firebase/ai@2.16.0",
+        "@firebase/analytics@0.10.25",
+        "@firebase/analytics-compat@0.2.31",
+        "@firebase/app@0.16.2",
+        "@firebase/app-check@0.13.1",
+        "@firebase/app-check-compat@0.4.7",
+        "@firebase/app-compat@0.5.18",
+        "@firebase/app-types@0.9.6",
+        "@firebase/auth@1.13.6",
+        "@firebase/auth-compat@0.6.11",
+        "@firebase/data-connect@0.7.4",
+        "@firebase/database@1.1.5",
+        "@firebase/database-compat@2.1.7",
+        "@firebase/firestore@4.17.2",
+        "@firebase/firestore-compat@0.4.14",
+        "@firebase/functions@0.14.0",
+        "@firebase/functions-compat@0.5.0",
+        "@firebase/installations@0.6.24",
+        "@firebase/installations-compat@0.2.24",
+        "@firebase/messaging@0.13.3",
+        "@firebase/messaging-compat@0.2.30",
+        "@firebase/performance@0.7.14",
+        "@firebase/performance-compat@0.2.27",
+        "@firebase/remote-config@0.9.2",
+        "@firebase/remote-config-compat@0.2.29",
+        "@firebase/storage@0.14.5",
+        "@firebase/storage-compat@0.4.5",
+        "@firebase/util@1.15.3"
+      ]
+    },
+    {
+      "ref": "get-caller-file@2.0.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "http-parser-js@0.5.10",
+      "dependsOn": []
+    },
+    {
+      "ref": "idb@7.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "intl-messageformat@12.1.3",
+      "dependsOn": [
+        "@formatjs/fast-memoize@3.1.7",
+        "@formatjs/icu-messageformat-parser@3.5.21"
+      ]
+    },
+    {
+      "ref": "lodash.camelcase@4.3.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "long@5.3.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "openapi-fetch@0.17.0",
+      "dependsOn": [
+        "openapi-typescript-helpers@0.1.0"
+      ]
+    },
+    {
+      "ref": "openapi-typescript-helpers@0.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "papaparse@5.7.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "protobufjs@7.6.6",
+      "dependsOn": [
+        "@protobufjs/aspromise@1.1.2",
+        "@protobufjs/base64@1.1.2",
+        "@protobufjs/codegen@2.0.5",
+        "@protobufjs/eventemitter@1.1.1",
+        "@protobufjs/fetch@1.1.1",
+        "@protobufjs/float@1.0.2",
+        "@protobufjs/path@1.1.2",
+        "@protobufjs/pool@1.1.0",
+        "@protobufjs/utf8@1.1.2",
+        "long@5.3.2"
+      ]
+    },
+    {
+      "ref": "re2js@2.8.6",
+      "dependsOn": []
+    },
+    {
+      "ref": "react-router@8.4.0",
+      "dependsOn": [
+        "@remix-run/route-pattern@0.22.1",
+        "cookie-es@3.1.1"
+      ]
+    },
+    {
+      "ref": "require-directory@2.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "safe-buffer@5.2.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "tslib@2.8.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "web-vitals@4.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "websocket-driver@0.7.5",
+      "dependsOn": [
+        "http-parser-js@0.5.10",
+        "safe-buffer@5.2.1",
+        "websocket-extensions@0.1.4"
+      ]
+    },
+    {
+      "ref": "websocket-extensions@0.1.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "wrap-ansi@7.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "y18n@5.0.8",
+      "dependsOn": []
+    },
+    {
+      "ref": "yargs@17.7.3",
+      "dependsOn": [
+        "cliui@8.0.1",
+        "escalade@3.2.0",
+        "get-caller-file@2.0.5",
+        "require-directory@2.1.1",
+        "y18n@5.0.8"
+      ]
+    }
+  ]
+}

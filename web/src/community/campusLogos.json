@@ -1,0 +1,2233 @@
+{
+  "source": "Wikidata (athletics program P154 via P1268; university P8972, P154, P158) and Wikimedia Commons",
+  "generatedAt": "2026-11-18",
+  "logos": {
+    "appalachian-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Appalachian_State_Mountaineers_logo.svg/330px-Appalachian_State_Mountaineers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.88,
+      "kind": "athletics",
+      "team": "Appalachian State Mountaineers",
+      "plate": {
+        "dark": true,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Appalachian_State_Mountaineers_logo.svg",
+      "author": "Appalachian State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "arizona-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Arizona_State_Athletics_wordmark.svg/330px-Arizona_State_Athletics_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 5.74,
+      "kind": "athletics",
+      "team": "Arizona State Sun Devils",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Arizona_State_Athletics_wordmark.svg",
+      "author": "Arizona State University Athletics",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "auburn-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/Auburn_Tigers_logo.svg/330px-Auburn_Tigers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.13,
+      "kind": "athletics",
+      "team": "Auburn Tigers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Auburn_Tigers_logo.svg",
+      "author": "Auburn University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "ball-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Ball_State_old_wordmark.png/330px-Ball_State_old_wordmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.96,
+      "kind": "athletics",
+      "team": "Ball State Cardinals",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Ball_State_old_wordmark.png",
+      "author": "Ball State University Athletics",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "baylor-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Baylor_Athletics_logo.svg/330px-Baylor_Athletics_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.83,
+      "kind": "athletics",
+      "team": "Baylor Bears",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Baylor_Athletics_logo.svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "boise-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Boise_State_text_logo.svg/330px-Boise_State_text_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.46,
+      "kind": "athletics",
+      "team": "Boise State Broncos",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Boise_State_text_logo.svg",
+      "author": "Boise State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "boston-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/Boston_University_Terriers_wordmark.svg/330px-Boston_University_Terriers_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.36,
+      "kind": "athletics",
+      "team": "Boston University Terriers",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Boston_University_Terriers_wordmark.svg",
+      "author": "Boston University athletics",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "brigham-young-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/BYU_Cougars_logo.svg/330px-BYU_Cougars_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.54,
+      "kind": "athletics",
+      "team": "BYU Cougars",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:BYU_Cougars_logo.svg",
+      "author": "Brigham Young University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "brigham-young-university-idaho": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Brigham_Young_University%E2%80%93Idaho_logo.svg/330px-Brigham_Young_University%E2%80%93Idaho_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.71,
+      "kind": "logo",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Brigham_Young_University%E2%80%93Idaho_logo.svg",
+      "author": "Brigham Young University–Idaho",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-polytechnic-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Calpolylogosports.png/330px-Calpolylogosports.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.02,
+      "kind": "athletics",
+      "team": "Cal Poly Mustangs",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Calpolylogosports.png",
+      "author": "California Polytechnic State University Uploaded by Sikolec at en.wikipedia",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-polytechnic-university-pomona": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Calpoly_pomona_broncos_wmark.png/330px-Calpoly_pomona_broncos_wmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 7.33,
+      "kind": "athletics",
+      "team": "Cal Poly Pomona Broncos",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Calpoly_pomona_broncos_wmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-university-dominguez-hills": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/Cal-st-dom-hills_logo_from_NCAA.svg/330px-Cal-st-dom-hills_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.71,
+      "kind": "athletics",
+      "team": "Cal State Dominguez Hills Toros",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Cal-st-dom-hills_logo_from_NCAA.svg",
+      "author": "an NCAA member institution",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-university-fresno": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/Fresno_state_athletics_wordmark_2020.png/330px-Fresno_state_athletics_wordmark_2020.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 7.85,
+      "kind": "athletics",
+      "team": "Fresno State Bulldogs",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Fresno_state_athletics_wordmark_2020.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-university-fullerton": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Cal_State_Fullerton_Titans_logo.svg/330px-Cal_State_Fullerton_Titans_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.05,
+      "kind": "athletics",
+      "team": "Cal State Fullerton Titans",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Cal_State_Fullerton_Titans_logo.svg",
+      "author": "California State University, Fullerton",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-university-long-beach": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Long_Beach_State_Athletics_logo.svg/330px-Long_Beach_State_Athletics_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.82,
+      "kind": "athletics",
+      "team": "Long Beach State athletics",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Long_Beach_State_Athletics_logo.svg",
+      "author": "Long Beach State 49ers",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-university-los-angeles": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Cal_state_goldeneagles_log.png/330px-Cal_state_goldeneagles_log.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.06,
+      "kind": "athletics",
+      "team": "Cal State Los Angeles Golden Eagles",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Cal_state_goldeneagles_log.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-university-northridge": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/CSUN_Matadors_big_C_logo.svg/330px-CSUN_Matadors_big_C_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.81,
+      "kind": "athletics",
+      "team": "Cal State Northridge Matadors",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:CSUN_Matadors_big_C_logo.svg",
+      "author": "Cal State Northridge Matadors",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-university-sacramento": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Sacramento_State_script_2008.svg/330px-Sacramento_State_script_2008.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 5.27,
+      "kind": "athletics",
+      "team": "Sacramento State Hornets",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Sacramento_State_script_2008.svg",
+      "author": "California State University, Sacramento",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "california-state-university-san-bernardino": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Csusb_coyotes_wmark_blueblack.png/330px-Csusb_coyotes_wmark_blueblack.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.42,
+      "kind": "athletics",
+      "team": "Cal State San Bernardino Coyotes",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Csusb_coyotes_wmark_blueblack.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "central-michigan-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Central-mich_bgd_logo_from_NCAA.svg/330px-Central-mich_bgd_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "Central Michigan Chippewas",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Central-mich_bgd_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "colorado-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Colorado_State_Rams_wordmark.svg/330px-Colorado_State_Rams_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.49,
+      "kind": "athletics",
+      "team": "Colorado State Rams",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Colorado_State_Rams_wordmark.svg",
+      "author": "Colorado State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "columbia-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Columbia_Lions_wordmark.svg/330px-Columbia_Lions_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.62,
+      "kind": "athletics",
+      "team": "Columbia Lions",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Columbia_Lions_wordmark.svg",
+      "author": "Columbia University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "cornell-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/Cornell_%22C%22_logo.svg/330px-Cornell_%22C%22_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.78,
+      "kind": "athletics",
+      "team": "Cornell Big Red",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Cornell_%22C%22_logo.svg",
+      "author": "Cornell University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "depaul-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/DePaul_Athletics_Logo_NEW2025.png/330px-DePaul_Athletics_Logo_NEW2025.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.95,
+      "kind": "athletics",
+      "team": "DePaul Blue Demons",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:DePaul_Athletics_Logo_NEW2025.png",
+      "author": "DePaul University Athletics",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "drexel-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Drexe_dragons_wordmark_2012.png/330px-Drexe_dragons_wordmark_2012.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.92,
+      "kind": "athletics",
+      "team": "Drexel Dragons",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Drexe_dragons_wordmark_2012.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "east-carolina-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/East_Carolina_Pirates_wordmark.svg/330px-East_Carolina_Pirates_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.65,
+      "kind": "athletics",
+      "team": "East Carolina Pirates",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:East_Carolina_Pirates_wordmark.svg",
+      "author": "East Carolina University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "eastern-michigan-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Eastern_Michigan_Eagles_logo.svg/330px-Eastern_Michigan_Eagles_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.88,
+      "kind": "athletics",
+      "team": "Eastern Michigan Eagles",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Eastern_Michigan_Eagles_logo.svg",
+      "author": "Eastern Michigan University athletics",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "eth-zurich": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/ETH_Z%C3%BCrich_Logo_black.svg/330px-ETH_Z%C3%BCrich_Logo_black.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 6,
+      "kind": "logo",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:ETH_Z%C3%BCrich_Logo_black.svg",
+      "author": "ETH Zürich",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "florida-atlantic-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Florida_Atlantic_Owls_wordmark.svg/330px-Florida_Atlantic_Owls_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.56,
+      "kind": "athletics",
+      "team": "Florida Atlantic Owls",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Florida_Atlantic_Owls_wordmark.svg",
+      "author": "Florida Atlantic Owls",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "florida-international-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/Florida_International_University_FIU_logo.svg/330px-Florida_International_University_FIU_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.16,
+      "kind": "athletics",
+      "team": "FIU Panthers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Florida_International_University_FIU_logo.svg",
+      "author": "Florida International University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "florida-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Florida_State_Seminoles_old_logo.svg/330px-Florida_State_Seminoles_old_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.09,
+      "kind": "athletics",
+      "team": "Florida State Seminoles",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Florida_State_Seminoles_old_logo.svg",
+      "author": "Florida State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "george-mason-university": {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/9/99/Georgemason_athletics_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "aspect": 1.13,
+      "kind": "athletics",
+      "team": "George Mason Patriots",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Georgemason_athletics_logo.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "georgia-southern-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Georgia_Southern_Eagles_wordmark.svg/330px-Georgia_Southern_Eagles_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.57,
+      "kind": "athletics",
+      "team": "Georgia Southern Eagles",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Georgia_Southern_Eagles_wordmark.svg",
+      "author": "Georgia Southern University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "georgia-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/Georgia_State_Athletics_wordmark.svg/330px-Georgia_State_Athletics_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.45,
+      "kind": "athletics",
+      "team": "Georgia State Panthers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Georgia_State_Athletics_wordmark.svg",
+      "author": "Georgia State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "georgia-tech": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Georgia_Tech_Yellow_Jackets_logo.svg/330px-Georgia_Tech_Yellow_Jackets_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.59,
+      "kind": "athletics",
+      "team": "Georgia Tech Yellow Jackets",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Georgia_Tech_Yellow_Jackets_logo.svg",
+      "author": "Georgia Institute of Technology",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "grand-valley-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Grand_Valley_State_Lakers_logo.svg/330px-Grand_Valley_State_Lakers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.31,
+      "kind": "athletics",
+      "team": "Grand Valley State Lakers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Grand_Valley_State_Lakers_logo.svg",
+      "author": "Grand Valley State Lakers",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "harvard-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Harvard_Crimson_logo_2020.svg/330px-Harvard_Crimson_logo_2020.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.82,
+      "kind": "athletics",
+      "team": "Harvard Crimson",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Harvard_Crimson_logo_2020.svg",
+      "author": "Harvard University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "illinois-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Illinois_State_Redbirds_Wordmark.png/330px-Illinois_State_Redbirds_Wordmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.04,
+      "kind": "athletics",
+      "team": "Illinois State Redbirds",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Illinois_State_Redbirds_Wordmark.png",
+      "author": "Illinois State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "imperial-college-london": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Imperial_College_London_new_logo.png/330px-Imperial_College_London_new_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 9.1,
+      "kind": "logo",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Imperial_College_London_new_logo.png",
+      "author": "Imperial College London",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "indiana-university-bloomington": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Indiana_Hoosiers_logo.svg/330px-Indiana_Hoosiers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.79,
+      "kind": "athletics",
+      "team": "Indiana Hoosiers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Indiana_Hoosiers_logo.svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "indiana-university-purdue-university-indianapolis": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Iupui_athletics_textlogo.png/330px-Iupui_athletics_textlogo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.06,
+      "kind": "athletics",
+      "team": "IU Indy Jaguars",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Iupui_athletics_textlogo.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "iowa-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Iowa_State_Cyclones_logo.svg/330px-Iowa_State_Cyclones_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.45,
+      "kind": "athletics",
+      "team": "Iowa State Cyclones",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Iowa_State_Cyclones_logo.svg",
+      "author": "Iowa State",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "james-madison-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/James_Madison_Athletics_wordmark.svg/330px-James_Madison_Athletics_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.12,
+      "kind": "athletics",
+      "team": "James Madison Dukes",
+      "plate": {
+        "dark": true,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:James_Madison_Athletics_wordmark.svg",
+      "author": "James Madison University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "johns-hopkins-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Hopkins_athletics_wmark.png/330px-Hopkins_athletics_wmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 6.21,
+      "kind": "athletics",
+      "team": "Johns Hopkins Blue Jays",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Hopkins_athletics_wmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "kansas-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Kansas_State_Wildcats_wordmark.svg/330px-Kansas_State_Wildcats_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 6.67,
+      "kind": "athletics",
+      "team": "Kansas State Wildcats",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Kansas_State_Wildcats_wordmark.svg",
+      "author": "Kansas State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "kennesaw-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Kennesaw-st_logo_from_NCAA.svg/330px-Kennesaw-st_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "Kennesaw State Owls",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Kennesaw-st_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "kent-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Kent_State_K.svg/330px-Kent_State_K.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.3,
+      "kind": "athletics",
+      "team": "Kent State Golden Flashes",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Kent_State_K.svg",
+      "author": "Kent State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "king-s-college-london": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Kcl-logo.svg/330px-Kcl-logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.51,
+      "kind": "logo",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Kcl-logo.svg",
+      "author": "reviczky",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "louisiana-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Louisiana_State_University_%28logo%29.svg/330px-Louisiana_State_University_%28logo%29.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.21,
+      "kind": "athletics",
+      "team": "LSU Tigers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Louisiana_State_University_(logo).svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "mcgill-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Mcgill_athletics_logo.png/330px-Mcgill_athletics_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.07,
+      "kind": "athletics",
+      "team": "McGill Redbirds and Martlets",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Mcgill_athletics_logo.png",
+      "author": "patent of arms for James McGill granted by England's Garter-King-at-Arms of 1922",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "metropolitan-state-university-of-denver": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Msu_denver_roadrunners_wordmark.png/330px-Msu_denver_roadrunners_wordmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.83,
+      "kind": "athletics",
+      "team": "MSU Denver Roadrunners",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Msu_denver_roadrunners_wordmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "miami-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/Miami_Redhawks_logo.svg/330px-Miami_Redhawks_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.32,
+      "kind": "athletics",
+      "team": "Miami RedHawks",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Miami_Redhawks_logo.svg",
+      "author": "Miami University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "michigan-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Michigan_State_Spartans_wordmark.svg/330px-Michigan_State_Spartans_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 8.33,
+      "kind": "athletics",
+      "team": "Michigan State Spartans",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Michigan_State_Spartans_wordmark.svg",
+      "author": "Michigan State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "mississippi-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Mississippi_state_athletics_logo_2024.png/330px-Mississippi_state_athletics_logo_2024.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.78,
+      "kind": "athletics",
+      "team": "Mississippi State Bulldogs",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Mississippi_state_athletics_logo_2024.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "montclair-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/Montclair_st_athletics_wmark.png/330px-Montclair_st_athletics_wmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.56,
+      "kind": "athletics",
+      "team": "Montclair State Red Hawks",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Montclair_st_athletics_wmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "national-autonomous-university-of-mexico": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Escudo-UNAM-escalable.svg/330px-Escudo-UNAM-escalable.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.89,
+      "kind": "logo",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Escudo-UNAM-escalable.svg",
+      "author": "Both, the shield and the motto, José Vasconcelos Calderón",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "new-mexico-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/New_Mexico_State_Aggies_wordmark.svg/330px-New_Mexico_State_Aggies_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.69,
+      "kind": "athletics",
+      "team": "New Mexico State Aggies",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:New_Mexico_State_Aggies_wordmark.svg",
+      "author": "New Mexico State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "new-york-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/NYU_Violets_wordmark.svg/330px-NYU_Violets_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.91,
+      "kind": "athletics",
+      "team": "NYU Violets",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:NYU_Violets_wordmark.svg",
+      "author": "New York University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "north-carolina-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Nc_state_wordmark_2023.png/330px-Nc_state_wordmark_2023.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.61,
+      "kind": "athletics",
+      "team": "NC State Wolfpack",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Nc_state_wordmark_2023.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "northeastern-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/NURugby_logo_current.png/330px-NURugby_logo_current.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.05,
+      "kind": "athletics",
+      "team": "Northeastern University Rugby Club",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:NURugby_logo_current.png",
+      "author": "Northeastern University Rugby Club",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "northern-arizona-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Northern-ariz_bgd_logo_from_NCAA.svg/330px-Northern-ariz_bgd_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.67,
+      "kind": "athletics",
+      "team": "Northern Arizona Lumberjacks",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Northern-ariz_bgd_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "northwestern-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Northwestern_Wildcats_logo.svg/330px-Northwestern_Wildcats_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.65,
+      "kind": "athletics",
+      "team": "Northwestern Wildcats",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Northwestern_Wildcats_logo.svg",
+      "author": "Northwestern University Athletics",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "nova-southeastern-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/NSU_Sharks_wordmark.png/330px-NSU_Sharks_wordmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.1,
+      "kind": "athletics",
+      "team": "Nova Southeastern Sharks",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:NSU_Sharks_wordmark.png",
+      "author": "Nova Southeastern University Athletics",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "ohio-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Ohio_State_Buckeyes_logo.svg/330px-Ohio_State_Buckeyes_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.02,
+      "kind": "athletics",
+      "team": "Ohio State Buckeyes",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Ohio_State_Buckeyes_logo.svg",
+      "author": "The original uploader was Buckeyes1186 at English Wikipedia.",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "ohio-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Ohio_Bobcats_wordmark.svg/330px-Ohio_Bobcats_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.47,
+      "kind": "athletics",
+      "team": "Ohio Bobcats",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Ohio_Bobcats_wordmark.svg",
+      "author": "Ohio University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "oklahoma-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/Oklahoma_State_Athletics_logo_%282001-2014%29.svg/330px-Oklahoma_State_Athletics_logo_%282001-2014%29.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.91,
+      "kind": "athletics",
+      "team": "Oklahoma State Cowboys and Cowgirls",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Oklahoma_State_Athletics_logo_(2001-2014).svg",
+      "author": "Oklahoma State University–Stillwater",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "old-dominion-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Old_Dominion_University_Logo.png/330px-Old_Dominion_University_Logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.4,
+      "kind": "logo",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Old_Dominion_University_Logo.png",
+      "author": "Old Dominion University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "oregon-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Oregon_state_wordmark_2013.png/330px-Oregon_state_wordmark_2013.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 9.05,
+      "kind": "athletics",
+      "team": "Oregon State Beavers",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Oregon_state_wordmark_2013.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "pennsylvania-state-university": {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Penn_state_wordmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "aspect": 8.53,
+      "kind": "athletics",
+      "team": "Penn State Nittany Lions",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Penn_state_wordmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "portland-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Portland-st_logo_from_NCAA.svg/330px-Portland-st_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.77,
+      "kind": "athletics",
+      "team": "Portland State Vikings",
+      "plate": {
+        "dark": true,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Portland-st_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "purdue-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Purdue_Boilermakers_logo.svg/330px-Purdue_Boilermakers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.87,
+      "kind": "athletics",
+      "team": "Purdue Boilermakers",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Purdue_Boilermakers_logo.svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "queens-college": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Queens_qc_logo.png/330px-Queens_qc_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.36,
+      "kind": "athletics",
+      "team": "Queens Knights",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Queens_qc_logo.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "rochester-institute-of-technology": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/RIT_Tigers_wordmark_with_paw.png/330px-RIT_Tigers_wordmark_with_paw.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.3,
+      "kind": "athletics",
+      "team": "RIT Tigers",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:RIT_Tigers_wordmark_with_paw.png",
+      "author": "Rochester Institute of Technology",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "rowan-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Rowan_logo_from_NCAA.svg/330px-Rowan_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.55,
+      "kind": "athletics",
+      "team": "Rowan Profs",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Rowan_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "san-diego-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/San_Diego_State_Aztecs_logo.svg/330px-San_Diego_State_Aztecs_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.44,
+      "kind": "athletics",
+      "team": "San Diego State Aztecs",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:San_Diego_State_Aztecs_logo.svg",
+      "author": "San Diego State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "san-francisco-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/San-fran-st_logo_from_NCAA.svg/330px-San-fran-st_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "San Francisco State Gators",
+      "plate": {
+        "dark": true,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:San-fran-st_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "seoul-national-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Seoul_national_university_logotype.svg/330px-Seoul_national_university_logotype.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.93,
+      "kind": "logo",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Seoul_national_university_logotype.svg",
+      "author": "Original raster image was excerpted from the source file, as specified above. Vectorized by the user User:Nudimmud.",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "st-john-s-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/St._John%27s_Red_Storm_logo.svg/330px-St._John%27s_Red_Storm_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.72,
+      "kind": "athletics",
+      "team": "St. John's Red Storm",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:St._John%27s_Red_Storm_logo.svg",
+      "author": "St. John's University (New York City)",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "stony-brook-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Stony_brook_athletics_wordmark.png/330px-Stony_brook_athletics_wordmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 6.64,
+      "kind": "athletics",
+      "team": "Stony Brook Seawolves",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Stony_brook_athletics_wordmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "technical-university-of-munich": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/TU_Muenchen_Logo.svg/330px-TU_Muenchen_Logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.08,
+      "kind": "logo",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:TU_Muenchen_Logo.svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "temple-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Temple_T_logo.svg/330px-Temple_T_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.88,
+      "kind": "athletics",
+      "team": "Temple Owls",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Temple_T_logo.svg",
+      "author": "Dream out loud",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "texas-a-and-m-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Texas_A%26M_Aggies_Primary_Logo_%282021-Present%29.png/330px-Texas_A%26M_Aggies_Primary_Logo_%282021-Present%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.02,
+      "kind": "athletics",
+      "team": "Texas A&M Aggies",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Texas_A%26M_Aggies_Primary_Logo_(2021-Present).png",
+      "author": "Chris Creamer",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+    },
+    "texas-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Texas_state_athletics_wmark.png/330px-Texas_state_athletics_wmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.14,
+      "kind": "athletics",
+      "team": "Texas State Bobcats",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Texas_state_athletics_wmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "texas-tech-university": {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Double_T_Original.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "aspect": 0.94,
+      "kind": "athletics",
+      "team": "Texas Tech Red Raiders",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Double_T_Original.png",
+      "author": "Texas Tech University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "towson-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Towson_Tigers_wordmark.svg/330px-Towson_Tigers_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.73,
+      "kind": "athletics",
+      "team": "Towson Tigers",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Towson_Tigers_wordmark.svg",
+      "author": "Towson University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "troy-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/ba/Troy_logo_from_NCAA.svg/330px-Troy_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "Troy Trojans",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Troy_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-at-buffalo": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/Buffalo_athletics_wordmark_2016.png/330px-Buffalo_athletics_wordmark_2016.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 5.11,
+      "kind": "athletics",
+      "team": "Buffalo Bulls",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Buffalo_athletics_wordmark_2016.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-alabama": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/Alabama_Crimson_Tide_logo.svg/330px-Alabama_Crimson_Tide_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "Alabama Crimson Tide",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Alabama_Crimson_Tide_logo.svg",
+      "author": "University of Alabama",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-alabama-at-birmingham": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Uab_blazers_primarylogo25.png/330px-Uab_blazers_primarylogo25.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.33,
+      "kind": "athletics",
+      "team": "UAB Blazers",
+      "plate": {
+        "dark": true,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Uab_blazers_primarylogo25.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-arizona": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Arizona_Wildcats_logo.svg/330px-Arizona_Wildcats_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.08,
+      "kind": "athletics",
+      "team": "Arizona Wildcats",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Arizona_Wildcats_logo.svg",
+      "author": "University of Arizona, extracted from PDF file by User:Zscout370 Uploaded by Zscout370 at en.wikipedia",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-arkansas": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Arkansas_wordmark_2014.png/330px-Arkansas_wordmark_2014.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 7.74,
+      "kind": "athletics",
+      "team": "Arkansas Razorbacks",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Arkansas_wordmark_2014.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-british-columbia": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cc/Ubc_thunderbirds_wmark.svg/330px-Ubc_thunderbirds_wmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 9.09,
+      "kind": "athletics",
+      "team": "UBC Thunderbirds",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Ubc_thunderbirds_wmark.svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-california-berkeley": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/California_Golden_Bears_logo.svg/330px-California_Golden_Bears_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.25,
+      "kind": "athletics",
+      "team": "California Golden Bears",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:California_Golden_Bears_logo.svg",
+      "author": "University of California, Berkeley",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-california-davis": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Uc-davis_bgd_logo_from_NCAA.svg/330px-Uc-davis_bgd_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.38,
+      "kind": "athletics",
+      "team": "UC Davis Aggies",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Uc-davis_bgd_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-california-irvine": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/UC_Irvine_Anteaters_logo.svg/330px-UC_Irvine_Anteaters_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.94,
+      "kind": "athletics",
+      "team": "UC Irvine Anteaters",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UC_Irvine_Anteaters_logo.svg",
+      "author": "UC Irvine Anteaters",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-california-los-angeles": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/UCLA_Bruins_primary_logo.svg/330px-UCLA_Bruins_primary_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.08,
+      "kind": "athletics",
+      "team": "UCLA Bruins",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UCLA_Bruins_primary_logo.svg",
+      "author": "University of California, Los Angeles",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-california-riverside": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/UC_Riverside_Highlanders_logo.svg/330px-UC_Riverside_Highlanders_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.04,
+      "kind": "athletics",
+      "team": "UC Riverside Highlanders",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UC_Riverside_Highlanders_logo.svg",
+      "author": "UC Riverside Highlanders",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-california-san-diego": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/UC_San_Diego_Tritons_wordmark.svg/330px-UC_San_Diego_Tritons_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 6.25,
+      "kind": "athletics",
+      "team": "UC San Diego Tritons",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UC_San_Diego_Tritons_wordmark.svg",
+      "author": "University of California, Sand Diego",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-california-santa-cruz": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Uc_santacruz_athletics_wmark.png/330px-Uc_santacruz_athletics_wmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.39,
+      "kind": "athletics",
+      "team": "UC Santa Cruz Banana Slugs",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Uc_santacruz_athletics_wmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-cambridge": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/University_of_Cambridge_logo.png/330px-University_of_Cambridge_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.61,
+      "kind": "logo",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:University_of_Cambridge_logo.png",
+      "author": "Dm980cam",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "university-of-central-florida": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/UCF_Knights_logo.svg/330px-UCF_Knights_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.24,
+      "kind": "athletics",
+      "team": "UCF Knights",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UCF_Knights_logo.svg",
+      "author": "University of Central Florida",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-chicago": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/Chicago_bgd_logo_from_NCAA.svg/330px-Chicago_bgd_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.77,
+      "kind": "athletics",
+      "team": "Chicago Maroons",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Chicago_bgd_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-cincinnati": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/Cincinnati_Bearcats_logo.svg/330px-Cincinnati_Bearcats_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.64,
+      "kind": "athletics",
+      "team": "Cincinnati Bearcats",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Cincinnati_Bearcats_logo.svg",
+      "author": "Cincinnati Bearcats",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-colorado-boulder": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Colorado_Buffaloes_wordmark_black.svg/330px-Colorado_Buffaloes_wordmark_black.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.93,
+      "kind": "athletics",
+      "team": "Colorado Buffaloes",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Colorado_Buffaloes_wordmark_black.svg",
+      "author": "University of Colorado Athletics",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-colorado-denver": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/CU_Denver_logo.png/330px-CU_Denver_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 5.16,
+      "kind": "logo",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:CU_Denver_logo.png",
+      "author": "University of Colorado",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-connecticut": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Connecticut_Huskies_wordmark.svg/330px-Connecticut_Huskies_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.49,
+      "kind": "athletics",
+      "team": "UConn Huskies",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Connecticut_Huskies_wordmark.svg",
+      "author": "Connecticut Huskies",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-delaware": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Delaware_Blue_Hens_wordmark.svg/330px-Delaware_Blue_Hens_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.81,
+      "kind": "athletics",
+      "team": "Delaware Fightin' Blue Hens",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Delaware_Blue_Hens_wordmark.svg",
+      "author": "University of Delaware",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-florida": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/Florida_Gators_script_logo.svg/330px-Florida_Gators_script_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.52,
+      "kind": "athletics",
+      "team": "Florida Gators",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Florida_Gators_script_logo.svg",
+      "author": "University of Florida",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-georgia": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Georgia_Athletics_logo.svg/330px-Georgia_Athletics_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.54,
+      "kind": "athletics",
+      "team": "Georgia Bulldogs",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Georgia_Athletics_logo.svg",
+      "author": "Brunswickian (talk)",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-houston": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Houston_Cougars_logo.svg/330px-Houston_Cougars_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.05,
+      "kind": "athletics",
+      "team": "Houston Cougars",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Houston_Cougars_logo.svg",
+      "author": "University of Houston Athletics Dept.",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-illinois-chicago": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/UIC_Flames_wordmark.svg/330px-UIC_Flames_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.32,
+      "kind": "athletics",
+      "team": "UIC Flames",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UIC_Flames_wordmark.svg",
+      "author": "University of Illinois at Chicago",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-illinois-urbana-champaign": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/72/Illinois_logo_from_NCAA.svg/330px-Illinois_logo_from_NCAA.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "Illinois Fighting Illini",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Illinois_logo_from_NCAA.svg",
+      "author": "NCAA member institutions",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-iowa": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Iowa_Hawkeyes_wordmark.svg/330px-Iowa_Hawkeyes_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.19,
+      "kind": "athletics",
+      "team": "Iowa Hawkeyes",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Iowa_Hawkeyes_wordmark.svg",
+      "author": "University of Iowa",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-kansas": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Kansas_Jayhawks_1946_logo.svg/330px-Kansas_Jayhawks_1946_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.13,
+      "kind": "athletics",
+      "team": "Kansas Jayhawks",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Kansas_Jayhawks_1946_logo.svg",
+      "author": "Hal Sandy",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-kentucky": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Kentucky_Wildcats_logo.svg/330px-Kentucky_Wildcats_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.22,
+      "kind": "athletics",
+      "team": "Kentucky Wildcats",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Kentucky_Wildcats_logo.svg",
+      "author": "University of Kentucky",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-louisville": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Louisville_Cardinals_wordmark.svg/330px-Louisville_Cardinals_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.31,
+      "kind": "athletics",
+      "team": "Louisville Cardinals",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Louisville_Cardinals_wordmark.svg",
+      "author": "University of Louisville",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-maryland": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Maryland_Terrapins_logo.svg/330px-Maryland_Terrapins_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.91,
+      "kind": "athletics",
+      "team": "Maryland Terrapins",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Maryland_Terrapins_logo.svg",
+      "author": "Maryland Terps",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-massachusetts-amherst": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/UMass_Amherst_athletics_logo.svg/330px-UMass_Amherst_athletics_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.22,
+      "kind": "athletics",
+      "team": "UMass Minutemen",
+      "plate": {
+        "dark": true,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UMass_Amherst_athletics_logo.svg",
+      "author": "UMass Amherst",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-memphis": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Memphis_Tigers_primary_wordmark.svg/330px-Memphis_Tigers_primary_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.9,
+      "kind": "athletics",
+      "team": "Memphis Tigers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Memphis_Tigers_primary_wordmark.svg",
+      "author": "University of Memphis",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-miami": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Miami_Hurricanes_logo.svg/330px-Miami_Hurricanes_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.63,
+      "kind": "athletics",
+      "team": "Miami Hurricanes",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Miami_Hurricanes_logo.svg",
+      "author": "University of Miami.",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-michigan": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Michigan_Wolverines_logo.svg/330px-Michigan_Wolverines_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.39,
+      "kind": "athletics",
+      "team": "Michigan Wolverines",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Michigan_Wolverines_logo.svg",
+      "author": "University of Michigan",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-minnesota": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Minnesota_Golden_Gophers_logo.svg/330px-Minnesota_Golden_Gophers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.68,
+      "kind": "athletics",
+      "team": "Minnesota Golden Gophers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Minnesota_Golden_Gophers_logo.svg",
+      "author": "University of Minnesota",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-mississippi": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Ole_Miss_Rebels_logo.svg/330px-Ole_Miss_Rebels_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.06,
+      "kind": "athletics",
+      "team": "Ole Miss Rebels",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Ole_Miss_Rebels_logo.svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-missouri": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Mizzou_Athletics_wordmark.svg/330px-Mizzou_Athletics_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 5.85,
+      "kind": "athletics",
+      "team": "Missouri Tigers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Mizzou_Athletics_wordmark.svg",
+      "author": "University of Missouri",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-nebraska-lincoln": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Nebraska_Cornhuskers_logo.svg/330px-Nebraska_Cornhuskers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "Nebraska Cornhuskers",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Nebraska_Cornhuskers_logo.svg",
+      "author": "University of Nebraska-Lincoln",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-nevada-las-vegas": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/UNLV_Rebels_wordmark.svg/330px-UNLV_Rebels_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.74,
+      "kind": "athletics",
+      "team": "UNLV Rebels",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UNLV_Rebels_wordmark.svg",
+      "author": "University of Nevada, Las Vegas",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-nevada-reno": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Nevada_athletics_wordmark_2023.png/330px-Nevada_athletics_wordmark_2023.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.74,
+      "kind": "athletics",
+      "team": "Nevada Wolf Pack",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Nevada_athletics_wordmark_2023.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-new-mexico": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/New_Mexico_Lobos_wordmark.svg/330px-New_Mexico_Lobos_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.48,
+      "kind": "athletics",
+      "team": "New Mexico Lobos",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:New_Mexico_Lobos_wordmark.svg",
+      "author": "New Mexico Lobos",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-north-carolina-at-chapel-hill": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/UNC_primary_mark_blue-white.svg/330px-UNC_primary_mark_blue-white.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.33,
+      "kind": "athletics",
+      "team": "North Carolina Tar Heels",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UNC_primary_mark_blue-white.svg",
+      "author": "University of North Carolina at Chapel Hill",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-north-carolina-at-charlotte": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Charlotte49ers_alt_logo.png/330px-Charlotte49ers_alt_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.8,
+      "kind": "athletics",
+      "team": "Charlotte 49ers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Charlotte49ers_alt_logo.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-north-georgia": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/North_georgia_logo_2024.png/330px-North_georgia_logo_2024.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.16,
+      "kind": "athletics",
+      "team": "North Georgia Nighthawks",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:North_georgia_logo_2024.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-north-texas": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Unt_north_texas_wordmark_2005.png/330px-Unt_north_texas_wordmark_2005.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 7.85,
+      "kind": "athletics",
+      "team": "North Texas Mean Green",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Unt_north_texas_wordmark_2005.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-oklahoma": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/61/Oklahoma_Sooners_logo.svg/330px-Oklahoma_Sooners_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.78,
+      "kind": "athletics",
+      "team": "Oklahoma Sooners",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Oklahoma_Sooners_logo.svg",
+      "author": "University of Oklahoma",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-oregon": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Oregon_Ducks_logo.svg/330px-Oregon_Ducks_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.21,
+      "kind": "athletics",
+      "team": "Oregon Ducks",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Oregon_Ducks_logo.svg",
+      "author": "w:User:Fuzzy510",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-oxford": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Circlet_of_University_of_Oxford.svg/330px-Circlet_of_University_of_Oxford.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.8,
+      "kind": "seal",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Circlet_of_University_of_Oxford.svg",
+      "author": "Jonas Magnus Lystad",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "university-of-pennsylvania": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Penn_Quakers_logo.svg/330px-Penn_Quakers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.82,
+      "kind": "athletics",
+      "team": "Penn Quakers",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Penn_Quakers_logo.svg",
+      "author": "Penn Quakers",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-pittsburgh": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Pitt_Panthers_wordmark.svg/330px-Pitt_Panthers_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.77,
+      "kind": "athletics",
+      "team": "Pittsburgh Panthers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Pitt_Panthers_wordmark.svg",
+      "author": "Pittsburgh Panthers",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-sao-paulo": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Webysther_20160310_-_Logo_USP.svg/330px-Webysther_20160310_-_Logo_USP.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.47,
+      "kind": "logo",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Webysther_20160310_-_Logo_USP.svg",
+      "author": "José Carlos de Araújo, João Delbucio Filho e Geny Yoshico Uehara.",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-south-carolina": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/South_Carolina_Gamecocks_logo.svg/330px-South_Carolina_Gamecocks_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.91,
+      "kind": "athletics",
+      "team": "South Carolina Gamecocks",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:South_Carolina_Gamecocks_logo.svg",
+      "author": "Paul Dietzel, head coach at University of South Carolina",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-southern-california": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/USC_Trojans_logo.svg/330px-USC_Trojans_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 0.67,
+      "kind": "athletics",
+      "team": "USC Trojans",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:USC_Trojans_logo.svg",
+      "author": "USC Trojans",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-tennessee": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Tennessee_Volunteers_logo.svg/330px-Tennessee_Volunteers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "Tennessee Volunteers",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Tennessee_Volunteers_logo.svg",
+      "author": "University of Tennessee",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-texas-at-arlington": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/UT_Arlington_Mavericks_wordmark.svg/330px-UT_Arlington_Mavericks_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.76,
+      "kind": "athletics",
+      "team": "UT Arlington Mavericks",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UT_Arlington_Mavericks_wordmark.svg",
+      "author": "University of Texas at Arlington",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-texas-at-austin": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Texas_Longhorns_logo.svg/330px-Texas_Longhorns_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.96,
+      "kind": "athletics",
+      "team": "Texas Longhorns",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Texas_Longhorns_logo.svg",
+      "author": "Unknown",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-texas-at-dallas": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/UT_Dallas_Wordmark_-_-_SVG_Brand_Identity_File.svg/330px-UT_Dallas_Wordmark_-_-_SVG_Brand_Identity_File.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.43,
+      "kind": "logo",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UT_Dallas_Wordmark_-_-_SVG_Brand_Identity_File.svg",
+      "author": "The University of Texas at Dallas",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "university-of-texas-at-el-paso": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/UTEP_Miners_wordmark.svg/330px-UTEP_Miners_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.04,
+      "kind": "athletics",
+      "team": "UTEP Miners",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:UTEP_Miners_wordmark.svg",
+      "author": "UTEP Miners",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-toledo": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Toledo_script.png/330px-Toledo_script.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.6,
+      "kind": "athletics",
+      "team": "Toledo Rockets",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Toledo_script.png",
+      "author": "University of Toledo",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-toronto": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Toronto_varsityblues_wmark.svg/330px-Toronto_varsityblues_wmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 3.25,
+      "kind": "athletics",
+      "team": "Toronto Varsity Blues",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Toronto_varsityblues_wmark.svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-utah": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/Utah_Utes_logo.svg/330px-Utah_Utes_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.09,
+      "kind": "athletics",
+      "team": "Utah Utes",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Utah_Utes_logo.svg",
+      "author": "Utah Utes",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-virginia": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Virginia_Cavaliers_wordmark_2020%2C_Virginia.png/330px-Virginia_Cavaliers_wordmark_2020%2C_Virginia.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 6.05,
+      "kind": "athletics",
+      "team": "Virginia Cavaliers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Virginia_Cavaliers_wordmark_2020,_Virginia.png",
+      "author": "University of Virginia",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-waterloo": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Waterloo_warriors_wmark.svg/330px-Waterloo_warriors_wmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.77,
+      "kind": "athletics",
+      "team": "Waterloo Warriors",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Waterloo_warriors_wmark.svg",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-wisconsin-madison": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Wisconsin_Badgers_logo.svg/330px-Wisconsin_Badgers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.06,
+      "kind": "athletics",
+      "team": "Wisconsin Badgers",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Wisconsin_Badgers_logo.svg",
+      "author": "Board of Regents of the University of Wisconsin System",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "university-of-wisconsin-milwaukee": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/Milwaukee_Panthers_letter_logo.svg/330px-Milwaukee_Panthers_letter_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.05,
+      "kind": "athletics",
+      "team": "Milwaukee Panthers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Milwaukee_Panthers_letter_logo.svg",
+      "author": "University of Wisconsin–Milwaukee",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "utah-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Utah_State_Aggies_logo.svg/330px-Utah_State_Aggies_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.32,
+      "kind": "athletics",
+      "team": "Utah State Aggies",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Utah_State_Aggies_logo.svg",
+      "author": "Utah State University Athletic Department",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "utah-valley-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Wolverines_wordmark.png/330px-Wolverines_wordmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 5.18,
+      "kind": "athletics",
+      "team": "Utah Valley Wolverines",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Wolverines_wordmark.png",
+      "author": "Utah Valley University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "virginia-tech": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Virginia_Tech_Hokies_logo.svg/330px-Virginia_Tech_Hokies_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 2.1,
+      "kind": "athletics",
+      "team": "Virginia Tech Hokies",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Virginia_Tech_Hokies_logo.svg",
+      "author": "Virginia Polytechnic Institute and State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "washington-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Washington_State_Cougars_wordmark.svg/330px-Washington_State_Cougars_wordmark.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.03,
+      "kind": "athletics",
+      "team": "Washington State Cougars",
+      "plate": {
+        "dark": false,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Washington_State_Cougars_wordmark.svg",
+      "author": "Washington State University Athletics",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "wayne-state-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Wayne_State_Warriors_primary_logo.svg/330px-Wayne_State_Warriors_primary_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.09,
+      "kind": "athletics",
+      "team": "Wayne State Warriors",
+      "plate": {
+        "dark": false,
+        "light": true
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Wayne_State_Warriors_primary_logo.svg",
+      "author": "Wayne State University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "webster-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Webster_univ_athletics_wmark.png/330px-Webster_univ_athletics_wmark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 4.49,
+      "kind": "athletics",
+      "team": "Webster Gorloks",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Webster_univ_athletics_wmark.png",
+      "author": "Unknown author",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "west-virginia-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/West_Virginia_Mountaineers_logo.svg/330px-West_Virginia_Mountaineers_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1.06,
+      "kind": "athletics",
+      "team": "West Virginia Mountaineers",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:West_Virginia_Mountaineers_logo.svg",
+      "author": "West Virginia University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    },
+    "western-michigan-university": {
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Western_Michigan_Broncos_%282021%29_logo.svg/330px-Western_Michigan_Broncos_%282021%29_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "aspect": 1,
+      "kind": "athletics",
+      "team": "Western Michigan Broncos",
+      "plate": {
+        "dark": true,
+        "light": false
+      },
+      "page": "https://commons.wikimedia.org/wiki/File:Western_Michigan_Broncos_(2021)_logo.svg",
+      "author": "Western Michigan University",
+      "license": "Public domain",
+      "licenseUrl": ""
+    }
+  }
+}

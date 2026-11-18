@@ -1,0 +1,238 @@
+"""The FastAPI application: ``create_app`` wires settings, storage and routes.
+
+Run locally with ``uv run uvicorn songnexus.service.app:create_app --factory``.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import contextlib
+import logging
+import os
+from collections.abc import AsyncIterator
+from typing import Any
+
+from fastapi import FastAPI
+from fastapi.openapi.utils import get_openapi
+from starlette.concurrency import run_in_threadpool
+from starlette.middleware.gzip import GZipMiddleware
+
+from songnexus import __version__
+from songnexus.config import Settings, get_settings, validate_for_serving
+from songnexus.identity.tokens import FirebaseIdTokenVerifier
+from songnexus.logs import configure_logging
+from songnexus.service.cache import build_cache
+from songnexus.service.deps import AppState
+from songnexus.service.errors import install_error_handlers
+from songnexus.service.flags import resolve_flags
+from songnexus.service.linking import cipher_from
+from songnexus.service.middleware import (
+    BodySizeLimitMiddleware,
+    CacheHeadersMiddleware,
+    RequestContextMiddleware,
+    SecurityHeadersMiddleware,
+)
+from songnexus.service.ratelimit import MethodClass, RateLimiter
+from songnexus.service.readmodel import ReadModelHolder, load_read_model, probe_version
+from songnexus.service.routes import (
+    accounts,
+    analysis,
+    browse,
+    catalog,
+    discover,
+    identity,
+    ops,
+    play,
+    playlists,
+    social,
+    users,
+)
+from songnexus.service.routes import ask as ask_routes
+from songnexus.service.routes import foryou as foryou_routes
+from songnexus.service.routes import links as links_routes
+from songnexus.service.routes import community as community_routes
+from songnexus.service.routes import friend_paths as friend_paths_routes
+from songnexus.service.routes import games as games_routes
+from songnexus.service.routes import recap as recap_routes
+from songnexus.service.schemas import ErrorResponse
+from songnexus.service.sync_job import run_sync
+from songnexus.storage.db import make_engine
+
+log = logging.getLogger(__name__)
+
+API_DESCRIPTION = (
+    "SongNexus maps the people behind the music and how they connect. Every connection is "
+    "backed by evidence with a source. Errors follow AIP-193; lists follow AIP-158."
+)
+
+
+async def _refresh_forever(holder: ReadModelHolder, interval_s: float) -> None:
+    while True:
+        await asyncio.sleep(interval_s)
+        if await run_in_threadpool(holder.refresh):
+            log.info("read model reloaded", extra={"version": holder.current().version})
+
+
+SYNC_POLL_S = 60.0
+GZIP_MIN_BYTES = 1024
+
+
+def _sync_once(state: AppState) -> dict[str, int]:
+    with state.outbound_http() as http:
+        return run_sync(state.engine, state.settings, state.holder.current(), http)
+
+
+async def _sync_forever(state: AppState) -> None:
+    """Development convenience: the scheduled sync job, run inside the API process.
+
+    Deployed environments run ``songnexus sync-accounts`` from a scheduler instead
+    (several API instances would otherwise sync the same accounts at once).
+    """
+    while True:
+        await asyncio.sleep(SYNC_POLL_S)
+        if not state.holder.ready or not state.flags.get("linkedAccounts", True):
+            continue
+        try:
+            counts = await run_in_threadpool(_sync_once, state)
+        except Exception:  # the loop must outlive any one failure
+            log.exception("linked-account sync failed")
+            continue
+        if counts["accounts"]:
+            log.info("linked accounts synced", extra=counts)
+
+
+def _openapi_with_error_model(app: FastAPI) -> dict[str, Any]:
+    """Returns the OpenAPI document with the real error contract.
+
+    FastAPI documents a 422 validation response that this API never sends;
+    every failure is instead the AIP-193 envelope with a canonical status.
+    """
+    if app.openapi_schema:
+        return app.openapi_schema
+    schema = get_openapi(
+        title=app.title, version=app.version, description=app.description, routes=app.routes
+    )
+    components = schema.setdefault("components", {}).setdefault("schemas", {})
+    for name in ("HTTPValidationError", "ValidationError"):
+        components.pop(name, None)
+    error_schemas = ErrorResponse.model_json_schema(
+        by_alias=True, ref_template="#/components/schemas/{model}"
+    )
+    components.update(error_schemas.pop("$defs", {}))
+    components["ErrorResponse"] = error_schemas
+    error_response = {
+        "description": "An error (AIP-193): see `error.status` and `error.details[0].reason`.",
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorResponse"}}},
+    }
+    for path in schema["paths"].values():
+        for operation in path.values():
+            operation["responses"].pop("422", None)
+            operation["responses"]["default"] = error_response
+    app.openapi_schema = schema
+    return schema
+
+
+def build_state(settings: Settings) -> AppState:
+    """Creates the process-wide state from settings.
+
+    Raises:
+        ConfigError: The configuration is unsafe for this environment.
+    """
+    validate_for_serving(settings, os.environ)
+    engine = make_engine(settings.database_url)
+    holder = ReadModelHolder(
+        lambda: load_read_model(engine, settings.genre_sources), lambda: probe_version(engine)
+    )
+    limiter = RateLimiter(
+        {
+            MethodClass.READ: settings.rate_limit_read_per_minute,
+            MethodClass.ANALYZE: settings.rate_limit_analyze_per_minute,
+            MethodClass.WRITE: settings.rate_limit_write_per_minute,
+        }
+    )
+    verifier = FirebaseIdTokenVerifier(settings.firebase_project_id)
+    return AppState(
+        settings,
+        engine,
+        holder,
+        limiter,
+        verifier,
+        resolve_flags(settings.flags),
+        cipher=cipher_from(settings),
+    )
+
+
+def create_app(settings: Settings | None = None, state: AppState | None = None) -> FastAPI:
+    """Builds the application.
+
+    Args:
+        settings: Configuration (default: from the environment).
+        state: Prebuilt state (tests inject one with a fake read model).
+    """
+    settings = settings or get_settings()
+    if state is None:
+        configure_logging(settings.log_level, json_output=settings.log_json)
+        state = build_state(settings)
+    app_state = state
+
+    @contextlib.asynccontextmanager
+    async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        await run_in_threadpool(app_state.holder.refresh)
+        if not app_state.holder.ready:
+            log.warning("starting without a catalog; requests get UNAVAILABLE until one loads")
+        refresher = asyncio.create_task(
+            _refresh_forever(app_state.holder, settings.read_model_refresh_s)
+        )
+        tasks = [refresher]
+        if settings.sync_in_process and app_state.cipher is not None:
+            tasks.append(asyncio.create_task(_sync_forever(app_state)))
+        try:
+            yield
+        finally:
+            for task in tasks:
+                task.cancel()
+            for task in tasks:
+                with contextlib.suppress(asyncio.CancelledError):
+                    await task
+
+    development = settings.environment == "development"
+    app = FastAPI(
+        title="SongNexus API",
+        version=__version__,
+        description=API_DESCRIPTION,
+        lifespan=lifespan,
+        openapi_url="/v1/openapi.json",
+        # Operation IDs are the AIP method names (GetArtist, FindPath, ...).
+        generate_unique_id_function=lambda route: route.summary or route.name,
+        docs_url="/v1/docs" if development else None,
+        redoc_url=None,
+    )
+    app.state.songnexus = app_state
+    app.state.response_cache = build_cache(settings.redis_url)
+    app.openapi = lambda: _openapi_with_error_model(app)  # type: ignore[method-assign]
+    install_error_handlers(app)
+    app.include_router(ops.router)
+    app.include_router(catalog.router)
+    app.include_router(analysis.router)
+    app.include_router(playlists.router)
+    app.include_router(play.router)
+    app.include_router(discover.router)
+    app.include_router(browse.router)
+    app.include_router(identity.router)
+    app.include_router(users.router)
+    app.include_router(accounts.router)
+    app.include_router(social.router)
+    app.include_router(community_routes.router)
+    app.include_router(games_routes.router)
+    app.include_router(friend_paths_routes.router)
+    app.include_router(recap_routes.router)
+    app.include_router(ask_routes.router)
+    app.include_router(foryou_routes.router)
+    # The middleware added last runs outermost, so security headers cover every
+    # response, including errors raised by the request-context layer.
+    app.add_middleware(BodySizeLimitMiddleware)
+    app.add_middleware(RequestContextMiddleware, gcp_project=settings.gcp_project)
+    app.add_middleware(CacheHeadersMiddleware)
+    app.add_middleware(GZipMiddleware, minimum_size=GZIP_MIN_BYTES, compresslevel=5)
+    app.add_middleware(SecurityHeadersMiddleware)
+    return app

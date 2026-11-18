@@ -1,0 +1,898 @@
+/* ---------- The connection web ----------
+   The page is the web. The canvas fills the stage over a faint wash of the
+   starting artist's color; the title, glass tools, legend and camera float
+   over it; a details panel sits beside it on wide screens and rises as a
+   bottom sheet on phones once something is selected. */
+
+.web {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  /* Phones: the top bar above, the floating tab bar below. */
+  block-size: calc(
+    100dvh - 2 * var(--nav-height) - env(safe-area-inset-bottom)
+  );
+  min-block-size: 420px;
+  overflow: hidden;
+}
+.web-error {
+  padding: var(--space-6) var(--space-4);
+}
+
+.web__stage {
+  position: relative;
+  min-block-size: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle, var(--fill-1) 1px, transparent 1.5px) 0 0 / 30px
+      30px,
+    radial-gradient(
+      70% 60% at 50% 45%,
+      hsl(var(--ambient-hue) 70% 50% / 13%),
+      transparent 70%
+    ),
+    radial-gradient(
+      100% 80% at 50% 40%,
+      var(--md-surface-container-low),
+      var(--md-surface) 80%
+    );
+}
+.web__canvas {
+  position: absolute;
+  inset: 0;
+}
+.web__canvas canvas {
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  touch-action: none;
+  cursor: grab;
+  outline: none;
+}
+.web__canvas canvas:focus-visible {
+  box-shadow: inset 0 0 0 3px var(--md-primary);
+}
+.web__tip {
+  position: absolute;
+  /* Physical, not logical: it is placed with a pixel transform from the left. */
+  top: 0;
+  left: 0;
+  z-index: 2;
+  max-inline-size: 280px;
+  padding: 7px 12px;
+  border-radius: var(--shape-m);
+  background: var(--md-inverse-surface);
+  color: var(--md-inverse-on-surface);
+  font: var(--label-large);
+  pointer-events: none;
+  box-shadow: var(--elevation-3);
+}
+
+/* Overlays let the canvas through except where they hold a control. */
+.web__top {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: linear-gradient(
+    var(--md-surface) 0%,
+    color-mix(in srgb, var(--md-surface) 70%, transparent) 55%,
+    transparent
+  );
+  pointer-events: none;
+}
+.web__top > *,
+.web__top-row > * {
+  pointer-events: auto;
+}
+.web__top-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  pointer-events: none;
+}
+.web__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+.web__heading .strapline {
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+}
+.web__heading h1 {
+  overflow: hidden;
+  font: 750 clamp(1.625rem, 1.1rem + 2vw, 2.75rem)/1.08 var(--font);
+  letter-spacing: var(--tracking-display);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.web__stats {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+  font-variant-numeric: tabular-nums;
+}
+.web__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.web__bar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px;
+  border-radius: var(--shape-full);
+}
+.web__bar .chip {
+  border-radius: var(--shape-full);
+  background: transparent;
+  box-shadow: none;
+}
+.web__bar .chip:hover {
+  background: var(--fill-2);
+}
+.web__bar .chip[aria-pressed='true'] {
+  background: var(--md-secondary-container);
+}
+.web__bar .icon-btn {
+  inline-size: 36px;
+  block-size: 36px;
+}
+.web__filter-toggle {
+  position: relative;
+}
+/* A dot says "filters are narrowing this web". */
+.web__filter-toggle[data-active]::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-end: 6px;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: var(--shape-full);
+  background: var(--brand);
+}
+.web__trail {
+  max-inline-size: 100%;
+}
+.web__trail ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.web__crumb {
+  padding-inline: 4px 14px;
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+.web__crumb .cover {
+  inline-size: 28px;
+  flex: none;
+  font-size: 0.75rem;
+}
+.web__trail .chip[aria-pressed='true'] {
+  background: var(--md-secondary-container);
+}
+
+.web__filters {
+  position: absolute;
+  inset-block-start: 76px;
+  inset-inline-end: var(--space-4);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  inline-size: min(400px, calc(100% - 2 * var(--space-4)));
+  max-block-size: calc(100% - 92px);
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--shape-xl);
+}
+.web__filters h2 {
+  font: var(--title-large);
+}
+.web__filter-group {
+  gap: var(--space-2);
+}
+
+.web__notices {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  pointer-events: none;
+}
+.web__notices > * {
+  pointer-events: auto;
+}
+.web__notice {
+  max-inline-size: 440px;
+  border-radius: var(--shape-xl);
+}
+/* "Drawing the web…": a pill under the starting artist while the first page loads. */
+.web__drawing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: 140px;
+  padding: 10px 16px;
+  border-radius: var(--shape-full);
+  font: var(--label-large);
+}
+@keyframes web-pulse {
+  50% {
+    transform: scale(0.6);
+    opacity: 0.45;
+  }
+}
+.web__drawing-dot {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  animation: web-pulse 1s var(--motion-standard) infinite;
+}
+
+.web__legend {
+  position: absolute;
+  inset-block-end: var(--space-4);
+  inset-inline-start: var(--space-4);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-inline-size: min(600px, calc(100% - 96px));
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--shape-l);
+}
+.web__legend-toggle {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  min-block-size: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--md-on-surface);
+  font: var(--label-large);
+  cursor: pointer;
+}
+.web__legend-toggle:hover {
+  text-decoration: underline;
+}
+.web__legend-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-1) var(--space-2);
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+.web__keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  color: var(--md-on-surface-variant);
+  font: var(--label-medium);
+  list-style: none;
+}
+.web__keys li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 20px;
+}
+
+.web__zoom {
+  position: absolute;
+  inset-block-end: var(--space-4);
+  inset-inline-end: var(--space-4);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 3px;
+  border-radius: var(--shape-full);
+}
+.web__zoom .icon-btn {
+  inline-size: 42px;
+  block-size: 42px;
+}
+
+/* The list view: the same web as text. */
+.web-list {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: 168px var(--space-4) var(--space-6);
+  background: var(--md-surface);
+}
+.web-list > .list {
+  max-inline-size: 760px;
+}
+.web-list__row {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+}
+.web-list__row .list-row {
+  flex: 1;
+}
+.web-list__branch {
+  margin-inline-start: var(--space-5);
+  padding-inline-start: var(--space-3);
+  border-inline-start: 1px solid var(--md-outline-variant);
+}
+.web-list .list-row__subtitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* The loading layout: a core and an orbit of covers, shimmering. */
+.web-skeleton {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.web-skeleton > * {
+  grid-area: 1 / 1;
+}
+.web-skeleton__core {
+  inline-size: 72px;
+  block-size: 72px;
+  border-radius: 50%;
+}
+.web-skeleton__orbit {
+  --angle: calc(var(--i) * 40deg);
+  inline-size: 36px;
+  block-size: 36px;
+  border-radius: 50%;
+  transform: rotate(var(--angle)) translateX(min(30vw, 170px))
+    rotate(calc(-1 * var(--angle)));
+  opacity: 0.8;
+}
+.web-skeleton__line {
+  display: block;
+  inline-size: 12rem;
+  block-size: 14px;
+  border-radius: var(--shape-full);
+}
+.web-skeleton__line[data-w='s'] {
+  inline-size: 7rem;
+  block-size: 10px;
+}
+.web-skeleton__line[data-w='l'] {
+  inline-size: min(18rem, 70%);
+  block-size: 28px;
+  margin-block: var(--space-1);
+}
+.web-skeleton__portrait {
+  inline-size: 96px;
+  block-size: 96px;
+  border-radius: 50%;
+}
+.web-skeleton__row {
+  display: block;
+  block-size: 52px;
+  border-radius: var(--shape-m);
+}
+.web[data-loading] .web__panel {
+  display: none;
+}
+
+/* ---------- The details panel ---------- */
+
+.web__panel {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 6;
+  display: none;
+  min-block-size: 0;
+  max-block-size: 62%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-start-start-radius: var(--shape-xl);
+  border-start-end-radius: var(--shape-xl);
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  backdrop-filter: blur(28px) saturate(1.6);
+  box-shadow:
+    var(--edge-light),
+    inset 0 0 0 1px var(--md-outline-variant),
+    var(--elevation-3);
+}
+@keyframes sheet-rise {
+  from {
+    transform: translateY(40%);
+    opacity: 0;
+  }
+}
+.web[data-selected='true'] .web__panel {
+  display: block;
+  animation: sheet-rise var(--duration-medium) var(--motion-decelerate);
+}
+/* The handle at the top of the sheet: tap or swipe down to close. */
+.web__grabber {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: block;
+  inline-size: 100%;
+  block-size: 22px;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+}
+.web__grabber::before {
+  content: '';
+  display: block;
+  inline-size: 40px;
+  block-size: 4px;
+  margin: 10px auto 0;
+  border-radius: 2px;
+  background: var(--fill-3);
+}
+.web-panel {
+  --hue: var(--ambient-hue);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-4) var(--space-5);
+}
+.web-panel__hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.web-panel__titles {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+.web-panel__titles .strapline {
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+}
+.web-panel__titles h2 {
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.web-panel__hero--pair .web-panel__titles h2 {
+  font: var(--headline-small);
+}
+.web-panel__dis {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+.web-panel__close {
+  align-self: flex-start;
+  margin-block-start: calc(-1 * var(--space-1));
+  margin-inline-end: calc(-1 * var(--space-2));
+}
+.web-panel__pair {
+  display: flex;
+  flex: none;
+}
+.web-panel__pair .portrait + .portrait {
+  margin-inline-start: -18px;
+}
+.web-panel__name {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.web-panel__name:hover {
+  text-decoration: underline;
+}
+.web-panel__amp {
+  color: var(--md-on-surface-variant);
+}
+.web-panel__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  margin: 0;
+}
+.web-panel__stats > div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+}
+.web-panel__stats dt {
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+}
+.web-panel__stats dd {
+  margin: 0;
+  font: 750 1.75rem/1 var(--font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-display);
+}
+.web-panel__genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.web-panel__genres li {
+  padding: 4px 12px;
+  border-radius: var(--shape-full);
+  background: hsl(var(--hue) 70% 50% / 16%);
+  box-shadow: inset 0 0 0 1px hsl(var(--hue) 70% 60% / 30%);
+  font: var(--label-medium);
+}
+.web-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.web-panel__note,
+.web-panel__hint {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+.web-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--md-outline-variant);
+}
+.web-panel__section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.web-panel__section h3 {
+  color: var(--md-on-surface-variant);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.web-panel__section .list {
+  margin-inline: calc(-1 * var(--space-3));
+}
+.web-panel__section > .btn {
+  align-self: flex-start;
+}
+.web-panel .list-row__subtitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.web-row .list-row__body {
+  gap: 2px;
+}
+/* How strong a connection is, against the strongest in the list. */
+.web-row__bar {
+  display: block;
+  block-size: 3px;
+  margin-block-start: 4px;
+  border-radius: 2px;
+  background: var(--fill-1);
+}
+.web-row__bar > span {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--bar);
+}
+
+/* The credits behind one connection (also used in the evidence sheet). */
+.connection-evidence {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.connection-evidence__count {
+  font: 750 1.75rem/1.1 var(--font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-display);
+}
+.connection-evidence__kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  color: var(--md-on-surface-variant);
+  font: var(--label-large);
+  list-style: none;
+}
+.connection-evidence__kinds li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.connection-evidence .btn {
+  align-self: flex-start;
+}
+
+/* The artist isn't in our data yet. */
+.web-missing {
+  display: grid;
+  place-items: center;
+  min-block-size: 60vh;
+  padding: var(--space-6) var(--space-4);
+}
+.web-missing__search {
+  inline-size: min(100%, 480px);
+}
+.web-missing__picks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 599px) {
+  .web__heading .strapline {
+    display: none;
+  }
+  /* Icons only; the label stays in the accessibility tree. */
+  .web__bar-label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .web__bar .btn {
+    padding-inline: var(--space-2);
+  }
+  .web__bar .btn .icon {
+    margin: 0;
+  }
+  .web__top-row {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .web__heading {
+    flex: 1 1 100%;
+  }
+  .web__tools {
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: var(--space-1);
+  }
+  .web__bar .chip {
+    padding-inline: var(--space-3);
+  }
+  .web__top {
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+  .web__keys {
+    display: none;
+  }
+  .web__legend {
+    inset-block-end: var(--space-3);
+    inset-inline-start: var(--space-3);
+    padding-inline: var(--space-3);
+  }
+  .web__zoom {
+    inset-block-end: var(--space-3);
+    inset-inline-end: var(--space-3);
+  }
+  .web-list {
+    padding-block-start: 200px;
+  }
+  .web-panel__titles h2 {
+    font: var(--headline-small);
+  }
+}
+
+@media (min-width: 840px) {
+  .web {
+    block-size: calc(100dvh - var(--nav-height));
+  }
+}
+
+/* Room for the panel beside the web. */
+@media (min-width: 1000px) {
+  .web {
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
+  .web__panel,
+  .web[data-selected='true'] .web__panel {
+    position: static;
+    display: block;
+    max-block-size: none;
+    border-radius: 0;
+    background: var(--md-surface-container-low);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: inset 1px 0 0 var(--md-outline-variant);
+    animation: none;
+  }
+  [dir='rtl'] .web__panel {
+    box-shadow: inset -1px 0 0 var(--md-outline-variant);
+  }
+  .web__grabber {
+    display: none;
+  }
+  .web__top {
+    padding: var(--space-5);
+  }
+  .web-panel {
+    padding: var(--space-5);
+    background: radial-gradient(
+      120% 50% at 0% 0%,
+      hsl(var(--hue) 70% 50% / 14%),
+      transparent 70%
+    );
+    transition: background var(--duration-long) var(--motion-standard);
+  }
+  .web__filters {
+    inset-block-start: 92px;
+    inset-inline-end: var(--space-5);
+  }
+  .web-list {
+    padding-inline: var(--space-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .web__drawing-dot {
+    animation: none;
+  }
+}
+@media (forced-colors: active) {
+  .web__panel {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* ---------- v5: orbits, songs, the first-visit hint ---------- */
+
+/* The orbit chips are the legend and the filter at once. */
+.web__orbits {
+  margin-inline: calc(-1 * var(--space-1));
+  padding-inline: var(--space-1);
+}
+.web__orbits .chip {
+  min-block-size: 32px;
+  gap: 6px;
+  padding-inline: 12px;
+}
+.web__orbit-count {
+  color: var(--md-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+.web__orbits .chip[aria-pressed='true'] .web__orbit-count {
+  color: inherit;
+  opacity: 0.7;
+}
+
+/* Songs two artists made together: a page each, and a play link out. */
+.web-songs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.web-song {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  border-radius: var(--shape-m);
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.web-song:hover {
+  background: var(--fill-1);
+}
+.web-song__link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  min-block-size: 52px;
+  padding-inline: var(--space-2);
+  color: inherit;
+  text-decoration: none;
+}
+.web-song__art {
+  --hue: 340;
+  display: grid;
+  place-items: center;
+  inline-size: 40px;
+  block-size: 40px;
+  flex: none;
+  border-radius: var(--shape-s);
+  background: linear-gradient(
+    150deg,
+    hsl(var(--hue) 62% 42%),
+    hsl(calc(var(--hue) - 30) 55% 16%)
+  );
+  color: rgb(255 255 255 / 90%);
+}
+.web-song__title {
+  overflow: hidden;
+  font: var(--title-small);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.web-song__play {
+  flex: none;
+  color: var(--md-on-surface);
+}
+.web-song__play .icon {
+  inline-size: 22px;
+  block-size: 22px;
+}
+.web-song__play:hover {
+  background: var(--brand-strong);
+  color: var(--on-brand);
+}
+
+/* One short hint on the first visit, until dismissed: the legend's first row. */
+.web__coach {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-inline-end: calc(-1 * var(--space-2));
+  padding-block-end: var(--space-1);
+  border-block-end: 1px solid var(--md-outline-variant);
+  font: var(--body-medium);
+  animation: popup-in var(--duration-medium) var(--motion-decelerate);
+}
+.web__coach > .icon {
+  flex: none;
+  color: var(--brand);
+}
+.web__coach p {
+  flex: 1;
+  margin: 0;
+}
+@media (max-width: 839px) {
+  .web__coach {
+    font: var(--body-small);
+  }
+  /* On phones the orbit chips are the whole legend. */
+  .web__legend-toggle {
+    display: none;
+  }
+  .web__legend {
+    padding-block: var(--space-2);
+  }
+}

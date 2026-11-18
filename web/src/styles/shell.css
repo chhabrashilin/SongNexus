@@ -1,0 +1,439 @@
+/* ---------- App shell ----------
+   Phones: top bar, content, a bottom bar of tabs.
+   840px and up: top bar across, the guide down the side (full, or a narrow
+   rail when the listener collapses it), content beside it. */
+
+.shell {
+  display: grid;
+  /* minmax(0, 1fr): long content can't stretch the page wider than the screen. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  min-block-size: 100dvh;
+}
+
+.top-bar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  block-size: var(--nav-height);
+  padding-inline: var(--space-3) var(--space-4);
+  /* Clear at the top of a page so the ambient color shows through; glass once
+     content scrolls under it (data-scrolled is set by the shell). */
+  background: transparent;
+  border-block-end: 1px solid transparent;
+  transition:
+    background var(--duration-medium) var(--motion-standard),
+    border-color var(--duration-medium) var(--motion-standard);
+}
+.shell[data-scrolled] .top-bar {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-block-end-color: var(--md-outline-variant);
+}
+.top-bar__start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: none;
+}
+.guide-toggle {
+  display: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: var(--touch-target);
+  padding-inline: var(--space-1);
+  border-radius: var(--shape-s);
+  color: var(--md-on-surface);
+  font: 750 1.375rem/1 var(--font);
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+.brand__mark {
+  inline-size: 28px;
+  block-size: 28px;
+  flex: none;
+}
+
+.top-bar__search {
+  flex: 1;
+  min-inline-size: 0;
+  max-inline-size: 640px;
+  margin-inline: auto;
+}
+.top-bar__search .field {
+  min-block-size: 44px;
+  border-radius: var(--shape-full);
+  background: var(--fill-1);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  transition:
+    background var(--duration-short) var(--motion-standard),
+    box-shadow var(--duration-short) var(--motion-standard);
+}
+.top-bar__search .field:hover {
+  background: var(--fill-2);
+}
+.top-bar__search .field:focus-within {
+  background: var(--md-surface-container-high);
+  box-shadow:
+    inset 0 0 0 1px var(--md-outline),
+    0 0 0 4px var(--fill-1);
+}
+/* The shortcut that focuses search, shown until the listener is typing. */
+.search-hint {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+.top-bar__search .field:focus-within .search-hint {
+  display: none;
+}
+@media (min-width: 840px) and (hover: hover) {
+  .search-hint {
+    display: inline-flex;
+  }
+}
+.top-bar__search .field .icon {
+  color: var(--md-on-surface-variant);
+}
+.top-bar__end {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--space-2);
+}
+
+.account {
+  display: grid;
+  place-items: center;
+  inline-size: var(--touch-target);
+  block-size: var(--touch-target);
+  border-radius: var(--shape-full);
+}
+.account .cover {
+  inline-size: 32px;
+  font-size: 0.9375rem;
+}
+
+/* On phones the wordmark is visually hidden (still the link's accessible name). */
+@media (max-width: 599px) {
+  .brand__name {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* Icon only; the label stays as the button's accessible name. */
+  .top-bar .btn--compact .icon + * {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .top-bar .btn--compact .icon {
+    margin: 0;
+  }
+  .top-bar .btn--compact {
+    padding-inline: var(--space-2);
+  }
+}
+
+.main {
+  /* Page padding, as variables so a hero can bleed to the edges. */
+  --page-x: var(--space-4);
+  --page-y: var(--space-5);
+  position: relative;
+  inline-size: 100%;
+  max-inline-size: var(--content-max);
+  margin-inline: auto;
+  padding: var(--page-y) var(--page-x) calc(var(--nav-height) + var(--space-8));
+}
+/* At least a screen tall, so the footer starts below the fold and never
+   jumps into view as a page's content loads. */
+.main__page {
+  min-block-size: 100dvh;
+}
+/* Full-bleed pages (the connection web) manage their own layout. */
+.main--wide {
+  max-inline-size: none;
+  padding: 0;
+}
+
+.footer {
+  margin-block-start: var(--space-7);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--md-outline-variant);
+  gap: var(--space-4);
+  font: var(--body-small);
+}
+.footer a {
+  color: inherit;
+  text-decoration: none;
+}
+.footer a:hover {
+  color: var(--md-on-surface);
+  text-decoration: underline;
+}
+
+/* The guide. On phones it is the bottom bar. */
+.nav {
+  position: fixed;
+  inset-inline: var(--space-3);
+  inset-block-end: calc(var(--space-2) + env(safe-area-inset-bottom));
+  z-index: 20;
+  border-radius: var(--shape-xl);
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow:
+    var(--edge-light),
+    inset 0 0 0 1px var(--md-outline-variant),
+    var(--elevation-3);
+}
+.nav__links {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  block-size: var(--nav-height);
+}
+.nav__extra,
+.nav__links .nav__item:not([data-phone]) {
+  display: none;
+}
+
+.nav__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-block-size: var(--touch-target);
+  min-inline-size: 0;
+  color: var(--md-on-surface-variant);
+  font: 500 0.6875rem/1 var(--font);
+  text-decoration: none;
+}
+.nav__label {
+  max-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nav__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.nav__item[aria-current='page'] {
+  color: var(--md-on-surface);
+}
+/* The current tab's icon sits on a pill. */
+.nav__icon {
+  inline-size: 52px;
+  block-size: 28px;
+  border-radius: var(--shape-full);
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.nav__item[aria-current='page'] .nav__icon {
+  background: var(--fill-3);
+}
+
+/* Unread count: a red dot on the icon; the number is in the full guide. */
+.nav__badge {
+  position: absolute;
+  inset-block-start: -3px;
+  inset-inline-end: -5px;
+  min-inline-size: 16px;
+  block-size: 16px;
+  padding-inline: 4px;
+  border-radius: var(--shape-full);
+  background: var(--brand-strong);
+  color: var(--on-brand);
+  font: 700 0.625rem/16px var(--font);
+  text-align: center;
+}
+
+@media (min-width: 840px) {
+  .shell {
+    grid-template-columns: var(--sidebar) minmax(0, 1fr);
+    grid-template-rows: var(--nav-height) 1fr;
+  }
+  .shell[data-rail] {
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+  }
+  .top-bar {
+    grid-column: 1 / -1;
+    padding-inline: var(--space-3) var(--space-5);
+  }
+  .top-bar__start {
+    inline-size: calc(var(--sidebar) - var(--space-3));
+  }
+  .guide-toggle {
+    display: inline-grid;
+  }
+  .nav {
+    position: sticky;
+    inset-block: var(--nav-height) auto;
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    block-size: calc(100dvh - var(--nav-height));
+    overflow-y: auto;
+    padding: var(--space-2) var(--space-3);
+    border-radius: 0;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+    scrollbar-width: thin;
+  }
+  .nav__icon {
+    inline-size: auto;
+    block-size: auto;
+  }
+  .nav__item[aria-current='page'] .nav__icon {
+    background: none;
+  }
+  .nav__links .nav__item:not([data-phone]) {
+    display: flex;
+  }
+  .nav__links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    block-size: auto;
+  }
+  .nav__item {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--space-4);
+    min-block-size: 48px;
+    padding-inline: var(--space-4);
+    border-radius: var(--shape-full);
+    color: var(--md-on-surface-variant);
+    font: 550 0.9375rem/1.25 var(--font);
+    transition: background var(--duration-short) var(--motion-standard);
+  }
+  .nav__item:hover {
+    background: var(--fill-1);
+    color: var(--md-on-surface);
+  }
+  .nav__item[aria-current='page'] {
+    background: var(--fill-2);
+    color: var(--md-on-surface);
+    font-weight: 700;
+  }
+  .nav__label {
+    flex: 1;
+  }
+
+  .nav__extra {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-block-start: var(--space-4);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid var(--md-outline-variant);
+  }
+  .nav__prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4) var(--space-4);
+    color: var(--md-on-surface-variant);
+    font: var(--body-medium);
+  }
+  .nav__heading {
+    padding: var(--space-2) var(--space-4) var(--space-1);
+    color: var(--md-on-surface-variant);
+    font: var(--label-medium);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .nav__recent {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-block-size: 48px;
+    padding-inline: var(--space-4);
+    border-radius: var(--shape-full);
+    color: var(--md-on-surface);
+    text-decoration: none;
+  }
+  .nav__recent:hover {
+    background: var(--fill-1);
+  }
+  .nav__recent .cover {
+    inline-size: 28px;
+    flex: none;
+    font-size: 0.8125rem;
+  }
+  .nav__recent-text {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+  .nav__recent-name {
+    overflow: hidden;
+    font: var(--label-large);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .nav__recent-kind {
+    color: var(--md-on-surface-variant);
+    font: var(--body-small);
+  }
+
+  /* The rail: icons over small labels; the extras are hidden. */
+  .shell[data-rail] .top-bar__start {
+    inline-size: auto;
+  }
+  .shell[data-rail] .nav {
+    padding-inline: var(--space-1);
+  }
+  .shell[data-rail] .nav__item {
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-block-size: 64px;
+    padding-inline: 2px;
+    border-radius: var(--shape-l);
+    font: 550 0.625rem/1 var(--font);
+  }
+  .shell[data-rail] .nav__label {
+    flex: none;
+  }
+  .shell[data-rail] .nav__extra {
+    display: none;
+  }
+
+  .main {
+    --page-x: clamp(var(--space-5), 4vw, 72px);
+    --page-y: var(--space-6);
+    grid-column: 2;
+    grid-row: 2;
+    padding: var(--page-y) var(--page-x) var(--space-6);
+  }
+  .main--wide {
+    padding: 0;
+  }
+  .snackbar {
+    inset-block-end: var(--space-5);
+  }
+}

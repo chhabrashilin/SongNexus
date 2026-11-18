@@ -1,0 +1,97 @@
+/**
+ * The genre filter (US-12), shared by Explore, Six degrees, Compare and Collaborations.
+ *
+ * Kept in the URL where a screen is shareable, so a link shows the same filtered
+ * result to anyone: `genres` (comma-separated resource names), `unknown=0` to drop
+ * artists without genre data, `subgenres=0` to match selected genres exactly.
+ */
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useSearchParams} from 'react-router';
+
+export interface GenreSelection {
+  genres: string[];
+  includeUnknownGenre: boolean;
+  includeSubgenres: boolean;
+}
+
+export const NO_GENRE_FILTER: GenreSelection = {
+  genres: [],
+  includeUnknownGenre: true,
+  includeSubgenres: true,
+};
+
+export function readGenreSelection(search: URLSearchParams): GenreSelection {
+  return {
+    genres: (search.get('genres') ?? '').split(',').filter(Boolean),
+    includeUnknownGenre: search.get('unknown') !== '0',
+    includeSubgenres: search.get('subgenres') !== '0',
+  };
+}
+
+/** Returns `search` with the selection written in; defaults are left out of the URL. */
+export function writeGenreSelection(
+  search: URLSearchParams,
+  selection: GenreSelection,
+): URLSearchParams {
+  const next = new URLSearchParams(search);
+  const set = (key: string, value: string | null) =>
+    value === null ? next.delete(key) : next.set(key, value);
+  set('genres', selection.genres.length ? selection.genres.join(',') : null);
+  set('unknown', selection.includeUnknownGenre ? null : '0');
+  set('subgenres', selection.includeSubgenres ? null : '0');
+  return next;
+}
+
+export function isFiltered(selection: GenreSelection): boolean {
+  return selection.genres.length > 0;
+}
+
+/**
+ * The genre selection held in the URL, and a setter that replaces the history entry.
+ *
+ * The setter takes only what changed and merges it into the URL as it is when the
+ * update applies, so two quick changes (add a genre, then untick subgenres) never
+ * overwrite each other. The router applies URL changes asynchronously, so the
+ * selection is also held locally and updated at once: a checkbox reflects a tap
+ * immediately instead of snapping back until the URL catches up.
+ */
+export function useGenreSelection(): [
+  GenreSelection,
+  (change: Partial<GenreSelection>) => void,
+] {
+  const [search, setSearch] = useSearchParams();
+  // Depend on this filter's own parameters only: other URL changes (a tab, a
+  // year) must not hand out a new object, or effects keyed on it re-run.
+  const genres = search.get('genres');
+  const unknown = search.get('unknown');
+  const subgenres = search.get('subgenres');
+  const fromUrl = useMemo(
+    () =>
+      readGenreSelection(
+        new URLSearchParams({
+          ...(genres !== null && {genres}),
+          ...(unknown !== null && {unknown}),
+          ...(subgenres !== null && {subgenres}),
+        }),
+      ),
+    [genres, unknown, subgenres],
+  );
+  const [selection, setSelection] = useState(fromUrl);
+  // The URL wins whenever it changes (back and forward, shared links).
+  useEffect(() => setSelection(fromUrl), [fromUrl]);
+  const update = useCallback(
+    (change: Partial<GenreSelection>) => {
+      setSelection(previous => ({...previous, ...change}));
+      setSearch(
+        current =>
+          writeGenreSelection(current, {
+            ...readGenreSelection(current),
+            ...change,
+          }),
+        {replace: true},
+      );
+    },
+    [setSearch],
+  );
+  return [selection, update];
+}
