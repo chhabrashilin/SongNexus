@@ -1,0 +1,571 @@
+/*
+ * Stories: one story at a time, filling the viewer. Portraits of the people in
+ * it over a wash of the lead's color, the sentence in display type, the credit
+ * that backs it. Tokens only; logical properties.
+ */
+
+.stories {
+  /* The viewer's height: the screen minus the top bar, the page padding and
+     the title row above it. On phones, also the floating tab bar below. */
+  --viewer-h: max(
+    520px,
+    calc(100dvh - var(--nav-height) - var(--page-y) - 150px)
+  );
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-inline-size: 1180px;
+  margin-inline: auto;
+}
+
+/* ---------- Title row and controls ---------- */
+
+.stories__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.stories__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+.stories__titles h1 {
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
+}
+.stories__controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  padding: 2px;
+  border-radius: var(--shape-full);
+}
+.stories__count {
+  min-inline-size: 4.5ch;
+  padding-inline: var(--space-3) var(--space-1);
+  color: var(--md-on-surface-variant);
+  font: var(--label-large);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.stories__controls .icon-btn[aria-disabled='true'] {
+  opacity: 0.38;
+  cursor: default;
+}
+.stories__controls .icon-btn[aria-disabled='true']:hover {
+  background: transparent;
+}
+
+/* ---------- Progress segments ---------- */
+
+.stories__progress {
+  display: flex;
+  gap: 4px;
+  block-size: 4px;
+}
+.stories__seg {
+  position: relative;
+  flex: 1 1 0;
+  min-inline-size: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--fill-3);
+}
+.stories__seg::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 0;
+  background: var(--md-on-surface);
+}
+.stories__seg[data-state='done']::after {
+  inline-size: 100%;
+  opacity: 0.6;
+}
+.stories__seg[data-state='current']::after {
+  inline-size: 100%;
+}
+/* While playing, the current segment fills over the time the story stays up. */
+@keyframes story-fill {
+  from {
+    inline-size: 0;
+  }
+  to {
+    inline-size: 100%;
+  }
+}
+.stories__seg[data-playing]::after {
+  animation: story-fill var(--seg-ms, 9s) linear both;
+}
+
+/* ---------- The viewer ---------- */
+
+.stories__feed {
+  position: relative;
+  block-size: var(--viewer-h);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: block mandatory;
+  scrollbar-width: none;
+  border-radius: var(--shape-xl);
+  list-style: none;
+  /* Vertical swipes scroll; sideways swipes are ours (next / previous). */
+  touch-action: pan-y;
+}
+.stories__feed::-webkit-scrollbar {
+  display: none;
+}
+.stories__feed:focus-visible {
+  outline-offset: 3px;
+}
+.stories__item {
+  block-size: 100%;
+  padding-block-end: var(--space-3);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* ---------- A story ---------- */
+
+.story {
+  --hue: 350;
+  --portrait: clamp(104px, 21vmin, 232px);
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  block-size: 100%;
+  overflow: hidden;
+  border-radius: var(--shape-xl);
+  background:
+    radial-gradient(
+      90% 70% at 15% 0%,
+      hsl(var(--hue) 80% 50% / 38%),
+      transparent 70%
+    ),
+    radial-gradient(
+      70% 60% at 100% 100%,
+      hsl(calc(var(--hue) + 50) 75% 45% / 22%),
+      transparent 70%
+    ),
+    var(--md-surface-container-low);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  isolation: isolate;
+}
+
+/* The lead's photo (or art), blurred into a color field behind everything. */
+.story__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.story__backdrop .cover {
+  block-size: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+  color: transparent;
+  opacity: 0.5;
+  filter: blur(56px) saturate(1.4);
+  transform: scale(1.25);
+}
+.story__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    light-dark(rgb(255 255 255 / 30%), rgb(0 0 0 / 18%)) 40%,
+    light-dark(rgb(255 255 255 / 88%), rgb(8 8 8 / 82%)) 100%
+  );
+}
+
+/* The people: portraits joined by the connection. */
+.story__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 0;
+  padding: var(--space-6) var(--space-4) var(--space-3);
+}
+.story__node {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+}
+.story__link {
+  flex: none;
+  inline-size: clamp(14px, 4vw, 48px);
+  block-size: 2px;
+  margin-block-end: 2.25rem;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--md-on-surface) 0 6px,
+    transparent 6px 11px
+  );
+  opacity: 0.55;
+}
+.story__person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: var(--portrait);
+  margin: 0;
+}
+.story__node[data-role='via'] .story__person {
+  --portrait-via: calc(var(--portrait) * 0.72);
+  inline-size: var(--portrait-via);
+}
+.story__person .cover {
+  font-size: calc(var(--portrait) * 0.38);
+  box-shadow:
+    0 0 0 4px light-dark(rgb(255 255 255 / 70%), rgb(255 255 255 / 10%)),
+    var(--elevation-3);
+}
+.story__node[data-role='via'] .story__person .cover {
+  font-size: calc(var(--portrait) * 0.27);
+  box-shadow:
+    0 0 0 3px hsl(var(--hue) 85% 60% / 85%),
+    var(--elevation-3);
+}
+.story__person figcaption {
+  max-inline-size: calc(var(--portrait) + 24px);
+  overflow: hidden;
+  font: var(--title-medium);
+  letter-spacing: var(--tracking-title);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.story__node[data-role='via'] figcaption {
+  color: var(--md-on-surface-variant);
+  font: var(--label-large);
+}
+
+/* The people arrive when their story does. */
+@keyframes story-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.92);
+  }
+}
+.stories__item[data-current] .story__node {
+  animation: story-pop var(--duration-long) var(--motion-spring) both;
+}
+.stories__item[data-current] .story__node:nth-child(2) {
+  animation-delay: 70ms;
+}
+.stories__item[data-current] .story__node:nth-child(3) {
+  animation-delay: 140ms;
+}
+@keyframes story-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+.stories__item[data-current] .story__sentence {
+  animation: story-rise var(--duration-long) var(--motion-decelerate) 90ms both;
+}
+
+/* The words. */
+.story__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  max-block-size: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: 0 var(--space-5) var(--space-5);
+}
+.story__kind {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 5px 12px 5px 10px;
+  border-radius: var(--shape-full);
+  background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 12%));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.story__pos {
+  color: var(--md-on-surface-variant);
+  letter-spacing: normal;
+  text-transform: none;
+}
+.story__pos::before {
+  content: '·';
+  margin-inline-end: var(--space-2);
+}
+.story__sentence {
+  max-inline-size: 26ch;
+  font: var(--headline-small);
+  letter-spacing: var(--tracking-title);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+.story__credit {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-inline-size: 56ch;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--shape-l);
+  background: light-dark(rgb(255 255 255 / 55%), rgb(0 0 0 / 28%));
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+}
+.story__credit-label {
+  color: var(--md-on-surface-variant);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.story__credit-text {
+  font: var(--body-large);
+}
+.story__credit-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font: var(--label-medium);
+}
+.story__credit-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: 28px;
+  color: var(--md-on-surface-variant);
+}
+.story__credit-links a:hover {
+  color: var(--md-on-surface);
+}
+.story__all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--touch-target);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--md-on-surface-variant);
+  font: var(--label-large);
+  cursor: pointer;
+}
+.story__all:hover {
+  color: var(--md-on-surface);
+  text-decoration: underline;
+}
+.story__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.story__honest {
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+}
+
+/* ---------- States: loading, empty, the end, flag off ---------- */
+
+.story--state {
+  grid-template-rows: 1fr;
+  place-items: center;
+  min-block-size: var(--viewer-h);
+}
+.stories__item .story--state {
+  min-block-size: 0;
+}
+.story__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-inline-size: 44ch;
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+}
+.story__state .story__actions {
+  justify-content: center;
+}
+.story__state-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 72px;
+  block-size: 72px;
+  border-radius: var(--shape-full);
+  background: hsl(var(--hue) 75% 50% / 26%);
+  color: hsl(var(--hue) 95% light-dark(30%, 82%));
+}
+.story__state-title {
+  font: var(--headline-medium);
+  letter-spacing: var(--tracking-title);
+  text-wrap: balance;
+}
+.story__state-body {
+  color: var(--md-on-surface-variant);
+  font: var(--body-large);
+  text-wrap: pretty;
+}
+.story--skeleton {
+  min-block-size: var(--viewer-h);
+}
+.story__skel-portrait {
+  inline-size: var(--portrait);
+  aspect-ratio: 1;
+  border-radius: var(--shape-full);
+}
+.story__skel-portrait--via {
+  inline-size: calc(var(--portrait) * 0.72);
+  margin-inline: var(--space-5);
+}
+.story__skel-line {
+  display: block;
+  inline-size: min(100%, 560px);
+  block-size: 18px;
+}
+.story__skel-line--short {
+  inline-size: 140px;
+}
+.story__skel-line--title {
+  block-size: 32px;
+}
+.story__skel-line--box {
+  block-size: 84px;
+  border-radius: var(--shape-l);
+}
+
+.stories__hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--md-on-surface-variant);
+  font: var(--body-small);
+}
+.stories__sheet-lead {
+  font: var(--title-large);
+  letter-spacing: var(--tracking-title);
+  text-wrap: balance;
+}
+
+/* ---------- Wider screens: the people beside the words ---------- */
+
+@media (min-width: 960px) {
+  .story {
+    --portrait: clamp(150px, 15vw, 232px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: center;
+  }
+  .story__backdrop::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      light-dark(rgb(255 255 255 / 40%), rgb(0 0 0 / 22%)) 45%,
+      light-dark(rgb(255 255 255 / 86%), rgb(8 8 8 / 78%)) 100%
+    );
+  }
+  [dir='rtl'] .story__backdrop::after {
+    transform: scaleX(-1);
+  }
+  .story__stage {
+    padding: var(--space-6);
+  }
+  .story__text {
+    justify-content: center;
+    padding: var(--space-7) var(--space-7) var(--space-7) var(--space-3);
+  }
+  .story__sentence {
+    font: var(--display-small);
+    letter-spacing: var(--tracking-title);
+  }
+  .story--state,
+  .story--skeleton {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .story--skeleton {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* ---------- Phones: room for the floating tab bar ---------- */
+
+@media (max-width: 839px) {
+  .stories {
+    --viewer-h: max(
+      460px,
+      calc(
+        100dvh - var(--nav-height) - var(--page-y) - 96px - var(--nav-height) -
+          var(--space-5) - env(safe-area-inset-bottom)
+      )
+    );
+    gap: var(--space-2);
+  }
+  .stories__titles .strapline {
+    display: none;
+  }
+  .stories__titles h1 {
+    font: var(--headline-medium);
+  }
+  .story__text {
+    gap: var(--space-2);
+    padding: 0 var(--space-4) var(--space-4);
+  }
+  .story__stage {
+    padding: var(--space-5) var(--space-2) var(--space-2);
+  }
+  .story__credit {
+    padding: var(--space-2) var(--space-3);
+  }
+  .story__credit-text {
+    font: var(--body-medium);
+  }
+  .story__actions .btn {
+    min-block-size: 36px;
+    padding-inline: var(--space-3);
+  }
+  .story__actions .btn::after {
+    inset: -4px 0;
+  }
+  .stories__hint {
+    display: none;
+  }
+  .stories__item {
+    padding-block-end: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stories__item[data-current] .story__node,
+  .stories__item[data-current] .story__sentence,
+  .stories__seg[data-playing]::after {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .story,
+  .story__credit {
+    border: 1px solid CanvasText;
+  }
+  .stories__seg::after {
+    background: CanvasText;
+  }
+}

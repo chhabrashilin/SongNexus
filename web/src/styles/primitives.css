@@ -1,0 +1,455 @@
+/* Primitives in the YouTube Music idiom: pill buttons, square-ish chips, flat
+   cards, shelves of cover cards. Class names are BEM-ish and component-scoped. */
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 40px;
+  padding-inline: var(--space-4);
+  border: 0;
+  border-radius: var(--shape-full);
+  background: transparent;
+  color: var(--md-on-surface);
+  font: var(--label-large);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  /* Background and press only: fading opacity would leave a just-enabled button
+     briefly below contrast. */
+  transition:
+    background var(--duration-short) var(--motion-standard),
+    transform var(--duration-short) var(--motion-spring);
+}
+/* 44px hit area around a 40px button. */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: -2px 0;
+}
+.btn .icon {
+  inline-size: 20px;
+  block-size: 20px;
+  margin-inline-start: -2px;
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+.btn--filled {
+  background: var(--btn-filled-bg);
+  color: var(--btn-filled-fg);
+}
+.btn--filled:hover:not(:disabled) {
+  opacity: 0.88;
+}
+/* The loudest button: brand red, white text (5.9:1). At most one per page. */
+.btn--accent {
+  background: var(--brand-strong);
+  color: var(--on-brand);
+}
+.btn--accent:hover:not(:disabled) {
+  opacity: 0.9;
+}
+.btn--tonal {
+  background: var(--fill-2);
+}
+.btn--outlined {
+  box-shadow: inset 0 0 0 1px var(--fill-3);
+}
+.btn--text {
+  padding-inline: var(--space-3);
+}
+.btn--danger {
+  background: var(--md-error);
+  color: var(--md-on-error);
+}
+.btn--tonal:hover:not(:disabled),
+.btn--outlined:hover:not(:disabled),
+.btn--text:hover:not(:disabled) {
+  background: var(--fill-3);
+}
+.btn--compact {
+  min-block-size: 36px;
+}
+/* 44px hit area around a 36px button. */
+.btn--compact::after {
+  inset: -4px 0;
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--touch-target);
+  block-size: var(--touch-target);
+  flex: none;
+  border: 0;
+  border-radius: var(--shape-full);
+  background: transparent;
+  color: var(--md-on-surface);
+  cursor: pointer;
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.icon-btn:hover:not(:disabled) {
+  background: var(--fill-2);
+}
+.icon-btn:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+.icon-btn--outlined {
+  inline-size: 36px;
+  block-size: 36px;
+  position: relative;
+  box-shadow: inset 0 0 0 1px var(--fill-3);
+}
+.icon-btn--outlined::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+}
+.icon-btn--outlined .icon {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+.icon {
+  inline-size: 24px;
+  block-size: 24px;
+  fill: currentColor;
+  flex: none;
+}
+[dir='rtl'] .icon--mirror {
+  transform: scaleX(-1);
+}
+
+/* ---------- Chips ---------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+/* One line of chips that scrolls sideways (the row under the top bar). */
+.chips--scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 6px;
+  margin-block: -6px;
+}
+.chips--scroll::-webkit-scrollbar {
+  display: none;
+}
+.chips--scroll > * {
+  flex: none;
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 36px;
+  padding-inline: 14px;
+  border: 0;
+  border-radius: var(--shape-full);
+  background: var(--fill-1);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  color: var(--md-on-surface);
+  font: var(--label-large);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--duration-short) var(--motion-standard);
+}
+/* 44px hit area around a 36px chip. */
+.chip::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+.chip:hover {
+  background: var(--fill-3);
+}
+.chip .icon {
+  inline-size: 18px;
+  block-size: 18px;
+}
+.chip[aria-pressed='true'],
+.chip[aria-checked='true'],
+.chip[aria-current='page'] {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+.chip[aria-pressed='true'] .muted,
+.chip[aria-checked='true'] .muted {
+  color: inherit;
+}
+
+.swatch {
+  inline-size: 18px;
+  block-size: 4px;
+  border-radius: 2px;
+  flex: none;
+}
+
+/* ---------- Surfaces ---------- */
+
+.card {
+  padding: var(--space-4);
+  border-radius: var(--shape-l);
+  background: var(--md-surface-container-low);
+}
+.card--outlined {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.section__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+}
+
+/* Page header: an uppercase strapline, the title, one line of what it does. */
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 720px;
+}
+.page-header h1 {
+  font: var(--display-large);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+.strapline {
+  color: var(--md-on-surface-variant);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.lead {
+  max-inline-size: 60ch;
+  color: var(--md-on-surface-variant);
+  font: var(--body-large);
+}
+
+/* "More about this": the short answer is on the page, the full one a tap away. */
+.more {
+  border-radius: var(--shape-m);
+}
+.more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--touch-target);
+  color: var(--md-on-surface-variant);
+  font: var(--label-large);
+  cursor: pointer;
+  list-style: none;
+}
+.more > summary::-webkit-details-marker {
+  display: none;
+}
+.more > summary::after {
+  content: '';
+  inline-size: 8px;
+  block-size: 8px;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--duration-short) var(--motion-standard);
+}
+.more[open] > summary::after {
+  transform: translateY(2px) rotate(225deg);
+}
+.more > summary:hover {
+  color: var(--md-on-surface);
+}
+.more__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 68ch;
+  padding-block: var(--space-1) var(--space-3);
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+
+/* ---------- Shelves ---------- */
+
+.shelf {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+.shelf__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.shelf__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+.shelf__eyebrow {
+  color: var(--md-on-surface-variant);
+  font: var(--overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+.shelf__titles h2 {
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
+}
+.shelf__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+}
+.shelf__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(132px, 36vw, 188px);
+  gap: var(--space-5);
+  /* Room for cards to lift on hover without being clipped by the scroller. */
+  margin: -8px -8px 0;
+  padding: 8px 8px var(--space-2);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+  scroll-padding-inline: 8px;
+  scrollbar-width: none;
+  list-style: none;
+}
+.shelf__track::-webkit-scrollbar {
+  display: none;
+}
+@media (max-width: 599px), (pointer: coarse) {
+  .shelf__page {
+    display: none;
+  }
+  .shelf__track {
+    gap: var(--space-4);
+  }
+}
+
+/* Cover cards. We hold no artwork rights, so covers are generated: a gradient
+   keyed to the name, pressed with faint record grooves, and a monogram. */
+.cover-card {
+  scroll-snap-align: start;
+  min-inline-size: 0;
+}
+.cover-card__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: inherit;
+  text-decoration: none;
+}
+.cover-card__art {
+  margin-block-end: var(--space-2);
+}
+.cover-card[data-round] .cover-card__link {
+  align-items: center;
+  text-align: center;
+}
+.cover {
+  --hue: 340;
+  position: relative;
+  display: grid;
+  place-items: end start;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  padding: 10%;
+  border-radius: var(--shape-cover);
+  background:
+    repeating-radial-gradient(
+      circle at 78% 22%,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 7px
+    ),
+    radial-gradient(
+      120% 100% at 85% 10%,
+      hsl(calc(var(--hue) + 35) 85% 62% / 85%),
+      transparent 55%
+    ),
+    linear-gradient(
+      150deg,
+      hsl(var(--hue) 62% 42%),
+      hsl(calc(var(--hue) - 30) 55% 14%)
+    );
+  color: rgb(255 255 255 / 94%);
+  font: 700 clamp(1.75rem, 6vw, 2.75rem)/0.9 var(--font);
+  letter-spacing: -0.04em;
+  transition: filter var(--duration-short) var(--motion-standard);
+}
+.cover--round {
+  --cover-round:
+    repeating-radial-gradient(
+      circle at 50% 50%,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 7px
+    ),
+    radial-gradient(
+      90% 90% at 30% 20%,
+      hsl(calc(var(--hue) + 35) 85% 62% / 85%),
+      transparent 60%
+    ),
+    linear-gradient(
+      150deg,
+      hsl(var(--hue) 62% 42%),
+      hsl(calc(var(--hue) - 30) 55% 14%)
+    );
+  place-items: center;
+  padding: 0;
+  border-radius: var(--shape-full);
+  background: var(--cover-round);
+}
+.cover-card__link:hover .cover,
+.cover-card__link:focus-visible .cover {
+  filter: brightness(1.15);
+}
+.cover-card__title {
+  overflow: hidden;
+  font: var(--title-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-inline-size: 100%;
+}
+.cover-card__subtitle {
+  overflow: hidden;
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-inline-size: 100%;
+}
+@media (forced-colors: active) {
+  .cover {
+    border: 1px solid CanvasText;
+  }
+}

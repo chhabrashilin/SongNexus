@@ -1,0 +1,59 @@
+# Cloud Run service for the SongNexus API (staging and demo).
+# Rendered by .github/workflows/deploy.yml: ${...} placeholders are substituted
+# with envsubst before `gcloud run services replace`.
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: songnexus-api
+  labels:
+    app: songnexus
+    environment: ${ENVIRONMENT}
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"   # scale to zero at demo traffic (plan §18)
+        autoscaling.knative.dev/maxScale: "4"   # cost ceiling and DoS blast radius (plan §19)
+        run.googleapis.com/cloudsql-instances: ${CLOUDSQL_INSTANCE}
+        run.googleapis.com/startup-cpu-boost: "true"
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      serviceAccountName: songnexus-api@${PROJECT_ID}.iam.gserviceaccount.com
+      containerConcurrency: 40
+      timeoutSeconds: 30
+      containers:
+        - image: ${IMAGE}
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi   # the read model is ~100-300 MB for the R1 catalog; measure (plan §17)
+          env:
+            - name: SONGNEXUS_ENVIRONMENT
+              value: ${ENVIRONMENT}
+            - name: GOOGLE_CLOUD_PROJECT
+              value: ${PROJECT_ID}
+            # Writes are accepted only from the web app's origin (CSRF defense).
+            - name: SONGNEXUS_ALLOWED_ORIGINS
+              value: '["${WEB_ORIGIN}"]'
+            - name: SONGNEXUS_FIREBASE_PROJECT_ID
+              value: ${PROJECT_ID}
+            # Client -> Firebase Hosting CDN -> Google front end -> Cloud Run: the client
+            # address is the second entry from the end of X-Forwarded-For. Verify in staging.
+            - name: SONGNEXUS_TRUSTED_PROXY_HOPS
+              value: "2"
+            - name: SONGNEXUS_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: songnexus-database-url
+                  key: latest
+          startupProbe:
+            httpGet:
+              path: /healthz
+            periodSeconds: 2
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /healthz
+            periodSeconds: 30

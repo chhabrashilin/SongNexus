@@ -1,0 +1,214 @@
+/* ---------- Home and the Explore hub ---------- */
+
+.home,
+.explore-hub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+.home {
+  gap: var(--space-7);
+}
+.home > nav {
+  margin-block: calc(-1 * var(--space-5));
+}
+.home__chips {
+  margin: 0;
+  padding-inline: 0;
+  list-style: none;
+}
+.section-title {
+  font: var(--display-small);
+  letter-spacing: var(--tracking-title);
+}
+
+/* The feature: what SongNexus is, with the way in. */
+.feature {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-5);
+  overflow: hidden;
+  padding: var(--space-5);
+  border-radius: var(--shape-xl);
+  background:
+    radial-gradient(
+      70% 120% at 100% 0%,
+      light-dark(rgb(255 0 0 / 8%), rgb(255 0 0 / 16%)),
+      transparent 60%
+    ),
+    var(--md-surface-container-low);
+}
+.feature__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+.feature h1 {
+  font: var(--display-large);
+  letter-spacing: -0.02em;
+  overflow-wrap: break-word;
+}
+.feature__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+}
+.feature__art {
+  display: none;
+  inline-size: 100%;
+  max-inline-size: 420px;
+  block-size: auto;
+  justify-self: end;
+}
+@media (min-width: 720px) {
+  .feature {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    padding: var(--space-6) var(--space-7);
+  }
+  .feature__art {
+    display: block;
+  }
+}
+
+/* Quick picks: two or three columns of compact rows. */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tool-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-block-size: 72px;
+  padding: var(--space-2);
+  border-radius: var(--shape-s);
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.tool-row:hover {
+  background: var(--fill-1);
+}
+.tool-row > .icon {
+  color: var(--md-on-surface-variant);
+}
+.tool-row__icon {
+  --tone: 0;
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  flex: none;
+  border-radius: var(--shape-cover);
+  background: linear-gradient(
+    150deg,
+    hsl(var(--tone) 62% 42%),
+    hsl(calc(var(--tone) - 30) 55% 14%)
+  );
+  color: #fff;
+}
+.tool-row__icon[data-tone='1'] {
+  --tone: 210;
+}
+.tool-row__icon[data-tone='2'] {
+  --tone: 275;
+}
+.tool-row__icon[data-tone='3'] {
+  --tone: 150;
+}
+.tool-row__icon[data-tone='4'] {
+  --tone: 28;
+}
+.tool-row__icon[data-tone='5'] {
+  --tone: 320;
+}
+.tool-row__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.tool-row__title {
+  font: var(--title-medium);
+}
+.tool-row__body {
+  color: var(--md-on-surface-variant);
+  font: var(--body-medium);
+}
+
+/* Explore hub: start a web. */
+.web-start {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--shape-xl);
+  background:
+    radial-gradient(circle, var(--fill-2) 1px, transparent 1.5px) 0 0 / 28px
+      28px,
+    var(--md-surface-container-low);
+}
+.web-start__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.web-start h2 {
+  font: var(--headline-medium);
+  letter-spacing: -0.01em;
+}
+.web-start__search {
+  max-inline-size: 560px;
+}
+.web-start__search .field {
+  min-block-size: 56px;
+  border-radius: var(--shape-s);
+  background: var(--md-surface-container-highest);
+}
+.web-start__try {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.web-start__picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pick {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--touch-target);
+  padding: 4px var(--space-4) 4px 4px;
+  border-radius: var(--shape-full);
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface);
+  font: var(--label-large);
+  text-decoration: none;
+  transition: background var(--duration-short) var(--motion-standard);
+}
+.pick:hover {
+  background: var(--fill-3);
+}
+.pick .cover {
+  inline-size: 36px;
+  flex: none;
+  font-size: 0.9375rem;
+}
+@media (min-width: 720px) {
+  .web-start {
+    padding: var(--space-6) var(--space-7);
+  }
+}

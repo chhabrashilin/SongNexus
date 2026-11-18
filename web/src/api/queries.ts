@@ -1,0 +1,604 @@
+/** Data hooks over the API (TanStack Query). One hook per method; keys include every parameter. */
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type QueryClient,
+} from '@tanstack/react-query';
+
+import type {GenreSelection} from '../app/genreSelection';
+
+import {api, ApiError, unwrap, type Schemas} from './client';
+
+export type ConnectionCategory = Schemas['ConnectionCategory'];
+export type CollaborationType = Schemas['CollaborationType'];
+export type PathMode = Schemas['PathMode'];
+
+const MINUTE = 60_000;
+
+/**
+ * Catalog answers change only when the server's `graphVersion` changes (a data
+ * refresh, hours apart), so they stay fresh for a long time and are kept in memory
+ * for a while after their last use. Sign-in, sign-out and blocking invalidate
+ * them explicitly (personalized results), so a long staleTime is safe.
+ */
+const CATALOG_CACHE = {staleTime: 30 * MINUTE, gcTime: 60 * MINUTE} as const;
+
+/** Warms the cache for an artist page (called on hover or focus). */
+export function prefetchArtist(queryClient: QueryClient, id: string) {
+  return queryClient.prefetchQuery({
+    queryKey: ['artist', id],
+    queryFn: () =>
+      unwrap(api.GET('/v1/artists/{artist}', {params: {path: {artist: id}}})),
+    ...CATALOG_CACHE,
+  });
+}
+
+/** Warms the cache for an artist's connections (same key as `useConnections`). */
+export function prefetchConnections(
+  queryClient: QueryClient,
+  id: string,
+  params: ConnectionParams,
+) {
+  return queryClient.prefetchQuery({
+    queryKey: ['connections', id, params],
+    queryFn: () => fetchConnections(id, params),
+    ...CATALOG_CACHE,
+  });
+}
+
+/** Retries transient failures only; never client errors. */
+export function shouldRetry(failureCount: number, error: unknown): boolean {
+  if (error instanceof ApiError) {
+    const transient = error.httpStatus === 0 || error.httpStatus >= 500;
+    return transient && failureCount < 2;
+  }
+  return false;
+}
+
+export function useConfig() {
+  return useQuery({
+    queryKey: ['config'],
+    queryFn: () => unwrap(api.GET('/v1/config')),
+    staleTime: 5 * MINUTE,
+  });
+}
+
+export function useArtist(id: string | undefined) {
+  return useQuery({
+    queryKey: ['artist', id],
+    queryFn: () =>
+      unwrap(api.GET('/v1/artists/{artist}', {params: {path: {artist: id!}}})),
+    enabled: Boolean(id),
+    ...CATALOG_CACHE,
+  });
+}
+
+export interface ConnectionParams extends GenreSelection {
+  categories: ConnectionCategory[];
+  pageSize?: number;
+  pageToken?: string;
+  /** `relevance desc` blends strength with how widely known an artist is. */
+  orderBy?: 'strength desc' | 'relevance desc' | 'displayName';
+}
+
+export function fetchConnections(id: string, params: ConnectionParams) {
+  return unwrap(
+    api.GET('/v1/artists/{artist}/connections', {
+      params: {path: {artist: id}, query: {...params}},
+    }),
+  );
+}
+
+export function useConnections(
+  id: string | undefined,
+  params: ConnectionParams,
+) {
+  return useQuery({
+    queryKey: ['connections', id, params],
+    queryFn: () => fetchConnections(id!, params),
+    enabled: Boolean(id),
+    ...CATALOG_CACHE,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useConnection(
+  a: string | undefined,
+  b: string | undefined,
+  categories: ConnectionCategory[],
+) {
+  return useQuery({
+    queryKey: ['connection', a, b, categories],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/artists/{artist}/connections/{other}', {
+          params: {path: {artist: a!, other: b!}, query: {categories}},
+        }),
+      ),
+    enabled: Boolean(a && b),
+    ...CATALOG_CACHE,
+  });
+}
+
+export type ProductionDirection = Schemas['ProductionDirection'];
+
+export interface CollaborationOptions {
+  startYear?: number | null;
+  endYear?: number | null;
+  orderBy?: Schemas['CollaborationOrder'];
+}
+
+export function useCollaborations(
+  id: string | undefined,
+  type: CollaborationType,
+  selection: GenreSelection,
+  pageToken = '',
+  direction: ProductionDirection | null = null,
+  options: CollaborationOptions = {},
+) {
+  const {startYear = null, endYear = null, orderBy = 'COUNT'} = options;
+  return useQuery({
+    queryKey: [
+      'collaborations',
+      id,
+      type,
+      selection,
+      direction,
+      startYear,
+      endYear,
+      orderBy,
+      pageToken,
+    ],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/artists/{artist}/collaborations', {
+          params: {
+            path: {artist: id!},
+            query: {
+              type,
+              pageSize: 25,
+              pageToken,
+              ...selection,
+              ...(direction ? {direction} : {}),
+              ...(startYear !== null ? {startYear} : {}),
+              ...(endYear !== null ? {endYear} : {}),
+              orderBy,
+            },
+          },
+        }),
+      ),
+    enabled: Boolean(id),
+    ...CATALOG_CACHE,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export interface PathParams extends GenreSelection {
+  from: string;
+  to: string;
+  mode: PathMode;
+  categories: ConnectionCategory[];
+  alternatives: number;
+}
+
+export function usePath(params: PathParams | null) {
+  return useQuery({
+    queryKey: ['path', params],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/artists/{artist}:findPath', {
+          params: {
+            path: {artist: params!.from},
+            query: {
+              target: `artists/${params!.to}`,
+              mode: params!.mode,
+              categories: params!.categories,
+              genres: params!.genres,
+              includeUnknownGenre: params!.includeUnknownGenre,
+              includeSubgenres: params!.includeSubgenres,
+              alternatives: params!.alternatives,
+            },
+          },
+        }),
+      ),
+    enabled: params !== null,
+    ...CATALOG_CACHE,
+  });
+}
+
+export function useCompare(
+  a: string | undefined,
+  b: string | undefined,
+  selection: GenreSelection,
+) {
+  return useQuery({
+    queryKey: ['compare', a, b, selection],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/artists/{artist}:compare', {
+          params: {
+            path: {artist: a!},
+            query: {other: `artists/${b!}`, ...selection},
+          },
+        }),
+      ),
+    enabled: Boolean(a && b && a !== b),
+    ...CATALOG_CACHE,
+  });
+}
+
+export function useRecordingComparison(
+  a: string | undefined,
+  b: string | undefined,
+) {
+  return useQuery({
+    queryKey: ['recordingComparison', a, b],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/recordings/{recording}:compare', {
+          params: {path: {recording: a!}, query: {other: `recordings/${b!}`}},
+        }),
+      ),
+    enabled: Boolean(a && b),
+    ...CATALOG_CACHE,
+  });
+}
+
+export function useLabel(id: string | undefined) {
+  return useQuery({
+    queryKey: ['label', id],
+    queryFn: () =>
+      unwrap(api.GET('/v1/labels/{label}', {params: {path: {label: id!}}})),
+    enabled: Boolean(id),
+    ...CATALOG_CACHE,
+  });
+}
+
+export function useRecording(id: string | undefined) {
+  return useQuery({
+    queryKey: ['recording', id],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/recordings/{recording}', {
+          params: {path: {recording: id!}},
+        }),
+      ),
+    enabled: Boolean(id),
+    ...CATALOG_CACHE,
+  });
+}
+
+export function useSearch(query: string, types: Schemas['EntityType'][] = []) {
+  const trimmed = query.trim();
+  return useQuery({
+    queryKey: ['search', trimmed, types],
+    queryFn: ({signal}) =>
+      unwrap(
+        api.GET('/v1/catalog:search', {
+          params: {query: {query: trimmed, types, pageSize: 8}},
+          signal,
+        }),
+      ),
+    enabled: trimmed.length > 0,
+    ...CATALOG_CACHE,
+    placeholderData: keepPreviousData,
+  });
+}
+
+/** Every genre (the API pages at 100; the catalog has more). QA Q16. */
+export async function fetchAllGenres(): Promise<Schemas['Genre'][]> {
+  const genres: Schemas['Genre'][] = [];
+  let pageToken = '';
+  do {
+    const page = await unwrap(
+      api.GET('/v1/genres', {params: {query: {pageSize: 100, pageToken}}}),
+    );
+    genres.push(...page.genres);
+    pageToken = page.nextPageToken;
+  } while (pageToken);
+  return genres;
+}
+
+export function useGenres() {
+  return useQuery({
+    queryKey: ['genres'],
+    queryFn: fetchAllGenres,
+    staleTime: 30 * MINUTE,
+    gcTime: 60 * MINUTE,
+  });
+}
+
+export async function fetchAllDataSources(): Promise<Schemas['DataSource'][]> {
+  const sources: Schemas['DataSource'][] = [];
+  let pageToken = '';
+  do {
+    const page = await unwrap(
+      api.GET('/v1/dataSources', {params: {query: {pageSize: 100, pageToken}}}),
+    );
+    sources.push(...page.dataSources);
+    pageToken = page.nextPageToken;
+  } while (pageToken);
+  return sources;
+}
+
+/** The data-source registry (ADR 0005), for the Resources section. */
+export function useDataSources() {
+  return useQuery({
+    queryKey: ['dataSources'],
+    queryFn: fetchAllDataSources,
+    staleTime: 60 * MINUTE,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Signed-in user data
+// ---------------------------------------------------------------------------
+
+export function usePreferences(enabled: boolean) {
+  return useQuery({
+    queryKey: ['me', 'preferences'],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/users/{user}/preferences', {params: {path: {user: 'me'}}}),
+      ),
+    enabled,
+  });
+}
+
+export function useUpdatePreferences() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      body,
+      mask,
+    }: {
+      body: Schemas['Preferences-Input'];
+      mask: string;
+    }) =>
+      unwrap(
+        api.PATCH('/v1/users/{user}/preferences', {
+          params: {path: {user: 'me'}, query: {updateMask: mask}},
+          body,
+        }),
+      ),
+    onSuccess: data => queryClient.setQueryData(['me', 'preferences'], data),
+    onError: () =>
+      queryClient.invalidateQueries({queryKey: ['me', 'preferences']}),
+  });
+}
+
+export function useBlockedArtists(enabled: boolean) {
+  return useQuery({
+    queryKey: ['me', 'blocked'],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/users/{user}/blockedArtists', {
+          params: {path: {user: 'me'}, query: {pageSize: 1000}},
+        }),
+      ),
+    enabled,
+  });
+}
+
+/** Blocks change what every list returns, so all catalog queries are refetched. */
+function refreshAfterBlockChange(queryClient: QueryClient) {
+  void queryClient.invalidateQueries({
+    predicate: query =>
+      query.queryKey[0] !== 'config' && query.queryKey[0] !== 'genres',
+  });
+}
+
+export function useBlockArtist() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (artistId: string) =>
+      unwrap(
+        api.POST('/v1/users/{user}/blockedArtists', {
+          params: {path: {user: 'me'}},
+          body: {artist: `artists/${artistId}`},
+        }),
+      ),
+    onSettled: () => refreshAfterBlockChange(queryClient),
+  });
+}
+
+export function useUnblockArtist() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (artistId: string) =>
+      unwrap(
+        api.DELETE('/v1/users/{user}/blockedArtists/{artist}', {
+          params: {path: {user: 'me', artist: artistId}},
+        }),
+      ),
+    onSettled: () => refreshAfterBlockChange(queryClient),
+  });
+}
+
+export function useProfile(enabled: boolean) {
+  return useQuery({
+    queryKey: ['me', 'profile'],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/users/{user}/profile', {params: {path: {user: 'me'}}}),
+      ),
+    enabled,
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: Schemas['Profile-Input']) =>
+      unwrap(
+        api.PATCH('/v1/users/{user}/profile', {
+          params: {path: {user: 'me'}, query: {updateMask: 'topArtists'}},
+          body,
+        }),
+      ),
+    onSuccess: data => queryClient.setQueryData(['me', 'profile'], data),
+    onError: () => queryClient.invalidateQueries({queryKey: ['me', 'profile']}),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Playlist analysis (US-10)
+// ---------------------------------------------------------------------------
+
+export type PlaylistAnalysis = Schemas['AnalyzePlaylistResponse'];
+
+/** Sends artist names only: titles aren't needed for the analysis, so they stay on the device. */
+export function useAnalyzePlaylist() {
+  return useMutation({
+    mutationFn: (artistsPerTrack: string[][]) =>
+      unwrap(
+        api.POST('/v1/playlists:analyze', {
+          body: {tracks: artistsPerTrack.map(artists => ({artists}))},
+        }),
+      ),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Play (US-04)
+// ---------------------------------------------------------------------------
+
+export function usePuzzle(date: string, enabled = true) {
+  return useQuery({
+    enabled,
+    queryKey: ['puzzle', date],
+    queryFn: () =>
+      unwrap(api.GET('/v1/puzzles/{date}', {params: {path: {date}}})),
+    staleTime: 5 * MINUTE,
+  });
+}
+
+/** Best-effort aggregate share action; the response deliberately has no body. */
+export async function reportPuzzleShare(): Promise<void> {
+  const result = await api.POST('/v1/puzzles:share', {credentials: 'omit'});
+  if (!result.response.ok) throw new Error('Share reporting failed');
+}
+
+export function checkMove(date: string, fromArtist: string, toArtist: string) {
+  return unwrap(
+    api.POST('/v1/puzzles/{date}:checkMove', {
+      params: {path: {date}},
+      body: {fromArtist, toArtist},
+    }),
+  );
+}
+
+export function getHint(date: string, fromArtist: string) {
+  return unwrap(
+    api.POST('/v1/puzzles/{date}:hint', {
+      params: {path: {date}},
+      body: {fromArtist},
+    }),
+  );
+}
+
+export function useReveal(date: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ['puzzle', date, 'reveal'],
+    queryFn: () =>
+      unwrap(api.GET('/v1/puzzles/{date}:reveal', {params: {path: {date}}})),
+    enabled,
+    staleTime: 5 * MINUTE,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Linked listening accounts (R2-6, ADR 0006)
+// ---------------------------------------------------------------------------
+
+export type ListeningProvider = Schemas['ListeningProvider'];
+export type ProviderOffer = Schemas['ProviderOffer'];
+
+export function useLinkedAccounts(enabled: boolean) {
+  return useQuery({
+    queryKey: ['me', 'linkedAccounts'],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/users/{user}/linkedAccounts', {
+          params: {path: {user: 'me'}},
+        }),
+      ),
+    enabled,
+    // The scheduled sync changes "last synced" while the page is open.
+    refetchInterval: MINUTE,
+  });
+}
+
+function refreshListening(queryClient: QueryClient) {
+  void queryClient.invalidateQueries({queryKey: ['me', 'linkedAccounts']});
+  void queryClient.invalidateQueries({queryKey: ['me', 'listening']});
+}
+
+/** Starts a redirect link and returns where to send the browser. */
+export function useStartLink() {
+  return useMutation({
+    mutationFn: (provider: ListeningProvider) =>
+      unwrap(
+        api.POST('/v1/users/{user}/linkedAccounts:start', {
+          params: {path: {user: 'me'}},
+          body: {provider},
+        }),
+      ),
+  });
+}
+
+export function useLinkWithToken() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: {provider: ListeningProvider; token: string}) =>
+      unwrap(
+        api.POST('/v1/users/{user}/linkedAccounts', {
+          params: {path: {user: 'me'}},
+          body,
+        }),
+      ),
+    onSuccess: () => refreshListening(queryClient),
+  });
+}
+
+export function useSyncLinkedAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (provider: ListeningProvider) =>
+      unwrap(
+        api.POST('/v1/users/{user}/linkedAccounts/{provider}:sync', {
+          params: {path: {user: 'me', provider: provider.toLowerCase()}},
+        }),
+      ),
+    onSettled: () => refreshListening(queryClient),
+  });
+}
+
+export function useUnlinkAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (provider: ListeningProvider) =>
+      unwrap(
+        api.DELETE('/v1/users/{user}/linkedAccounts/{provider}', {
+          params: {path: {user: 'me', provider: provider.toLowerCase()}},
+        }),
+      ),
+    onSettled: () => refreshListening(queryClient),
+  });
+}
+
+/** The listener's artists from linked accounts, most played first. */
+export function useListening(enabled: boolean, pageSize = 50) {
+  return useQuery({
+    queryKey: ['me', 'listening', pageSize],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/users/{user}/listening', {
+          params: {path: {user: 'me'}, query: {pageSize}},
+        }),
+      ),
+    enabled,
+  });
+}
